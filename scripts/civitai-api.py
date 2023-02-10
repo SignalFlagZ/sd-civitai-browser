@@ -123,7 +123,7 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
     elif content_type == "AestheticGradient":
         folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
         new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
-    elif content_type == "LoRA":
+    elif content_type == "LORA":
         folder = "models/Lora"
         new_folder = "models/Lora/new"
     elif content_type == "VAE":
@@ -170,7 +170,7 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
     elif content_type == "TextualInversion":
         folder = "embeddings"
         new_folder = "embeddings/new"
-    elif content_type == "LoRA":
+    elif content_type == "LORA":
         folder = "models/Lora"
         new_folder = "models/Lora/new"
     elif content_type == "AestheticGradient":
@@ -357,7 +357,7 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
     elif content_type == "AestheticGradient":
         folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
         new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
-    elif content_type == "LoRA":
+    elif content_type == "LORA":
         folder = "models/Lora"
         new_folder = "models/Lora/new"
     elif content_type == "VAE":
@@ -416,7 +416,7 @@ def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
             with gr.Column(scale=2):
-                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","LoRA","AestheticGradient", "VAE"], value="Checkpoint", type="value")
+                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","LORA","AestheticGradient", "VAE"], value="Checkpoint", type="value")
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):

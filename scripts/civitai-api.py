@@ -123,6 +123,9 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
     elif content_type == "AestheticGradient":
         folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
         new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
+    elif content_type == "LoRA":
+        folder = "models/Lora"
+        new_folder = "models/Lora/new"
     elif content_type == "VAE":
         folder = "models/VAE"
         new_folder = "models/VAE/new"
@@ -138,14 +141,14 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
                 os.makedirs(model_folder)
     else:            
         if use_new_folder:
-            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
+            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
             if not os.path.exists(new_folder):
                 os.makedirs(new_folder)
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
             
         else:
-            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
+            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
 
@@ -167,6 +170,9 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
     elif content_type == "TextualInversion":
         folder = "embeddings"
         new_folder = "embeddings/new"
+    elif content_type == "LoRA":
+        folder = "models/Lora"
+        new_folder = "models/Lora/new"
     elif content_type == "AestheticGradient":
         folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
         new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
@@ -185,14 +191,14 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
                 os.makedirs(model_folder)
     else:            
         if use_new_folder:
-            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
+            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
             if not os.path.exists(new_folder):
                 os.makedirs(new_folder)
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
             
         else:
-            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
+            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
    
@@ -260,7 +266,6 @@ def update_model_versions(model_name=None):
         versions_dict = {}
         for item in json_data['items']:
             if item['name'] == model_name:
-
                 for model in item['modelVersions']:
                     versions_dict[model['name']] = item["name"]
         return gr.Dropdown.update(choices=[k + ' - ' + v for k, v in versions_dict.items()], value=f'{next(iter(versions_dict.keys()))} - {model_name}')
@@ -284,7 +289,7 @@ def update_dl_url(model_name=None, model_version=None, model_filename=None):
     else:
         return gr.Textbox.update(value=None)
 
-def update_model_info(model_name=None, model_version=None):
+def  update_model_info(model_name=None, model_version=None):
 
 
     if model_name and model_version:
@@ -316,7 +321,6 @@ def update_model_info(model_name=None, model_version=None):
                             img_html = img_html + f'<img src={pic["url"]} width=400px></img>'
                         img_html = img_html + '</div>'
                         output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
-
         return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys())))
     else:
         return gr.HTML.update(value=None), gr.Textbox.update(value=None), gr.Dropdown.update(choices=[], value=None)
@@ -339,12 +343,54 @@ def update_everything(list_models, list_versions, model_filename, dl_url):
     dl_url = update_dl_url(list_models, list_versions, f['value'])
     return (a, d, f, list_versions, list_models, dl_url)
 
-def save_image_files(preview_image_html, model_filename, list_models):
+def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder):
     print("Save Images Clicked")
+    if content_type == "Checkpoint":
+        folder = "models/Stable-diffusion"
+        new_folder = "models/Stable-diffusion/new"
+    elif content_type == "Hypernetwork":
+        folder = "models/hypernetworks"
+        new_folder = "models/hypernetworks/new"
+    elif content_type == "TextualInversion":
+        folder = "embeddings"
+        new_folder = "embeddings/new"
+    elif content_type == "AestheticGradient":
+        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
+    elif content_type == "LoRA":
+        folder = "models/Lora"
+        new_folder = "models/Lora/new"
+    elif content_type == "VAE":
+        folder = "models/VAE"
+        new_folder = "models/VAE/new"
+    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
+        if use_new_folder:
+            model_folder = new_folder
+            if not os.path.exists(new_folder):
+                os.makedirs(new_folder)
+            
+        else:
+            model_folder = folder
+            if not os.path.exists(model_folder):
+                os.makedirs(model_folder)
+    else:            
+        if use_new_folder:
+            model_folder = os.path.join(new_folder,list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            if not os.path.exists(new_folder):
+                os.makedirs(new_folder)
+            if not os.path.exists(model_folder):
+                os.makedirs(model_folder)
+            
+        else:
+            model_folder = os.path.join(folder,list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            if not os.path.exists(model_folder):
+                os.makedirs(model_folder)
+
+
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', preview_image_html)
     
     name = os.path.splitext(model_filename)[0]
-    model_folder = os.path.join("models\Stable-diffusion",list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
+    #model_folder = os.path.join("models\Stable-diffusion",list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
 
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
@@ -364,12 +410,13 @@ def save_image_files(preview_image_html, model_filename, list_models):
                     
         except urllib.error.URLError as e:
             print(f'Error: {e.reason}')
+    print(f"Done.")
 
 def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
             with gr.Column(scale=2):
-                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","AestheticGradient", "VAE"], value="Checkpoint", type="value")
+                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","LoRA","AestheticGradient", "VAE"], value="Checkpoint", type="value")
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):
@@ -412,7 +459,9 @@ def on_ui_tabs():
             inputs=[
             preview_image_html,
             model_filename,
-            list_models
+            list_models,
+            content_type,
+            save_model_in_new
             ],
             outputs=[]
         )

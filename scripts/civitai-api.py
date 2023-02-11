@@ -12,7 +12,7 @@ from tqdm import tqdm
 import re
 from requests.exceptions import ConnectionError
 import urllib.request
-
+from modules.shared import cmd_opts
 
 def download_file(url, file_name):
     # Maximum number of retries
@@ -110,25 +110,25 @@ def download_file(url, file_name):
 #    # Close the progress bar
 #    progress.close()
 
-def download_file_thread(url, file_name, content_type, use_new_folder, model_name):
+def extranetwork_folder(content_type, use_new_folder, model_name = ""):
     if content_type == "Checkpoint":
-        folder = "models/Stable-diffusion"
-        new_folder = "models/Stable-diffusion/new"
+        folder = cmd_opts.ckpt_dir #"models/Stable-diffusion"
+        new_folder = os.path.join(folder,"new") #"models/Stable-diffusion/new"
     elif content_type == "Hypernetwork":
-        folder = "models/hypernetworks"
-        new_folder = "models/hypernetworks/new"
+        folder = cmd_opts.hypernetwork_dir #"models/hypernetworks"
+        new_folder = os.path.join(folder,"new") #"models/hypernetworks/new"
     elif content_type == "TextualInversion":
-        folder = "embeddings"
-        new_folder = "embeddings/new"
+        folder = cmd_opts.embeddings_dir #"embeddings"
+        new_folder = os.path.join(folder,"new") #"embeddings/new"
     elif content_type == "AestheticGradient":
         folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
         new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
     elif content_type == "LORA":
-        folder = "models/Lora"
-        new_folder = "models/Lora/new"
+        folder = cmd_opts.lora_dir #"models/Lora"
+        new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
-        folder = "models/VAE"
-        new_folder = "models/VAE/new"
+        folder = cmd_opts.vae_dir #"models/VAE"
+        new_folder = os.path.join(folder,"new") #"models/VAE/new"
     if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
         if use_new_folder:
             model_folder = new_folder
@@ -151,7 +151,52 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
             model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
+    print(f"Folder Path:{model_folder}")
+    return model_folder
 
+def download_file_thread(url, file_name, content_type, use_new_folder, model_name):
+#    if content_type == "Checkpoint":
+#        folder = "models/Stable-diffusion"
+#        new_folder = "models/Stable-diffusion/new"
+#    elif content_type == "Hypernetwork":
+#        folder = "models/hypernetworks"
+#        new_folder = "models/hypernetworks/new"
+#    elif content_type == "TextualInversion":
+#        folder = "embeddings"
+#        new_folder = "embeddings/new"
+#    elif content_type == "AestheticGradient":
+#        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+#        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
+#    elif content_type == "LORA":
+#        folder = "models/Lora"
+#        new_folder = "models/Lora/new"
+#    elif content_type == "VAE":
+#        folder = "models/VAE"
+#        new_folder = "models/VAE/new"
+#    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
+#        if use_new_folder:
+#            model_folder = new_folder
+#            if not os.path.exists(new_folder):
+#                os.makedirs(new_folder)
+#            
+#        else:
+#            model_folder = folder
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+#    else:            
+#       if use_new_folder:
+#            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+#            if not os.path.exists(new_folder):
+#                os.makedirs(new_folder)
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+#            
+#        else:
+#            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+
+    model_folder = extranetwork_folder(content_type, use_new_folder,model_name)
     path_to_new_file = os.path.join(model_folder, file_name)     
 
     thread = threading.Thread(target=download_file, args=(url, path_to_new_file))
@@ -160,48 +205,49 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
     thread.start()
 
 def save_text_file(file_name, content_type, use_new_folder, trained_words, model_name):
-    print("Save Text File Clicked")
-    if content_type == "Checkpoint":
-        folder = "models/Stable-diffusion"
-        new_folder = "models/Stable-diffusion/new"
-    elif content_type == "Hypernetwork":
-        folder = "models/hypernetworks"
-        new_folder = "models/hypernetworks/new"
-    elif content_type == "TextualInversion":
-        folder = "embeddings"
-        new_folder = "embeddings/new"
-    elif content_type == "LORA":
-        folder = "models/Lora"
-        new_folder = "models/Lora/new"
-    elif content_type == "AestheticGradient":
-        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
-        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
-    elif content_type == "VAE":
-        folder = "models/VAE"
-        new_folder = "models/VAE/new"
-    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
-        if use_new_folder:
-            model_folder = new_folder
-            if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
-            
-        else:
-            model_folder = folder
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
-    else:            
-        if use_new_folder:
-            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
-            
-        else:
-            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
-   
+#    print("Save Text File Clicked")
+#    if content_type == "Checkpoint":
+#        folder = "models/Stable-diffusion"
+#        new_folder = "models/Stable-diffusion/new"
+#    elif content_type == "Hypernetwork":
+#        folder = "models/hypernetworks"
+#        new_folder = "models/hypernetworks/new"
+#    elif content_type == "TextualInversion":
+#        folder = "embeddings"
+#        new_folder = "embeddings/new"
+#    elif content_type == "LORA":
+#        folder = "models/Lora"
+#        new_folder = "models/Lora/new"
+#    elif content_type == "AestheticGradient":
+#        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+#        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
+#    elif content_type == "VAE":
+#        folder = "models/VAE"
+#        new_folder = "models/VAE/new"
+#    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
+#        if use_new_folder:
+#            model_folder = new_folder
+#            if not os.path.exists(new_folder):
+#                os.makedirs(new_folder)
+#            
+#        else:
+#            model_folder = folder
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+#    else:            
+#        if use_new_folder:
+#            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+#            if not os.path.exists(new_folder):
+#                os.makedirs(new_folder)
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+#            
+#        else:
+#            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+
+    model_folder = extranetwork_folder(content_type, use_new_folder, model_name)   
     path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt"))
     if not os.path.exists(path_to_new_file):
         with open(path_to_new_file, 'w') as f:
@@ -345,48 +391,48 @@ def update_everything(list_models, list_versions, model_filename, dl_url):
 
 def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder):
     print("Save Images Clicked")
-    if content_type == "Checkpoint":
-        folder = "models/Stable-diffusion"
-        new_folder = "models/Stable-diffusion/new"
-    elif content_type == "Hypernetwork":
-        folder = "models/hypernetworks"
-        new_folder = "models/hypernetworks/new"
-    elif content_type == "TextualInversion":
-        folder = "embeddings"
-        new_folder = "embeddings/new"
-    elif content_type == "AestheticGradient":
-        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
-        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
-    elif content_type == "LORA":
-        folder = "models/Lora"
-        new_folder = "models/Lora/new"
-    elif content_type == "VAE":
-        folder = "models/VAE"
-        new_folder = "models/VAE/new"
-    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
-        if use_new_folder:
-            model_folder = new_folder
-            if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
-            
-        else:
-            model_folder = folder
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
-    else:            
-        if use_new_folder:
-            model_folder = os.path.join(new_folder,list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
-            
-        else:
-            model_folder = os.path.join(folder,list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
+#    if content_type == "Checkpoint":
+#        folder = "models/Stable-diffusion"
+#        new_folder = "models/Stable-diffusion/new"
+#    elif content_type == "Hypernetwork":
+#        folder = "models/hypernetworks"
+#        new_folder = "models/hypernetworks/new"
+#    elif content_type == "TextualInversion":
+#        folder = "embeddings"
+#        new_folder = "embeddings/new"
+#    elif content_type == "AestheticGradient":
+#        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+#        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
+#    elif content_type == "LORA":
+#        folder = "models/Lora"
+#        new_folder = "models/Lora/new"
+#    elif content_type == "VAE":
+#        folder = "models/VAE"
+#        new_folder = "models/VAE/new"
+#    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
+#        if use_new_folder:
+#            model_folder = new_folder
+#            if not os.path.exists(new_folder):
+#                os.makedirs(new_folder)
+#            
+#        else:
+#            model_folder = folder
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+#    else:            
+#        if use_new_folder:
+#            model_folder = os.path.join(new_folder,list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+#            if not os.path.exists(new_folder):
+#                os.makedirs(new_folder)
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
+#            
+#        else:
+#            model_folder = os.path.join(folder,list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+#            if not os.path.exists(model_folder):
+#                os.makedirs(model_folder)
 
-
+    model_folder = extranetwork_folder(content_type, use_new_folder, list_models)
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', preview_image_html)
     
     name = os.path.splitext(model_filename)[0]

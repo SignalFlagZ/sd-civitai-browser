@@ -140,15 +140,24 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
     else:            
+        escapechars = str.maketrans({" ": r"_",
+                                     "(": r"",
+                                     ")": r"",
+                                     "|": r"",
+                                     ":": r"",
+                                     ",": r"",
+                                     "\\": r""})
         if use_new_folder:
-            model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            model_folder = os.path.join(new_folder,model_name.translate(escapechars))
             if not os.path.exists(new_folder):
                 os.makedirs(new_folder)
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
             
         else:
-            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            model_folder = os.path.join(folder,model_name.translate(escapechars))
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
     print(f"Folder Path:{model_folder}")

@@ -145,7 +145,9 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
                                      ")": r"",
                                      "|": r"",
                                      ":": r"",
-                                     ",": r"",
+                                     ",": r"，",
+                                     "<": r"＜",
+                                     ">": r"＞",
                                      "\\": r""})
         if use_new_folder:
             #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))

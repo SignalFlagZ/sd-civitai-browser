@@ -469,9 +469,9 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
         except urllib.error.URLError as e:
             print(f'Error: {e.reason}')
     path_to_new_file = os.path.join(model_folder, f'{name}.html')
-    if not os.path.exists(path_to_new_file):
-        with open(path_to_new_file, 'wb') as f:
-            f.write(html.encode('utf8'))
+    #if not os.path.exists(path_to_new_file):
+    with open(path_to_new_file, 'wb') as f:
+        f.write(html.encode('utf8'))
 
     print(f"Done.")
 

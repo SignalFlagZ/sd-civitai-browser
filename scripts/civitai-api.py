@@ -377,7 +377,7 @@ def  update_model_info(model_name=None, model_version=None):
                         for pic in model['images']:
                             img_html = img_html + f'<img src={pic["url"]} width=400px></img>'
                         img_html = img_html + '</div>'
-                        output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
+                        output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><b>Trained Tags:</b> {output_training}<br><br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
         return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys())))
     else:
         return gr.HTML.update(value=None), gr.Textbox.update(value=None), gr.Dropdown.update(choices=[], value=None)
@@ -453,10 +453,11 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
     urllib.request.install_opener(opener)
 
+    html = preview_image_html
     for i, img_url in enumerate(img_urls):
         filename = f'{name}_{i}.png'
+        html = html.replace(img_url,filename)
         img_url = img_url.replace("https", "http").replace("=","%3D")
-
         print(img_url, filename)
         try:
             with urllib.request.urlopen(img_url) as url:
@@ -467,6 +468,11 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
                     
         except urllib.error.URLError as e:
             print(f'Error: {e.reason}')
+    path_to_new_file = os.path.join(model_folder, f'{name}.html')
+    if not os.path.exists(path_to_new_file):
+        with open(path_to_new_file, 'wb') as f:
+            f.write(html.encode('utf8'))
+
     print(f"Done.")
 
 def on_ui_tabs():

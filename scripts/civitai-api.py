@@ -266,7 +266,7 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
 
 
 # Set the URL for the API endpoint
-api_url = "https://civitai.com/api/v1/models?limit=50"
+api_url = "https://civitai.com/api/v1/models?limit=20"
 json_data = None
 
 def api_to_data(content_type, sort_type, use_search_term, search_term=None):
@@ -299,7 +299,13 @@ def update_next_page(show_nsfw):
             temp_nsfw = item['nsfw']
             if not temp_nsfw:
                 model_dict[item['name']] = item['name']
-    return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None)
+    html = '<HEAD><style>img { display: inline-block; }</style></HEAD><div class="column">'
+    for item in json_data['items']:
+        for k,model in model_dict.items():
+            if model_dict[k] == item['name']:
+                #print(f'Item:{item["modelVersions"][0]["images"]}')
+                html = html +  f'<img src={item["modelVersions"][0]["images"][0]["url"]} width=100px></img>'
+    return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=html)
 
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
@@ -315,7 +321,13 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
             if not temp_nsfw:
                 model_dict[item['name']] = item['name']
 
-    return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None)
+    html = '<HEAD><style>img { display: inline-block; }</style></HEAD><div class="column">'
+    for item in json_data['items']:
+        for k,model in model_dict.items():
+            if model_dict[k] == item['name']:
+                #print(f'Item:{item["modelVersions"][0]["images"]}')
+                html = html +  f'<img src={item["modelVersions"][0]["images"][0]["url"]} width=100px></img>'
+    return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=html)
 
 def update_model_versions(model_name=None):
     if model_name is not None:
@@ -491,6 +503,8 @@ def on_ui_tabs():
             get_list_from_api = gr.Button(label="Get List", value="Get List")
             get_next_page = gr.Button(value="Next Page")
         with gr.Row():
+            list_html = gr.HTML()
+        with gr.Row():
             list_models = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="quicksettings", value=None)
             list_versions = gr.Dropdown(label="Version", choices=[], interactive=True, elem_id="quicksettings", value=None)
         with gr.Row():
@@ -551,6 +565,7 @@ def on_ui_tabs():
             outputs=[
             list_models,
             list_versions,
+            list_html
             ]
         )
         update_info.click(
@@ -606,6 +621,7 @@ def on_ui_tabs():
             outputs=[
             list_models,
             list_versions,
+            list_html
             ]
         )
 

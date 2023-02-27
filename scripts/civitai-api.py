@@ -148,6 +148,9 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
                                      ",": r"，",
                                      "<": r"＜",
                                      ">": r"＞",
+                                     "!": r"！",
+                                     "?": r"？",
+                                     "\"": r"”",
                                      "\\": r""})
         if use_new_folder:
             #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
@@ -299,7 +302,7 @@ def update_next_page(show_nsfw):
             temp_nsfw = item['nsfw']
             if not temp_nsfw:
                 model_dict[item['name']] = item['name']
-    html = '<HEAD><style>img { display: inline-block; }</style></HEAD><div class="column">'
+    html = '<HEAD><style>img { display: inline-block; background-size: auto 100%; background-position: center; }</style></HEAD><div class="column">'
     for item in json_data['items']:
         for k,model in model_dict.items():
             if model_dict[k] == item['name']:
@@ -321,7 +324,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
             if not temp_nsfw:
                 model_dict[item['name']] = item['name']
 
-    html = '<HEAD><style>img { display: inline-block; }</style></HEAD><div class="column">'
+    html = '<HEAD><style>img { display: inline-block; background-size: auto 100%; background-position: center; }</style></HEAD><div class="column">'
     for item in json_data['items']:
         for k,model in model_dict.items():
             if model_dict[k] == item['name']:
@@ -385,9 +388,15 @@ def  update_model_info(model_name=None, model_version=None):
                         model_url = model['downloadUrl']
                         #model_filename = model['files']['name']
 
-                        img_html = '<HEAD><style>img { display: inline-block; }</style></HEAD><div class="column">'
+                        img_html = '<div>'
                         for pic in model['images']:
-                            img_html = img_html + f'<img src={pic["url"]} width=400px></img>'
+                            img_html = img_html + f'<div style="display:flex;align-items:flex-start;"><img src={pic["url"]} style="width:400px;"></img>'
+                            if pic['meta']:
+                                img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
+                                for key, value in pic['meta'].items():
+                                    img_html = img_html + f'{key}: {value}</br>'
+                                img_html = img_html + '</div>'
+                            img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
                         output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><b>Trained Tags:</b> {output_training}<br><br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
         return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys())))

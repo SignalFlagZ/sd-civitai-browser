@@ -13,6 +13,7 @@ import re
 from requests.exceptions import ConnectionError
 import urllib.request
 from modules.shared import cmd_opts
+import shutil
 
 def download_file(url, file_name):
     # Maximum number of retries
@@ -477,6 +478,7 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
     html = preview_image_html
     for i, img_url in enumerate(img_urls):
         filename = f'{name}_{i}.png'
+        filenamethumb = f'{name}.png'
         html = html.replace(img_url,filename)
         img_url = img_url.replace("https", "http").replace("=","%3D")
         print(img_url, filename)
@@ -484,6 +486,8 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
             with urllib.request.urlopen(img_url) as url:
                 with open(os.path.join(model_folder, filename), 'wb') as f:
                     f.write(url.read())
+                    if i == 0 and not os.path.exists(os.path.join(model_folder, filenamethumb)):
+                        shutil.copy2(os.path.join(model_folder, filename),os.path.join(model_folder, filenamethumb))
                     print("\t\t\tDownloaded")
             #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
                     

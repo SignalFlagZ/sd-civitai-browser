@@ -481,7 +481,7 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
         filename = f'{name}_{i}.png'
         filenamethumb = f'{name}.png'
         html = html.replace(img_url,filename)
-        img_url = img_url.replace("https", "http").replace("=","%3D")
+        img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
         print(img_url, filename)
         try:
             with urllib.request.urlopen(img_url) as url:

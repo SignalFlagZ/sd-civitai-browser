@@ -374,11 +374,20 @@ def  update_model_info(model_name=None, model_version=None):
         img_html = ""
         model_desc = ""
         dl_dict = {}
+        allow = {}
         for item in json_data['items']:
             if item['name'] == model_name:
                 model_uploader = item['creator']['username']
                 if item['description']:
                     model_desc = item['description']
+                if item['allowNoCredit']:
+                    allow['allowNoCredit'] = item['allowNoCredit']
+                if item['allowCommercialUse']:
+                    allow['allowCommercialUse'] = item['allowCommercialUse']
+                if item['allowDerivatives']:
+                    allow['allowDerivatives'] = item['allowDerivatives']
+                if item['allowDifferentLicense']:
+                    allow['allowDifferentLicense'] = item['allowDifferentLicense']
                 for model in item['modelVersions']:
                     if model['name'] == model_version:
                         if model['trainedWords']:
@@ -400,7 +409,7 @@ def  update_model_info(model_name=None, model_version=None):
                                 img_html = img_html + '</div>'
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
-                        output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><b>Trained Tags:</b> {output_training}<br><br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
+                        output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><b>Trained Tags:</b> {output_training}<br>{allow}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
         return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys())))
     else:
         return gr.HTML.update(value=None), gr.Textbox.update(value=None), gr.Dropdown.update(choices=[], value=None)

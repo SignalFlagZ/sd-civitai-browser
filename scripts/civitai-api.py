@@ -270,7 +270,7 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
 
 
 # Set the URL for the API endpoint
-api_url = "https://civitai.com/api/v1/models?limit=20"
+api_url = "https://civitai.com/api/v1/models?limit=10"
 json_data = None
 
 def api_to_data(content_type, sort_type, use_search_term, search_term=None):
@@ -289,6 +289,18 @@ def api_next_page(next_page_url=None):
     if next_page_url is not None:
         return request_civit_api(next_page_url)
 
+def model_list_html(json_data, model_dict):
+    html = '<div class="column" style="display: flex;flex-wrap: wrap;">'
+    for item in json_data['items']:
+        for k,model in model_dict.items():
+            if model_dict[k] == item['name']:
+                #print(f'Item:{item["modelVersions"][0]["images"]}')
+                html = html +  f'<figure style="margin:2px;position:relative;">'\
+                            +  f'<img src={item["modelVersions"][0]["images"][0]["url"]} style="width:100px;height:150px;object-fit:cover;"></img>'\
+                            +  f'<figcaption style="position:absolute;bottom: 5px;left: 5px;overflow-wrap: break-word;background-color:rgba(32,32,32,0.5);">{item["name"]}</figcaption></figure>'
+    html = html + '</div>'
+    return html
+
 def update_next_page(show_nsfw):
     global json_data
     json_data = api_next_page()
@@ -303,14 +315,8 @@ def update_next_page(show_nsfw):
             temp_nsfw = item['nsfw']
             if not temp_nsfw:
                 model_dict[item['name']] = item['name']
-    html = '<HEAD><style>img { display: inline-block; background-size: auto 100%; background-position: center; }</style></HEAD><div class="column">'
-    for item in json_data['items']:
-        for k,model in model_dict.items():
-            if model_dict[k] == item['name']:
-                #print(f'Item:{item["modelVersions"][0]["images"]}')
-                html = html +  f'<img src={item["modelVersions"][0]["images"][0]["url"]} width=100px></img>'
+    html = model_list_html(json_data, model_dict)
     return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=html)
-
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
@@ -325,12 +331,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
             if not temp_nsfw:
                 model_dict[item['name']] = item['name']
 
-    html = '<HEAD><style>img { display: inline-block; background-size: auto 100%; background-position: center; }</style></HEAD><div class="column">'
-    for item in json_data['items']:
-        for k,model in model_dict.items():
-            if model_dict[k] == item['name']:
-                #print(f'Item:{item["modelVersions"][0]["images"]}')
-                html = html +  f'<img src={item["modelVersions"][0]["images"][0]["url"]} width=100px></img>'
+    html = model_list_html(json_data, model_dict)
     return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=html)
 
 def update_model_versions(model_name=None):

@@ -7,3 +7,5 @@ An extension to help download models from CivitAi without leaving WebUI
 - Set folders from cmd_opts
 - Save HTML with images
 - Add Trained Tags in html
+- Add meta data in html
+- Copy first image as thumbnail

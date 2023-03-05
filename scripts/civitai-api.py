@@ -489,6 +489,9 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
     for i, img_url in enumerate(img_urls):
         filename = f'{name}_{i}.png'
         filenamethumb = f'{name}.png'
+        if content_type == "TextualInversion":
+            filename = f'{name}_{i}.preview.png'
+            filenamethumb = f'{name}.preview.png'
         html = html.replace(img_url,filename)
         img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
         print(img_url, filename)

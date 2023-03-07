@@ -342,7 +342,7 @@ def update_model_versions(model_name=None):
             if item['name'] == model_name:
                 for model in item['modelVersions']:
                     versions_dict[model['name']] = item["name"]
-        return gr.Dropdown.update(choices=[k + ' - ' + v for k, v in versions_dict.items()], value=f'{next(iter(versions_dict.keys()))} - {model_name}')
+        return gr.Dropdown.update(choices=[k for k, v in versions_dict.items()], value=f'{next(iter(versions_dict.keys()), None)}')
     else:
         return gr.Dropdown.update(choices=[], value=None)
 
@@ -351,7 +351,7 @@ def update_dl_url(model_name=None, model_version=None, model_filename=None):
         global json_data
         dl_dict = {}
         dl_url = None
-        model_version = model_version.replace(f' - {model_name}','').strip()
+        #model_version = model_version.replace(f' - {model_name}','').strip()
         for item in json_data['items']:
             if item['name'] == model_name:
                 for model in item['modelVersions']:
@@ -367,7 +367,7 @@ def  update_model_info(model_name=None, model_version=None):
 
 
     if model_name and model_version:
-        model_version = model_version.replace(f' - {model_name}','').strip()
+        #model_version = model_version.replace(f' - {model_name}','').strip()
         global json_data
         output_html = ""
         output_training = ""
@@ -410,7 +410,7 @@ def  update_model_info(model_name=None, model_version=None):
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
                         output_html = f"<p><b>Model:</b> {model_name}<br><b>Version:</b> {model_version}<br><b>Uploaded by:</b> {model_uploader}<br><b>Trained Tags:</b> {output_training}<br>{allow}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
-        return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys())))
+        return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys()), None))
     else:
         return gr.HTML.update(value=None), gr.Textbox.update(value=None), gr.Dropdown.update(choices=[], value=None)
 

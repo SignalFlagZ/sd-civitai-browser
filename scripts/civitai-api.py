@@ -130,7 +130,7 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
     elif content_type == "VAE":
         folder = cmd_opts.vae_dir #"models/VAE"
         new_folder = os.path.join(folder,"new") #"models/VAE/new"
-    if content_type == "TextualInversion" or content_type == "VAE" or content_type == "AestheticGradient":
+    if content_type == "VAE" or content_type == "AestheticGradient":
         if use_new_folder:
             model_folder = new_folder
             if not os.path.exists(new_folder):

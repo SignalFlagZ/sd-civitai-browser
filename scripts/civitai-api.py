@@ -267,7 +267,10 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
     if not os.path.exists(path_to_new_file):
         with open(path_to_new_file, 'w') as f:
             f.write(trained_words)
-
+    #Save json_data
+    path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".civitai.info").replace(".safetensors",".civitai.info").replace(".pt",".civitai.info").replace(".yaml",".civitai.info"))
+    with open(path_to_new_file, mode="w", encoding="utf-8") as f:
+        json.dump(json_data, f, indent=2, ensure_ascii=False)
 
 # Set the URL for the API endpoint
 api_url = "https://civitai.com/api/v1/models?limit=10"

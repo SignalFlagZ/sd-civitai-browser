@@ -127,6 +127,9 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
     elif content_type == "LORA":
         folder = cmd_opts.lora_dir #"models/Lora"
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
+    elif content_type == "LoCon":
+        folder = f"{cmd_opts.lora_dir}/00LoCon" #"models/Lora/LyCORIS"
+        new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
         folder = cmd_opts.vae_dir #"models/VAE"
         new_folder = os.path.join(folder,"new") #"models/VAE/new"
@@ -146,12 +149,12 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
                                      ")": r"",
                                      "|": r"",
                                      ":": r"",
-                                     ",": r"，",
-                                     "<": r"＜",
-                                     ">": r"＞",
-                                     "!": r"！",
-                                     "?": r"？",
-                                     "\"": r"”",
+                                     ",": r"_",
+                                     "<": r"",
+                                     ">": r"",
+                                     "!": r"",
+                                     "?": r"",
+                                     "\"": r"",
                                      "\\": r""})
         if use_new_folder:
             #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
@@ -523,7 +526,7 @@ def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
             with gr.Column(scale=2):
-                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","LORA","AestheticGradient", "VAE"], value="Checkpoint", type="value")
+                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","LORA","LoCon","AestheticGradient", "VAE"], value="Checkpoint", type="value")
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):

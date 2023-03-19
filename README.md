@@ -10,4 +10,5 @@ An extension to help download models from CivitAi without leaving WebUI
 - Add meta data in html
 - Copy first image as thumbnail
 - Add thumbnail preview list.
+- Save model data as ".civitai.info"
 - Support LoCON/LyCORIS

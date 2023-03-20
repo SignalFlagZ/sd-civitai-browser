@@ -42,8 +42,9 @@ def download_file(url, file_name):
         progress = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
 
         # Open a local file to save the download
+        global blDownload
         with open(file_name, "ab") as f:
-            while True:
+            while blDownload:
                 try:
                     # Send a GET request to the URL and save the response to the local file
                     response = requests.get(url, headers=headers, stream=True)
@@ -61,7 +62,9 @@ def download_file(url, file_name):
                         if chunk:  # filter out keep-alive new chunks
                             f.write(chunk)
                             progress.update(len(chunk))
-
+                        if (blDownload == False):
+                            response.close
+                            break
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break
@@ -78,6 +81,10 @@ def download_file(url, file_name):
 
         # Close the progress bar
         progress.close()
+        if (blDownload == False):
+            print (f'Canceled!')
+            break
+        blDownload = False
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         if downloaded_size >= total_size:
@@ -128,7 +135,7 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
         folder = cmd_opts.lora_dir #"models/Lora"
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "LoCon":
-        folder = f"{cmd_opts.lora_dir}/00LoCon" #"models/Lora/LyCORIS"
+        folder = f"{cmd_opts.lora_dir}/_LoCon" #"models/Lora/LyCORIS"
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
         folder = cmd_opts.vae_dir #"models/VAE"
@@ -213,7 +220,11 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
 #            model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
 #            if not os.path.exists(model_folder):
 #                os.makedirs(model_folder)
-
+    global blDownload
+    if blDownload:
+        blDownload = False
+        return
+    blDownload = True
     model_folder = extranetwork_folder(content_type, use_new_folder,model_name)
     path_to_new_file = os.path.join(model_folder, file_name)     
 
@@ -275,6 +286,7 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
 api_url = "https://civitai.com/api/v1/models?limit=10"
 json_data = None
 json_info = None
+blDownload = False
 
 def api_to_data(content_type, sort_type, use_search_term, search_term=None):
     if use_search_term and search_term:

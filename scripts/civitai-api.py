@@ -12,7 +12,8 @@ from tqdm import tqdm
 import re
 from requests.exceptions import ConnectionError
 import urllib.request
-from modules.shared import cmd_opts
+from modules.shared import opts, cmd_opts
+from modules.paths import models_path
 import shutil
 
 def download_file(url, file_name):
@@ -120,7 +121,10 @@ def download_file(url, file_name):
 
 def extranetwork_folder(content_type, use_new_folder, model_name = ""):
     if content_type == "Checkpoint":
-        folder = cmd_opts.ckpt_dir #"models/Stable-diffusion"
+        if cmd_opts.ckpt_dir:
+            folder = cmd_opts.ckpt_dir #"models/Stable-diffusion"
+        else:            
+            folder = os.path.join(models_path,"Stable-diffusion") 
         new_folder = os.path.join(folder,"new") #"models/Stable-diffusion/new"
     elif content_type == "Hypernetwork":
         folder = cmd_opts.hypernetwork_dir #"models/hypernetworks"
@@ -542,7 +546,7 @@ def on_ui_tabs():
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):
-                show_nsfw = gr.Checkbox(label="Show NSFW", value=True)
+                show_nsfw = gr.Checkbox(label="Show NSFW", value=False)
         with gr.Row():
             use_search_term = gr.Checkbox(label="Search by term?", value=False)
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)

@@ -1,0 +1,24 @@
+.civmodellist {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.civmodelcard {
+	margin: 2px;
+	position: relative;
+}
+
+.civmodelcard img {
+	/*filter: blur(6px);*/
+	width: 6em;
+	height: 10em;
+	object-fit: cover;
+}
+
+.civmodelcard figcaption {
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+	overflow-wrap: break-word;
+	background-color: rgba(32, 32, 32, 0.5);
+}

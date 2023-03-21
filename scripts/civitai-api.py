@@ -305,14 +305,14 @@ def api_next_page(next_page_url=None):
         return request_civit_api(next_page_url)
 
 def model_list_html(json_data, model_dict):
-    html = '<div class="column" style="display: flex;flex-wrap: wrap;">'
+    html = '<div class="column civmodellist">'
     for item in json_data['items']:
         for k,model in model_dict.items():
             if model_dict[k] == item['name']:
                 #print(f'Item:{item["modelVersions"][0]["images"]}')
-                html = html +  f'<figure style="margin:2px;position:relative;">'\
-                            +  f'<img src={item["modelVersions"][0]["images"][0]["url"]} style="width:100px;height:150px;object-fit:cover;"></img>'\
-                            +  f'<figcaption style="position:absolute;bottom: 5px;left: 5px;overflow-wrap: break-word;background-color:rgba(32,32,32,0.5);">{item["name"]}</figcaption></figure>'
+                html = html +  f'<figure class="civmodelcard">'\
+                            +  f'<img src={item["modelVersions"][0]["images"][0]["url"]}></img>'\
+                            +  f'<figcaption>{item["name"]}</figcaption></figure>'
     html = html + '</div>'
     return html
 
@@ -418,7 +418,7 @@ def  update_model_info(model_name=None, model_version=None):
 
                         img_html = '<div>'
                         for pic in model['images']:
-                            img_html = img_html + f'<div style="display:flex;align-items:flex-start;"><img src={pic["url"]} style="width:400px;"></img>'
+                            img_html = img_html + f'<div style="display:flex;align-items:flex-start;"><img src={pic["url"]} style="width:20em;"></img>'
                             if pic['meta']:
                                 img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
                                 for key, value in pic['meta'].items():

@@ -6,6 +6,7 @@ from modules import script_callbacks
 import time
 import threading
 import urllib.request
+import urllib.parse
 import urllib.error
 import os
 from tqdm import tqdm
@@ -294,19 +295,18 @@ blDownload = False
 
 def api_to_data(content_type, sort_type, use_search_term, search_term=None):
     if use_search_term and search_term:
-        search_term = search_term.replace(" ","%20")
-        return request_civit_api(f"{api_url}&types={content_type}&sort={sort_type}&query={search_term}")
+        #search_term = search_term.replace(" ","%20")
+        return request_civit_api(f"{api_url}", {'types': content_type, 'sort': sort_type, 'query': search_term } )
     else:
-        return request_civit_api(f"{api_url}&types={content_type}&sort={sort_type}")
+        return request_civit_api(f"{api_url}", {'types': content_type, 'sort': sort_type} )
 
 def api_next_page(next_page_url=None):
     global json_data
-    try: json_data['metadata']['nextPage']
-    except: return
-    if json_data['metadata']['nextPage'] is not None:
+    if next_page_url == None:
+        try: json_data['metadata']['nextPage']
+        except: return
         next_page_url = json_data['metadata']['nextPage']
-    if next_page_url is not None:
-        return request_civit_api(next_page_url)
+    return request_civit_api(next_page_url)
 
 def model_list_html(json_data, model_dict):
     html = '<div class="column civmodellist">'
@@ -320,9 +320,18 @@ def model_list_html(json_data, model_dict):
     html = html + '</div>'
     return html
 
-def update_next_page(show_nsfw):
+def update_prev_page(show_nsfw):
+    return update_next_page(show_nsfw, False)
+
+def update_next_page(show_nsfw, isNext=True):
     global json_data
-    json_data = api_next_page()
+    if isNext:
+        json_data = api_next_page()
+    else:
+        if json_data['metadata']['prevPage'] is not None:
+            json_data = api_next_page(json_data['metadata']['prevPage'])
+        else:
+            json_data = None
     model_dict = {}
     try: json_data['items']
     except TypeError: return gr.Dropdown.update(choices=[], value=None)
@@ -436,17 +445,26 @@ def  update_model_info(model_name=None, model_version=None):
         return gr.HTML.update(value=None), gr.Textbox.update(value=None), gr.Dropdown.update(choices=[], value=None)
 
 
-def request_civit_api(api_url=None):
+def request_civit_api(api_url=None, payload=None):
+    if payload != None:
+        payload = urllib.parse.urlencode(payload, quote_via=urllib.parse.quote)
     # Make a GET request to the API
-    response = requests.get(api_url)
-
+    try:
+        response = requests.get(api_url, params=payload, timeout=30)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("Request error: ", e)
+        print(f"Query: {payload} URL: {response.url}")
+        exit()
+    else:
+        response.encoding = response.apparent_encoding
+        data = json.loads(response.text)
     # Check the status code of the response
-    if response.status_code != 200:
-      print("Request failed with status code: {}".format(response.status_code))
-      exit()
-
-    data = json.loads(response.text)
+    #if response.status_code != 200:
+    #  print("Request failed with status code: {}".format(response.status_code))
+    #  exit()
     return data
+
 
 def update_everything(list_models, list_versions, model_filename, dl_url):
     (a, d, f) = update_model_info(list_models, list_versions)
@@ -552,6 +570,7 @@ def on_ui_tabs():
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)
         with gr.Row():
             get_list_from_api = gr.Button(label="Get List", value="Get List")
+            get_prev_page = gr.Button(value="Prev. Page")
             get_next_page = gr.Button(value="Next Page")
         with gr.Row():
             list_html = gr.HTML()
@@ -666,6 +685,17 @@ def on_ui_tabs():
         )
         get_next_page.click(
             fn=update_next_page,
+            inputs=[
+            show_nsfw,
+            ],
+            outputs=[
+            list_models,
+            list_versions,
+            list_html
+            ]
+        )
+        get_prev_page.click(
+            fn=update_prev_page,
             inputs=[
             show_nsfw,
             ],

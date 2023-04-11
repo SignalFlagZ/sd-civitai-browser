@@ -13,3 +13,4 @@ An extension to help download models from CivitAi without leaving WebUI
 - Save model data as ".civitai.info"
 - Support LoCon/LyCORIS
 - Press the Download Model button again to cancel the download
+- Add previous button.

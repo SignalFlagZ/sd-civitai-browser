@@ -457,7 +457,7 @@ def request_civit_api(api_url=None, payload=None):
         print(f"Query: {payload} URL: {response.url}")
         exit()
     else:
-        response.encoding = response.apparent_encoding
+        response.encoding  = "utf-8" # response.apparent_encoding
         data = json.loads(response.text)
     # Check the status code of the response
     #if response.status_code != 200:
@@ -570,8 +570,9 @@ def on_ui_tabs():
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)
         with gr.Row():
             get_list_from_api = gr.Button(label="Get List", value="Get List")
-            get_prev_page = gr.Button(value="Prev. Page")
-            get_next_page = gr.Button(value="Next Page")
+            with gr.Box():
+                get_prev_page = gr.Button(value="Prev. Page")
+                get_next_page = gr.Button(value="Next Page")
         with gr.Row():
             list_html = gr.HTML()
         with gr.Row():

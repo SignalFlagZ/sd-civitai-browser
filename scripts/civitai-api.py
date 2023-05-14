@@ -316,8 +316,8 @@ def model_list_html(json_data, model_dict):
         for k,model in model_dict.items():
             if model_dict[k] == item['name']:
                 #print(f'Item:{item["modelVersions"][0]["images"]}')
-                HTML = HTML +  f'<figure class="civmodelcard">'\
-                            +  f'<img src={item["modelVersions"][0]["images"][0]["url"]}></img>'\
+                HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{escape(item["name"],quote=True)}\')">'\
+                            +  f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'\
                             +  f'<figcaption>{item["name"]}</figcaption></figure>'
     HTML = HTML + '</div>'
     return HTML
@@ -578,7 +578,8 @@ def on_ui_tabs():
         with gr.Row():
             list_html = gr.HTML()
         with gr.Row():
-            list_models = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="quicksettings", value=None)
+            list_models = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="quicksettings1", value=None)
+            t = gr.Textbox(label="test",elem_id="test1",interactive=True, lines=1)
             list_versions = gr.Dropdown(label="Version", choices=[], interactive=True, elem_id="quicksettings", value=None)
         with gr.Row():
             txt_list = ""

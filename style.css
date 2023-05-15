@@ -10,8 +10,9 @@
 
 .civmodelcard img {
 	/*filter: blur(6px);*/
-	width: 6em;
-	height: 10em;
+	cursor: pointer;
+	width: 8em;
+	height: 12em;
 	object-fit: cover;
 }
 

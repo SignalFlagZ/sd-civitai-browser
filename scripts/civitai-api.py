@@ -316,7 +316,9 @@ def model_list_html(json_data, model_dict):
         for k,model in model_dict.items():
             if model_dict[k] == item['name']:
                 #print(f'Item:{item["modelVersions"][0]["images"]}')
-                HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{escape(item["name"],quote=True)}\')">'\
+                model_name = escape(item["name"].replace("'","\\'"),quote=True)
+                #print(f'{model_name}')
+                HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{model_name}\')">'\
                             +  f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'\
                             +  f'<figcaption>{item["name"]}</figcaption></figure>'
     HTML = HTML + '</div>'
@@ -396,8 +398,6 @@ def update_dl_url(model_name=None, model_version=None, model_filename=None):
         return gr.Textbox.update(value=None)
 
 def  update_model_info(model_name=None, model_version=None):
-
-
     if model_name and model_version:
         #model_version = model_version.replace(f' - {model_name}','').strip()
         global json_data
@@ -468,7 +468,7 @@ def request_civit_api(api_url=None, payload=None):
     return data
 
 
-def update_everything(list_models, list_versions, model_filename, dl_url):
+def update_everything(list_models, list_versions, dl_url):
     (a, d, f) = update_model_info(list_models, list_versions)
     dl_url = update_dl_url(list_models, list_versions, f['value'])
     return (a, d, f, list_versions, list_models, dl_url)
@@ -557,7 +557,7 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
         json.dump(json_info, f, indent=2, ensure_ascii=False)
 
     print(f"Done.")
-
+   
 def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
@@ -579,7 +579,7 @@ def on_ui_tabs():
             list_html = gr.HTML()
         with gr.Row():
             list_models = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="quicksettings1", value=None)
-            t = gr.Textbox(label="test",elem_id="test1",interactive=True, lines=1)
+            event_text = gr.Textbox(label="Event text",elem_id="eventtext1", visible=False, interactive=True, lines=1)
             list_versions = gr.Dropdown(label="Version", choices=[], interactive=True, elem_id="quicksettings", value=None)
         with gr.Row():
             txt_list = ""
@@ -594,6 +594,7 @@ def on_ui_tabs():
             save_model_in_new = gr.Checkbox(label="Save Model to new folder", value=False)
         with gr.Row():
             preview_image_html = gr.HTML()
+
         save_text.click(
             fn=save_text_file,
             inputs=[
@@ -648,7 +649,6 @@ def on_ui_tabs():
             inputs=[
             list_models,
             list_versions,
-            model_filename,
             dl_url
             ],
             outputs=[
@@ -669,7 +669,6 @@ def on_ui_tabs():
             list_versions,
             ]
         )
-
         list_versions.change(
             fn=update_model_info,
             inputs=[
@@ -707,6 +706,25 @@ def on_ui_tabs():
             list_models,
             list_versions,
             list_html
+            ]
+        )
+        def update_models_dropdown(model_name):
+            ret_versions=update_model_versions(model_name)
+            (html,d, f) = update_model_info(model_name,ret_versions['value'])
+            dl_url = update_dl_url(model_name, ret_versions['value'], f['value'])
+            return gr.Dropdown.update(value=model_name),ret_versions ,html,dl_url,d,f
+        event_text.change(
+            fn=update_models_dropdown,
+            inputs=[
+                event_text,
+            ],
+            outputs=[
+                list_models,
+                list_versions,
+                preview_image_html,
+                dl_url,
+                dummy,
+                model_filename
             ]
         )
 

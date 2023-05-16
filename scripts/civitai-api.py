@@ -353,6 +353,9 @@ def update_next_page(show_nsfw, isNext=True):
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
+    if 'items' not in json_data:
+        print("Civitai API returns empty response.")
+        return
     model_dict = {}
     if show_nsfw:
         for item in json_data['items']:

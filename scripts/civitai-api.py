@@ -322,7 +322,7 @@ def model_list_html(json_data, model_dict):
                 if len(item["modelVersions"][0]["images"]) > 0:
                     imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
                 else:
-                    imgtag = f'<img style="background-image: url(./file=html/card-no-preview.png);"></img>'
+                    imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
                 HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{model_name}\')">'\
                                 +  imgtag \
                                 +  f'<figcaption>{item["name"]}</figcaption></figure>'

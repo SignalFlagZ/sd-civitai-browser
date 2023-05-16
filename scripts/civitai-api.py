@@ -318,9 +318,14 @@ def model_list_html(json_data, model_dict):
                 #print(f'Item:{item["modelVersions"][0]["images"]}')
                 model_name = escape(item["name"].replace("'","\\'"),quote=True)
                 #print(f'{model_name}')
+                #print(f'Length: {len(item["modelVersions"][0]["images"])}')
+                if len(item["modelVersions"][0]["images"]) > 0:
+                    imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
+                else:
+                    imgtag = f'<img style="background-image: url(./file=html/card-no-preview.png);"></img>'
                 HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{model_name}\')">'\
-                            +  f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'\
-                            +  f'<figcaption>{item["name"]}</figcaption></figure>'
+                                +  imgtag \
+                                +  f'<figcaption>{item["name"]}</figcaption></figure>'
     HTML = HTML + '</div>'
     return HTML
 
@@ -337,8 +342,10 @@ def update_next_page(show_nsfw, isNext=True):
         else:
             json_data = None
     model_dict = {}
-    try: json_data['items']
-    except TypeError: return gr.Dropdown.update(choices=[], value=None)
+    try:
+        json_data['items']
+    except TypeError:
+        return gr.Dropdown.update(choices=[], value=None)
     if show_nsfw:
         for item in json_data['items']:
             model_dict[item['name']] = item['name']
@@ -353,10 +360,6 @@ def update_next_page(show_nsfw, isNext=True):
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
-    if 'items' not in json_data:
-        print("Civitai API returns empty response.")
-        print(f"{json_data}")
-        return
     model_dict = {}
     if show_nsfw:
         for item in json_data['items']:

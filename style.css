@@ -4,12 +4,12 @@
 }
 
 .civmodelcard {
-	margin: 2px;
 	position: relative;
 }
 
 .civmodelcard img {
 	/*filter: blur(6px);*/
+	margin: 4px;
 	cursor: pointer;
 	width: 8em;
 	height: 12em;

@@ -355,6 +355,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
     if 'items' not in json_data:
         print("Civitai API returns empty response.")
+        print(f"{json_data}")
         return
     model_dict = {}
     if show_nsfw:

@@ -346,14 +346,11 @@ def update_next_page(show_nsfw, isNext=True):
         json_data['items']
     except TypeError:
         return gr.Dropdown.update(choices=[], value=None)
-    if show_nsfw:
-        for item in json_data['items']:
+
+    for item in json_data['items']:
+        temp_nsfw = item['nsfw']
+        if (not temp_nsfw or show_nsfw) and (len(item["modelVersions"][0]["images"]) > 0):
             model_dict[item['name']] = item['name']
-    else:
-        for item in json_data['items']:
-            temp_nsfw = item['nsfw']
-            if not temp_nsfw:
-                model_dict[item['name']] = item['name']
     HTML = model_list_html(json_data, model_dict)
     return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
 
@@ -361,15 +358,10 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     global json_data
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
     model_dict = {}
-    if show_nsfw:
-        for item in json_data['items']:
+    for item in json_data['items']:
+        temp_nsfw = item['nsfw']
+        if (not temp_nsfw or show_nsfw) and (len(item["modelVersions"][0]["images"]) > 0):
             model_dict[item['name']] = item['name']
-    else:
-        for item in json_data['items']:
-            temp_nsfw = item['nsfw']
-            if not temp_nsfw:
-                model_dict[item['name']] = item['name']
-
     HTML = model_list_html(json_data, model_dict)
     return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
 

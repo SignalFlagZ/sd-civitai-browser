@@ -15,3 +15,4 @@ An extension to help download models from CivitAi without leaving WebUI
 - Press the Download Model button again to cancel the download
 - Add previous button.
 - Click on a thumbnail to select a model.
+- Add zoom effect to thumbnails.

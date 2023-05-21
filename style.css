@@ -2,32 +2,39 @@
 	display: flex;
 	flex-wrap: wrap;
 }
+.civmodellist figure {
+	margin: 4px;
+	transition: transform .3s ease-out;
+	cursor: pointer;
+}
 
 .civmodelcard {
 	position: relative;
 }
 
+.civmodelcard:hover {
+	transform: scale(1.5, 1.5);
+	position: relative;	/* need for z-index */
+	z-index: var(--layer-5);
+	box-shadow: 0 0 4px 6px whitesmoke
+}
+.civmodelcard:hover figcaption{
+	bottom: initial;
+	background-color: rgba(32, 32, 32, 0.9);
+}
+
 .civmodelcard img {
 	/*filter: blur(6px);*/
-	margin: 4px;
-	cursor: pointer;
 	width: 8em;
 	height: 12em;
 	object-fit: cover;
-	transition: transform .3s ease-out;
 }
 
-.civmodelcard img:hover {
-	transform: scale(1.5, 1.5);
-	position: relative; /* need for z-index */
-	z-index: 1;
-	box-shadow: 0 0 4px 6px whitesmoke
-}
 .civmodelcard figcaption {
 	position: absolute;
 	bottom: 5px;
 	left: 5px;
-	overflow-wrap: break-word;
+	word-break: break-word;
 	background-color: rgba(32, 32, 32, 0.5);
-	/* z-index: 1; */ 
+	/*transition: bottom .3s ease-out;*/
 }

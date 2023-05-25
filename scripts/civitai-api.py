@@ -532,7 +532,7 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
         if content_type == "TextualInversion":
             filename = f'{name}_{i}.preview.png'
             filenamethumb = f'{name}.preview.png'
-        HTML = HTML.replace(img_url,filename)
+        HTML = HTML.replace(img_url,f'"{filename}"')
         img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
         print(img_url, filename)
         try:

@@ -331,6 +331,7 @@ def api_next_page(next_page_url=None):
     return request_civit_api(next_page_url)
 
 def model_list_html(json_data, model_dict):
+    allownsfw = json_data['allownsfw']
     HTML = '<div class="column civmodellist">'
     for item in json_data['items']:
         for k,model in model_dict.items():
@@ -339,12 +340,15 @@ def model_list_html(json_data, model_dict):
                 model_name = escape(item["name"].replace("'","\\'"),quote=True)
                 #print(f'{model_name}')
                 #print(f'Length: {len(item["modelVersions"][0]["images"])}')
+                nsfw = None
                 if any(item['modelVersions']):
                     if len(item['modelVersions'][0]['images']) > 0:
+                        if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not allownsfw:
+                            nsfw = 'civcardnsfw'
                         imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
                     else:
                         imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
-                HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{model_name}\')">'\
+                HTML = HTML +  f'<figure class="civmodelcard {nsfw}" onclick="select_model(\'{model_name}\')">'\
                                 +  imgtag \
                                 +  f'<figcaption>{item["name"]}</figcaption></figure>'
     HTML = HTML + '</div>'
@@ -362,6 +366,7 @@ def update_next_page(show_nsfw, isNext=True):
             json_data = api_next_page(json_data['metadata']['prevPage'])
         else:
             json_data = None
+    json_data['allownsfw'] = show_nsfw # Add key for nsfw
     model_dict = {}
     try:
         json_data['items']
@@ -379,6 +384,7 @@ def update_next_page(show_nsfw, isNext=True):
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
+    json_data['allownsfw'] = show_nsfw # Add key for nsfw
     model_dict = {}
     for item in json_data['items']:
         temp_nsfw = item['nsfw']
@@ -430,6 +436,7 @@ def  update_model_info(model_name=None, model_version=None):
         model_desc = ""
         dl_dict = {}
         allow = {}
+        allownsfw = json_data['allownsfw']
         for item in json_data['items']:
             if item['name'] == model_name:
                 model_uploader = item['creator']['username']
@@ -455,9 +462,12 @@ def  update_model_info(model_name=None, model_version=None):
                         model_url = model['downloadUrl']
                         #model_filename = model['files']['name']
 
-                        img_html = '<div>'
+                        img_html = '<div class="sampleimgs">'
                         for pic in model['images']:
-                            img_html = img_html + f'<div style="display:flex;align-items:flex-start;"><img src={pic["url"]} style="width:20em;"></img>'
+                            nsfw = None
+                            if pic['nsfw'] != "None" and not allownsfw:
+                                nsfw = 'class="civnsfw"'
+                            img_html = img_html + f'<div {nsfw} style="display:flex;align-items:flex-start;"><img src={pic["url"]} style="width:20em;"></img>'
                             if pic['meta']:
                                 img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
                                 for key, value in pic['meta'].items():
@@ -594,7 +604,7 @@ def on_ui_tabs():
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):
-                show_nsfw = gr.Checkbox(label="Show NSFW", value=False)
+                show_nsfw = gr.Checkbox(label="WARNING ADULT CONTENT", value=False)
         with gr.Row():
             use_search_term = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)

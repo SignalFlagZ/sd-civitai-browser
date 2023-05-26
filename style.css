@@ -38,3 +38,10 @@
 	background-color: rgba(32, 32, 32, 0.5);
 	/*transition: bottom .3s ease-out;*/
 }
+
+.civnsfw img {
+	filter: blur(10px);
+}
+.civcardnsfw img {
+	filter: blur(4px);
+}

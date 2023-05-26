@@ -146,6 +146,19 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
     elif content_type == "VAE":
         folder = cmd_opts.vae_dir #"models/VAE"
         new_folder = os.path.join(folder,"new") #"models/VAE/new"
+    elif content_type == "Controlnet":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "ControlNet")
+        else:            
+            folder = os.path.join(models_path,"ControlNet")
+        new_folder = os.path.join(folder,"new") 
+    elif content_type == "Poses":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "Poses")
+        else:            
+            folder = os.path.join(models_path,"Poses")
+        new_folder = os.path.join(folder,"new") 
+
     if content_type == "VAE" or content_type == "AestheticGradient":
         if use_new_folder:
             model_folder = new_folder
@@ -319,10 +332,11 @@ def model_list_html(json_data, model_dict):
                 model_name = escape(item["name"].replace("'","\\'"),quote=True)
                 #print(f'{model_name}')
                 #print(f'Length: {len(item["modelVersions"][0]["images"])}')
-                if len(item["modelVersions"][0]["images"]) > 0:
-                    imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
-                else:
-                    imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
+                if any(item['modelVersions']):
+                    if len(item['modelVersions'][0]['images']) > 0:
+                        imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
+                    else:
+                        imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
                 HTML = HTML +  f'<figure class="civmodelcard" onclick="select_model(\'{model_name}\')">'\
                                 +  imgtag \
                                 +  f'<figcaption>{item["name"]}</figcaption></figure>'
@@ -349,7 +363,7 @@ def update_next_page(show_nsfw, isNext=True):
 
     for item in json_data['items']:
         temp_nsfw = item['nsfw']
-        if (not temp_nsfw or show_nsfw) and (len(item["modelVersions"][0]["images"]) > 0):
+        if (not temp_nsfw or show_nsfw):
             model_dict[item['name']] = item['name']
     HTML = model_list_html(json_data, model_dict)
     return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
@@ -360,7 +374,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     model_dict = {}
     for item in json_data['items']:
         temp_nsfw = item['nsfw']
-        if (not temp_nsfw or show_nsfw) and (len(item["modelVersions"][0]["images"]) > 0):
+        if (not temp_nsfw or show_nsfw):
             model_dict[item['name']] = item['name']
     HTML = model_list_html(json_data, model_dict)
     return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
@@ -561,7 +575,7 @@ def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
             with gr.Column(scale=2):
-                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","Hypernetwork","TextualInversion","LORA","LoCon","AestheticGradient", "VAE"], value="Checkpoint", type="value")
+                content_type = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):

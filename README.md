@@ -19,3 +19,4 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Add previous button.
 - Click on a thumbnail to select a model.
 - Add zoom effect to thumbnails.
+- Support ControlNet/Poses.

@@ -366,6 +366,7 @@ def update_next_page(show_nsfw, isNext=True):
         else:
             json_data = None
     json_data['allownsfw'] = show_nsfw # Add key for nsfw
+    (hasPrev, hasNext, pages) = pagecontrol(json_data)
     model_dict = {}
     try:
         json_data['items']
@@ -378,12 +379,27 @@ def update_next_page(show_nsfw, isNext=True):
             model_dict[item['name']] = item['name']
     HTML = model_list_html(json_data, model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
-            gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
+            gr.Dropdown.update(choices=[], value=None),\
+            gr.HTML.update(value=HTML),\
+            gr.Button.update(interactive=hasPrev),\
+            gr.Button.update(interactive=hasNext),\
+            gr.Textbox.update(value=pages)
+
+def pagecontrol(json_data):
+    pages = f"{json_data['metadata']['currentPage']}/{json_data['metadata']['totalPages']}"
+    hasNext = False
+    hasPrev = False
+    if 'nextPage' in json_data['metadata']:
+        hasNext = True
+    if 'prevPage' in json_data['metadata']:
+        hasPrev = True
+    return hasPrev,hasNext,pages
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
     json_data['allownsfw'] = show_nsfw # Add key for nsfw
+    (hasPrev, hasNext, pages) = pagecontrol(json_data)
     model_dict = {}
     for item in json_data['items']:
         temp_nsfw = item['nsfw']
@@ -392,7 +408,10 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     HTML = model_list_html(json_data, model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
-            gr.HTML.update(value=HTML)
+            gr.HTML.update(value=HTML),\
+            gr.Button.update(interactive=hasPrev),\
+            gr.Button.update(interactive=hasNext),\
+            gr.Textbox.update(value=pages)
 
 def update_model_versions(model_name=None):
     if model_name is not None:
@@ -608,10 +627,13 @@ def on_ui_tabs():
             use_search_term = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)
         with gr.Row():
-            get_list_from_api = gr.Button(label="Get List", value="Get List")
-            with gr.Box():
-                get_prev_page = gr.Button(value="Prev. Page")
-                get_next_page = gr.Button(value="Next Page")
+            with gr.Column():
+                get_list_from_api = gr.Button(label="Get List", value="Get List")
+            with gr.Column():
+                with gr.Row():
+                    get_prev_page = gr.Button(value="Prev. Page")
+                    get_next_page = gr.Button(value="Next Page")
+                    pages = gr.Textbox(label='Pages',show_label=False)
         with gr.Row():
             list_html = gr.HTML()
         with gr.Row():
@@ -672,12 +694,15 @@ def on_ui_tabs():
             sort_type,
             use_search_term,
             search_term,
-            show_nsfw,
+            show_nsfw
             ],
             outputs=[
             list_models,
             list_versions,
-            list_html
+            list_html,            
+            get_prev_page,
+            get_next_page,
+            pages
             ]
         )
         update_info.click(
@@ -731,7 +756,10 @@ def on_ui_tabs():
             outputs=[
             list_models,
             list_versions,
-            list_html
+            list_html,
+            get_prev_page,
+            get_next_page,
+            pages
             ]
         )
         get_prev_page.click(
@@ -742,7 +770,10 @@ def on_ui_tabs():
             outputs=[
             list_models,
             list_versions,
-            list_html
+            list_html,
+            get_prev_page,
+            get_next_page,
+            pages
             ]
         )
         def update_models_dropdown(model_name):

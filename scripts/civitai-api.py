@@ -604,7 +604,7 @@ def on_ui_tabs():
             with gr.Column(scale=2):
                 sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
             with gr.Column(scale=1):
-                show_nsfw = gr.Checkbox(label="WARNING ADULT CONTENT", value=False)
+                show_nsfw = gr.Checkbox(label="NSFW content", value=False)
         with gr.Row():
             use_search_term = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)

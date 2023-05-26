@@ -366,7 +366,8 @@ def update_next_page(show_nsfw, isNext=True):
         if (not temp_nsfw or show_nsfw):
             model_dict[item['name']] = item['name']
     HTML = model_list_html(json_data, model_dict)
-    return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
+    return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
+            gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
@@ -377,7 +378,9 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
         if (not temp_nsfw or show_nsfw):
             model_dict[item['name']] = item['name']
     HTML = model_list_html(json_data, model_dict)
-    return gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None), gr.Dropdown.update(choices=[], value=None), gr.HTML.update(value=HTML)
+    return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
+            gr.Dropdown.update(choices=[], value=None),\
+            gr.HTML.update(value=HTML)
 
 def update_model_versions(model_name=None):
     if model_name is not None:
@@ -456,9 +459,13 @@ def  update_model_info(model_name=None, model_version=None):
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
                         output_html = f"<p><b>Model:</b> {escape(str(model_name))}<br><b>Version:</b> {escape(str(model_version))}<br><b>Uploaded by:</b> {escape(str(model_uploader))}<br><b>Tags:</b> {escape(str(tags))}<br><b>Trained Tags:</b> {escape(str(output_training))}<br>{escape(str(allow))}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
-        return gr.HTML.update(value=output_html), gr.Textbox.update(value=output_training), gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys()), None))
+        return  gr.HTML.update(value=output_html),\
+                gr.Textbox.update(value=output_training),\
+                gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys()), None))
     else:
-        return gr.HTML.update(value=None), gr.Textbox.update(value=None), gr.Dropdown.update(choices=[], value=None)
+        return  gr.HTML.update(value=None),\
+                gr.Textbox.update(value=None),\
+                gr.Dropdown.update(choices=[], value=None)
 
 
 def request_civit_api(api_url=None, payload=None):

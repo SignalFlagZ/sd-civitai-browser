@@ -309,9 +309,16 @@ json_info = None
 blDownload = False
 
 def api_to_data(content_type, sort_type, use_search_term, search_term=None):
-    if use_search_term and search_term:
+    if use_search_term != "No" and search_term:
         #search_term = search_term.replace(" ","%20")
-        return request_civit_api(f"{api_url}", {'types': content_type, 'sort': sort_type, 'query': search_term } )
+        match use_search_term:
+            case "User name":
+                query = {'types': content_type, 'sort': sort_type, 'username': search_term }
+            case "Tag":
+                query = {'types': content_type, 'sort': sort_type, 'tag': search_term }
+            case _:
+                query = {'types': content_type, 'sort': sort_type, 'query': search_term }
+        return request_civit_api(f"{api_url}", query )
     else:
         return request_civit_api(f"{api_url}", {'types': content_type, 'sort': sort_type} )
 
@@ -589,7 +596,7 @@ def on_ui_tabs():
             with gr.Column(scale=1):
                 show_nsfw = gr.Checkbox(label="Show NSFW", value=False)
         with gr.Row():
-            use_search_term = gr.Checkbox(label="Search by term?", value=False)
+            use_search_term = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)
         with gr.Row():
             get_list_from_api = gr.Button(label="Get List", value="Get List")

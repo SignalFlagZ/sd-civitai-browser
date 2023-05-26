@@ -309,18 +309,17 @@ json_info = None
 blDownload = False
 
 def api_to_data(content_type, sort_type, use_search_term, search_term=None):
+    query = {'types': content_type, 'sort': sort_type}
     if use_search_term != "No" and search_term:
         #search_term = search_term.replace(" ","%20")
         match use_search_term:
             case "User name":
-                query = {'types': content_type, 'sort': sort_type, 'username': search_term }
+                query |= {'username': search_term }
             case "Tag":
-                query = {'types': content_type, 'sort': sort_type, 'tag': search_term }
+                query |= {'tag': search_term }
             case _:
-                query = {'types': content_type, 'sort': sort_type, 'query': search_term }
-        return request_civit_api(f"{api_url}", query )
-    else:
-        return request_civit_api(f"{api_url}", {'types': content_type, 'sort': sort_type} )
+                query |= {'query': search_term }
+    return request_civit_api(f"{api_url}", query )
 
 def api_next_page(next_page_url=None):
     global json_data

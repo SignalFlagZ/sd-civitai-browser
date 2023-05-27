@@ -623,21 +623,21 @@ def on_ui_tabs():
         with gr.Row():
             with gr.Column(scale=2):
                 content_type = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
-            with gr.Column(scale=2):
-                sort_type = gr.Radio(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
-            with gr.Column(scale=1):
-                show_nsfw = gr.Checkbox(label="NSFW content", value=False)
+            with gr.Column(scale=1,min_width=100):
+                    sort_type = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
+                    show_nsfw = gr.Checkbox(label="NSFW content", value=False)
         with gr.Row():
             use_search_term = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             search_term = gr.Textbox(label="Search Term", interactive=True, lines=1)
         with gr.Row():
-            with gr.Column():
+            with gr.Column(scale=4):
                 get_list_from_api = gr.Button(label="Get List", value="Get List")
-            with gr.Column():
-                with gr.Row():
-                    get_prev_page = gr.Button(value="Prev. Page")
-                    get_next_page = gr.Button(value="Next Page")
-                    pages = gr.Textbox(label='Pages',show_label=False)
+            with gr.Column(scale=2,min_width=80):
+                get_prev_page = gr.Button(value="Prev. Page")
+            with gr.Column(scale=2,min_width=80):
+                get_next_page = gr.Button(value="Next Page")
+            with gr.Column(scale=1,min_width=80):
+                pages = gr.Textbox(label='Pages',show_label=False)
         with gr.Row():
             list_html = gr.HTML()
         with gr.Row():

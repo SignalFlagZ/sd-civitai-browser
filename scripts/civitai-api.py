@@ -323,7 +323,7 @@ def api_to_data(content_type, sort_type, use_search_term, search_term=None):
 
 def api_next_page(next_page_url=None):
     global json_data
-    if next_page_url == None:
+    if next_page_url is None:
         try: json_data['metadata']['nextPage']
         except: return
         next_page_url = json_data['metadata']['nextPage']
@@ -365,6 +365,8 @@ def update_next_page(show_nsfw, isNext=True):
             json_data = api_next_page(json_data['metadata']['prevPage'])
         else:
             json_data = None
+    if json_data is None:
+        return
     json_data['allownsfw'] = show_nsfw # Add key for nsfw
     (hasPrev, hasNext, pages) = pagecontrol(json_data)
     model_dict = {}
@@ -398,6 +400,8 @@ def pagecontrol(json_data):
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     global json_data
     json_data = api_to_data(content_type, sort_type, use_search_term, search_term)
+    if json_data is None:
+        return
     json_data['allownsfw'] = show_nsfw # Add key for nsfw
     (hasPrev, hasNext, pages) = pagecontrol(json_data)
     model_dict = {}
@@ -504,7 +508,7 @@ def  update_model_info(model_name=None, model_version=None):
 
 
 def request_civit_api(api_url=None, payload=None):
-    if payload != None:
+    if payload is not None:
         payload = urllib.parse.urlencode(payload, quote_via=urllib.parse.quote)
     # Make a GET request to the API
     try:
@@ -512,8 +516,8 @@ def request_civit_api(api_url=None, payload=None):
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Request error: ", e)
-        print(f"Query: {payload} URL: {response.url}")
-        exit()
+        #print(f"Query: {payload} URL: {response.url}")
+        return None
     else:
         response.encoding  = "utf-8" # response.apparent_encoding
         data = json.loads(response.text)

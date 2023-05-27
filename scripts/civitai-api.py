@@ -297,7 +297,7 @@ def save_text_file(file_name, content_type, use_new_folder, trained_words, model
 #                os.makedirs(model_folder)
 
     model_folder = extranetwork_folder(content_type, use_new_folder, model_name)   
-    path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt"))
+    path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt").replace(".zip",".txt"))
     if not os.path.exists(path_to_new_file):
         with open(path_to_new_file, 'w') as f:
             f.write(trained_words)

@@ -141,7 +141,10 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
         folder = cmd_opts.lora_dir #"models/Lora"
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "LoCon":
-        folder = f"{cmd_opts.lora_dir}/_LoCon" #"models/Lora/LyCORIS"
+        if cmd_opts.lyco_dir:
+            folder = f"{cmd_opts.lyco_dir}"
+        else:
+            folder = f"{cmd_opts.lora_dir}/_LoCon" #"models/Lora/LyCORIS"
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
         folder = cmd_opts.vae_dir #"models/VAE"

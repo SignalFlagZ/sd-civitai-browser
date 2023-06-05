@@ -22,3 +22,4 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Support ControlNet/Poses.
 - Support user and tag name search.
 - Implement page controls
+- Support for `--lyco-dir`. To use the existing _LoCon folder, specify with `--lyco-dir`.

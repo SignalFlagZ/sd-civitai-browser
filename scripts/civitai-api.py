@@ -120,8 +120,7 @@ def download_file(url, file_name):
 #
 #    # Close the progress bar
 #    progress.close()
-
-def extranetwork_folder(content_type, use_new_folder, model_name = ""):
+def contenttype_folder(content_type):
     if content_type == "Checkpoint":
         if cmd_opts.ckpt_dir:
             folder = cmd_opts.ckpt_dir #"models/Stable-diffusion"
@@ -161,19 +160,10 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
         else:            
             folder = os.path.join(models_path,"Poses")
         new_folder = os.path.join(folder,"new") 
+    return folder, new_folder
 
-    if content_type == "VAE" or content_type == "AestheticGradient":
-        if use_new_folder:
-            model_folder = new_folder
-            if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
-            
-        else:
-            model_folder = folder
-            if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
-    else:            
-        escapechars = str.maketrans({" ": r"_",
+def escaped_modelpath(folder, model_name):
+    escapechars = str.maketrans({" ": r"_",
                                      "(": r"",
                                      ")": r"",
                                      "|": r"",
@@ -186,9 +176,24 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
                                      ".": r"_",
                                      "\"": r"",
                                      "\\": r""})
+    return os.path.join(folder,model_name.translate(escapechars))
+
+def extranetwork_folder(content_type, use_new_folder, model_name = ""):
+    folder, new_folder = contenttype_folder(content_type)
+    if content_type == "VAE" or content_type == "AestheticGradient":
+        if use_new_folder:
+            model_folder = new_folder
+            if not os.path.exists(new_folder):
+                os.makedirs(new_folder)
+            
+        else:
+            model_folder = folder
+            if not os.path.exists(model_folder):
+                os.makedirs(model_folder)
+    else:            
         if use_new_folder:
             #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            model_folder = os.path.join(new_folder,model_name.translate(escapechars))
+            model_folder = escaped_modelpath(new_folder, model_name)
             if not os.path.exists(new_folder):
                 os.makedirs(new_folder)
             if not os.path.exists(model_folder):
@@ -196,10 +201,10 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
             
         else:
             #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            model_folder = os.path.join(folder,model_name.translate(escapechars))
+            model_folder = escaped_modelpath(folder, model_name)
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
-    print(f"Folder Path:{model_folder}")
+    #print(f"Folder Path:{model_folder}")
     return model_folder
 
 def download_file_thread(url, file_name, content_type, use_new_folder, model_name):
@@ -250,7 +255,7 @@ def api_next_page(next_page_url=None):
         next_page_url = json_data['metadata']['nextPage']
     return request_civit_api(next_page_url)
 
-def model_list_html(json_data, model_dict):
+def model_list_html(json_data, model_dict, content_type):
     allownsfw = json_data['allownsfw']
     HTML = '<div class="column civmodellist">'
     for item in json_data['items']:
@@ -260,7 +265,8 @@ def model_list_html(json_data, model_dict):
                 model_name = escape(item["name"].replace("'","\\'"),quote=True)
                 #print(f'{model_name}')
                 #print(f'Length: {len(item["modelVersions"][0]["images"])}')
-                nsfw = None
+                nsfw = ""
+                alreadyhave = ""
                 if any(item['modelVersions']):
                     if len(item['modelVersions'][0]['images']) > 0:
                         if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not allownsfw:
@@ -268,16 +274,25 @@ def model_list_html(json_data, model_dict):
                         imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
                     else:
                         imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
-                HTML = HTML +  f'<figure class="civmodelcard {nsfw}" onclick="select_model(\'{model_name}\')">'\
+                        
+                    for file in item['modelVersions'][0]['files']:
+                        file_name = file['name']
+                        folder1, folder2 = contenttype_folder(content_type)
+                        path_to_new_file = os.path.join(escaped_modelpath(folder1, model_name),file_name)
+                        #print(f"{path_to_new_file}")
+                        if os.path.exists(path_to_new_file):
+                            alreadyhave = "civmodelcardalreadyhave"
+                            break
+                HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{model_name}\')">'\
                                 +  imgtag \
                                 +  f'<figcaption>{item["name"]}</figcaption></figure>'
     HTML = HTML + '</div>'
     return HTML
 
-def update_prev_page(show_nsfw):
-    return update_next_page(show_nsfw, False)
+def update_prev_page(show_nsfw, content_type):
+    return update_next_page(show_nsfw, content_type, False)
 
-def update_next_page(show_nsfw, isNext=True):
+def update_next_page(show_nsfw, content_type, isNext=True, ):
     global json_data
     if isNext:
         json_data = api_next_page()
@@ -300,7 +315,7 @@ def update_next_page(show_nsfw, isNext=True):
         temp_nsfw = item['nsfw']
         if (not temp_nsfw or show_nsfw):
             model_dict[item['name']] = item['name']
-    HTML = model_list_html(json_data, model_dict)
+    HTML = model_list_html(json_data, model_dict, content_type)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
@@ -330,7 +345,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
         temp_nsfw = item['nsfw']
         if (not temp_nsfw or show_nsfw):
             model_dict[item['name']] = item['name']
-    HTML = model_list_html(json_data, model_dict)
+    HTML = model_list_html(json_data, model_dict, content_type)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
@@ -637,6 +652,7 @@ def on_ui_tabs():
             fn=update_next_page,
             inputs=[
             show_nsfw,
+            content_type,
             ],
             outputs=[
             list_models,
@@ -651,6 +667,7 @@ def on_ui_tabs():
             fn=update_prev_page,
             inputs=[
             show_nsfw,
+            content_type,
             ],
             outputs=[
             list_models,

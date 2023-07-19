@@ -16,7 +16,11 @@
 	transform: scale(1.5, 1.5);
 	position: relative;	/* need for z-index */
 	z-index: var(--layer-5);
-	box-shadow: 0 0 4px 6px whitesmoke
+	box-shadow: 0 0 4px 6px whitesmoke;
+}
+
+.civmodelcardalreadyhave:hover {
+	box-shadow: 0 0 4px 6px aquamarine;
 }
 .civmodelcard:hover figcaption{
 	bottom: initial;

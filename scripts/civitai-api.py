@@ -279,7 +279,7 @@ def model_list_html(json_data, model_dict, content_type):
                     for file in item['modelVersions'][0]['files']:
                         file_name = file['name']
                         folder1, folder2 = contenttype_folder(content_type)
-                        path_to_new_file = os.path.join(escaped_modelpath(folder1, model_name),file_name)
+                        path_to_new_file = os.path.join(escaped_modelpath(folder1, item["name"]),file_name)
                         #print(f"{path_to_new_file}")
                         if os.path.exists(path_to_new_file):
                             alreadyhave = "civmodelcardalreadyhave"

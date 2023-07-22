@@ -175,6 +175,7 @@ def escaped_modelpath(folder, model_name):
                                      "?": r"",
                                      ".": r"_",
                                      "&": r"_and_",
+                                     "*": r"_",
                                      "\"": r"",
                                      "\\": r""})
     return os.path.join(folder,model_name.translate(escapechars))

@@ -174,6 +174,7 @@ def escaped_modelpath(folder, model_name):
                                      "!": r"",
                                      "?": r"",
                                      ".": r"_",
+                                     "&": r"_and_",
                                      "\"": r"",
                                      "\\": r""})
     return os.path.join(folder,model_name.translate(escapechars))
@@ -204,7 +205,7 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
             model_folder = escaped_modelpath(folder, model_name)
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
-    #print(f"Folder Path:{model_folder}")
+    print(f"Folder Path:{model_folder}")
     return model_folder
 
 def download_file_thread(url, file_name, content_type, use_new_folder, model_name):

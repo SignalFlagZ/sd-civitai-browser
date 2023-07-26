@@ -180,7 +180,7 @@ def escaped_modelpath(folder, model_name):
                                      "\\": r""})
     return os.path.join(folder,model_name.translate(escapechars))
 
-def extranetwork_folder(content_type, use_new_folder, model_name = ""):
+def extranetwork_folder(content_type, use_new_folder, model_name = "",base_model=""):
     folder, new_folder = contenttype_folder(content_type)
     if content_type == "VAE" or content_type == "AestheticGradient":
         if use_new_folder:
@@ -203,19 +203,21 @@ def extranetwork_folder(content_type, use_new_folder, model_name = ""):
             
         else:
             #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+            if not 'SD 1' in base_model:
+                folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
             model_folder = escaped_modelpath(folder, model_name)
             if not os.path.exists(model_folder):
                 os.makedirs(model_folder)
     print(f"Folder Path:{model_folder}")
     return model_folder
 
-def download_file_thread(url, file_name, content_type, use_new_folder, model_name):
+def download_file_thread(url, file_name, content_type, use_new_folder, model_name,base_model):
     global isDownloading
     if isDownloading:
         isDownloading = False
         return
     isDownloading = True
-    model_folder = extranetwork_folder(content_type, use_new_folder,model_name)
+    model_folder = extranetwork_folder(content_type, use_new_folder,model_name,base_model)
     path_to_new_file = os.path.join(model_folder, file_name)     
 
     thread = threading.Thread(target=download_file, args=(url, path_to_new_file))
@@ -223,8 +225,8 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
         # Start the thread
     thread.start()
 
-def save_text_file(file_name, content_type, use_new_folder, trained_words, model_name):
-    model_folder = extranetwork_folder(content_type, use_new_folder, model_name)   
+def save_text_file(file_name, content_type, use_new_folder, trained_words, model_name, base_model):
+    model_folder = extranetwork_folder(content_type, use_new_folder, model_name,base_model)   
     path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt").replace(".zip",".txt"))
     if not os.path.exists(path_to_new_file):
         with open(path_to_new_file, 'w') as f:
@@ -392,6 +394,7 @@ def  update_model_info(model_name=None, model_version=None):
         global json_data
         output_html = ""
         output_training = ""
+        output_basemodel = ""
         img_html = ""
         model_desc = ""
         dl_dict = {}
@@ -415,7 +418,8 @@ def  update_model_info(model_name=None, model_version=None):
                     if model['name'] == model_version:
                         if model['trainedWords']:
                             output_training = ", ".join(model['trainedWords'])
-
+                        if model['baseModel']:
+                            output_basemodel = model['baseModel']
                         for file in model['files']:
                             dl_dict[file['name']] = file['downloadUrl']
 
@@ -435,14 +439,17 @@ def  update_model_info(model_name=None, model_version=None):
                                 img_html = img_html + '</div>'
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
-                        output_html = f"<p><b>Model:</b> {escape(str(model_name))}<br><b>Version:</b> {escape(str(model_version))}<br><b>Uploaded by:</b> {escape(str(model_uploader))}<br><b>Tags:</b> {escape(str(tags))}<br><b>Trained Tags:</b> {escape(str(output_training))}<br>{escape(str(allow))}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
+                        output_html = f"<p><b>Model:</b> {escape(str(model_name))}<br><b>Version:</b> {escape(str(model_version))}<br><b>Uploaded by:</b> {escape(str(model_uploader))}<br><b>Base Model</b>{escape(str(output_basemodel))}</br><b>Tags:</b> {escape(str(tags))}<br><b>Trained Tags:</b> {escape(str(output_training))}<br>{escape(str(allow))}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
+                
         return  gr.HTML.update(value=output_html),\
                 gr.Textbox.update(value=output_training),\
-                gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys()), None))
+                gr.Dropdown.update(choices=[k for k, v in dl_dict.items()], value=next(iter(dl_dict.keys()), None)),\
+                gr.Textbox.update(value=output_basemodel)
     else:
         return  gr.HTML.update(value=None),\
                 gr.Textbox.update(value=None),\
-                gr.Dropdown.update(choices=[], value=None)
+                gr.Dropdown.update(choices=[], value=None),\
+                gr.Textbox.update(value='')
 
 
 def request_civit_api(api_url=None, payload=None):
@@ -467,14 +474,14 @@ def request_civit_api(api_url=None, payload=None):
 
 
 def update_everything(list_models, list_versions, dl_url):
-    (a, d, f) = update_model_info(list_models, list_versions)
+    (a, d, f, base_model) = update_model_info(list_models, list_versions)
     dl_url = update_dl_url(list_models, list_versions, f['value'])
-    return (a, d, f, list_versions, list_models, dl_url)
+    return (a, d, f, list_versions, list_models, dl_url, base_model)
 
-def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder):
+def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
     print("Save Images Clicked")
 
-    model_folder = extranetwork_folder(content_type, use_new_folder, list_models)
+    model_folder = extranetwork_folder(content_type, use_new_folder, list_models, base_model)
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', preview_image_html)
     
     name = os.path.splitext(model_filename)[0]
@@ -545,6 +552,7 @@ def on_ui_tabs():
         with gr.Row():
             txt_list = ""
             dummy = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
+            base_model = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
             model_filename = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
             dl_url = gr.Textbox(label="Download Url", interactive=False, value=None)
         with gr.Row():
@@ -564,6 +572,7 @@ def on_ui_tabs():
             save_model_in_new,
             dummy,
             list_models,
+            base_model
             ],
             outputs=[]
         )
@@ -574,7 +583,8 @@ def on_ui_tabs():
             model_filename,
             list_models,
             content_type,
-            save_model_in_new
+            save_model_in_new,
+            base_model
             ],
             outputs=[]
         )
@@ -586,6 +596,7 @@ def on_ui_tabs():
             content_type,
             save_model_in_new,
             list_models,
+            base_model
             ],
             outputs=[]
         )
@@ -621,7 +632,8 @@ def on_ui_tabs():
             model_filename,
             list_versions,
             list_models,
-            dl_url
+            dl_url,
+            base_model
             ]
         )
         list_models.change(
@@ -643,6 +655,7 @@ def on_ui_tabs():
             preview_image_html,
             dummy,
             model_filename,
+            base_model
             ]
         )
         model_filename.change(
@@ -682,9 +695,9 @@ def on_ui_tabs():
         )
         def update_models_dropdown(model_name):
             ret_versions=update_model_versions(model_name)
-            (html,d, f) = update_model_info(model_name,ret_versions['value'])
+            (html,d, f, base_model) = update_model_info(model_name,ret_versions['value'])
             dl_url = update_dl_url(model_name, ret_versions['value'], f['value'])
-            return gr.Dropdown.update(value=model_name),ret_versions ,html,dl_url,d,f
+            return gr.Dropdown.update(value=model_name),ret_versions ,html,dl_url,d,f,base_model
         event_text.change(
             fn=update_models_dropdown,
             inputs=[

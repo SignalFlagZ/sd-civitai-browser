@@ -450,10 +450,10 @@ def request_civit_api(api_url=None, payload=None):
         payload = urllib.parse.urlencode(payload, quote_via=urllib.parse.quote)
     # Make a GET request to the API
     try:
-        response = requests.get(api_url, params=payload, timeout=30)
+        response = requests.get(api_url, params=payload, timeout=(10,15))
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        #print("Request error: ", e)
+        print("Request error: ", e)
         #print(f"Query: {payload} URL: {response.url}")
         exit() #return None
     else:

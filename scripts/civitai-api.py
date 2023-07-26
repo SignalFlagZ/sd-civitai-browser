@@ -439,7 +439,7 @@ def  update_model_info(model_name=None, model_version=None):
                                 img_html = img_html + '</div>'
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
-                        output_html = f"<p><b>Model:</b> {escape(str(model_name))}<br><b>Version:</b> {escape(str(model_version))}<br><b>Uploaded by:</b> {escape(str(model_uploader))}<br><b>Base Model</b>{escape(str(output_basemodel))}</br><b>Tags:</b> {escape(str(tags))}<br><b>Trained Tags:</b> {escape(str(output_training))}<br>{escape(str(allow))}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
+                        output_html = f"<p><b>Model</b>: {escape(str(model_name))}<br><b>Version</b>: {escape(str(model_version))}<br><b>Uploaded by</b>: {escape(str(model_uploader))}<br><b>Base Model</b>: {escape(str(output_basemodel))}</br><b>Tags</b>: {escape(str(tags))}<br><b>Trained Tags</b>: {escape(str(output_training))}<br>{escape(str(allow))}<br><a href={model_url}><b>Download Here</b></a></p><br><br>{model_desc}<br><div align=center>{img_html}</div>"
                 
         return  gr.HTML.update(value=output_html),\
                 gr.Textbox.update(value=output_training),\

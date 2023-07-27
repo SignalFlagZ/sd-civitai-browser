@@ -182,26 +182,26 @@ def escaped_modelpath(folder, model_name):
                                      "\\": r""})
     return os.path.join(folder,model_name.translate(escapechars))
 
-def extranetwork_folder(content_type, use_new_folder, model_name = "",base_model=""):
+def extranetwork_folder(content_type, use_new_folder, model_name = "",base_model="", make_dir=True):
     folder, new_folder = contenttype_folder(content_type)
     if content_type == "VAE" or content_type == "AestheticGradient":
         if use_new_folder:
             model_folder = new_folder
             if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
+                if make_dir: os.makedirs(new_folder)
             
         else:
             model_folder = folder
             if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
+                if make_dir: os.makedirs(model_folder)
     else:            
         if use_new_folder:
             #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
             model_folder = escaped_modelpath(new_folder, model_name)
             if not os.path.exists(new_folder):
-                os.makedirs(new_folder)
+                if make_dir: os.makedirs(new_folder)
             if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
+                if make_dir: os.makedirs(model_folder)
             
         else:
             #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
@@ -209,7 +209,7 @@ def extranetwork_folder(content_type, use_new_folder, model_name = "",base_model
                 folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
             model_folder = escaped_modelpath(folder, model_name)
             if not os.path.exists(model_folder):
-                os.makedirs(model_folder)
+                if make_dir: os.makedirs(model_folder)
     print(f"Folder Path:{model_folder}")
     return model_folder
 
@@ -284,7 +284,7 @@ def model_list_html(json_data, model_dict, content_type):
                     for file in item['modelVersions'][0]['files']:
                         file_name = file['name']
                         base_model = item["modelVersions"][0]['baseModel']
-                        folder = extranetwork_folder(content_type,False,item["name"],base_model)
+                        folder = extranetwork_folder(content_type,False,item["name"],base_model, False)
                         path_file = os.path.join(folder, file_name)
                         #print(f"{path_file}")
                         if os.path.exists(path_file):

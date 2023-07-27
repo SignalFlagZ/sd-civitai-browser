@@ -283,10 +283,11 @@ def model_list_html(json_data, model_dict, content_type):
                         
                     for file in item['modelVersions'][0]['files']:
                         file_name = file['name']
-                        folder1, folder2 = contenttype_folder(content_type)
-                        path_to_new_file = os.path.join(escaped_modelpath(folder1, item["name"]),file_name)
-                        #print(f"{path_to_new_file}")
-                        if os.path.exists(path_to_new_file):
+                        base_model = item["modelVersions"][0]['baseModel']
+                        folder = extranetwork_folder(content_type,False,item["name"],base_model)
+                        path_file = os.path.join(folder, file_name)
+                        #print(f"{path_file}")
+                        if os.path.exists(path_file):
                             alreadyhave = "civmodelcardalreadyhave"
                             break
                 HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{model_name}\')">'\

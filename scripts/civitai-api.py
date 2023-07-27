@@ -142,8 +142,10 @@ def contenttype_folder(content_type):
     elif content_type == "LoCon":
         if "lyco_dir" in cmd_opts:
             folder = f"{cmd_opts.lyco_dir}"
+        elif "lyco_dir_backcompat" in cmd_opts: #A1111 V1.5.1
+            folder = f"{cmd_opts.lyco_dir_backcompat}"
         else:
-            folder = f"{cmd_opts.lora_dir}/_LoCon" #"models/Lora/LyCORIS"
+            folder = os.path.join(models_path,"LyCORIS")
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
         folder = cmd_opts.vae_dir #"models/VAE"

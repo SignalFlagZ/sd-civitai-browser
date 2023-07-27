@@ -148,7 +148,10 @@ def contenttype_folder(content_type):
             folder = os.path.join(models_path,"LyCORIS")
         new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
-        folder = cmd_opts.vae_dir #"models/VAE"
+        if cmd_opts.vae_dir:
+            folder = cmd_opts.vae_dir #"models/VAE"
+        else:
+            folder = os.path.join(models_path,"VAE")
         new_folder = os.path.join(folder,"new") #"models/VAE/new"
     elif content_type == "Controlnet":
         if cmd_opts.ckpt_dir:
@@ -182,35 +185,24 @@ def escaped_modelpath(folder, model_name):
                                      "\\": r""})
     return os.path.join(folder,model_name.translate(escapechars))
 
-def extranetwork_folder(content_type, use_new_folder, model_name = "",base_model="", make_dir=True):
+def extranetwork_folder(content_type, use_new_folder, model_name:str = "",base_model:str="", make_dir:bool=True):
     folder, new_folder = contenttype_folder(content_type)
-    if content_type == "VAE" or content_type == "AestheticGradient":
-        if use_new_folder:
-            model_folder = new_folder
-            if not os.path.exists(new_folder):
-                if make_dir: os.makedirs(new_folder)
-            
-        else:
-            model_folder = folder
-            if not os.path.exists(model_folder):
-                if make_dir: os.makedirs(model_folder)
-    else:            
-        if use_new_folder:
-            #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            model_folder = escaped_modelpath(new_folder, model_name)
-            if not os.path.exists(new_folder):
-                if make_dir: os.makedirs(new_folder)
-            if not os.path.exists(model_folder):
-                if make_dir: os.makedirs(model_folder)
-            
-        else:
-            #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-            if not 'SD 1' in base_model:
-                folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
-            model_folder = escaped_modelpath(folder, model_name)
-            if not os.path.exists(model_folder):
-                if make_dir: os.makedirs(model_folder)
-    print(f"Folder Path:{model_folder}")
+    if use_new_folder:
+        #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+        model_folder = escaped_modelpath(new_folder, model_name)
+        if not os.path.exists(new_folder):
+            if make_dir: os.makedirs(new_folder)
+        if not os.path.exists(model_folder):
+            if make_dir: os.makedirs(model_folder)
+        
+    else:
+        #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+        if not 'SD 1' in base_model:
+            folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
+        model_folder = escaped_modelpath(folder, model_name)
+        if not os.path.exists(model_folder):
+            if make_dir: os.makedirs(model_folder)
+    #print(f"Folder Path:{model_folder}")
     return model_folder
 
 def download_file_thread(url, file_name, content_type, use_new_folder, model_name,base_model):
@@ -230,6 +222,7 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
 def save_text_file(file_name, content_type, use_new_folder, trained_words, model_name, base_model):
     model_folder = extranetwork_folder(content_type, use_new_folder, model_name,base_model)   
     path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt").replace(".zip",".txt"))
+    print(f"{path_to_new_file}")
     if not os.path.exists(path_to_new_file):
         with open(path_to_new_file, 'w') as f:
             f.write(trained_words)
@@ -503,7 +496,7 @@ def save_image_files(preview_image_html, model_filename, list_models, content_ty
             filenamethumb = f'{name}.preview.png'
         HTML = HTML.replace(img_url,f'"{filename}"')
         img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
-        print(img_url, filename)
+        print(img_url, model_folder, filename)
         try:
             with urllib.request.urlopen(img_url) as url:
                 with open(os.path.join(model_folder, filename), 'wb') as f:

@@ -150,8 +150,8 @@ class civitaimodels:
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
                         output_html = '<p>' \
-                            '<b>Model</b>: {escape(str(modelName))}<br>'\
-                            '<b>Version</b>: {escape(str(modelVersion))}<br>'\
+                            f'<b>Model</b>: {escape(str(modelName))}<br>'\
+                            f'<b>Version</b>: {escape(str(modelVersion))}<br>'\
                             f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
                             f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
                             f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\

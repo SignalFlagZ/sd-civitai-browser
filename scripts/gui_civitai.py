@@ -1,13 +1,14 @@
-import requests
-import json
 import gradio as gr
+import json
 import urllib.parse
 import shutil
+import re
+import os
 from html import escape
 from modules import script_callbacks
 import modules.scripts as scripts
-from scripts.civitai_api import *
-from scripts.file_manage import *
+from scripts.civitai_api import civitaimodels
+from scripts.file_manage import extranetwork_folder, save_text_file, download_file_thread
 
 # Set the URL for the API endpoint
 json_data = civitaimodels("https://civitai.com/api/v1/models?limit=10")
@@ -118,28 +119,6 @@ def  update_model_info(model_name=None, model_version=None):
                 gr.Textbox.update(value=None),\
                 gr.Dropdown.update(choices=[], value=None),\
                 gr.Textbox.update(value='')
-
-
-def request_civit_api(api_url=None, payload=None):
-    if payload is not None:
-        payload = urllib.parse.urlencode(payload, quote_via=urllib.parse.quote)
-    # Make a GET request to the API
-    try:
-        response = requests.get(api_url, params=payload, timeout=(10,15))
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print("Request error: ", e)
-        #print(f"Query: {payload} URL: {response.url}")
-        exit() #return None
-    else:
-        response.encoding  = "utf-8" # response.apparent_encoding
-        data = json.loads(response.text)
-    # Check the status code of the response
-    #if response.status_code != 200:
-    #  print("Request failed with status code: {}".format(response.status_code))
-    #  exit()
-    return data
-
 
 def update_everything(list_models, list_versions, dl_url):
     (a, d, f, base_model) = update_model_info(list_models, list_versions)

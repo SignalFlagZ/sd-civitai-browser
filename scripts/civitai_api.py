@@ -2,8 +2,9 @@ import os
 from html import escape
 import json
 import urllib.parse
+import requests
 from colorama import Fore, Back, Style
-from scripts.file_manage import *
+from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
 # Handle the response data of civitai api.

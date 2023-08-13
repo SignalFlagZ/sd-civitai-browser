@@ -1,62 +1,12 @@
 import gradio as gr
-import json
-import urllib.parse
-import shutil
-import re
-import os
 from html import escape
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
-from scripts.file_manage import extranetwork_folder, save_text_file, download_file_thread
+from scripts.file_manage import save_text_file, download_file_thread, saveImageFiles
 
 # Set the URL for the API endpoint
 json_data = civitaimodels("https://civitai.com/api/v1/models?limit=10")
-
-def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
-    print("Save Images Clicked")
-
-    model_folder = extranetwork_folder(content_type, use_new_folder, list_models, base_model)
-    img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', preview_image_html)
-    
-    name = os.path.splitext(model_filename)[0]
-    #model_folder = os.path.join("models\Stable-diffusion",list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
-
-    opener = urllib.request.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    urllib.request.install_opener(opener)
-
-    HTML = preview_image_html
-    for i, img_url in enumerate(img_urls):
-        filename = f'{name}_{i}.png'
-        filenamethumb = f'{name}.png'
-        if content_type == "TextualInversion":
-            filename = f'{name}_{i}.preview.png'
-            filenamethumb = f'{name}.preview.png'
-        HTML = HTML.replace(img_url,f'"{filename}"')
-        img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
-        print(img_url, model_folder, filename)
-        try:
-            with urllib.request.urlopen(img_url) as url:
-                with open(os.path.join(model_folder, filename), 'wb') as f:
-                    f.write(url.read())
-                    if i == 0 and not os.path.exists(os.path.join(model_folder, filenamethumb)):
-                        shutil.copy2(os.path.join(model_folder, filename),os.path.join(model_folder, filenamethumb))
-                    print("\t\t\tDownloaded")
-            #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
-                    
-        except urllib.error.URLError as e:
-            print(f'Error: {e.reason}')
-    path_to_new_file = os.path.join(model_folder, f'{name}.html')
-    #if not os.path.exists(path_to_new_file):
-    with open(path_to_new_file, 'wb') as f:
-        f.write(HTML.encode('utf8'))
-    #Save json_info
-    path_to_new_file = os.path.join(model_folder, f'{name}.civitai.info')
-    with open(path_to_new_file, mode="w", encoding="utf-8") as f:
-        json.dump(json_data.getModelVersionInfo(), f, indent=2, ensure_ascii=False)
-    
-    print(f"Done.")
 
 def api_next_page(next_page_url:str=""):
     if not next_page_url:
@@ -179,6 +129,9 @@ def on_ui_tabs():
             ],
             outputs=[]
         )
+
+        def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
+            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model,json_data.getModelVersionInfo())
         save_images.click(
             fn=save_image_files,
             inputs=[

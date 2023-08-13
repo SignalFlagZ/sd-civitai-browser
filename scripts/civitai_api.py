@@ -253,7 +253,7 @@ class civitaimodels:
             response = requests.get( url, params=query, timeout=(10,15))
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print(Fore.YELLOW + "Request error: " , e)
+            print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
             print(Style.RESET_ALL)
             #print(f"Query: {payload} URL: {response.url}")
             data = self.jsonData # exit() #return None

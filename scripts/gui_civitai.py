@@ -10,7 +10,7 @@ from scripts.civitai_api import *
 from scripts.file_manage import *
 
 # Set the URL for the API endpoint
-json_data = civitaiData("https://civitai.com/api/v1/models?limit=10")
+json_data = civitaimodels("https://civitai.com/api/v1/models?limit=10")
 
 def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
     print("Save Images Clicked")
@@ -74,7 +74,7 @@ def update_next_page(show_nsfw, content_type, isNext=True, ):
     pages = json_data.getPages()
     hasPrev = not json_data.prevPage() == ""
     hasNext = not json_data.nextPage() == ""
-    model_dict = json_data.getModelNames() if (show_nsfw) else json_data.getModelNamesSfw()
+    model_dict = json_data.getItemNames() if (show_nsfw) else json_data.getItemNamesSfw()
     HTML = json_data.modelCardsHtml(model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
@@ -85,7 +85,7 @@ def update_next_page(show_nsfw, content_type, isNext=True, ):
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     query = json_data.makeRequestQuery(content_type, sort_type, use_search_term, search_term)
-    data = json_data.requestApi(json_data.getBaseUrl(), query)
+    data = json_data.requestApi(query=query)
     json_data.updateJsondata(data, content_type)
     if json_data.getJsonData() is None:
         return
@@ -93,7 +93,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     pages = json_data.getPages()
     hasPrev = not json_data.prevPage() == ""
     hasNext = not json_data.nextPage() == ""
-    model_dict = json_data.getModelNames() if (show_nsfw) else json_data.getModelNamesSfw()
+    model_dict = json_data.getItemNames() if (show_nsfw) else json_data.getItemNamesSfw()
     HTML = json_data.modelCardsHtml(model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\

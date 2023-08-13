@@ -2,14 +2,17 @@ import os
 from html import escape
 import json
 import urllib.parse
+from colorama import Fore, Back, Style
 from scripts.file_manage import *
+
+class civitaimodels:
 # Handle the response data of civitai api.
-class civitaiData:
     def __init__(self, url:str, json_data:dict={}, content_type:str=""):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
         self.baseUrl = url
+        self.selectedItemID = None
 
     def setBaseUrl(self,url:str):
            self.url = url
@@ -30,20 +33,60 @@ class civitaiData:
     def getContentType(self) -> str:
         return self.contentType
     
-    # Models
-    def getModelNames(self) -> dict: #include nsfw models
+    # Items
+    def getItemNames(self) -> dict: #include nsfw models
         model_dict = {}
         for item in self.jsonData['items']:
             model_dict[item['name']] = item['name']
         return model_dict
-    def getModelNamesSfw(self) -> dict: #sfw models
+    def getItemNamesSfw(self) -> dict: #sfw models
         model_dict = {}
         for item in self.jsonData['items']:
             if not item['nsfw']:
                 model_dict[item['name']] = item['name']
-        return model_dict          
-
+        return model_dict   
+    def getItemIDs(self) -> dict:
+        IDs = {}
+        for item in self.jsonData['items']:
+            IDs[item['id']] = item['name']
+        return IDs
+    def getItemnameByID(self, id:int) -> str:
+        name = None
+        for item in self.jsonData['items']:
+            if item['id'] == id:
+                name = item['name']
+        return name
+    def getIDByItemname(self, name:str) -> str:
+        id = None
+        for item in self.jsonData['items']:
+            if item['name'] == name:
+                id = item['id']
+        return id
+    def isNsfw(self, id:int) -> bool:
+        nsfw = None
+        for item in self.jsonData['items']:
+            if item['id'] == id:
+                nsfw = item['name']
+        return nsfw
+    
     # Model
+    def selectItem(self, id:int):
+        for item in self.jsonData['items']:
+            if item['id'] == id:
+                self.selectedItemID = id
+        return self.selectedItemID
+    def getSelectedItemID(self) -> int:
+        return self.selectedItemID
+    def getModelVersions(self):
+        modelVersions=None
+        if self.selectedItemID is None:
+            print('Select item first.')
+        else:
+            for item in self.jsonData['items']:
+                if item['id'] == self.selectedItemID:
+                    modelVersions = item['modelVersions']
+        return modelVersions
+
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
     def getModelVersionInfo(self) -> str:
@@ -106,7 +149,19 @@ class civitaiData:
                                 img_html = img_html + '</div>'
                             img_html = img_html + '</div>'
                         img_html = img_html + '</div>'
-                        output_html = f"<p><b>Model</b>: {escape(str(modelName))}<br><b>Version</b>: {escape(str(modelVersion))}<br><b>Uploaded by</b>: {escape(str(modelInfo['creator']))}<br><b>Base Model</b>: {escape(str(modelInfo['baseModel']))}</br><b>Tags</b>: {escape(str(modelInfo['tags']))}<br><b>Trained Tags</b>: {escape(str(modelInfo['trainedWords']))}<br>{escape(str(modelInfo['allow']))}<br><a href={modelInfo['downloadUrl']}><b>Download Here</b></a></p><br><br>{modelInfo['description']}<br><div align=center>{img_html}</div>"
+                        output_html = '<p>' \
+                            '<b>Model</b>: {escape(str(modelName))}<br>'\
+                            '<b>Version</b>: {escape(str(modelVersion))}<br>'\
+                            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
+                            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
+                            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\
+                            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br>'\
+                            f'{escape(str(modelInfo["allow"]))}<br>'\
+                            f'<a href={modelInfo["downloadUrl"]}><b>'\
+                            'Download Here</b></a>'\
+                            '</p><br><br><p>'\
+                            f'{modelInfo["description"]}</p><br>'\
+                            f'<div align=center>{img_html}</div>'
                         modelInfo['html'] = output_html
         return modelInfo
 
@@ -197,9 +252,10 @@ class civitaiData:
             response = requests.get( url, params=query, timeout=(10,15))
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print("Request error: ", e)
+            print(Fore.YELLOW + "Request error: " , e)
+            print(Style.RESET_ALL)
             #print(f"Query: {payload} URL: {response.url}")
-            exit() #return None
+            data = self.jsonData # exit() #return None
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)

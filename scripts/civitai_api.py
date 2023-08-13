@@ -21,13 +21,13 @@ class civitaimodels:
             return self.baseUrl
     def getJsonData(self) -> dict:
         return self.jsonData
-    def updateJsondata(self, json_data:dict={}, content_type:str=""):
+    def updateJsonData(self, json_data:dict={}, content_type:str=""):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
     def setShowNsfw(self, showNsfw:bool):
         self.showNsfw = showNsfw
-    def getShowNsfw(self) -> bool:
+    def isShowNsfw(self) -> bool:
         return self.showNsfw
     def setContentType(self, content_type:str):
         self.contentType = content_type
@@ -51,19 +51,19 @@ class civitaimodels:
         for item in self.jsonData['items']:
             IDs[item['id']] = item['name']
         return IDs
-    def getItemnameByID(self, id:int) -> str:
+    def getItemNameByID(self, id:int) -> str:
         name = None
         for item in self.jsonData['items']:
             if item['id'] == id:
                 name = item['name']
         return name
-    def getIDByItemname(self, name:str) -> str:
+    def getIDByItemName(self, name:str) -> str:
         id = None
         for item in self.jsonData['items']:
             if item['name'] == name:
                 id = item['id']
         return id
-    def isNsfw(self, id:int) -> bool:
+    def isNsfwItem(self, id:int) -> bool:
         nsfw = None
         for item in self.jsonData['items']:
             if item['id'] == id:
@@ -208,7 +208,7 @@ class civitaimodels:
                     alreadyhave = ""
                     if any(item['modelVersions']):
                         if len(item['modelVersions'][0]['images']) > 0:
-                            if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not self.getShowNsfw():
+                            if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not self.isShowNsfw():
                                 nsfw = 'civcardnsfw'
                             imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
                         else:

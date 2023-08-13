@@ -6,27 +6,27 @@ from scripts.civitai_api import civitaimodels
 from scripts.file_manage import save_text_file, download_file_thread, saveImageFiles
 
 # Set the URL for the API endpoint
-json_data = civitaimodels("https://civitai.com/api/v1/models?limit=10")
+civitai = civitaimodels("https://civitai.com/api/v1/models?limit=10")
 
 def api_next_page(next_page_url:str=""):
     if not next_page_url:
-        next_page_url = json_data.nextPage()
-    return json_data.requestApi(next_page_url)
+        next_page_url = civitai.nextPage()
+    return civitai.requestApi(next_page_url)
 
 def update_prev_page(show_nsfw, content_type):
     return update_next_page(show_nsfw, content_type, False)
 
 def update_next_page(show_nsfw, content_type, isNext=True, ):
     if isNext:
-        json_data.updateJsondata(api_next_page(json_data.nextPage()), content_type)
+        civitai.updateJsonData(api_next_page(civitai.nextPage()), content_type)
     else:
-        json_data.updateJsondata(api_next_page(json_data.prevPage()), content_type)
-    json_data.setShowNsfw(show_nsfw)
-    pages = json_data.getPages()
-    hasPrev = not json_data.prevPage() == ""
-    hasNext = not json_data.nextPage() == ""
-    model_dict = json_data.getItemNames() if (show_nsfw) else json_data.getItemNamesSfw()
-    HTML = json_data.modelCardsHtml(model_dict)
+        civitai.updateJsonData(api_next_page(civitai.prevPage()), content_type)
+    civitai.setShowNsfw(show_nsfw)
+    pages = civitai.getPages()
+    hasPrev = not civitai.prevPage() == ""
+    hasNext = not civitai.nextPage() == ""
+    model_dict = civitai.getItemNames() if (show_nsfw) else civitai.getItemNamesSfw()
+    HTML = civitai.modelCardsHtml(model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
@@ -35,17 +35,17 @@ def update_next_page(show_nsfw, content_type, isNext=True, ):
             gr.Textbox.update(value=pages)
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
-    query = json_data.makeRequestQuery(content_type, sort_type, use_search_term, search_term)
-    data = json_data.requestApi(query=query)
-    json_data.updateJsondata(data, content_type)
-    if json_data.getJsonData() is None:
+    query = civitai.makeRequestQuery(content_type, sort_type, use_search_term, search_term)
+    data = civitai.requestApi(query=query)
+    civitai.updateJsonData(data, content_type)
+    if civitai.getJsonData() is None:
         return
-    json_data.setShowNsfw(show_nsfw)
-    pages = json_data.getPages()
-    hasPrev = not json_data.prevPage() == ""
-    hasNext = not json_data.nextPage() == ""
-    model_dict = json_data.getItemNames() if (show_nsfw) else json_data.getItemNamesSfw()
-    HTML = json_data.modelCardsHtml(model_dict)
+    civitai.setShowNsfw(show_nsfw)
+    pages = civitai.getPages()
+    hasPrev = not civitai.prevPage() == ""
+    hasNext = not civitai.nextPage() == ""
+    model_dict = civitai.getItemNames() if (show_nsfw) else civitai.getItemNamesSfw()
+    HTML = civitai.modelCardsHtml(model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
@@ -54,12 +54,12 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
             gr.Textbox.update(value=pages)
 
 def update_model_versions(model_name=None):
-    dict = json_data.getModelVersions(model_name)
+    dict = civitai.getModelVersions(model_name)
     return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
 
 def  update_model_info(model_name=None, model_version=None):
     if model_name and model_version:
-        dict = json_data.getModelInfo(model_name, model_version)             
+        dict = civitai.getModelInfo(model_name, model_version)             
         return  gr.HTML.update(value=dict['html']),\
                 gr.Textbox.update(value=dict['trainedWords']),\
                 gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
@@ -72,7 +72,7 @@ def  update_model_info(model_name=None, model_version=None):
 
 def update_everything(list_models, list_versions, dl_url):
     (a, d, f, base_model) = update_model_info(list_models, list_versions)
-    dl_url = gr.Textbox.update(value=json_data.updateDlUrl(list_models, list_versions, f['value']))
+    dl_url = gr.Textbox.update(value=civitai.updateDlUrl(list_models, list_versions, f['value']))
     return (a, d, f, list_versions, list_models, dl_url, base_model)
 
    
@@ -131,7 +131,7 @@ def on_ui_tabs():
         )
 
         def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
-            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model,json_data.getModelVersionInfo())
+            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model,civitai.getModelVersionInfo())
         save_images.click(
             fn=save_image_files,
             inputs=[
@@ -215,7 +215,7 @@ def on_ui_tabs():
             ]
         )
         model_filename.change(
-            fn=json_data.updateDlUrl,
+            fn=civitai.updateDlUrl,
             inputs=[list_models, list_versions, model_filename,],
             outputs=[dl_url,]
         )
@@ -252,7 +252,7 @@ def on_ui_tabs():
         def update_models_dropdown(model_name):
             ret_versions=update_model_versions(model_name)
             (html,d, f, base_model) = update_model_info(model_name,ret_versions['value'])
-            dl_url = gr.Textbox.update(value=json_data.updateDlUrl(list_models, list_versions, f['value']))
+            dl_url = gr.Textbox.update(value=civitai.updateDlUrl(list_models, list_versions, f['value']))
             return gr.Dropdown.update(value=model_name),ret_versions ,html,dl_url,d,f,base_model
         event_text.change(
             fn=update_models_dropdown,

@@ -7,24 +7,30 @@ from colorama import Fore, Back, Style
 from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
-# Handle the response data of civitai api.
+    '''civitaimodels handle the response of civitai models api v1.'''
     def __init__(self, url:str, json_data:dict={}, content_type:str=""):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
         self.baseUrl = url
-        self.selectedItemID = None
-
+        self.modelID = None
+        self.modelNsfw = False
+        self.modelVersionInfo = None
+    def updateJsonData(self, json_data:dict={}, content_type:str=""):
+        '''Update json data.'''
+        self.jsonData = json_data
+        self.contentType = content_type
+        self.showNsfw = False
+        self.modelID = None
+        self.modelNsfw = False
+        self.modelVersionInfo = None
     def setBaseUrl(self,url:str):
            self.url = url
     def getBaseUrl(self) -> str:
             return self.baseUrl
     def getJsonData(self) -> dict:
         return self.jsonData
-    def updateJsonData(self, json_data:dict={}, content_type:str=""):
-        self.jsonData = json_data
-        self.contentType = content_type
-        self.showNsfw = False
+
     def setShowNsfw(self, showNsfw:bool):
         self.showNsfw = showNsfw
     def isShowNsfw(self) -> bool:
@@ -34,13 +40,14 @@ class civitaimodels:
     def getContentType(self) -> str:
         return self.contentType
     
-    # Items
+    # Models
     def getItemNames(self) -> dict: #include nsfw models
         model_dict = {}
         for item in self.jsonData['items']:
             model_dict[item['name']] = item['name']
         return model_dict
     def getItemNamesSfw(self) -> dict: #sfw models
+        '''Return SFW items names.'''
         model_dict = {}
         for item in self.jsonData['items']:
             if not item['nsfw']:
@@ -63,48 +70,75 @@ class civitaimodels:
             if item['name'] == name:
                 id = item['id']
         return id
-    def isNsfwItem(self, id:int) -> bool:
+    def isNsfwItembyID(self, id:int) -> bool:
         nsfw = None
         for item in self.jsonData['items']:
             if item['id'] == id:
-                nsfw = item['name']
+                nsfw = item['nsfw']
         return nsfw
     
-    # Model
-    def selectItem(self, id:int):
+    # Model Version
+    def selectItemByID(self, id:int):
         for item in self.jsonData['items']:
             if item['id'] == id:
-                self.selectedItemID = id
-        return self.selectedItemID
-    def getSelectedItemID(self) -> int:
-        return self.selectedItemID
-    def getModelVersions(self):
-        modelVersions=None
-        if self.selectedItemID is None:
-            print('Select item first.')
+                self.modelID = item['id']
+                self.modelNsfw = item['nsfw']
+            #print(f'{id} - {self.modelNsfw}')
+        return self.modelID
+    def selectItemByName(self, name:str):
+        if name is not None:
+            for item in self.jsonData['items']:
+                if item['name'] == name:
+                    self.modelID = item['id']
+                    self.modelNsfw = item['nsfw']
+            #print(f'{name} - {self.modelNsfw}')
+        return self.modelID
+    def isNsfwItem(self) -> bool:
+        return self.modelNsfw
+    def getItemID(self) -> int:
+        return self.modelID
+    def getModelVersionsList(self):
+        '''Return modelVersions list.
+         Select the item before. '''
+        versions_dict = {}
+        if self.modelID is None:
+            print(Fore.LIGHTYELLOW_EX + 'Select the item first.' + Style.RESET_ALL )
         else:
             for item in self.jsonData['items']:
-                if item['id'] == self.selectedItemID:
-                    modelVersions = item['modelVersions']
-        return modelVersions
+                if item['id'] == self.modelID:
+                    for model in item['modelVersions']:
+                        versions_dict[model['name']] = model["name"]
+        return versions_dict
 
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
     def getModelVersionInfo(self) -> str:
         return self.modelVersionInfo
 
-    def getModelVersions(self, modelName:str) -> dict:
-        versions_dict = {}
+    def getModelByName(self, modelName:str) -> dict:
+        model_dict = {}
         if modelName is not None:
-            versions_dict = {}
-            for item in self.jsonData['items']:
-                if item['name'] == modelName:
+            for index, item in enumerate(self.jsonData['items']):
+                if item['id'] == self.modelID:
                     for model in item['modelVersions']:
-                        versions_dict[model['name']] = item["name"]
-        return versions_dict
+                        if model['name'] == modelName:
+                            model_dict = model
+        return model_dict
 
 
-    def getModelInfo(self, modelName:str, modelVersion:str) -> dict:
+    def getModelInfo2(self, modelName:str) -> dict:
+        '''not yet'''
+        modelInfo = {}
+        if self.modelID is None:
+            print(Fore.LIGHTYELLOW_EX + f'Select item first. {self.modelID}' + Style.RESET_ALL )
+        else:
+            for index, item in enumerate(self.jsonData['items']):
+                if item['id'] == self.modelID:
+                    modelInfo = self.jsonData['items'][index]
+            modelInfo['modelVersion'] = self.getModelByName(modelName)
+        return modelInfo
+    
+    def makeModelInfo(self, modelName:str, modelVersion:str) -> dict:
         modelInfo = {
             'description':"",
             'trainedWords':"",
@@ -113,58 +147,75 @@ class civitaimodels:
         }
         for item in self.jsonData['items']:
             if item['name'] == modelName:
+                modelInfo['id'] = item['id']
+                modelInfo['model_name'] = item['name']
+                modelInfo['type'] = item['type']
+                modelInfo['nsfw'] = item['nsfw']
                 modelInfo['creator'] = item['creator']['username']
                 modelInfo['tags'] = item['tags']
-                if item['description']:
-                    modelInfo['description'] = item['description']
-                if item['allowNoCredit']:
-                    modelInfo['allow']['allowNoCredit'] = item['allowNoCredit']
-                if item['allowCommercialUse']:
-                    modelInfo['allow']['allowCommercialUse'] = item['allowCommercialUse']
-                if item['allowDerivatives']:
-                    modelInfo['allow']['allowDerivatives'] = item['allowDerivatives']
-                if item['allowDifferentLicense']:
-                    modelInfo['allow']['allowDifferentLicense'] = item['allowDifferentLicense']
+                modelInfo['description'] = item['description']
+                modelInfo['allow']['allowNoCredit'] = item['allowNoCredit']
+                modelInfo['allow']['allowCommercialUse'] = item['allowCommercialUse']
+                modelInfo['allow']['allowDerivatives'] = item['allowDerivatives']
+                modelInfo['allow']['allowDifferentLicense'] = item['allowDifferentLicense']
                 for model in item['modelVersions']:
                     if model['name'] == modelVersion:
-                        if model['trainedWords']:
-                            modelInfo['trainedWords'] = ", ".join(model['trainedWords'])
-                        if model['baseModel']:
-                            modelInfo['baseModel'] = model['baseModel']
+                        modelInfo['version_name'] = model['name']
+                        modelInfo['modelId'] = model['modelId']
+                        modelInfo['trainedWords'] = ", ".join(model['trainedWords'])
+                        modelInfo['baseModel'] = model['baseModel']
+                        modelInfo['model_description'] = model['description']
                         for file in model['files']:
                             modelInfo['files'][file['name']] = file['downloadUrl']
-
-                        modelInfo['downloadUrl'] = model['downloadUrl']
-                        #model_filename = model['files']['name']
-
-                        img_html = '<div class="sampleimgs">'
+                        pics = []
                         for pic in model['images']:
-                            nsfw = None
-                            if pic['nsfw'] != "None" and not self.showNsfw:
-                                nsfw = 'class="civnsfw"'
-                            img_html = img_html + f'<div {nsfw} style="display:flex;align-items:flex-start;"><img src={pic["url"]} style="width:20em;"></img>'
-                            if pic['meta']:
-                                img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
-                                for key, value in pic['meta'].items():
-                                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}</br>'
-                                img_html = img_html + '</div>'
-                            img_html = img_html + '</div>'
-                        img_html = img_html + '</div>'
-                        output_html = '<p>' \
-                            f'<b>Model</b>: {escape(str(modelName))}<br>'\
-                            f'<b>Version</b>: {escape(str(modelVersion))}<br>'\
-                            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
-                            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
-                            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\
-                            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br>'\
-                            f'{escape(str(modelInfo["allow"]))}<br>'\
-                            f'<a href={modelInfo["downloadUrl"]}><b>'\
-                            'Download Here</b></a>'\
-                            '</p><br><br><p>'\
-                            f'{modelInfo["description"]}</p><br>'\
-                            f'<div align=center>{img_html}</div>'
-                        modelInfo['html'] = output_html
+                            pics.append({ 'id' : pic['id'],
+                                          'nsfw' : pic['nsfw'],
+                                          'url': pic["url"],
+                                          'meta' : pic['meta'],
+                                          'type' : pic['type'],
+                                         })
+                        modelInfo['images'] = pics
+                        modelInfo['downloadUrl'] = model['downloadUrl'] if 'downloadUrl' in model else ""
+                modelInfo['html'] = self.modelInfoHtml(modelInfo)
         return modelInfo
+
+    def modelInfoHtml(self, modelInfo:dict) -> str:
+        img_html = '<div class="sampleimgs">'
+        for pic in modelInfo['images']:
+            nsfw = None
+            if pic['nsfw'] != "None" and not self.showNsfw:
+                nsfw = 'class="civnsfw"'
+            img_html = img_html +\
+                         f'<div {nsfw} style="display:flex;align-items:flex-start;">'\
+                         f'<img src={pic["url"]} style="width:20em;"></img>'
+            if pic['meta']:
+                img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
+                for key, value in pic['meta'].items():
+                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}</br>'
+                img_html = img_html + '</div>'
+            img_html = img_html + '</div>'
+        img_html = img_html + '</div>'
+        output_html = '<div>'
+        if modelInfo['nsfw']:
+            output_html += '<h1>NSFW</b></h1>'
+        output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'
+        output_html += f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br>'\
+            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
+            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
+            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\
+            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br>'\
+            f'{escape(str(modelInfo["allow"]))}<br>'\
+            f'<a href={modelInfo["downloadUrl"]}>'\
+            '<b>Download Here</b></a>'\
+            '</div><br>'\
+            '<div><h2>Model description</h2>'\
+            f'<p>{modelInfo["description"]}</p></div><br>'
+        if modelInfo["model_description"]:
+            output_html += f'<div><h3>Version description</h3>'\
+            f'<p>{modelInfo["model_description"]}</p></div><br>'
+        output_html += f'<div align=center>{img_html}</div>'
+        return output_html
 
     def updateDlUrl(self, model_name=None, model_version=None, model_filename=None):
         if model_filename:
@@ -217,7 +268,7 @@ class civitaimodels:
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
                             base_model = item["modelVersions"][0]['baseModel']
-                            folder = extranetwork_folder(self.getContentType(),False,item["name"],base_model, False)
+                            folder = extranetwork_folder(self.getContentType(),False,item["name"],base_model, False, nsfw=item['nsfw'])
                             path_file = os.path.join(folder, file_name)
                             #print(f"{path_file}")
                             if os.path.exists(path_file):
@@ -231,6 +282,7 @@ class civitaimodels:
     
     #REST API
     def makeRequestQuery(self, content_type, sort_type, use_search_term, search_term=None):
+        
         query = {'types': content_type, 'sort': sort_type}
         if use_search_term != "No" and search_term:
             #search_term = search_term.replace(" ","%20")

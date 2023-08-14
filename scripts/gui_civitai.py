@@ -4,6 +4,7 @@ from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
 from scripts.file_manage import save_text_file, download_file_thread, saveImageFiles
+from colorama import Fore, Back, Style
 
 # Set the URL for the API endpoint
 civitai = civitaimodels("https://civitai.com/api/v1/models?limit=10")
@@ -36,10 +37,10 @@ def update_next_page(show_nsfw, content_type, isNext=True, ):
 
 def update_model_list(content_type, sort_type, use_search_term, search_term, show_nsfw):
     query = civitai.makeRequestQuery(content_type, sort_type, use_search_term, search_term)
-    data = civitai.requestApi(query=query)
-    civitai.updateJsonData(data, content_type)
-    if civitai.getJsonData() is None:
-        return
+    response = civitai.requestApi(query=query)
+    if response is None:
+        return {}
+    civitai.updateJsonData(response, content_type)
     civitai.setShowNsfw(show_nsfw)
     pages = civitai.getPages()
     hasPrev = not civitai.prevPage() == ""
@@ -54,12 +55,16 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
             gr.Textbox.update(value=pages)
 
 def update_model_versions(model_name=None):
-    dict = civitai.getModelVersions(model_name)
-    return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+    if model_name is not None:
+        civitai.selectItemByName(model_name)
+        dict = civitai.getModelVersionsList()
+        return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+    else:
+        return gr.Dropdown.update(choices=[], value=None)
 
 def  update_model_info(model_name=None, model_version=None):
     if model_name and model_version:
-        dict = civitai.getModelInfo(model_name, model_version)             
+        dict = civitai.makeModelInfo(model_name, model_version)             
         return  gr.HTML.update(value=dict['html']),\
                 gr.Textbox.update(value=dict['trainedWords']),\
                 gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
@@ -116,22 +121,24 @@ def on_ui_tabs():
             save_model_in_new = gr.Checkbox(label="Save Model to new folder", value=False)
         with gr.Row():
             preview_image_html = gr.HTML()
-
+        
+        def save_text_click(file_name, content_type, use_new_folder, trained_words, list_models, base_model):
+            save_text_file(file_name, content_type, use_new_folder, trained_words, list_models, base_model,civitai.isNsfwItem() )
         save_text.click(
-            fn=save_text_file,
+            fn=save_text_click,
             inputs=[
             model_filename,
             content_type,
             save_model_in_new,
             dummy,
             list_models,
-            base_model
+            base_model,
             ],
             outputs=[]
         )
 
         def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
-            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model,civitai.getModelVersionInfo())
+            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model, civitai.getModelVersionInfo(), civitai.isNsfwItem() )
         save_images.click(
             fn=save_image_files,
             inputs=[
@@ -144,8 +151,10 @@ def on_ui_tabs():
             ],
             outputs=[]
         )
+        def download_model_click(url, file_name, content_type, use_new_folder, list_models,base_model):
+            download_file_thread(url, file_name, content_type, use_new_folder, list_models,base_model, civitai.isNsfwItem() )
         download_model.click(
-            fn=download_file_thread,
+            fn=download_model_click,
             inputs=[
             dl_url,
             model_filename,

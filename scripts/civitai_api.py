@@ -164,7 +164,7 @@ class civitaimodels:
                         modelInfo['modelId'] = model['modelId']
                         modelInfo['trainedWords'] = ", ".join(model['trainedWords'])
                         modelInfo['baseModel'] = model['baseModel']
-                        modelInfo['model_description'] = model['description']
+                        modelInfo['versionDescription'] = model['description']
                         for file in model['files']:
                             modelInfo['files'][file['name']] = file['downloadUrl']
                         pics = []
@@ -178,44 +178,8 @@ class civitaimodels:
                         modelInfo['images'] = pics
                         modelInfo['downloadUrl'] = model['downloadUrl'] if 'downloadUrl' in model else ""
                 modelInfo['html'] = self.modelInfoHtml(modelInfo)
+                self.setModelVersionInfo(modelInfo)
         return modelInfo
-
-    def modelInfoHtml(self, modelInfo:dict) -> str:
-        img_html = '<div class="sampleimgs">'
-        for pic in modelInfo['images']:
-            nsfw = None
-            if pic['nsfw'] != "None" and not self.showNsfw:
-                nsfw = 'class="civnsfw"'
-            img_html = img_html +\
-                         f'<div {nsfw} style="display:flex;align-items:flex-start;">'\
-                         f'<img src={pic["url"]} style="width:20em;"></img>'
-            if pic['meta']:
-                img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
-                for key, value in pic['meta'].items():
-                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}</br>'
-                img_html = img_html + '</div>'
-            img_html = img_html + '</div>'
-        img_html = img_html + '</div>'
-        output_html = '<div>'
-        if modelInfo['nsfw']:
-            output_html += '<h1>NSFW</b></h1>'
-        output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'
-        output_html += f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br>'\
-            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
-            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
-            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\
-            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br>'\
-            f'{escape(str(modelInfo["allow"]))}<br>'\
-            f'<a href={modelInfo["downloadUrl"]}>'\
-            '<b>Download Here</b></a>'\
-            '</div><br>'\
-            '<div><h2>Model description</h2>'\
-            f'<p>{modelInfo["description"]}</p></div><br>'
-        if modelInfo["model_description"]:
-            output_html += f'<div><h3>Version description</h3>'\
-            f'<p>{modelInfo["model_description"]}</p></div><br>'
-        output_html += f'<div align=center>{img_html}</div>'
-        return output_html
 
     def updateDlUrl(self, model_name=None, model_version=None, model_filename=None):
         if model_filename:
@@ -228,7 +192,6 @@ class civitaimodels:
                             for file in model['files']:
                                 if file['name'] == model_filename:
                                     dl_url = file['downloadUrl']
-                                    self.setModelVersionInfo(model)
             return dl_url
         else:
             return None
@@ -247,6 +210,7 @@ class civitaimodels:
     # HTML
     # Make model cards html
     def modelCardsHtml(self, model_dict):
+        '''Generate HTML of model cards.'''
         HTML = '<div class="column civmodellist">'
         for item in self.jsonData['items']:
             for k,model in model_dict.items():
@@ -279,10 +243,50 @@ class civitaimodels:
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'
         return HTML
-    
+
+    def modelInfoHtml(self, modelInfo:dict) -> str:
+        '''Generate HTML of model info'''
+        img_html = '<div class="sampleimgs">'
+        for pic in modelInfo['images']:
+            nsfw = None
+            if pic['nsfw'] != "None" and not self.showNsfw:
+                nsfw = 'class="civnsfw"'
+            img_html = img_html +\
+                         f'<div {nsfw} style="display:flex;align-items:flex-start;">'\
+                         f'<img src={pic["url"]} style="width:20em;"></img>'
+            if pic['meta']:
+                img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
+                for key, value in pic['meta'].items():
+                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}</br>'
+                img_html = img_html + '</div>'
+            img_html = img_html + '</div>'
+        img_html = img_html + '</div>'
+        output_html = '<div>'
+        if modelInfo['nsfw']:
+            output_html += '<h1>NSFW</b></h1>'
+        output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
+            f'<b>Civitai link</b> (if exist): '\
+            f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
+            f'https://civitai.com/models/{str(modelInfo["id"])}</a></br>'\
+            f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br>'\
+            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
+            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
+            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\
+            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br>'\
+            f'{escape(str(modelInfo["allow"]))}<br>'\
+            f'<a href={modelInfo["downloadUrl"]}>'\
+            '<b>Download Here</b></a>'\
+            '</div><br>'\
+            '<div><h2>Model description</h2>'\
+            f'<p>{modelInfo["description"]}</p></div><br>'
+        if modelInfo["versionDescription"]:
+            output_html += f'<div><h2>Version description</h2>'\
+            f'<p>{modelInfo["versionDescription"]}</p></div><br>'
+        output_html += f'<div><h2>Images</h3>{img_html}</div>'
+        return output_html
+
     #REST API
     def makeRequestQuery(self, content_type, sort_type, use_search_term, search_term=None):
-        
         query = {'types': content_type, 'sort': sort_type}
         if use_search_term != "No" and search_term:
             #search_term = search_term.replace(" ","%20")

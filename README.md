@@ -28,3 +28,4 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Support `--lyco-dir-backcompat` modified in v1.5.1 of SD web UI
 - Save to subfolder of base model name (e.g. `_SDXL_1_0` `_Other`)
 - NSFW models are saved in `.nsfw`
+- Show permmisions in HTML -> [reference](https://github.com/civitai/civitai/blob/62e1f299fda5421b6355853a32b3e5af8ee0b2c4/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)

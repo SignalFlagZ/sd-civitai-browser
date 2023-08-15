@@ -101,7 +101,7 @@ class civitaimodels:
         return self.modelID
     def allows2permissions(self) -> dict:
         '''Convert allows to permissions.
-            [->Reference](https://github.com/civitai/civitai/blob/62e1f299fda5421b6355853a32b3e5af8ee0b2c4/src/components/PermissionIndicator/PermissionIndicator.tsx#L16)'''
+            [->Reference](https://github.com/civitai/civitai/blob/62e1f299fda5421b6355853a32b3e5af8ee0b2c4/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
         permissions = {}
         if self.modelID is None:
             print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )

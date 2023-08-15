@@ -26,7 +26,7 @@ def update_next_page(show_nsfw, content_type, isNext=True, ):
     pages = civitai.getPages()
     hasPrev = not civitai.prevPage() == ""
     hasNext = not civitai.nextPage() == ""
-    model_dict = civitai.getItemNames() if (show_nsfw) else civitai.getItemNamesSfw()
+    model_dict = civitai.getModelNames() if (show_nsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
@@ -45,7 +45,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     pages = civitai.getPages()
     hasPrev = not civitai.prevPage() == ""
     hasNext = not civitai.nextPage() == ""
-    model_dict = civitai.getItemNames() if (show_nsfw) else civitai.getItemNamesSfw()
+    model_dict = civitai.getModelNames() if (show_nsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_dict)
     return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
@@ -56,7 +56,7 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
 
 def update_model_versions(model_name=None):
     if model_name is not None:
-        civitai.selectItemByName(model_name)
+        civitai.selectModelByName(model_name)
         dict = civitai.getModelVersionsList()
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
     else:
@@ -123,7 +123,7 @@ def on_ui_tabs():
             preview_image_html = gr.HTML()
         
         def save_text_click(file_name, content_type, use_new_folder, trained_words, list_models, base_model):
-            save_text_file(file_name, content_type, use_new_folder, trained_words, list_models, base_model,civitai.isNsfwItem() )
+            save_text_file(file_name, content_type, use_new_folder, trained_words, list_models, base_model,civitai.isNsfwModel() )
         save_text.click(
             fn=save_text_click,
             inputs=[
@@ -138,7 +138,7 @@ def on_ui_tabs():
         )
 
         def save_image_files(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model):
-            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model, civitai.getModelVersionInfo(), civitai.isNsfwItem() )
+            saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model, civitai.getModelVersionInfo(), civitai.isNsfwModel() )
         save_images.click(
             fn=save_image_files,
             inputs=[
@@ -152,7 +152,7 @@ def on_ui_tabs():
             outputs=[]
         )
         def download_model_click(url, file_name, content_type, use_new_folder, list_models,base_model):
-            download_file_thread(url, file_name, content_type, use_new_folder, list_models,base_model, civitai.isNsfwItem() )
+            download_file_thread(url, file_name, content_type, use_new_folder, list_models,base_model, civitai.isNsfwModel() )
         download_model.click(
             fn=download_model_click,
             inputs=[

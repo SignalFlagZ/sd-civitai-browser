@@ -41,51 +41,52 @@ class civitaimodels:
         return self.contentType
     
     # Models
-    def getItemNames(self) -> dict: #include nsfw models
+    def getModelNames(self) -> dict: #include nsfw models
         model_dict = {}
         for item in self.jsonData['items']:
             model_dict[item['name']] = item['name']
         return model_dict
-    def getItemNamesSfw(self) -> dict: #sfw models
+    def getModelNamesSfw(self) -> dict: #sfw models
         '''Return SFW items names.'''
         model_dict = {}
         for item in self.jsonData['items']:
             if not item['nsfw']:
                 model_dict[item['name']] = item['name']
         return model_dict   
-    def getItemIDs(self) -> dict:
+    def getModelIDs(self) -> dict:
         IDs = {}
         for item in self.jsonData['items']:
             IDs[item['id']] = item['name']
         return IDs
-    def getItemNameByID(self, id:int) -> str:
+    
+    # Model
+    def getModelNameByID(self, id:int) -> str:
         name = None
         for item in self.jsonData['items']:
             if item['id'] == id:
                 name = item['name']
         return name
-    def getIDByItemName(self, name:str) -> str:
+    def getIDByModelName(self, name:str) -> str:
         id = None
         for item in self.jsonData['items']:
             if item['name'] == name:
                 id = item['id']
         return id
-    def isNsfwItembyID(self, id:int) -> bool:
+    def isNsfwModelByID(self, id:int) -> bool:
         nsfw = None
         for item in self.jsonData['items']:
             if item['id'] == id:
                 nsfw = item['nsfw']
         return nsfw
-    
-    # Model Version
-    def selectItemByID(self, id:int):
+    def selectModelByID(self, id:int):
         for item in self.jsonData['items']:
             if item['id'] == id:
                 self.modelID = item['id']
                 self.modelNsfw = item['nsfw']
-            #print(f'{id} - {self.modelNsfw}')
+            else:
+                print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelID}' + Style.RESET_ALL)
         return self.modelID
-    def selectItemByName(self, name:str):
+    def selectModelByName(self, name:str):
         if name is not None:
             for item in self.jsonData['items']:
                 if item['name'] == name:
@@ -93,10 +94,12 @@ class civitaimodels:
                     self.modelNsfw = item['nsfw']
             #print(f'{name} - {self.modelNsfw}')
         return self.modelID
-    def isNsfwItem(self) -> bool:
+    def isNsfwModel(self) -> bool:
         return self.modelNsfw
-    def getItemID(self) -> int:
+    def getModelID(self) -> int:
         return self.modelID
+    # Version
+
     def getModelVersionsList(self):
         '''Return modelVersions list.
          Select the item before. '''
@@ -115,18 +118,18 @@ class civitaimodels:
     def getModelVersionInfo(self) -> str:
         return self.modelVersionInfo
 
-    def getModelByName(self, modelName:str) -> dict:
+    def getVersionInfoByName(self,versionName:str) -> dict:
         model_dict = {}
-        if modelName is not None:
+        if versionName is not None:
             for index, item in enumerate(self.jsonData['items']):
                 if item['id'] == self.modelID:
                     for model in item['modelVersions']:
-                        if model['name'] == modelName:
+                        if model['name'] == versionName:
                             model_dict = model
         return model_dict
 
 
-    def getModelInfo2(self, modelName:str) -> dict:
+    def makeModelInfo2(self, versionName:str) -> dict:
         '''not yet'''
         modelInfo = {}
         if self.modelID is None:
@@ -135,7 +138,9 @@ class civitaimodels:
             for index, item in enumerate(self.jsonData['items']):
                 if item['id'] == self.modelID:
                     modelInfo = self.jsonData['items'][index]
-            modelInfo['modelVersion'] = self.getModelByName(modelName)
+                for version in item['modelVersions']:
+                    if version['name'] == versionName:
+                        modelInfo['modelVersion'] = version
         return modelInfo
     
     def makeModelInfo(self, modelName:str, modelVersion:str) -> dict:

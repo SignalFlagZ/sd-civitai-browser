@@ -306,28 +306,44 @@ class civitaimodels:
             '<b>Download Here</b></a>'\
             '</div>'\
             '<h2>Permissions</h2>'\
-            f'<p>{escape(str(modelInfo["allow"]))}<p>'\
-            f'{self.permissionsHtml(self.allows2permissions())}'\
+            f'<p>{self.permissionsHtml(self.allows2permissions())}'\
+            f'{escape(str(modelInfo["allow"]))}</p>'\
             '<div><h2>Model description</h2>'\
-            f'<p>{modelInfo["description"]}</p></div></br>'
+            f'<p>{modelInfo["description"]}</p></div>'
         if modelInfo["versionDescription"]:
             output_html += f'<div><h2>Version description</h2>'\
             f'<p>{modelInfo["versionDescription"]}</p></div></br>'
         output_html += f'<div><h2>Images</h3>{img_html}</div>'
         return output_html
     
-    def permissionsHtml(self, premissions:dict) -> str:
-        html = '<div>'\
-            f'<p><strong>Check the source license yourself.</strong></p>'\
-            f'<b>{premissions["allowNoCredit"]}</b> : Use the model without crediting the creator</br>'\
-            f'<b>{premissions["canSellImages"]}</b> : Sell images they generate</br>'\
-            f'<b>{premissions["canRent"]}</b> : Run on services that generate images for money</br>'\
-            f'<b>{premissions["allowDerivatives"]}</b> : Share merges using this model</br>'\
-            f'<b>{premissions["canSell"]}</b> : Sell this model or merges using this model</br>'\
-            f'<b>{premissions["allowDifferentLicense"]}<b> : Have different permissions when sharing merges</p>'\
-            '</div>'
+    def permissionsHtml(self, premissions:dict, msgType:int=2) -> str:
+        html1 = '<div>'\
+                f'<p><strong>Check the source license yourself.</strong></p>'\
+                f'<b>{premissions["allowNoCredit"]}</b> : Use the model without crediting the creator</br>'\
+                f'<b>{premissions["canSellImages"]}</b> : Sell images they generate</br>'\
+                f'<b>{premissions["canRent"]}</b> : Run on services that generate images for money</br>'\
+                f'<b>{premissions["allowDerivatives"]}</b> : Share merges using this model</br>'\
+                f'<b>{premissions["canSell"]}</b> : Sell this model or merges using this model</br>'\
+                f'<b>{premissions["allowDifferentLicense"]}<b> : Have different permissions when sharing merges</p>'\
+                '</div>'
+        html2 = '<div>'\
+                f'<p><strong>Check the source license yourself.</strong></br>'\
+                '<span style=color:red>'
+        html2 += 'Creator credit required</br>' if not premissions["allowNoCredit"] else ''
+        html2 += 'No selling images</br>' if not premissions["canSellImages"] else ''
+        html2 += 'No generation services</br>' if not premissions["canRent"] else ''
+        html2 += 'No selling models</br>' if not premissions["canSell"] else ''
+        html2 += 'No sharing merges</br>' if not premissions["allowDerivatives"] else ''
+        html2 += 'Same permissions required</br>' if not premissions["allowDifferentLicense"] else ''
+        html2 += '</span></p></div>'
+        match msgType:
+            case 1:
+                html = html1
+            case 2:
+                html = html2
+            case _:
+                html = html2 + html1
         return html
-
 
     #REST API
     def makeRequestQuery(self, content_type, sort_type, use_search_term, search_term=None):

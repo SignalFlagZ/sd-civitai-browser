@@ -87,17 +87,41 @@ class civitaimodels:
                 print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelID}' + Style.RESET_ALL)
         return self.modelID
     def selectModelByName(self, name:str):
+        '''Serlect model by Name. Name are vaguer than IDs.'''
         if name is not None:
             for item in self.jsonData['items']:
                 if item['name'] == name:
                     self.modelID = item['id']
                     self.modelNsfw = item['nsfw']
-            #print(f'{name} - {self.modelNsfw}')
+            #print(f'{name} - {self.modelID}')
         return self.modelID
     def isNsfwModel(self) -> bool:
         return self.modelNsfw
     def getModelID(self) -> int:
         return self.modelID
+    def allows2permissions(self) -> dict:
+        '''Convert allows to permissions.
+            [->Reference](https://github.com/civitai/civitai/blob/62e1f299fda5421b6355853a32b3e5af8ee0b2c4/src/components/PermissionIndicator/PermissionIndicator.tsx#L16)'''
+        permissions = {}
+        if self.modelID is None:
+            print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )
+        else:
+            for item in self.jsonData['items']:
+                if item['id'] == self.modelID:
+                    allowNoCredit = item['allowNoCredit']
+                    allowCommercialUse = item['allowCommercialUse']
+                    allowDerivatives = item['allowDerivatives']
+                    allowDifferentLicense = item['allowDifferentLicense']
+                    canSellImages = allowCommercialUse == 'Image' or allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
+                    canRent = allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
+                    canSell = allowCommercialUse == 'Sell'
+                    permissions['allowNoCredit'] = allowNoCredit
+                    permissions['canSellImages'] = canSellImages
+                    permissions['canRent'] = canRent
+                    permissions['canSell'] = canSell
+                    permissions['allowDerivatives'] = allowDerivatives
+                    permissions['allowDifferentLicense'] = allowDifferentLicense
+        return permissions
     # Version
 
     def getModelVersionsList(self):
@@ -105,7 +129,7 @@ class civitaimodels:
          Select the item before. '''
         versions_dict = {}
         if self.modelID is None:
-            print(Fore.LIGHTYELLOW_EX + 'Select the item first.' + Style.RESET_ALL )
+            print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )
         else:
             for item in self.jsonData['items']:
                 if item['id'] == self.modelID:
@@ -273,22 +297,37 @@ class civitaimodels:
             f'<b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
             f'https://civitai.com/models/{str(modelInfo["id"])}</a></br>'\
-            f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br>'\
-            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br>'\
+            f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}</br>'\
+            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}</br>'\
             f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
-            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br>'\
-            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br>'\
-            f'{escape(str(modelInfo["allow"]))}<br>'\
+            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}</br>'\
+            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}</br>'\
             f'<a href={modelInfo["downloadUrl"]}>'\
             '<b>Download Here</b></a>'\
-            '</div><br>'\
+            '</div>'\
+            '<h2>Permissions</h2>'\
+            f'<p>{escape(str(modelInfo["allow"]))}<p>'\
+            f'{self.permissionsHtml(self.allows2permissions())}'\
             '<div><h2>Model description</h2>'\
-            f'<p>{modelInfo["description"]}</p></div><br>'
+            f'<p>{modelInfo["description"]}</p></div></br>'
         if modelInfo["versionDescription"]:
             output_html += f'<div><h2>Version description</h2>'\
-            f'<p>{modelInfo["versionDescription"]}</p></div><br>'
+            f'<p>{modelInfo["versionDescription"]}</p></div></br>'
         output_html += f'<div><h2>Images</h3>{img_html}</div>'
         return output_html
+    
+    def permissionsHtml(self, premissions:dict) -> str:
+        html = '<div>'\
+            f'<p><strong>Check the source license yourself.</strong></p>'\
+            f'<b>{premissions["allowNoCredit"]}</b> : Use the model without crediting the creator</br>'\
+            f'<b>{premissions["canSellImages"]}</b> : Sell images they generate</br>'\
+            f'<b>{premissions["canRent"]}</b> : Run on services that generate images for money</br>'\
+            f'<b>{premissions["allowDerivatives"]}</b> : Share merges using this model</br>'\
+            f'<b>{premissions["canSell"]}</b> : Sell this model or merges using this model</br>'\
+            f'<b>{premissions["allowDifferentLicense"]}<b> : Have different permissions when sharing merges</p>'\
+            '</div>'
+        return html
+
 
     #REST API
     def makeRequestQuery(self, content_type, sort_type, use_search_term, search_term=None):
@@ -326,3 +365,4 @@ class civitaimodels:
         #  print("Request failed with status code: {}".format(response.status_code))
         #  exit()            
         return data
+    

@@ -7,7 +7,7 @@ from colorama import Fore, Back, Style
 from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
-    '''civitaimodels handle the response of civitai models api v1.'''
+    '''civitaimodels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str, json_data:dict={}, content_type:str=""):
         self.jsonData = json_data
         self.contentType = content_type

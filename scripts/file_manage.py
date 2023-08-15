@@ -164,21 +164,22 @@ def contenttype_folder(content_type):
     return folder, new_folder
 
 def escaped_modelpath(folder, model_name):
-    escapechars = str.maketrans({" ": r"_",
-                                     "(": r"",
-                                     ")": r"",
-                                     "|": r"",
-                                     ":": r"",
-                                     ",": r"_",
-                                     "<": r"",
-                                     ">": r"",
-                                     "!": r"",
-                                     "?": r"",
-                                     ".": r"_",
-                                     "&": r"_and_",
-                                     "*": r"_",
-                                     "\"": r"",
-                                     "\\": r""})
+    escapechars = str.maketrans({   " ": r"_",
+                                    "(": r"",
+                                    ")": r"",
+                                    "|": r"",
+                                    ":": r"",
+                                    ",": r"_",
+                                    "<": r"",
+                                    ">": r"",
+                                    "!": r"",
+                                    "?": r"",
+                                    ".": r"_",
+                                    "&": r"_and_",
+                                    "*": r"_",
+                                    "\"": r"",
+                                    "\\": r""
+                                })
     return os.path.join(folder,model_name.translate(escapechars))
 
 def extranetwork_folder(content_type, use_new_folder, model_name:str = "",base_model:str="", make_dir:bool=True, nsfw:bool=False):

@@ -55,12 +55,7 @@ class civitaimodels:
             if not item['nsfw']:
                 model_dict[item['name']] = item['name']
         return model_dict   
-    def getModelIDs(self) -> dict:
-        IDs = {}
-        for item in self.jsonData['items']:
-            IDs[item['id']] = item['name']
-        return IDs
-    
+        
     # Model
     def getModelNameByID(self, id:int) -> str:
         name = None
@@ -80,6 +75,11 @@ class civitaimodels:
             if item['id'] == id:
                 nsfw = item['nsfw']
         return nsfw
+    def selectModelByIndex(self, index:int):
+        if index < len(self.jsonData['items']):
+            self.modelIndex = index
+        return self.modelIndex
+            
     def selectModelByID(self, id:int):
         for index, item in enumerate(self.jsonData['items']):
             if item['id'] == id:
@@ -107,6 +107,12 @@ class civitaimodels:
         return self.modelNsfw
     def getSelectedModelIndex(self) -> int:
         return self.modelIndex
+    def getSelectedModelName(self) -> str:
+        item = self.jsonData['items'][self.modelIndex]
+        return item['name']
+    def getSelectedModelID(self) -> str:
+        item = self.jsonData['items'][self.modelIndex]
+        return item['id']
     def allows2permissions(self) -> dict:
         '''Convert allows to permissions. Select model first.
             [->Reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
@@ -268,7 +274,7 @@ class civitaimodels:
     def modelCardsHtml(self, model_names):
         '''Generate HTML of model cards.'''
         HTML = '<div class="column civmodellist">'
-        for item in self.jsonData['items']:
+        for index, item in enumerate(self.jsonData['items']):
             for k,model in model_names.items():
                 if model_names[k] == item['name']:
                     #print(f'Item:{item["modelVersions"][0]["images"]}')
@@ -294,7 +300,7 @@ class civitaimodels:
                             if os.path.exists(path_file):
                                 alreadyhave = "civmodelcardalreadyhave"
                                 break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{model_name}\')">'\
+                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{index}\')">'\
                                     +  imgtag \
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'

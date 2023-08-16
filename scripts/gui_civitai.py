@@ -57,15 +57,14 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
 def update_model_versions(model_name=None):
     if model_name is not None:
         civitai.selectModelByName(model_name)
+    if civitai.getSelectedModelIndex() is not None:
         dict = civitai.getModelVersionsList()
         civitai.selectVersionByName(next(iter(dict.keys()), None))
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
-    else:
-        return gr.Dropdown.update(choices=[], value=None)
 
-def  update_model_info(model_name=None, model_version=None):
+def  update_model_info(model_version=None):
     civitai.selectVersionByName(model_version)
-    if model_name and model_version:
+    if model_version:
         dict = civitai.makeModelInfo()             
         return  gr.HTML.update(value=dict['html']),\
                 gr.Textbox.update(value=dict['trainedWords']),\
@@ -80,7 +79,7 @@ def  update_model_info(model_name=None, model_version=None):
 def update_everything(list_models, list_versions, dl_url):
     civitai.selectModelByName(list_models)
     civitai.selectVersionByName(list_versions)
-    (a, d, f, base_model) = update_model_info(list_models, list_versions)
+    (a, d, f, base_model) = update_model_info(list_versions)
     dl_url = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))
     return (a, d, f, list_versions, list_models, dl_url, base_model)
 
@@ -217,7 +216,6 @@ def on_ui_tabs():
         list_versions.change(
             fn=update_model_info,
             inputs=[
-            list_models,
             list_versions,
             ],
             outputs=[
@@ -264,11 +262,12 @@ def on_ui_tabs():
             pages
             ]
         )
-        def update_models_dropdown(model_name):
-            ret_versions=update_model_versions(model_name)
-            (html,d, f, base_model) = update_model_info(model_name,ret_versions['value'])
+        def update_models_dropdown(event_text):
+            civitai.selectModelByIndex(int(event_text))
+            ret_versions=update_model_versions()
+            (html,d, f, base_model) = update_model_info(ret_versions['value'])
             dl_url = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))
-            return gr.Dropdown.update(value=model_name),ret_versions ,html,dl_url,d,f,base_model
+            return gr.Dropdown.update(value=civitai.getSelectedModelName()),ret_versions ,html,dl_url,d,f,base_model
         event_text.change(
             fn=update_models_dropdown,
             inputs=[

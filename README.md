@@ -34,3 +34,4 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ↓ v1.2.0
 - NSFW models are saved in `.nsfw`
 - Show permmisions in HTML -> [reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)
+- Avoid collision when there are same model names

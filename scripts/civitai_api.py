@@ -74,7 +74,7 @@ class civitaimodels:
                 nsfw = item['nsfw']
         return nsfw
     def selectModelByIndex(self, index:int):
-        if index < len(self.jsonData['items']):
+        if index >= 0 and index < len(self.jsonData['items']):
             self.modelIndex = index
         return self.modelIndex
             

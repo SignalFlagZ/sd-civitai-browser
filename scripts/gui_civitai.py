@@ -26,9 +26,9 @@ def update_next_page(show_nsfw, content_type, isNext=True, ):
     pages = civitai.getPages()
     hasPrev = not civitai.prevPage() == ""
     hasNext = not civitai.nextPage() == ""
-    model_dict = civitai.getModelNames() if (show_nsfw) else civitai.getModelNamesSfw()
-    HTML = civitai.modelCardsHtml(model_dict)
-    return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
+    model_names = civitai.getModelNames() if (show_nsfw) else civitai.getModelNamesSfw()
+    HTML = civitai.modelCardsHtml(model_names)
+    return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
             gr.Button.update(interactive=hasPrev),\
@@ -45,9 +45,9 @@ def update_model_list(content_type, sort_type, use_search_term, search_term, sho
     pages = civitai.getPages()
     hasPrev = not civitai.prevPage() == ""
     hasNext = not civitai.nextPage() == ""
-    model_dict = civitai.getModelNames() if (show_nsfw) else civitai.getModelNamesSfw()
-    HTML = civitai.modelCardsHtml(model_dict)
-    return  gr.Dropdown.update(choices=[v for k, v in model_dict.items()], value=None),\
+    model_names = civitai.getModelNames() if (show_nsfw) else civitai.getModelNamesSfw()
+    HTML = civitai.modelCardsHtml(model_names)
+    return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
             gr.Dropdown.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
             gr.Button.update(interactive=hasPrev),\
@@ -58,13 +58,15 @@ def update_model_versions(model_name=None):
     if model_name is not None:
         civitai.selectModelByName(model_name)
         dict = civitai.getModelVersionsList()
+        civitai.selectVersionByName(next(iter(dict.keys()), None))
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
     else:
         return gr.Dropdown.update(choices=[], value=None)
 
 def  update_model_info(model_name=None, model_version=None):
+    civitai.selectVersionByName(model_version)
     if model_name and model_version:
-        dict = civitai.makeModelInfo(model_name, model_version)             
+        dict = civitai.makeModelInfo()             
         return  gr.HTML.update(value=dict['html']),\
                 gr.Textbox.update(value=dict['trainedWords']),\
                 gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
@@ -76,8 +78,10 @@ def  update_model_info(model_name=None, model_version=None):
                 gr.Textbox.update(value='')
 
 def update_everything(list_models, list_versions, dl_url):
+    civitai.selectModelByName(list_models)
+    civitai.selectVersionByName(list_versions)
     (a, d, f, base_model) = update_model_info(list_models, list_versions)
-    dl_url = gr.Textbox.update(value=civitai.updateDlUrl(list_models, list_versions, f['value']))
+    dl_url = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))
     return (a, d, f, list_versions, list_models, dl_url, base_model)
 
    
@@ -223,9 +227,11 @@ def on_ui_tabs():
             base_model
             ]
         )
+        def updateDlUrl(model_filename):
+            return civitai.getUrlbyName(model_filename)
         model_filename.change(
-            fn=civitai.updateDlUrl,
-            inputs=[list_models, list_versions, model_filename,],
+            fn=updateDlUrl,
+            inputs=[model_filename,],
             outputs=[dl_url,]
         )
         get_next_page.click(
@@ -261,7 +267,7 @@ def on_ui_tabs():
         def update_models_dropdown(model_name):
             ret_versions=update_model_versions(model_name)
             (html,d, f, base_model) = update_model_info(model_name,ret_versions['value'])
-            dl_url = gr.Textbox.update(value=civitai.updateDlUrl(list_models, list_versions, f['value']))
+            dl_url = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))
             return gr.Dropdown.update(value=model_name),ret_versions ,html,dl_url,d,f,base_model
         event_text.change(
             fn=update_models_dropdown,

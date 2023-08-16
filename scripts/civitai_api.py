@@ -13,7 +13,8 @@ class civitaimodels:
         self.contentType = content_type
         self.showNsfw = False
         self.baseUrl = url
-        self.modelID = None
+        self.modelIndex = None
+        self.versionIndex = None
         self.modelNsfw = False
         self.modelVersionInfo = None
     def updateJsonData(self, json_data:dict={}, content_type:str=""):
@@ -21,7 +22,8 @@ class civitaimodels:
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
-        self.modelID = None
+        self.modelIndex = None
+        self.versionIndex = None
         self.modelNsfw = False
         self.modelVersionInfo = None
     def setBaseUrl(self,url:str):
@@ -79,84 +81,110 @@ class civitaimodels:
                 nsfw = item['nsfw']
         return nsfw
     def selectModelByID(self, id:int):
-        for item in self.jsonData['items']:
+        for index, item in enumerate(self.jsonData['items']):
             if item['id'] == id:
-                self.modelID = item['id']
+                self.modelIndex = index
                 self.modelNsfw = item['nsfw']
             else:
-                print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelID}' + Style.RESET_ALL)
-        return self.modelID
-    def selectModelByName(self, name:str):
-        '''Serlect model by Name. Name are vaguer than IDs.'''
+                print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelIndex}' + Style.RESET_ALL)
+        return self.modelIndex
+    def selectModelByName(self, name:str) -> int:
+        '''Serlect model by Name. Name are vaguer than IDs.
+        
+        Args:
+            name (str): model name
+        Returns:
+            int: index number of the model
+        '''
         if name is not None:
-            for item in self.jsonData['items']:
+            for index, item in enumerate(self.jsonData['items']):
                 if item['name'] == name:
-                    self.modelID = item['id']
+                    self.modelIndex = index
                     self.modelNsfw = item['nsfw']
-            #print(f'{name} - {self.modelID}')
-        return self.modelID
+            #print(f'{name} - {self.modelIndex}')
+        return self.modelIndex
     def isNsfwModel(self) -> bool:
         return self.modelNsfw
-    def getModelID(self) -> int:
-        return self.modelID
+    def getSelectedModelIndex(self) -> int:
+        return self.modelIndex
     def allows2permissions(self) -> dict:
-        '''Convert allows to permissions.
+        '''Convert allows to permissions. Select model first.
             [->Reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
         permissions = {}
-        if self.modelID is None:
+        if self.modelIndex is None:
             print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )
         else:
-            for item in self.jsonData['items']:
-                if item['id'] == self.modelID:
-                    allowNoCredit = item['allowNoCredit']
-                    allowCommercialUse = item['allowCommercialUse']
-                    allowDerivatives = item['allowDerivatives']
-                    allowDifferentLicense = item['allowDifferentLicense']
-                    canSellImages = allowCommercialUse == 'Image' or allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
-                    canRent = allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
-                    canSell = allowCommercialUse == 'Sell'
-                    permissions['allowNoCredit'] = allowNoCredit
-                    permissions['canSellImages'] = canSellImages
-                    permissions['canRent'] = canRent
-                    permissions['canSell'] = canSell
-                    permissions['allowDerivatives'] = allowDerivatives
-                    permissions['allowDifferentLicense'] = allowDifferentLicense
+            if self.modelIndex is not None:
+                item = self.jsonData['items'][self.modelIndex]
+                allowNoCredit = item['allowNoCredit']
+                allowCommercialUse = item['allowCommercialUse']
+                allowDerivatives = item['allowDerivatives']
+                allowDifferentLicense = item['allowDifferentLicense']
+                canSellImages = allowCommercialUse == 'Image' or allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
+                canRent = allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
+                canSell = allowCommercialUse == 'Sell'
+                permissions['allowNoCredit'] = allowNoCredit
+                permissions['canSellImages'] = canSellImages
+                permissions['canRent'] = canRent
+                permissions['canSell'] = canSell
+                permissions['allowDerivatives'] = allowDerivatives
+                permissions['allowDifferentLicense'] = allowDifferentLicense
         return permissions
-    # Version
-
     def getModelVersionsList(self):
-        '''Return modelVersions list.
-         Select the item before. '''
-        versions_dict = {}
-        if self.modelID is None:
+        '''Return modelVersions list. Select item before.'''
+        versionNames = {}
+        if self.modelIndex is None:
             print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )
         else:
-            for item in self.jsonData['items']:
-                if item['id'] == self.modelID:
-                    for model in item['modelVersions']:
-                        versions_dict[model['name']] = model["name"]
-        return versions_dict
+            item = self.jsonData['items'][self.modelIndex]
+            for version in item['modelVersions']:
+                versionNames[version['name']] = version["name"]
+        return versionNames
 
+    # Version
+    def selectVersionByID(self, ID:int) -> int:
+        '''Select model version by ID. Select model first.
+        
+        Args:
+            ID (int): version ID
+        Returns:
+            int: index number of the version
+        '''
+        item = self.jsonData['items'][self.modelIndex]
+        for index, model in enumerate(item['modelVersions']):
+            if model['id'] == ID:
+                    self.versionIndex = index
+        return self.versionIndex
+    def selectVersionByName(self, name:str) -> int:
+        '''Select model version by name. Select model first.
+        
+        Args:
+            ID (int): version ID
+        Returns:
+            int: index number of the version
+        '''
+        if name is not None:
+            item = self.jsonData['items'][self.modelIndex]
+            for index, model in enumerate(item['modelVersions']):
+                if model['name'] == name:
+                        self.versionIndex = index
+        return self.versionIndex
+    
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
     def getModelVersionInfo(self) -> str:
         return self.modelVersionInfo
 
-    def getVersionInfoByName(self,versionName:str) -> dict:
-        model_dict = {}
-        if versionName is not None:
-            for index, item in enumerate(self.jsonData['items']):
-                if item['id'] == self.modelID:
-                    for model in item['modelVersions']:
-                        if model['name'] == versionName:
-                            model_dict = model
-        return model_dict
-
+    def getVersionInfo(self) -> dict:
+        version_dict = {}
+        item = self.jsonData['items'][self.modelIndex]
+        version_dict = item['modelVersions'][self.versionIndex]
+        return version_dict
 
     def makeModelInfo2(self, versionName:str) -> dict:
         '''not yet'''
         modelInfo = {}
-        if self.modelID is None:
+        if self.modelIndex is None:
             print(Fore.LIGHTYELLOW_EX + f'Select item first. {self.modelID}' + Style.RESET_ALL )
         else:
             for index, item in enumerate(self.jsonData['items']):
@@ -167,63 +195,62 @@ class civitaimodels:
                         modelInfo['modelVersion'] = version
         return modelInfo
     
-    def makeModelInfo(self, modelName:str, modelVersion:str) -> dict:
+    def makeModelInfo(self) -> dict:
         modelInfo = {
             'description':"",
             'trainedWords':"",
             'files':{},
             'allow':{},
         }
-        for item in self.jsonData['items']:
-            if item['name'] == modelName:
-                modelInfo['id'] = item['id']
-                modelInfo['model_name'] = item['name']
-                modelInfo['type'] = item['type']
-                modelInfo['nsfw'] = item['nsfw']
-                modelInfo['creator'] = item['creator']['username']
-                modelInfo['tags'] = item['tags']
-                modelInfo['description'] = item['description']
-                modelInfo['allow']['allowNoCredit'] = item['allowNoCredit']
-                modelInfo['allow']['allowCommercialUse'] = item['allowCommercialUse']
-                modelInfo['allow']['allowDerivatives'] = item['allowDerivatives']
-                modelInfo['allow']['allowDifferentLicense'] = item['allowDifferentLicense']
-                for model in item['modelVersions']:
-                    if model['name'] == modelVersion:
-                        modelInfo['version_name'] = model['name']
-                        modelInfo['modelId'] = model['modelId']
-                        modelInfo['trainedWords'] = ", ".join(model['trainedWords'])
-                        modelInfo['baseModel'] = model['baseModel']
-                        modelInfo['versionDescription'] = model['description']
-                        for file in model['files']:
-                            modelInfo['files'][file['name']] = file['downloadUrl']
-                        pics = []
-                        for pic in model['images']:
-                            pics.append({ 'id' : pic['id'],
-                                          'nsfw' : pic['nsfw'],
-                                          'url': pic["url"],
-                                          'meta' : pic['meta'],
-                                          'type' : pic['type'],
-                                         })
-                        modelInfo['images'] = pics
-                        modelInfo['downloadUrl'] = model['downloadUrl'] if 'downloadUrl' in model else ""
-                modelInfo['html'] = self.modelInfoHtml(modelInfo)
-                self.setModelVersionInfo(modelInfo)
+        item = self.jsonData['items'][self.modelIndex]
+        version = item['modelVersions'][self.versionIndex]
+        modelInfo['id'] = item['id']
+        modelInfo['model_name'] = item['name']
+        modelInfo['type'] = item['type']
+        modelInfo['nsfw'] = item['nsfw']
+        modelInfo['creator'] = item['creator']['username']
+        modelInfo['tags'] = item['tags']
+        modelInfo['description'] = item['description']
+        modelInfo['allow']['allowNoCredit'] = item['allowNoCredit']
+        modelInfo['allow']['allowCommercialUse'] = item['allowCommercialUse']
+        modelInfo['allow']['allowDerivatives'] = item['allowDerivatives']
+        modelInfo['allow']['allowDifferentLicense'] = item['allowDifferentLicense']
+        modelInfo['version_name'] = version['name']
+        modelInfo['modelId'] = version['modelId']
+        modelInfo['trainedWords'] = ", ".join(version['trainedWords'])
+        modelInfo['baseModel'] = version['baseModel']
+        modelInfo['versionDescription'] = version['description']
+        for file in version['files']:
+            modelInfo['files'][file['name']] = file['downloadUrl']
+        pics = []
+        for pic in version['images']:
+            pics.append({ 'id' : pic['id'],
+                            'nsfw' : pic['nsfw'],
+                            'url': pic["url"],
+                            'meta' : pic['meta'],
+                            'type' : pic['type'],
+                            })
+        modelInfo['images'] = pics
+        modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else ""
+        modelInfo['html'] = self.modelInfoHtml(modelInfo)
+        self.setModelVersionInfo(modelInfo)
         return modelInfo
 
-    def updateDlUrl(self, model_name=None, model_version=None, model_filename=None):
-        if model_filename:
-            dl_url = None
-            #model_version = model_version.replace(f' - {model_name}','').strip()
-            for item in self.jsonData['items']:
-                if item['name'] == model_name:
-                    for model in item['modelVersions']:
-                        if model['name'] == model_version:
-                            for file in model['files']:
-                                if file['name'] == model_filename:
-                                    dl_url = file['downloadUrl']
-            return dl_url
-        else:
-            return None
+    def getUrlbyName(self, model_filename=None):
+        if self.modelIndex is None:
+            #print(Fore.LIGHTYELLOW_EX + f'Select model first.' + Style.RESET_ALL )
+            return
+        if self.versionIndex is None:
+            #print(Fore.LIGHTYELLOW_EX + f'Select version first.' + Style.RESET_ALL )
+            return
+        item = self.jsonData['items'][self.modelIndex]
+        version = item['modelVersions'][self.versionIndex]
+        dl_url = None
+        for file in version['files']:
+            if file['name'] == model_filename:
+                dl_url = file['downloadUrl']
+        return dl_url
+
     # Pages
     def getCurrentPage(self) -> str:
         return f"{self.jsonData['metadata']['currentPage']}"
@@ -238,12 +265,12 @@ class civitaimodels:
 
     # HTML
     # Make model cards html
-    def modelCardsHtml(self, model_dict):
+    def modelCardsHtml(self, model_names):
         '''Generate HTML of model cards.'''
         HTML = '<div class="column civmodellist">'
         for item in self.jsonData['items']:
-            for k,model in model_dict.items():
-                if model_dict[k] == item['name']:
+            for k,model in model_names.items():
+                if model_names[k] == item['name']:
                     #print(f'Item:{item["modelVersions"][0]["images"]}')
                     model_name = escape(item["name"].replace("'","\\'"),quote=True)
                     #print(f'{model_name}')

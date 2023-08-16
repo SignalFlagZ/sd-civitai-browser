@@ -15,7 +15,6 @@ class civitaimodels:
         self.baseUrl = url
         self.modelIndex = None
         self.versionIndex = None
-        self.modelNsfw = False
         self.modelVersionInfo = None
     def updateJsonData(self, json_data:dict={}, content_type:str=""):
         '''Update json data.'''
@@ -24,7 +23,6 @@ class civitaimodels:
         self.showNsfw = False
         self.modelIndex = None
         self.versionIndex = None
-        self.modelNsfw = False
         self.modelVersionInfo = None
     def setBaseUrl(self,url:str):
            self.url = url
@@ -84,7 +82,6 @@ class civitaimodels:
         for index, item in enumerate(self.jsonData['items']):
             if item['id'] == id:
                 self.modelIndex = index
-                self.modelNsfw = item['nsfw']
             else:
                 print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelIndex}' + Style.RESET_ALL)
         return self.modelIndex
@@ -100,11 +97,10 @@ class civitaimodels:
             for index, item in enumerate(self.jsonData['items']):
                 if item['name'] == name:
                     self.modelIndex = index
-                    self.modelNsfw = item['nsfw']
             #print(f'{name} - {self.modelIndex}')
         return self.modelIndex
     def isNsfwModel(self) -> bool:
-        return self.modelNsfw
+        return self.jsonData['items'][self.modelIndex]['nsfw']
     def getSelectedModelIndex(self) -> int:
         return self.modelIndex
     def getSelectedModelName(self) -> str:

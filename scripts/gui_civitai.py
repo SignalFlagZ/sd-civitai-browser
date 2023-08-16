@@ -263,7 +263,8 @@ def on_ui_tabs():
             ]
         )
         def update_models_dropdown(event_text):
-            civitai.selectModelByIndex(int(event_text))
+            index = event_text.split(':')[1] # str: 'Index:{index}:{id}'
+            civitai.selectModelByIndex(int(index))
             ret_versions=update_model_versions()
             (html,d, f, base_model) = update_model_info(ret_versions['value'])
             dl_url = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))

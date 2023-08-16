@@ -279,6 +279,7 @@ class civitaimodels:
                     #print(f'Length: {len(item["modelVersions"][0]["images"])}')
                     nsfw = ""
                     alreadyhave = ""
+                    ID = item['id']
                     if any(item['modelVersions']):
                         if len(item['modelVersions'][0]['images']) > 0:
                             if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not self.isShowNsfw():
@@ -296,7 +297,7 @@ class civitaimodels:
                             if os.path.exists(path_file):
                                 alreadyhave = "civmodelcardalreadyhave"
                                 break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{index}\')">'\
+                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index:{index}:{ID}\')">'\
                                     +  imgtag \
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'

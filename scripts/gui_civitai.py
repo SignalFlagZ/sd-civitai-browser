@@ -80,7 +80,7 @@ def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
     civitai.selectModelByName(grDrpdwnModels)
     civitai.selectVersionByName(grRadioVersions)
     grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel = update_model_info(grRadioVersions)
-    grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))
+    grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(['value']))
     return  grHtmlModelInfo,\
             grTxtTrainedWords,\
             grDrpdwnFilenames,\

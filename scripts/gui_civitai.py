@@ -113,9 +113,11 @@ def on_ui_tabs():
         with gr.Row():
             grHtmlCards = gr.HTML()
         with gr.Row():
-            grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="quicksettings1", value=None)
-            grTxtJsEvent = gr.Textbox(label="Event text",elem_id="eventtext1", visible=False, interactive=True, lines=1)
-            grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="quicksettings", value=None)
+            with gr.Column(scale=1):
+                grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="modellist", value=None)
+                grTxtJsEvent = gr.Textbox(label="Event text",elem_id="eventtext1", visible=False, interactive=True, lines=1)
+            with gr.Column(scale=5):
+                grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
         with gr.Row():
             txt_list = ""
             grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)

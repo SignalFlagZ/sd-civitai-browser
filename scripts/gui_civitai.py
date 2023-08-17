@@ -76,15 +76,15 @@ def  update_model_info(model_version=None):
                 gr.Dropdown.update(choices=[], value=None),\
                 gr.Textbox.update(value='')
 
-def update_everything(grDrpdwnModels, grDrpdwnVersions, grTxtDlUrl):
+def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
     civitai.selectModelByName(grDrpdwnModels)
-    civitai.selectVersionByName(grDrpdwnVersions)
-    grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel = update_model_info(grDrpdwnVersions)
+    civitai.selectVersionByName(grRadioVersions)
+    grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel = update_model_info(grRadioVersions)
     grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(f['value']))
     return  grHtmlModelInfo,\
             grTxtTrainedWords,\
             grDrpdwnFilenames,\
-            grDrpdwnVersions,\
+            grRadioVersions,\
             grDrpdwnModels,\
             grTxtDlUrl,\
             grTxtBaseModel
@@ -115,7 +115,7 @@ def on_ui_tabs():
         with gr.Row():
             grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="quicksettings1", value=None)
             grTxtJsEvent = gr.Textbox(label="Event text",elem_id="eventtext1", visible=False, interactive=True, lines=1)
-            grDrpdwnVersions = gr.Dropdown(label="Version", choices=[], interactive=True, elem_id="quicksettings", value=None)
+            grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="quicksettings", value=None)
         with gr.Row():
             txt_list = ""
             grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
@@ -185,7 +185,7 @@ def on_ui_tabs():
             ],
             outputs=[
             grDrpdwnModels,
-            grDrpdwnVersions,
+            grRadioVersions,
             grHtmlCards,            
             grBtnPrevPage,
             grBtnNextPage,
@@ -197,14 +197,14 @@ def on_ui_tabs():
             #fn=update_model_info,
             inputs=[
             grDrpdwnModels,
-            grDrpdwnVersions,
+            grRadioVersions,
             grTxtDlUrl
             ],
             outputs=[
             grHtmlModelInfo,
             grTxtTrainedWords,
             grDrpdwnFilenames,
-            grDrpdwnVersions,
+            grRadioVersions,
             grDrpdwnModels,
             grTxtDlUrl,
             grTxtBaseModel
@@ -216,13 +216,13 @@ def on_ui_tabs():
             grDrpdwnModels,
             ],
             outputs=[
-            grDrpdwnVersions,
+            grRadioVersions,
             ]
         )
-        grDrpdwnVersions.change(
+        grRadioVersions.change(
             fn=update_model_info,
             inputs=[
-            grDrpdwnVersions,
+            grRadioVersions,
             ],
             outputs=[
             grHtmlModelInfo,
@@ -246,7 +246,7 @@ def on_ui_tabs():
             ],
             outputs=[
             grDrpdwnModels,
-            grDrpdwnVersions,
+            grRadioVersions,
             grHtmlCards,
             grBtnPrevPage,
             grBtnNextPage,
@@ -261,7 +261,7 @@ def on_ui_tabs():
             ],
             outputs=[
             grDrpdwnModels,
-            grDrpdwnVersions,
+            grRadioVersions,
             grHtmlCards,
             grBtnPrevPage,
             grBtnNextPage,
@@ -283,7 +283,7 @@ def on_ui_tabs():
             ],
             outputs=[
                 grDrpdwnModels,
-                grDrpdwnVersions,
+                grRadioVersions,
                 grHtmlModelInfo,
                 grTxtDlUrl,
                 grTxtTrainedWords,

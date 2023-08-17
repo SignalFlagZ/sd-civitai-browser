@@ -16,6 +16,7 @@ class civitaimodels:
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None
+        self.saveFolder = None
     def updateJsonData(self, json_data:dict={}, content_type:str=""):
         '''Update json data.'''
         self.jsonData = json_data
@@ -24,6 +25,7 @@ class civitaimodels:
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None
+        self.saveFolder = None
     def setBaseUrl(self,url:str):
            self.url = url
     def getBaseUrl(self) -> str:
@@ -39,7 +41,11 @@ class civitaimodels:
         self.contentType = content_type
     def getContentType(self) -> str:
         return self.contentType
-    
+    def setSaveFolder(self, path):
+        self.saveFolder = path
+    def getSaveFolder(self):
+        return self.saveFolder
+
     # Models
     def getModelNames(self) -> dict: #include nsfw models
         model_dict = {}
@@ -86,7 +92,7 @@ class civitaimodels:
                 print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelIndex}' + Style.RESET_ALL)
         return self.modelIndex
     def selectModelByName(self, name:str) -> int:
-        '''Serlect model by Name. Name are vaguer than IDs.
+        '''Select model by Name. Name are vaguer than IDs.
         
         Args:
             name (str): model name
@@ -171,13 +177,15 @@ class civitaimodels:
                 if model['name'] == name:
                         self.versionIndex = index
         return self.versionIndex
-    
+    def getSelectedVersionName(self):
+        return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['name']
+    def getSelectedVersionBaeModel(self):
+        return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
     def getModelVersionInfo(self) -> str:
         return self.modelVersionInfo
-
-    def getVersionInfo(self) -> dict:
+    def getVersionDict(self) -> dict:
         version_dict = {}
         item = self.jsonData['items'][self.modelIndex]
         version_dict = item['modelVersions'][self.versionIndex]
@@ -196,7 +204,6 @@ class civitaimodels:
                     if version['name'] == versionName:
                         modelInfo['modelVersion'] = version
         return modelInfo
-    
     def makeModelInfo(self) -> dict:
         modelInfo = {
             'description':"",
@@ -291,7 +298,7 @@ class civitaimodels:
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
                             base_model = item["modelVersions"][0]['baseModel']
-                            folder = extranetwork_folder(self.getContentType(),False,item["name"],base_model, False, nsfw=item['nsfw'])
+                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, False, nsfw=item['nsfw'])
                             path_file = os.path.join(folder, file_name)
                             #print(f"{path_file}")
                             if os.path.exists(path_file):

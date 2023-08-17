@@ -35,3 +35,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - NSFW models are saved in `.nsfw`
 - Show permmisions in HTML -> [reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)
 - Avoid collision when there are same model names
+- Deprecate new folder checkbox and its function
+- Change version selection from dropdown to radio button
+---
+↓ v1.3.0
+- Add save folder textbox

@@ -291,7 +291,7 @@ class civitaimodels:
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
                             base_model = item["modelVersions"][0]['baseModel']
-                            folder = extranetwork_folder(self.getContentType(),False,item["name"],base_model, False, nsfw=item['nsfw'])
+                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, False, nsfw=item['nsfw'])
                             path_file = os.path.join(folder, file_name)
                             #print(f"{path_file}")
                             if os.path.exists(path_file):

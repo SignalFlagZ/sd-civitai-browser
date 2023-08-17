@@ -182,34 +182,34 @@ def escaped_modelpath(folder, model_name):
                                 })
     return os.path.join(folder,model_name.translate(escapechars))
 
-def extranetwork_folder(content_type, use_new_folder, model_name:str = "",base_model:str="", make_dir:bool=True, nsfw:bool=False):
+def extranetwork_folder(content_type, model_name:str = "",base_model:str="", make_dir:bool=True, nsfw:bool=False):
     folder, new_folder = contenttype_folder(content_type)
-    if use_new_folder:
+#    if use_new_folder:
         #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-        model_folder = escaped_modelpath(new_folder, model_name)
-        if not os.path.exists(new_folder):
-            if make_dir: os.makedirs(new_folder)
-        if not os.path.exists(model_folder):
-            if make_dir: os.makedirs(model_folder)
-    else:
+#        model_folder = escaped_modelpath(new_folder, model_name)
+#        if not os.path.exists(new_folder):
+#            if make_dir: os.makedirs(new_folder)
+#        if not os.path.exists(model_folder):
+#            if make_dir: os.makedirs(model_folder)
+#    else:
         #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-        if not 'SD 1' in base_model:
-            folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
-        if nsfw:
-            folder = os.path.join(folder, '.nsfw')
-        model_folder = escaped_modelpath(folder, model_name)
-        if not os.path.exists(model_folder):
-            if make_dir: os.makedirs(model_folder)
+    if not 'SD 1' in base_model:
+        folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
+    if nsfw:
+        folder = os.path.join(folder, '.nsfw')
+    model_folder = escaped_modelpath(folder, model_name)
+    if not os.path.exists(model_folder):
+        if make_dir: os.makedirs(model_folder)
     #print(f"nsfw:{nsfw}")
     return model_folder
 
-def download_file_thread(url, file_name, content_type, use_new_folder, model_name,base_model, nsfw:bool=False):
+def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
     global isDownloading
     if isDownloading:
         isDownloading = False
         return
     isDownloading = True
-    model_folder = extranetwork_folder(content_type, use_new_folder,model_name,base_model,nsfw=nsfw)
+    model_folder = extranetwork_folder(content_type, model_name,base_model,nsfw=nsfw)
     path_to_new_file = os.path.join(model_folder, file_name)     
 
     thread = threading.Thread(target=download_file, args=(url, path_to_new_file))
@@ -217,18 +217,18 @@ def download_file_thread(url, file_name, content_type, use_new_folder, model_nam
         # Start the thread
     thread.start()
 
-def save_text_file(file_name, content_type, use_new_folder, trained_words, model_name, base_model,nsfw):
-    model_folder = extranetwork_folder(content_type, use_new_folder, model_name,base_model,nsfw=nsfw )   
+def save_text_file(file_name, content_type, trained_words, model_name, base_model,nsfw):
+    model_folder = extranetwork_folder(content_type, model_name,base_model,nsfw=nsfw )   
     path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt").replace(".zip",".txt"))
     print(f"{path_to_new_file}")
     if not os.path.exists(path_to_new_file):
         with open(path_to_new_file, 'w') as f:
             f.write(trained_words)
 
-def saveImageFiles(preview_image_html, model_filename, list_models, content_type, use_new_folder,base_model, modelinfo, nsfw):
+def saveImageFiles(preview_image_html, model_filename, list_models, content_type, base_model, modelinfo, nsfw):
     print(Fore.LIGHTBLUE_EX + "Save Images Clicked" + Style.RESET_ALL)
 
-    model_folder = extranetwork_folder(content_type, use_new_folder, list_models, base_model,nsfw=nsfw)
+    model_folder = extranetwork_folder(content_type, list_models, base_model,nsfw=nsfw)
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', preview_image_html)
     
     name = os.path.splitext(model_filename)[0]

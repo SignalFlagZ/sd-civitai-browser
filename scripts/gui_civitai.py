@@ -3,6 +3,7 @@ from html import escape
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
+from scripts.file_manage import extranetwork_folder
 from scripts.file_manage import save_text_file, download_file_thread, saveImageFiles
 from colorama import Fore, Back, Style
 
@@ -29,17 +30,23 @@ def update_next_page(grChkboxShowNsfw, grRadioContentType, isNext=True, ):
     model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_names)
     return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
-            gr.Dropdown.update(choices=[], value=None),\
+            gr.Radio.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
             gr.Button.update(interactive=hasPrev),\
             gr.Button.update(interactive=hasNext),\
-            gr.Textbox.update(value=grTxtPages)
+            gr.Textbox.update(value=grTxtPages),\
+            gr.Textbox.update(value=None)
 
 def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw):
     query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm)
     response = civitai.requestApi(query=query)
     if response is None:
-        return {}
+        return gr.Dropdown.update(choices=[], value=None),\
+            gr.Dropdown.update(choices=[], value=None),\
+            gr.HTML.update(value=None),\
+            gr.Button.update(interactive=False),\
+            gr.Button.update(interactive=False),\
+            gr.Textbox.update(value=None)
     civitai.updateJsonData(response, grRadioContentType)
     civitai.setShowNsfw(grChkboxShowNsfw)
     grTxtPages = civitai.getPages()
@@ -63,23 +70,36 @@ def update_model_versions(model_name=None):
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
 
 def  update_model_info(model_version=None):
-    civitai.selectVersionByName(model_version)
-    if model_version:
+    if model_version is None:
+        return  gr.HTML.update(value=None),\
+                gr.Textbox.update(value=None),\
+                gr.Dropdown.update(choices=[], value=None),\
+                gr.Textbox.update(value=None),\
+                gr.Textbox.update(value=None)
+    if civitai.selectVersionByName(model_version) is not None:
+        path = extranetwork_folder(civitai.getContentType(),
+                                   civitai.getSelectedModelName(),
+                                   civitai.getSelectedVersionBaeModel(),
+                                   False,
+                                   civitai.isNsfwModel()
+            )
         dict = civitai.makeModelInfo()             
         return  gr.HTML.update(value=dict['html']),\
                 gr.Textbox.update(value=dict['trainedWords']),\
                 gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
-                gr.Textbox.update(value=dict['baseModel'])
+                gr.Textbox.update(value=dict['baseModel']),\
+                gr.Textbox.update(value=path)
     else:
         return  gr.HTML.update(value=None),\
                 gr.Textbox.update(value=None),\
                 gr.Dropdown.update(choices=[], value=None),\
-                gr.Textbox.update(value='')
+                gr.Textbox.update(value=None),\
+                gr.Textbox.update(value=None)
 
 def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
     civitai.selectModelByName(grDrpdwnModels)
     civitai.selectVersionByName(grRadioVersions)
-    grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel = update_model_info(grRadioVersions)
+    grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions)
     grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(['value']))
     return  grHtmlModelInfo,\
             grTxtTrainedWords,\
@@ -87,7 +107,8 @@ def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
             grRadioVersions,\
             grDrpdwnModels,\
             grTxtDlUrl,\
-            grTxtBaseModel
+            grTxtBaseModel,\
+            grTxtSaveFolder
 
    
 def on_ui_tabs():
@@ -119,10 +140,12 @@ def on_ui_tabs():
             with gr.Column(scale=5):
                 grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
         with gr.Row():
+            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
+            grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
+        with gr.Row():
             txt_list = ""
             grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
             grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
-            grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
             grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
         with gr.Row():
             grBtnUpdateInfo = gr.Button(value='1st - Get Model Info')
@@ -133,46 +156,39 @@ def on_ui_tabs():
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         
-        def save_text(file_name, grRadioContentType, trained_words, grDrpdwnModels, grTxtBaseModel):
-            save_text_file(file_name, grRadioContentType, trained_words, grDrpdwnModels, grTxtBaseModel,civitai.isNsfwModel() )
+        def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
+            save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
         grBtnSaveText.click(
             fn=save_text,
             inputs=[
+            grTxtSaveFolder,
             grDrpdwnFilenames,
-            grRadioContentType,
-            #save_model_in_new,
             grTxtTrainedWords,
-            grDrpdwnModels,
-            grTxtBaseModel,
             ],
             outputs=[]
         )
 
-        def save_image_files(grHtmlModelInfo, grDrpdwnFilenames, grDrpdwnModels, grRadioContentType, grTxtBaseModel):
-            saveImageFiles(grHtmlModelInfo, grDrpdwnFilenames, grDrpdwnModels, grRadioContentType, grTxtBaseModel, civitai.getModelVersionInfo(), civitai.isNsfwModel() )
+        def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
+            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getVersionDict() )
         grBtnSaveImages.click(
             fn=save_image_files,
             inputs=[
-            grHtmlModelInfo,
+            grTxtSaveFolder,
             grDrpdwnFilenames,
-            grDrpdwnModels,
+            grHtmlModelInfo,
             grRadioContentType,
-            #save_model_in_new,
-            grTxtBaseModel
             ],
             outputs=[]
         )
-        def model_download(url, file_name, grRadioContentType, grDrpdwnModels,grTxtBaseModel):
-            download_file_thread(url, file_name, grRadioContentType, grDrpdwnModels,grTxtBaseModel, civitai.isNsfwModel() )
+        def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl):
+            download_file_thread(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
+            return "Done"
         grBtnDownloadModel.click(
             fn=model_download,
             inputs=[
-            grTxtDlUrl,
-            grDrpdwnFilenames,
-            grRadioContentType,
-            #save_model_in_new,
-            grDrpdwnModels,
-            grTxtBaseModel
+                grTxtSaveFolder,
+                grDrpdwnFilenames,
+                grTxtDlUrl
             ],
             outputs=[]
         )
@@ -209,7 +225,8 @@ def on_ui_tabs():
             grRadioVersions,
             grDrpdwnModels,
             grTxtDlUrl,
-            grTxtBaseModel
+            grTxtBaseModel,
+            grTxtSaveFolder
             ]
         )
         grDrpdwnModels.change(
@@ -230,9 +247,16 @@ def on_ui_tabs():
             grHtmlModelInfo,
             grTxtTrainedWords,
             grDrpdwnFilenames,
-            grTxtBaseModel
+            grTxtBaseModel,
+            grTxtSaveFolder
             ]
         )
+        
+        grTxtSaveFolder.change(
+            fn=civitai.setSaveFolder,
+            inputs={grTxtSaveFolder},
+            outputs=[])
+        
         def updateDlUrl(grDrpdwnFilenames):
             return civitai.getUrlbyName(grDrpdwnFilenames)
         grDrpdwnFilenames.change(
@@ -252,7 +276,8 @@ def on_ui_tabs():
             grHtmlCards,
             grBtnPrevPage,
             grBtnNextPage,
-            grTxtPages
+            grTxtPages,
+            grTxtSaveFolder
             ]
         )
         grBtnPrevPage.click(
@@ -267,17 +292,18 @@ def on_ui_tabs():
             grHtmlCards,
             grBtnPrevPage,
             grBtnNextPage,
-            grTxtPages
+            grTxtPages,
+            grTxtSaveFolder
             ]
         )
         def update_models_dropdown(grTxtJsEvent):
             index = grTxtJsEvent.split(':')[1] # str: 'Index:{index}:{id}'
             civitai.selectModelByIndex(int(index))
             ret_versions=update_model_versions()
-            html,grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel = update_model_info(ret_versions['value'])
+            html,grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(ret_versions['value'])
             grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(['value']))
             grDrpdwnModels = gr.Dropdown.update(value=civitai.getSelectedModelName())
-            return grDrpdwnModels, ret_versions ,html,grTxtDlUrl,grTxtTrainedWords,grDrpdwnFilenames,grTxtBaseModel
+            return grDrpdwnModels, ret_versions ,html,grTxtDlUrl,grTxtTrainedWords,grDrpdwnFilenames,grTxtBaseModel,grTxtSaveFolder
         grTxtJsEvent.change(
             fn=update_models_dropdown,
             inputs=[
@@ -289,7 +315,9 @@ def on_ui_tabs():
                 grHtmlModelInfo,
                 grTxtDlUrl,
                 grTxtTrainedWords,
-                grDrpdwnFilenames
+                grDrpdwnFilenames,
+                grTxtBaseModel,
+                grTxtSaveFolder
             ]
         )
 

@@ -101,68 +101,72 @@ def extranetwork_folder(content_type, model_name:str = "",base_model:str="", mak
     #print(f"nsfw:{nsfw}")
     return model_folder
 
-def save_text_file(file_name, content_type, trained_words, model_name, base_model,nsfw):
-    model_folder = extranetwork_folder(content_type, model_name,base_model,nsfw=nsfw )   
-    path_to_new_file = os.path.join(model_folder, file_name.replace(".ckpt",".txt").replace(".safetensors",".txt").replace(".pt",".txt").replace(".yaml",".txt").replace(".zip",".txt"))
-    print(f"{path_to_new_file}")
-    if not os.path.exists(path_to_new_file):
-        with open(path_to_new_file, 'w') as f:
+def save_text_file(folder, filename, trained_words):
+    makedirs(folder)
+    filepath = os.path.join(folder, filename.replace(".ckpt",".txt")\
+                                        .replace(".safetensors",".txt")\
+                                        .replace(".pt",".txt")\
+                                        .replace(".yaml",".txt")\
+                                        .replace(".zip",".txt")\
+                        )
+    if not os.path.exists(filepath):
+        with open(filepath, 'w') as f:
             f.write(trained_words)
+    print(Fore.LIGHTCYAN_EX + f'Save text.' + Style.RESET_ALL)
 
-def saveImageFiles(preview_image_html, model_filename, list_models, content_type, base_model, modelinfo, nsfw):
-    print(Fore.LIGHTBLUE_EX + "Save Images Clicked" + Style.RESET_ALL)
-
-    model_folder = extranetwork_folder(content_type, list_models, base_model,nsfw=nsfw)
-    img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', preview_image_html)
-    
-    name = os.path.splitext(model_filename)[0]
-    #model_folder = os.path.join("models\Stable-diffusion",list_models.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-"))
-
+def makedirs(folder):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(Fore.LIGHTCYAN_EX + f'Make folder: {folder}' + Style.RESET_ALL)
+        
+def saveImageFiles(folder, versionName, html, content_type, versionInfo):
+    makedirs(folder)
+    img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', html)
+    basename = os.path.splitext(versionName)[0] # remove extension
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    urllib.request.install_opener(opener)
 
-    HTML = preview_image_html
+    urllib.request.install_opener(opener)
+    HTML = html
     for i, img_url in enumerate(img_urls):
-        filename = f'{name}_{i}.png'
-        filenamethumb = f'{name}.png'
+        filename = f'{basename}_{i}.png'
+        filenamethumb = f'{basename}.png'
         if content_type == "TextualInversion":
-            filename = f'{name}_{i}.preview.png'
-            filenamethumb = f'{name}.preview.png'
+            filename = f'{basename}_{i}.preview.png'
+            filenamethumb = f'{basename}.preview.png'
         HTML = HTML.replace(img_url,f'"{filename}"')
         img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
-        print(img_url, model_folder, filename)
         try:
             with urllib.request.urlopen(img_url) as url:
-                with open(os.path.join(model_folder, filename), 'wb') as f:
+                with open(os.path.join(folder, filename), 'wb') as f:
                     f.write(url.read())
-                    if i == 0 and not os.path.exists(os.path.join(model_folder, filenamethumb)):
-                        shutil.copy2(os.path.join(model_folder, filename),os.path.join(model_folder, filenamethumb))
-                    print(Fore.LIGHTBLUE_EX + f"Done." + Style.RESET_ALL)
+                    if i == 0 and not os.path.exists(os.path.join(folder, filenamethumb)):
+                        shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
+                    print(Fore.LIGHTCYAN_EX + f"Save {filename}" + Style.RESET_ALL)
             #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
                     
         except urllib.error.URLError as e:
             print(f'Error: {e.reason}')
-    path_to_new_file = os.path.join(model_folder, f'{name}.html')
-    #if not os.path.exists(path_to_new_file):
-    with open(path_to_new_file, 'wb') as f:
+    
+    filepath = os.path.join(folder, f'{basename}.html')
+    with open(filepath, 'wb') as f:
         f.write(HTML.encode('utf8'))
     #Save json_info
-    path_to_new_file = os.path.join(model_folder, f'{name}.civitai.info')
-    with open(path_to_new_file, mode="w", encoding="utf-8") as f:
-        json.dump(modelinfo, f, indent=2, ensure_ascii=False)
-    print(Fore.LIGHTBLUE_EX + f"Done." + Style.RESET_ALL)
+    filepath = os.path.join(folder, f'{basename}.civitai.info')
+    with open(filepath, mode="w", encoding="utf-8") as f:
+        json.dump(versionInfo, f, indent=2, ensure_ascii=False)
+    print(Fore.LIGHTCYAN_EX + f"Done." + Style.RESET_ALL)
 
-
-def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
+#def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
+def download_file_thread(folder, filename,  url):
     global isDownloading
     if isDownloading:
         isDownloading = False
         return
     isDownloading = True
-    model_folder = extranetwork_folder(content_type, model_name,base_model,nsfw=nsfw)
-    path_to_new_file = os.path.join(model_folder, file_name)     
-    thread = threading.Thread(target=download_file, args=(url, path_to_new_file))
+    makedirs(folder)
+    filepath = os.path.join(folder, filename)
+    thread = threading.Thread(target=download_file, args=(url, filepath))
     # Start the thread
     thread.start()
 
@@ -240,7 +244,7 @@ def download_file(url, file_name):
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         if downloaded_size >= total_size:
-            print(Fore.LIGHTBLUE_EX + f"Done: {file_name_display}" + Style.RESET_ALL)
+            print(Fore.LIGHTCYAN_EX + f"Success: {file_name_display}" + Style.RESET_ALL)
             break
         else:
             print(f"Error: File download failed. Retrying... {file_name_display}")

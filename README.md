@@ -37,3 +37,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Avoid collision when there are same model names
 - Deprecate new folder checkbox and its function
 - Change version selection from dropdown to radio button
+---
+↓ v1.3.0
+- Add save folder textbox

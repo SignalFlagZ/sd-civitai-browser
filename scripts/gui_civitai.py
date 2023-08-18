@@ -25,8 +25,8 @@ def update_next_page(grChkboxShowNsfw, grRadioContentType, isNext=True, ):
         civitai.updateJsonData(api_next_page(civitai.prevPage()), grRadioContentType)
     civitai.setShowNsfw(grChkboxShowNsfw)
     grTxtPages = civitai.getPages()
-    hasPrev = not civitai.prevPage() == ""
-    hasNext = not civitai.nextPage() == ""
+    hasPrev = not civitai.prevPage() is None
+    hasNext = not civitai.nextPage() is None
     model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_names)
     return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\

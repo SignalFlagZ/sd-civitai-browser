@@ -36,8 +36,8 @@ def update_next_page(grChkboxShowNsfw, grRadioContentType, isNext=True, ):
             gr.Button.update(interactive=hasNext),\
             gr.Textbox.update(value=grTxtPages),\
 
-def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw):
-    query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm)
+def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
+    query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
     response = civitai.requestApi(query=query)
     if response is None:
         return gr.Dropdown.update(choices=[], value=None),\
@@ -119,11 +119,13 @@ def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
 def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
-            with gr.Column(scale=2):
+            with gr.Column(scale=4):
                 grRadioContentType = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
-            with gr.Column(scale=1,min_width=100):
-                    grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
-                    grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
+            with gr.Column(scale=1, max_width=100, min_width=100):
+                grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
+                grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value="AllTime", type="value")
+            with gr.Column(scale=1, max_width=100, min_width=80):
+                grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
         with gr.Row():
             grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
@@ -204,7 +206,8 @@ def on_ui_tabs():
                 grDrpdwnSortType,
                 grRadioSearchType,
                 grTxtSearchTerm,
-                grChkboxShowNsfw
+                grChkboxShowNsfw,
+                grDrpdwnPeriod
             ],
             outputs=[
                 grDrpdwnModels,

@@ -374,8 +374,8 @@ class civitaimodels:
         return html
 
     #REST API
-    def makeRequestQuery(self, content_type, sort_type, use_search_term, search_term=None):
-        query = {'types': content_type, 'sort': sort_type}
+    def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None):
+        query = {'types': content_type, 'sort': sort_type, 'period': period}
         if use_search_term != "No" and search_term:
             #search_term = search_term.replace(" ","%20")
             match use_search_term:

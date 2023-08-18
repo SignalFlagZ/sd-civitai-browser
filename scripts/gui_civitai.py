@@ -154,9 +154,9 @@ def on_ui_tabs():
         grBtnSaveText.click(
             fn=save_text,
             inputs=[
-            grTxtSaveFolder,
-            grDrpdwnFilenames,
-            grTxtTrainedWords,
+                grTxtSaveFolder,
+                grDrpdwnFilenames,
+                grTxtTrainedWords,
             ],
             outputs=[]
         )
@@ -166,10 +166,10 @@ def on_ui_tabs():
         grBtnSaveImages.click(
             fn=save_image_files,
             inputs=[
-            grTxtSaveFolder,
-            grDrpdwnFilenames,
-            grHtmlModelInfo,
-            grRadioContentType,
+                grTxtSaveFolder,
+                grDrpdwnFilenames,
+                grHtmlModelInfo,
+                grRadioContentType,
             ],
             outputs=[]
         )
@@ -188,47 +188,47 @@ def on_ui_tabs():
         grBtnGetListAPI.click(
             fn=update_model_list,
             inputs=[
-            grRadioContentType,
-            grDrpdwnSortType,
-            grRadioSearchType,
-            grTxtSearchTerm,
-            grChkboxShowNsfw
+                grRadioContentType,
+                grDrpdwnSortType,
+                grRadioSearchType,
+                grTxtSearchTerm,
+                grChkboxShowNsfw
             ],
             outputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grHtmlCards,            
-            grBtnPrevPage,
-            grBtnNextPage,
-            grTxtPages
+                grDrpdwnModels,
+                grRadioVersions,
+                grHtmlCards,            
+                grBtnPrevPage,
+                grBtnNextPage,
+                grTxtPages
             ]
         )
         grBtnUpdateInfo.click(
             fn=update_everything,
             #fn=update_model_info,
             inputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grTxtDlUrl
+                grDrpdwnModels,
+                grRadioVersions,
+                grTxtDlUrl
             ],
             outputs=[
-            grHtmlModelInfo,
-            grTxtTrainedWords,
-            grDrpdwnFilenames,
-            grRadioVersions,
-            grDrpdwnModels,
-            grTxtDlUrl,
-            grTxtBaseModel,
-            grTxtSaveFolder
+                grHtmlModelInfo,
+                grTxtTrainedWords,
+                grDrpdwnFilenames,
+                grRadioVersions,
+                grDrpdwnModels,
+                grTxtDlUrl,
+                grTxtBaseModel,
+                grTxtSaveFolder
             ]
         )
         grDrpdwnModels.change(
             fn=update_model_versions,
             inputs=[
-            grDrpdwnModels,
+                grDrpdwnModels,
             ],
             outputs=[
-            grRadioVersions,
+                grRadioVersions,
             ]
         )
         grRadioVersions.change(
@@ -237,11 +237,11 @@ def on_ui_tabs():
             grRadioVersions,
             ],
             outputs=[
-            grHtmlModelInfo,
-            grTxtTrainedWords,
-            grDrpdwnFilenames,
-            grTxtBaseModel,
-            grTxtSaveFolder
+                grHtmlModelInfo,
+                grTxtTrainedWords,
+                grDrpdwnFilenames,
+                grTxtBaseModel,
+                grTxtSaveFolder
             ]
         )
         
@@ -260,33 +260,33 @@ def on_ui_tabs():
         grBtnNextPage.click(
             fn=update_next_page,
             inputs=[
-            grChkboxShowNsfw,
-            grRadioContentType,
+                grChkboxShowNsfw,
+                grRadioContentType,
             ],
             outputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grHtmlCards,
-            grBtnPrevPage,
-            grBtnNextPage,
-            grTxtPages,
-            grTxtSaveFolder
+                grDrpdwnModels,
+                grRadioVersions,
+                grHtmlCards,
+                grBtnPrevPage,
+                grBtnNextPage,
+                grTxtPages,
+                grTxtSaveFolder
             ]
         )
         grBtnPrevPage.click(
             fn=update_prev_page,
             inputs=[
-            grChkboxShowNsfw,
-            grRadioContentType,
+                grChkboxShowNsfw,
+                grRadioContentType,
             ],
             outputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grHtmlCards,
-            grBtnPrevPage,
-            grBtnNextPage,
-            grTxtPages,
-            grTxtSaveFolder
+                grDrpdwnModels,
+                grRadioVersions,
+                grHtmlCards,
+                grBtnPrevPage,
+                grBtnNextPage,
+                grTxtPages,
+                grTxtSaveFolder
             ]
         )
         def update_models_dropdown(grTxtJsEvent):

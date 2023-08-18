@@ -364,13 +364,12 @@ class civitaimodels:
         html2 += 'No sharing merges</br>' if not premissions["allowDerivatives"] else ''
         html2 += 'Same permissions required</br>' if not premissions["allowDifferentLicense"] else ''
         html2 += '</span></p></div>'
-        match msgType:
-            case 1:
-                html = html1
-            case 2:
-                html = html2
-            case _:
-                html = html2 + html1
+        if msgType == 1:
+            html = html1
+        elif msgType == 2:
+            html = html2
+        else:
+            html = html2 + html1
         return html
 
     #REST API
@@ -378,13 +377,12 @@ class civitaimodels:
         query = {'types': content_type, 'sort': sort_type, 'period': period}
         if use_search_term != "No" and search_term:
             #search_term = search_term.replace(" ","%20")
-            match use_search_term:
-                case "User name":
-                    query |= {'username': search_term }
-                case "Tag":
-                    query |= {'tag': search_term }
-                case _:
-                    query |= {'query': search_term }
+            if use_search_term == "User name":
+                query |= {'username': search_term }
+            elif use_search_term == "Tag":
+                query |= {'tag': search_term }
+            else:
+                query |= {'query': search_term }
         return query
 
     def requestApi(self, url=None, query=None):

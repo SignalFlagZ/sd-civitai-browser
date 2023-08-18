@@ -25,8 +25,8 @@ def update_next_page(grChkboxShowNsfw, grRadioContentType, isNext=True, ):
         civitai.updateJsonData(api_next_page(civitai.prevPage()), grRadioContentType)
     civitai.setShowNsfw(grChkboxShowNsfw)
     grTxtPages = civitai.getPages()
-    hasPrev = not civitai.prevPage() == ""
-    hasNext = not civitai.nextPage() == ""
+    hasPrev = not civitai.prevPage() is None
+    hasNext = not civitai.nextPage() is None
     model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_names)
     return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
@@ -35,14 +35,13 @@ def update_next_page(grChkboxShowNsfw, grRadioContentType, isNext=True, ):
             gr.Button.update(interactive=hasPrev),\
             gr.Button.update(interactive=hasNext),\
             gr.Textbox.update(value=grTxtPages),\
-            gr.Textbox.update(value=None)
 
-def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw):
-    query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm)
+def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
+    query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
     response = civitai.requestApi(query=query)
     if response is None:
         return gr.Dropdown.update(choices=[], value=None),\
-            gr.Dropdown.update(choices=[], value=None),\
+            gr.Radio.update(choices=[], value=None),\
             gr.HTML.update(value=None),\
             gr.Button.update(interactive=False),\
             gr.Button.update(interactive=False),\
@@ -50,38 +49,44 @@ def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, g
     civitai.updateJsonData(response, grRadioContentType)
     civitai.setShowNsfw(grChkboxShowNsfw)
     grTxtPages = civitai.getPages()
-    hasPrev = not civitai.prevPage() == ""
-    hasNext = not civitai.nextPage() == ""
+    hasPrev = not civitai.prevPage() is None
+    hasNext = not civitai.nextPage() is None
     model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_names)
     return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
-            gr.Dropdown.update(choices=[], value=None),\
+            gr.Radio.update(choices=[], value=None),\
             gr.HTML.update(value=HTML),\
             gr.Button.update(interactive=hasPrev),\
             gr.Button.update(interactive=hasNext),\
             gr.Textbox.update(value=grTxtPages)
 
-def update_model_versions(model_name=None):
+'''def updateVersionsOfModelName(model_name=None):
     if model_name is not None:
         civitai.selectModelByName(model_name)
-    if civitai.getSelectedModelIndex() is not None:
-        dict = civitai.getModelVersionsList()
-        civitai.selectVersionByName(next(iter(dict.keys()), None))
+        if civitai.getSelectedModelIndex() is not None:
+            dict = civitai.getModelVersionsList()
+            civitai.selectVersionByName(next(iter(dict.keys()), None))
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+    else:
+        return gr.Dropdown.update(choices=[],value = None)
+'''
+
+def updateVersionsByModelID(model_ID=None):
+    if model_ID is not None:
+        civitai.selectModelByID(model_ID)
+        if civitai.getSelectedModelIndex() is not None:
+            dict = civitai.getModelVersionsList()
+            civitai.selectVersionByName(next(iter(dict.keys()), None))
+        return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+    else:
+        return gr.Dropdown.update(choices=[],value = None)
 
 def  update_model_info(model_version=None):
-    if model_version is None:
-        return  gr.HTML.update(value=None),\
-                gr.Textbox.update(value=None),\
-                gr.Dropdown.update(choices=[], value=None),\
-                gr.Textbox.update(value=None),\
-                gr.Textbox.update(value=None)
-    if civitai.selectVersionByName(model_version) is not None:
-        path = extranetwork_folder(civitai.getContentType(),
-                                   civitai.getSelectedModelName(),
-                                   civitai.getSelectedVersionBaeModel(),
-                                   False,
-                                   civitai.isNsfwModel()
+    if model_version is not None and civitai.selectVersionByName(model_version) is not None:
+        path = extranetwork_folder( civitai.getContentType(),
+                                    civitai.getSelectedModelName(),
+                                    civitai.getSelectedVersionBaeModel(),
+                                    civitai.isNsfwModel()
             )
         dict = civitai.makeModelInfo()             
         return  gr.HTML.update(value=dict['html']),\
@@ -100,7 +105,7 @@ def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
     civitai.selectModelByName(grDrpdwnModels)
     civitai.selectVersionByName(grRadioVersions)
     grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions)
-    grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(['value']))
+    grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames['value']))
     return  grHtmlModelInfo,\
             grTxtTrainedWords,\
             grDrpdwnFilenames,\
@@ -114,11 +119,13 @@ def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
 def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         with gr.Row():
-            with gr.Column(scale=2):
+            with gr.Column(scale=4):
                 grRadioContentType = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
-            with gr.Column(scale=1,min_width=100):
-                    grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
-                    grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
+            with gr.Column(scale=1, max_width=100, min_width=100):
+                grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
+                grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value="AllTime", type="value")
+            with gr.Column(scale=1, max_width=100, min_width=80):
+                grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
         with gr.Row():
             grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
             grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
@@ -136,11 +143,11 @@ def on_ui_tabs():
         with gr.Row():
             with gr.Column(scale=1):
                 grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="modellist", value=None)
-                grTxtJsEvent = gr.Textbox(label="Event text",elem_id="eventtext1", visible=False, interactive=True, lines=1)
+                grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id="eventtext1", visible=False, interactive=True, lines=1)
             with gr.Column(scale=5):
                 grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
         with gr.Row():
-            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
+            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value=None, lines=1)
             grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
         with gr.Row():
             txt_list = ""
@@ -148,10 +155,10 @@ def on_ui_tabs():
             grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
             grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
         with gr.Row():
-            grBtnUpdateInfo = gr.Button(value='1st - Get Model Info')
-            grBtnSaveText = gr.Button(value="2nd - Save Text")
-            grBtnSaveImages = gr.Button(value="3rd - Save Images")
-            grBtnDownloadModel = gr.Button(value="4th - Download Model")
+            grBtnUpdateInfo = gr.Button(value='1st - Get Model Info',interactive=False)
+            grBtnSaveText = gr.Button(value="2nd - Save Text",interactive=False)
+            grBtnSaveImages = gr.Button(value="3rd - Save Images",interactive=False)
+            grBtnDownloadModel = gr.Button(value="4th - Download Model",interactive=False)
             #save_model_in_new = gr.Checkbox(label="Save Model to new folder", value=False)
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
@@ -161,22 +168,22 @@ def on_ui_tabs():
         grBtnSaveText.click(
             fn=save_text,
             inputs=[
-            grTxtSaveFolder,
-            grDrpdwnFilenames,
-            grTxtTrainedWords,
+                grTxtSaveFolder,
+                grDrpdwnFilenames,
+                grTxtTrainedWords,
             ],
             outputs=[]
         )
 
         def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
-            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getVersionDict() )
+            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getModelVersionInfo() )
         grBtnSaveImages.click(
             fn=save_image_files,
             inputs=[
-            grTxtSaveFolder,
-            grDrpdwnFilenames,
-            grHtmlModelInfo,
-            grRadioContentType,
+                grTxtSaveFolder,
+                grDrpdwnFilenames,
+                grHtmlModelInfo,
+                grRadioContentType,
             ],
             outputs=[]
         )
@@ -195,47 +202,55 @@ def on_ui_tabs():
         grBtnGetListAPI.click(
             fn=update_model_list,
             inputs=[
-            grRadioContentType,
-            grDrpdwnSortType,
-            grRadioSearchType,
-            grTxtSearchTerm,
-            grChkboxShowNsfw
+                grRadioContentType,
+                grDrpdwnSortType,
+                grRadioSearchType,
+                grTxtSearchTerm,
+                grChkboxShowNsfw,
+                grDrpdwnPeriod
             ],
             outputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grHtmlCards,            
-            grBtnPrevPage,
-            grBtnNextPage,
-            grTxtPages
+                grDrpdwnModels,
+                grRadioVersions,
+                grHtmlCards,            
+                grBtnPrevPage,
+                grBtnNextPage,
+                grTxtPages
             ]
         )
         grBtnUpdateInfo.click(
             fn=update_everything,
             #fn=update_model_info,
             inputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grTxtDlUrl
+                grDrpdwnModels,
+                grRadioVersions,
+                grTxtDlUrl
             ],
             outputs=[
-            grHtmlModelInfo,
-            grTxtTrainedWords,
-            grDrpdwnFilenames,
-            grRadioVersions,
-            grDrpdwnModels,
-            grTxtDlUrl,
-            grTxtBaseModel,
-            grTxtSaveFolder
+                grHtmlModelInfo,
+                grTxtTrainedWords,
+                grDrpdwnFilenames,
+                grRadioVersions,
+                grDrpdwnModels,
+                grTxtDlUrl,
+                grTxtBaseModel,
+                grTxtSaveFolder
             ]
         )
+        def UpdatedModels(grDrpdwnModels):
+            index = civitai.getIndexByModelName(grDrpdwnModels)
+            eventText = None
+            if grDrpdwnModels is not None:
+                eventText = 'Index:' + str(index)
+            return gr.Textbox.update(value=eventText)
         grDrpdwnModels.change(
-            fn=update_model_versions,
+            fn=UpdatedModels,
             inputs=[
-            grDrpdwnModels,
+                grDrpdwnModels,
             ],
             outputs=[
-            grRadioVersions,
+                #grRadioVersions,
+                grTxtJsEvent
             ]
         )
         grRadioVersions.change(
@@ -244,11 +259,11 @@ def on_ui_tabs():
             grRadioVersions,
             ],
             outputs=[
-            grHtmlModelInfo,
-            grTxtTrainedWords,
-            grDrpdwnFilenames,
-            grTxtBaseModel,
-            grTxtSaveFolder
+                grHtmlModelInfo,
+                grTxtTrainedWords,
+                grDrpdwnFilenames,
+                grTxtBaseModel,
+                grTxtSaveFolder
             ]
         )
         
@@ -258,54 +273,87 @@ def on_ui_tabs():
             outputs=[])
         
         def updateDlUrl(grDrpdwnFilenames):
-            return civitai.getUrlbyName(grDrpdwnFilenames)
+            return  gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames)),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False)
+        
         grDrpdwnFilenames.change(
             fn=updateDlUrl,
             inputs=[grDrpdwnFilenames,],
-            outputs=[grTxtDlUrl,]
+            outputs=[
+                grTxtDlUrl,
+                grBtnUpdateInfo,
+                grBtnSaveText,
+                grBtnSaveImages,
+                grBtnDownloadModel
+            ]
         )
         grBtnNextPage.click(
             fn=update_next_page,
             inputs=[
-            grChkboxShowNsfw,
-            grRadioContentType,
+                grChkboxShowNsfw,
+                grRadioContentType,
             ],
             outputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grHtmlCards,
-            grBtnPrevPage,
-            grBtnNextPage,
-            grTxtPages,
-            grTxtSaveFolder
+                grDrpdwnModels,
+                grRadioVersions,
+                grHtmlCards,
+                grBtnPrevPage,
+                grBtnNextPage,
+                grTxtPages,
+                #grTxtSaveFolder
             ]
         )
         grBtnPrevPage.click(
             fn=update_prev_page,
             inputs=[
-            grChkboxShowNsfw,
-            grRadioContentType,
+                grChkboxShowNsfw,
+                grRadioContentType,
             ],
             outputs=[
-            grDrpdwnModels,
-            grRadioVersions,
-            grHtmlCards,
-            grBtnPrevPage,
-            grBtnNextPage,
-            grTxtPages,
-            grTxtSaveFolder
+                grDrpdwnModels,
+                grRadioVersions,
+                grHtmlCards,
+                grBtnPrevPage,
+                grBtnNextPage,
+                grTxtPages,
+                #grTxtSaveFolder
             ]
         )
-        def update_models_dropdown(grTxtJsEvent):
-            index = grTxtJsEvent.split(':')[1] # str: 'Index:{index}:{id}'
-            civitai.selectModelByIndex(int(index))
-            ret_versions=update_model_versions()
-            html,grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(ret_versions['value'])
-            grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlbyName(['value']))
-            grDrpdwnModels = gr.Dropdown.update(value=civitai.getSelectedModelName())
-            return grDrpdwnModels, ret_versions ,html,grTxtDlUrl,grTxtTrainedWords,grDrpdwnFilenames,grTxtBaseModel,grTxtSaveFolder
+        def eventTextUpdated(grTxtJsEvent):
+            if grTxtJsEvent is not None:
+                grTxtJsEvent = grTxtJsEvent.split(':')
+                # print(Fore.LIGHTYELLOW_EX + f'{grTxtJsEvent=}' + Style.RESET_ALL)
+                if grTxtJsEvent[0] == 'Index':
+                    index = int(grTxtJsEvent[1]) # str: 'Index:{index}:{id}'
+                    civitai.selectModelByIndex(index)
+                    grRadioVersions = updateVersionsByModelID(civitai.getSelectedModelID())
+                    grHtmlModelInfo,grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions['value'])
+                    grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames['value']))
+                    grDrpdwnModels = gr.Dropdown.update(value=civitai.getSelectedModelName())
+                    return  grDrpdwnModels,\
+                            grRadioVersions,\
+                            grHtmlModelInfo,\
+                            grTxtDlUrl,\
+                            grTxtTrainedWords,\
+                            grDrpdwnFilenames,\
+                            grTxtBaseModel,\
+                            grTxtSaveFolder
+                else:
+                    return  gr.Dropdown.update(value=None),\
+                            gr.Radio.update(value=None),\
+                            gr.Html.update(value=None),\
+                            gr.Textbox.update(vlue=None),\
+                            gr.Textbox.update(vlue=None),\
+                            gr.Dropdown.update(value=None),\
+                            gr.Textbox.update(vlue=None),\
+                            gr.Textbox.update(vlue=None)
+            else:
+                return None, None, None, None, None, None, None, None
         grTxtJsEvent.change(
-            fn=update_models_dropdown,
+            fn=eventTextUpdated,
             inputs=[
                 grTxtJsEvent,
             ],

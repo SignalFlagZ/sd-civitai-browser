@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict={}, content_type:str=""):
+    def __init__(self, url:str, json_data:dict={}, content_type:str=None):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -17,7 +17,7 @@ class civitaimodels:
         self.versionIndex = None
         self.modelVersionInfo = None
         self.saveFolder = None
-    def updateJsonData(self, json_data:dict={}, content_type:str=""):
+    def updateJsonData(self, json_data:dict={}, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
         self.contentType = content_type
@@ -64,41 +64,31 @@ class civitaimodels:
     def getModelNameByID(self, id:int) -> str:
         name = None
         for item in self.jsonData['items']:
-            if item['id'] == id:
+            if int(item['id']) == int(id):
                 name = item['name']
         return name
     def getIDByModelName(self, name:str) -> str:
         id = None
         for item in self.jsonData['items']:
             if item['name'] == name:
-                id = item['id']
+                id = int(item['id'])
         return id
     def isNsfwModelByID(self, id:int) -> bool:
         nsfw = None
         for item in self.jsonData['items']:
-            if item['id'] == id:
+            if int(item['id']) == int(id):
                 nsfw = item['nsfw']
         return nsfw
     def selectModelByIndex(self, index:int):
         if index >= 0 and index < len(self.jsonData['items']):
             self.modelIndex = index
         return self.modelIndex
-            
     def selectModelByID(self, id:int):
         for index, item in enumerate(self.jsonData['items']):
-            if item['id'] == id:
+            if int(item['id']) == int(id):
                 self.modelIndex = index
-            else:
-                print(Fore.LIGHTYELLOW_EX + f'Model {id} not found. Return {self.modelIndex}' + Style.RESET_ALL)
         return self.modelIndex
     def selectModelByName(self, name:str) -> int:
-        '''Select model by Name. Name are vaguer than IDs.
-        
-        Args:
-            name (str): model name
-        Returns:
-            int: index number of the model
-        '''
         if name is not None:
             for index, item in enumerate(self.jsonData['items']):
                 if item['name'] == name:
@@ -107,6 +97,13 @@ class civitaimodels:
         return self.modelIndex
     def isNsfwModel(self) -> bool:
         return self.jsonData['items'][self.modelIndex]['nsfw']
+    def getIndexByModelName(self, name:str) -> int:
+        retIndex = None
+        if name is not None:
+            for index, item in enumerate(self.jsonData['items']):
+                if item['name'] == name:
+                    retIndex = index
+        return retIndex
     def getSelectedModelIndex(self) -> int:
         return self.modelIndex
     def getSelectedModelName(self) -> str:
@@ -114,7 +111,7 @@ class civitaimodels:
         return item['name']
     def getSelectedModelID(self) -> str:
         item = self.jsonData['items'][self.modelIndex]
-        return item['id']
+        return int(item['id'])
     def allows2permissions(self) -> dict:
         '''Convert allows to permissions. Select model first.
             [->Reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
@@ -151,16 +148,9 @@ class civitaimodels:
 
     # Version
     def selectVersionByID(self, ID:int) -> int:
-        '''Select model version by ID. Select model first.
-        
-        Args:
-            ID (int): version ID
-        Returns:
-            int: index number of the version
-        '''
         item = self.jsonData['items'][self.modelIndex]
         for index, model in enumerate(item['modelVersions']):
-            if model['id'] == ID:
+            if int(model['id']) == int(ID):
                     self.versionIndex = index
         return self.versionIndex
     def selectVersionByName(self, name:str) -> int:
@@ -198,7 +188,7 @@ class civitaimodels:
             print(Fore.LIGHTYELLOW_EX + f'Select item first. {self.modelID}' + Style.RESET_ALL )
         else:
             for index, item in enumerate(self.jsonData['items']):
-                if item['id'] == self.modelID:
+                if int(item['id']) == self.modelID:
                     modelInfo = self.jsonData['items'][index]
                 for version in item['modelVersions']:
                     if version['name'] == versionName:
@@ -240,18 +230,19 @@ class civitaimodels:
                             'type' : pic['type'],
                             })
         modelInfo['images'] = pics
-        modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else ""
+        modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else None
         modelInfo['html'] = self.modelInfoHtml(modelInfo)
         self.setModelVersionInfo(modelInfo)
         return modelInfo
 
-    def getUrlbyName(self, model_filename=None):
+    def getUrlByName(self, model_filename=None):
         if self.modelIndex is None:
-            #print(Fore.LIGHTYELLOW_EX + f'Select model first.' + Style.RESET_ALL )
+            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select model first. {model_filename}' + Style.RESET_ALL )
             return
         if self.versionIndex is None:
-            #print(Fore.LIGHTYELLOW_EX + f'Select version first.' + Style.RESET_ALL )
+            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select version first. {model_filename}' + Style.RESET_ALL )
             return
+        #print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
         item = self.jsonData['items'][self.modelIndex]
         version = item['modelVersions'][self.versionIndex]
         dl_url = None
@@ -268,9 +259,9 @@ class civitaimodels:
     def getPages(self) -> str:
         return f"{self.getCurrentPage()}/{self.getTotalPages()}"
     def nextPage(self) -> str:
-        return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else ""
+        return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
     def prevPage(self) -> str:
-        return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else ""
+        return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
 
     # HTML
     # Make model cards html
@@ -298,7 +289,7 @@ class civitaimodels:
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
                             base_model = item["modelVersions"][0]['baseModel']
-                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, False, nsfw=item['nsfw'])
+                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, item['nsfw'])
                             path_file = os.path.join(folder, file_name)
                             #print(f"{path_file}")
                             if os.path.exists(path_file):
@@ -383,8 +374,8 @@ class civitaimodels:
         return html
 
     #REST API
-    def makeRequestQuery(self, content_type, sort_type, use_search_term, search_term=None):
-        query = {'types': content_type, 'sort': sort_type}
+    def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None):
+        query = {'types': content_type, 'sort': sort_type, 'period': period}
         if use_search_term != "No" and search_term:
             #search_term = search_term.replace(" ","%20")
             match use_search_term:

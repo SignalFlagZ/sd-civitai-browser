@@ -39,4 +39,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Change version selection from dropdown to radio button
 ---
 ↓ v1.3.0
+- Changed to ID based model selection
 - Add save folder textbox
+- Add dropdown list of search period

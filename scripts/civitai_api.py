@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict={}, content_type:str=""):
+    def __init__(self, url:str, json_data:dict={}, content_type:str=None):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -17,7 +17,7 @@ class civitaimodels:
         self.versionIndex = None
         self.modelVersionInfo = None
         self.saveFolder = None
-    def updateJsonData(self, json_data:dict={}, content_type:str=""):
+    def updateJsonData(self, json_data:dict={}, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
         self.contentType = content_type
@@ -240,7 +240,7 @@ class civitaimodels:
                             'type' : pic['type'],
                             })
         modelInfo['images'] = pics
-        modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else ""
+        modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else None
         modelInfo['html'] = self.modelInfoHtml(modelInfo)
         self.setModelVersionInfo(modelInfo)
         return modelInfo
@@ -268,9 +268,9 @@ class civitaimodels:
     def getPages(self) -> str:
         return f"{self.getCurrentPage()}/{self.getTotalPages()}"
     def nextPage(self) -> str:
-        return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else ""
+        return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
     def prevPage(self) -> str:
-        return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else ""
+        return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
 
     # HTML
     # Make model cards html
@@ -298,7 +298,7 @@ class civitaimodels:
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
                             base_model = item["modelVersions"][0]['baseModel']
-                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, False, nsfw=item['nsfw'])
+                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, item['nsfw'])
                             path_file = os.path.join(folder, file_name)
                             #print(f"{path_file}")
                             if os.path.exists(path_file):

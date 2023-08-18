@@ -50,8 +50,8 @@ def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, g
     civitai.updateJsonData(response, grRadioContentType)
     civitai.setShowNsfw(grChkboxShowNsfw)
     grTxtPages = civitai.getPages()
-    hasPrev = not civitai.prevPage() == ""
-    hasNext = not civitai.nextPage() == ""
+    hasPrev = not civitai.prevPage() is None
+    hasNext = not civitai.nextPage() is None
     model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
     HTML = civitai.modelCardsHtml(model_names)
     return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
@@ -70,18 +70,11 @@ def update_model_versions(model_name=None):
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
 
 def  update_model_info(model_version=None):
-    if model_version is None:
-        return  gr.HTML.update(value=None),\
-                gr.Textbox.update(value=None),\
-                gr.Dropdown.update(choices=[], value=None),\
-                gr.Textbox.update(value=None),\
-                gr.Textbox.update(value=None)
-    if civitai.selectVersionByName(model_version) is not None:
-        path = extranetwork_folder(civitai.getContentType(),
-                                   civitai.getSelectedModelName(),
-                                   civitai.getSelectedVersionBaeModel(),
-                                   False,
-                                   civitai.isNsfwModel()
+    if model_version is not None and civitai.selectVersionByName(model_version) is not None:
+        path = extranetwork_folder( civitai.getContentType(),
+                                    civitai.getSelectedModelName(),
+                                    civitai.getSelectedVersionBaeModel(),
+                                    civitai.isNsfwModel()
             )
         dict = civitai.makeModelInfo()             
         return  gr.HTML.update(value=dict['html']),\
@@ -140,7 +133,7 @@ def on_ui_tabs():
             with gr.Column(scale=5):
                 grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
         with gr.Row():
-            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
+            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value=None, lines=1)
             grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
         with gr.Row():
             txt_list = ""
@@ -169,7 +162,7 @@ def on_ui_tabs():
         )
 
         def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
-            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getVersionDict() )
+            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getModelVersionInfo() )
         grBtnSaveImages.click(
             fn=save_image_files,
             inputs=[

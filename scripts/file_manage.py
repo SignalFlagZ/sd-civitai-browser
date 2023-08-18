@@ -20,19 +20,14 @@ def contenttype_folder(content_type):
             folder = cmd_opts.ckpt_dir #"models/Stable-diffusion"
         else:            
             folder = os.path.join(models_path,"Stable-diffusion") 
-        new_folder = os.path.join(folder,"new") #"models/Stable-diffusion/new"
     elif content_type == "Hypernetwork":
         folder = cmd_opts.hypernetwork_dir #"models/hypernetworks"
-        new_folder = os.path.join(folder,"new") #"models/hypernetworks/new"
     elif content_type == "TextualInversion":
         folder = cmd_opts.embeddings_dir #"embeddings"
-        new_folder = os.path.join(folder,"new") #"embeddings/new"
     elif content_type == "AestheticGradient":
         folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
-        new_folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings/new"
     elif content_type == "LORA":
         folder = cmd_opts.lora_dir #"models/Lora"
-        new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "LoCon":
         if "lyco_dir" in cmd_opts:
             folder = f"{cmd_opts.lyco_dir}"
@@ -40,26 +35,22 @@ def contenttype_folder(content_type):
             folder = f"{cmd_opts.lyco_dir_backcompat}"
         else:
             folder = os.path.join(models_path,"LyCORIS")
-        new_folder = os.path.join(folder,"new") #"models/Lora/new"
     elif content_type == "VAE":
         if cmd_opts.vae_dir:
             folder = cmd_opts.vae_dir #"models/VAE"
         else:
             folder = os.path.join(models_path,"VAE")
-        new_folder = os.path.join(folder,"new") #"models/VAE/new"
     elif content_type == "Controlnet":
         if cmd_opts.ckpt_dir:
             folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "ControlNet")
         else:            
             folder = os.path.join(models_path,"ControlNet")
-        new_folder = os.path.join(folder,"new") 
     elif content_type == "Poses":
         if cmd_opts.ckpt_dir:
             folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "Poses")
         else:            
             folder = os.path.join(models_path,"Poses")
-        new_folder = os.path.join(folder,"new") 
-    return folder, new_folder
+    return folder
 
 def escaped_modelpath(folder, model_name):
     escapechars = str.maketrans({   " ": r"_",
@@ -80,8 +71,8 @@ def escaped_modelpath(folder, model_name):
                                 })
     return os.path.join(folder,model_name.translate(escapechars))
 
-def extranetwork_folder(content_type, model_name:str = "",base_model:str="", make_dir:bool=True, nsfw:bool=False):
-    folder, new_folder = contenttype_folder(content_type)
+def extranetwork_folder(content_type, model_name:str = "",base_model:str="", nsfw:bool=False):
+    folder = contenttype_folder(content_type)
 #    if use_new_folder:
         #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
 #        model_folder = escaped_modelpath(new_folder, model_name)
@@ -96,9 +87,6 @@ def extranetwork_folder(content_type, model_name:str = "",base_model:str="", mak
     if nsfw:
         folder = os.path.join(folder, '.nsfw')
     model_folder = escaped_modelpath(folder, model_name)
-    if not os.path.exists(model_folder):
-        if make_dir: os.makedirs(model_folder)
-    #print(f"nsfw:{nsfw}")
     return model_folder
 
 def save_text_file(folder, filename, trained_words):

@@ -20,7 +20,7 @@ class civitaimodels:
     def updateJsonData(self, json_data:dict={}, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
-        self.contentType = content_type
+        self.contentType = self.contentType if content_type is None else content_type
         self.showNsfw = False
         self.modelIndex = None
         self.versionIndex = None
@@ -400,7 +400,7 @@ class civitaimodels:
             print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
             print(Style.RESET_ALL)
             #print(f"Query: {payload} URL: {response.url}")
-            data = self.jsonData # exit() #return None
+            data = None #self.jsonData # exit() #return None
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)

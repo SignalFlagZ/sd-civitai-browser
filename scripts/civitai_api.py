@@ -400,7 +400,7 @@ class civitaimodels:
             print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
             print(Style.RESET_ALL)
             #print(f"Query: {payload} URL: {response.url}")
-            data = None #self.jsonData # exit() #return None
+            data = self.jsonData # No update data
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)

@@ -10,30 +10,6 @@ from colorama import Fore, Back, Style
 # Set the URL for the API endpoint
 civitai = civitaimodels("https://civitai.com/api/v1/models?limit=10")
 
-def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
-    query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
-    response = civitai.requestApi(query=query)
-    if response is None:
-        return gr.Dropdown.update(choices=[], value=None),\
-            gr.Radio.update(choices=[], value=None),\
-            gr.HTML.update(value=None),\
-            gr.Button.update(interactive=False),\
-            gr.Button.update(interactive=False),\
-            gr.Textbox.update(value=None)
-    civitai.updateJsonData(response, grRadioContentType)
-    civitai.setShowNsfw(grChkboxShowNsfw)
-    grTxtPages = civitai.getPages()
-    hasPrev = not civitai.prevPage() is None
-    hasNext = not civitai.nextPage() is None
-    model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
-    HTML = civitai.modelCardsHtml(model_names)
-    return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
-            gr.Radio.update(choices=[], value=None),\
-            gr.HTML.update(value=HTML),\
-            gr.Button.update(interactive=hasPrev),\
-            gr.Button.update(interactive=hasNext),\
-            gr.Textbox.update(value=grTxtPages)
-
 def updateVersionsByModelID(model_ID=None):
     if model_ID is not None:
         civitai.selectModelByID(model_ID)
@@ -43,26 +19,6 @@ def updateVersionsByModelID(model_ID=None):
         return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
     else:
         return gr.Dropdown.update(choices=[],value = None)
-
-def  update_model_info(model_version=None):
-    if model_version is not None and civitai.selectVersionByName(model_version) is not None:
-        path = extranetwork_folder( civitai.getContentType(),
-                                    civitai.getSelectedModelName(),
-                                    civitai.getSelectedVersionBaeModel(),
-                                    civitai.isNsfwModel()
-                                )
-        dict = civitai.makeModelInfo()             
-        return  gr.HTML.update(value=dict['html']),\
-                gr.Textbox.update(value=dict['trainedWords']),\
-                gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
-                gr.Textbox.update(value=dict['baseModel']),\
-                gr.Textbox.update(value=path)
-    else:
-        return  gr.HTML.update(value=None),\
-                gr.Textbox.update(value=None),\
-                gr.Dropdown.update(choices=[], value=None),\
-                gr.Textbox.update(value=None),\
-                gr.Textbox.update(value=None)
 
 def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
@@ -148,6 +104,30 @@ def on_ui_tabs():
             ],
             outputs=[]
         )
+        
+        def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
+            query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
+            response = civitai.requestApi(query=query)
+            if response is None:
+                return gr.Dropdown.update(choices=[], value=None),\
+                    gr.Radio.update(choices=[], value=None),\
+                    gr.HTML.update(value=None),\
+                    gr.Button.update(interactive=False),\
+                    gr.Button.update(interactive=False),\
+                    gr.Textbox.update(value=None)
+            civitai.updateJsonData(response, grRadioContentType)
+            civitai.setShowNsfw(grChkboxShowNsfw)
+            grTxtPages = civitai.getPages()
+            hasPrev = not civitai.prevPage() is None
+            hasNext = not civitai.nextPage() is None
+            model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
+            HTML = civitai.modelCardsHtml(model_names)
+            return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
+                    gr.Radio.update(choices=[], value=None),\
+                    gr.HTML.update(value=HTML),\
+                    gr.Button.update(interactive=hasPrev),\
+                    gr.Button.update(interactive=hasNext),\
+                    gr.Textbox.update(value=grTxtPages)
         grBtnGetListAPI.click(
             fn=update_model_list,
             inputs=[
@@ -217,6 +197,26 @@ def on_ui_tabs():
                 grTxtJsEvent
             ]
         )
+        
+        def  update_model_info(model_version=None):
+            if model_version is not None and civitai.selectVersionByName(model_version) is not None:
+                path = extranetwork_folder( civitai.getContentType(),
+                                            civitai.getSelectedModelName(),
+                                            civitai.getSelectedVersionBaeModel(),
+                                            civitai.isNsfwModel()
+                                        )
+                dict = civitai.makeModelInfo()             
+                return  gr.HTML.update(value=dict['html']),\
+                        gr.Textbox.update(value=dict['trainedWords']),\
+                        gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
+                        gr.Textbox.update(value=dict['baseModel']),\
+                        gr.Textbox.update(value=path)
+            else:
+                return  gr.HTML.update(value=None),\
+                        gr.Textbox.update(value=None),\
+                        gr.Dropdown.update(choices=[], value=None),\
+                        gr.Textbox.update(value=None),\
+                        gr.Textbox.update(value=None)
         grRadioVersions.change(
             fn=update_model_info,
             inputs=[

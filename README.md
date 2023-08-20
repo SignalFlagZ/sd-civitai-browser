@@ -43,4 +43,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Add save folder textbox
 - Add dropdown list of search period
 - Highlighted if you already have the file
+---
+↓ v1.4
 - Add page slider and jump button

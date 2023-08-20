@@ -131,6 +131,7 @@ def on_ui_tabs():
             grTxtPages = civitai.getPages()
             hasPrev = not civitai.prevPage() is None
             hasNext = not civitai.nextPage() is None
+            enableJump = hasPrev or hasNext
             model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
             HTML = civitai.modelCardsHtml(model_names)
             return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
@@ -138,8 +139,8 @@ def on_ui_tabs():
                     gr.HTML.update(value=HTML),\
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
-                    gr.Button.update(interactive=True),\
-                    gr.Slider.update(interactive=True, value=int(civitai.getCurrentPage()),maximum=int(civitai.getTotalPages())),\
+                    gr.Button.update(interactive=enableJump),\
+                    gr.Slider.update(interactive=enableJump, value=int(civitai.getCurrentPage()),maximum=int(civitai.getTotalPages())),\
                     gr.Textbox.update(value=grTxtPages)
         grBtnGetListAPI.click(
             fn=update_model_list,

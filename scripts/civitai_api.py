@@ -278,6 +278,7 @@ class civitaimodels:
                     nsfw = ""
                     alreadyhave = ""
                     ID = item['id']
+                    imgtag = ""
                     if any(item['modelVersions']):
                         if len(item['modelVersions'][0]['images']) > 0:
                             if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not self.isShowNsfw():
@@ -314,7 +315,7 @@ class civitaimodels:
             if pic['meta']:
                 img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
                 for key, value in pic['meta'].items():
-                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}</br>'
+                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}<br/>'
                 img_html = img_html + '</div>'
             img_html = img_html + '</div>'
         img_html = img_html + '</div>'
@@ -324,12 +325,12 @@ class civitaimodels:
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
             f'<b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
-            f'https://civitai.com/models/{str(modelInfo["id"])}</a></br>'\
-            f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}</br>'\
-            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}</br>'\
-            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}</br>'\
-            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}</br>'\
-            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}</br>'\
+            f'https://civitai.com/models/{str(modelInfo["id"])}</a><br/>'\
+            f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br/>'\
+            f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br/>'\
+            f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}<br/>'\
+            f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br/>'\
+            f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br/>'\
             f'<a href={modelInfo["downloadUrl"]}>'\
             '<b>Download Here</b></a>'\
             '</div>'\
@@ -340,29 +341,29 @@ class civitaimodels:
             f'<p>{modelInfo["description"]}</p></div>'
         if modelInfo["versionDescription"]:
             output_html += f'<div><h2>Version description</h2>'\
-            f'<p>{modelInfo["versionDescription"]}</p></div></br>'
+            f'<p>{modelInfo["versionDescription"]}</p></div><br/>'
         output_html += f'<div><h2>Images</h3>{img_html}</div>'
         return output_html
     
     def permissionsHtml(self, premissions:dict, msgType:int=2) -> str:
         html1 = '<div>'\
                 f'<p><strong>Check the source license yourself.</strong></p>'\
-                f'<b>{premissions["allowNoCredit"]}</b> : Use the model without crediting the creator</br>'\
-                f'<b>{premissions["canSellImages"]}</b> : Sell images they generate</br>'\
-                f'<b>{premissions["canRent"]}</b> : Run on services that generate images for money</br>'\
-                f'<b>{premissions["allowDerivatives"]}</b> : Share merges using this model</br>'\
-                f'<b>{premissions["canSell"]}</b> : Sell this model or merges using this model</br>'\
+                f'<b>{premissions["allowNoCredit"]}</b> : Use the model without crediting the creator<br/>'\
+                f'<b>{premissions["canSellImages"]}</b> : Sell images they generate<br/>'\
+                f'<b>{premissions["canRent"]}</b> : Run on services that generate images for money<br/>'\
+                f'<b>{premissions["allowDerivatives"]}</b> : Share merges using this model<br/>'\
+                f'<b>{premissions["canSell"]}</b> : Sell this model or merges using this model<br/>'\
                 f'<b>{premissions["allowDifferentLicense"]}<b> : Have different permissions when sharing merges</p>'\
                 '</div>'
         html2 = '<div>'\
-                f'<p><strong>Check the source license yourself.</strong></br>'\
+                f'<p><strong>Check the source license yourself.</strong><br/>'\
                 '<span style=color:red>'
-        html2 += 'Creator credit required</br>' if not premissions["allowNoCredit"] else ''
-        html2 += 'No selling images</br>' if not premissions["canSellImages"] else ''
-        html2 += 'No generation services</br>' if not premissions["canRent"] else ''
-        html2 += 'No selling models</br>' if not premissions["canSell"] else ''
-        html2 += 'No sharing merges</br>' if not premissions["allowDerivatives"] else ''
-        html2 += 'Same permissions required</br>' if not premissions["allowDifferentLicense"] else ''
+        html2 += 'Creator credit required<br/>' if not premissions["allowNoCredit"] else ''
+        html2 += 'No selling images<br/>' if not premissions["canSellImages"] else ''
+        html2 += 'No generation services<br/>' if not premissions["canRent"] else ''
+        html2 += 'No selling models<br/>' if not premissions["canSell"] else ''
+        html2 += 'No sharing merges<br/>' if not premissions["allowDerivatives"] else ''
+        html2 += 'Same permissions required<br/>' if not premissions["allowDifferentLicense"] else ''
         html2 += '</span></p></div>'
         if msgType == 1:
             html = html1

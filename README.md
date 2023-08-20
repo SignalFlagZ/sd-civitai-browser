@@ -28,7 +28,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Support `--lyco-dir-backcompat` modified in v1.5.1 of SD web UI
 - Save to subfolder of base model name (e.g. `_SDXL_1_0` , `_Other`)
 
-<br>↑ v1.1.0
+<br/>↑ v1.1.0
 
 ---
 ↓ v1.2.0
@@ -39,6 +39,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Change version selection from dropdown to radio button
 ---
 ↓ v1.3.0
-- Changed to ID based model selection
+- Changed to index based model selection
 - Add save folder textbox
 - Add dropdown list of search period

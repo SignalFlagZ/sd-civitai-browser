@@ -49,3 +49,20 @@
 .civcardnsfw img {
 	filter: blur(4px);
 }
+
+/*https: //github.com/gradio-app/gradio/issues/3337#issuecomment-1449589285*/
+.civitaibuttons {
+	margin: 1.2em 0em 0.55em 0em !important;
+	max-width: 2.5em;
+	min-width: 2.5em !important;
+	height: 2.4em;
+}
+
+.civitaimsg {
+	/*align-self: center;*/
+	text-align: center;
+	background-color:maroon;
+	margin: 1.1em 0em 0em 0em !important;
+	max-width: 10em;
+	min-width: 5em !important;
+}

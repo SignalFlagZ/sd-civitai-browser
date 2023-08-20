@@ -388,6 +388,13 @@ class civitaimodels:
                 query |= {'query': search_term }
         return query
 
+    def updateQuery(self, url:str , addQuery:dict) -> str:
+        parse = urllib.parse.urlparse(url)
+        strQuery = parse.query
+        dictQuery = urllib.parse.parse_qs(strQuery)
+        query = {**dictQuery, **addQuery}
+        return urllib.parse.urlunparse(parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote)))
+
     def requestApi(self, url=None, query=None):
         if url is None:
             url = self.getBaseUrl()

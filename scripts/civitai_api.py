@@ -393,7 +393,8 @@ class civitaimodels:
         strQuery = parse.query
         dictQuery = urllib.parse.parse_qs(strQuery)
         query = {**dictQuery, **addQuery}
-        return urllib.parse.urlunparse(parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote)))
+        newURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+        return urllib.parse.urlunparse(newURL)
 
     def requestApi(self, url=None, query=None):
         if url is None:

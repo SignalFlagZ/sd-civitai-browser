@@ -40,10 +40,16 @@ def on_ui_tabs():
                 grBtnPrevPage = gr.Button(value="Prev. Page", interactive=False)
             with gr.Column(scale=2,min_width=80):
                 grBtnNextPage = gr.Button(value="Next Page", interactive=False)
-            with gr.Column(scale=1,min_width=80):
-                grBtnLastPage = gr.Button(value="Last Page", interactive=False)
+            #with gr.Column(scale=1,min_width=80):
+                #grBtnLastPage = gr.Button(value="Last Page", interactive=False)
             with gr.Column(scale=1,min_width=80):
                 grTxtPages = gr.Textbox(label='Pages',show_label=False)
+        with gr.Row():
+            with gr.Column(scale=3):
+                grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
+            with gr.Column(scale=1):
+                grBtnGoPage = gr.Button(value="Jump to page", interactive=False, scale=1)
+
         with gr.Row():
             grHtmlCards = gr.HTML()
         with gr.Row():
@@ -118,13 +124,13 @@ def on_ui_tabs():
                     gr.Button.update(interactive=False),\
                     gr.Button.update(interactive=False),\
                     gr.Button.update(interactive=False),\
+                    gr.Slider.update(interactive=False),\
                     gr.Textbox.update(value=None)
             civitai.updateJsonData(response, grRadioContentType)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
             hasPrev = not civitai.prevPage() is None
             hasNext = not civitai.nextPage() is None
-            isLast = not hasNext
             model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
             HTML = civitai.modelCardsHtml(model_names)
             return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
@@ -132,7 +138,8 @@ def on_ui_tabs():
                     gr.HTML.update(value=HTML),\
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
-                    gr.Button.update(interactive=not isLast),\
+                    gr.Button.update(interactive=True),\
+                    gr.Slider.update(interactive=True, value=int(civitai.getCurrentPage()),maximum=int(civitai.getTotalPages())),\
                     gr.Textbox.update(value=grTxtPages)
         grBtnGetListAPI.click(
             fn=update_model_list,
@@ -150,7 +157,8 @@ def on_ui_tabs():
                 grHtmlCards,            
                 grBtnPrevPage,
                 grBtnNextPage,
-                grBtnLastPage,
+                grBtnGoPage,
+                grSldrPage,
                 grTxtPages
             ]
         )
@@ -303,7 +311,6 @@ def on_ui_tabs():
             grTxtPages = civitai.getPages()
             hasPrev = not civitai.prevPage() is None
             hasNext = not civitai.nextPage() is None
-            isLast = not hasNext
             model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
             HTML = civitai.modelCardsHtml(model_names)
             return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
@@ -311,7 +318,7 @@ def on_ui_tabs():
                     gr.HTML.update(value=HTML),\
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
-                    gr.Button.update(interactive=not isLast),\
+                    gr.Slider.update(value=civitai.getCurrentPage()),\
                     gr.Textbox.update(value=grTxtPages)
         
         grBtnNextPage.click(
@@ -325,7 +332,7 @@ def on_ui_tabs():
                 grHtmlCards,
                 grBtnPrevPage,
                 grBtnNextPage,
-                grBtnLastPage,
+                grSldrPage,
                 grTxtPages,
                 #grTxtSaveFolder
             ]
@@ -343,17 +350,19 @@ def on_ui_tabs():
                 grHtmlCards,
                 grBtnPrevPage,
                 grBtnNextPage,
-                grBtnLastPage,
+                grSldrPage,
                 grTxtPages,
                 #grTxtSaveFolder
             ]
             )
 
-        def update_last_page(grChkboxShowNsfw):
+        def jump_to_page(grChkboxShowNsfw, grSldrPage):
             url = civitai.nextPage()
-            addQuery =  {'page': civitai.getTotalPages() }
+            if url is None:
+                url = civitai.prevPage()
+            addQuery =  {'page': grSldrPage }
             newURL = civitai.updateQuery(url, addQuery)
-            print(f'{newURL}')
+            #print(f'{newURL}')
             response = civitai.requestApi(newURL)
             if response is None:
                 return None, None, None, None, None, None, None
@@ -362,7 +371,6 @@ def on_ui_tabs():
             grTxtPages = civitai.getPages()
             hasPrev = not civitai.prevPage() is None
             hasNext = not civitai.nextPage() is None
-            isLast = not hasNext
             model_names = civitai.getModelNames() if (grChkboxShowNsfw) else civitai.getModelNamesSfw()
             HTML = civitai.modelCardsHtml(model_names)
             return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
@@ -370,12 +378,13 @@ def on_ui_tabs():
                     gr.HTML.update(value=HTML),\
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
-                    gr.Button.update(interactive=not isLast),\
+                    gr.Slider.update(value = civitai.getCurrentPage()),\
                     gr.Textbox.update(value=grTxtPages)
-        grBtnLastPage.click(
-            fn=update_last_page,
+        grBtnGoPage.click(
+            fn=jump_to_page,
             inputs=[
                 grChkboxShowNsfw,
+                grSldrPage
             ],
             outputs=[
                 grDrpdwnModels,
@@ -383,7 +392,7 @@ def on_ui_tabs():
                 grHtmlCards,
                 grBtnPrevPage,
                 grBtnNextPage,
-                grBtnLastPage,
+                grSldrPage,
                 grTxtPages,
                 #grTxtSaveFolder
             ])

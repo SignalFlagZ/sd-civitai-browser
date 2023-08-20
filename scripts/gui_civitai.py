@@ -3,7 +3,7 @@ from html import escape
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
-from scripts.file_manage import extranetwork_folder
+from scripts.file_manage import extranetwork_folder, isExistFile
 from scripts.file_manage import save_text_file, download_file_thread, saveImageFiles
 from colorama import Fore, Back, Style
 
@@ -50,9 +50,10 @@ def on_ui_tabs():
                 grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id="eventtext1", visible=False, interactive=True, lines=1)
             with gr.Column(scale=5):
                 grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
-        with gr.Row():
-            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value=None, lines=1)
-            #grBtnFolder = gr.Button(value='📁')
+        with gr.Row().style(equal_height=False):
+            grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civitaibuttons")
+            grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
+            grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civitaimsg", visible=False)
             grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
         with gr.Row():
             txt_list = ""
@@ -229,7 +230,26 @@ def on_ui_tabs():
                 grTxtBaseModel,
                 grTxtSaveFolder
             ]
-        )
+            )
+        
+        def save_folder_changed(folder, filename):
+            civitai.setSaveFolder(folder)
+            isExist = None
+            if filename is not None:
+                isExist = file_exist_check(folder, filename)
+            return gr.Markdown.update(visible = True if isExist else False)
+            
+        grTxtSaveFolder.submit(
+            fn=save_folder_changed,
+            inputs={grTxtSaveFolder,grDrpdwnFilenames},
+            outputs=[grMrkdwnFileMessage])
+        
+        def updateDlUrl(grDrpdwnFilenames):
+            return  gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames)),\
+                    gr.Button.update(interactive=False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False)
         
         grTxtSaveFolder.change(
             fn=civitai.setSaveFolder,
@@ -242,18 +262,30 @@ def on_ui_tabs():
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False)
-        
         grDrpdwnFilenames.change(
             fn=updateDlUrl,
-            inputs=[grDrpdwnFilenames,],
+            inputs=[grDrpdwnFilenames],
             outputs=[
                 grTxtDlUrl,
                 grBtnUpdateInfo,
                 grBtnSaveText,
                 grBtnSaveImages,
                 grBtnDownloadModel
-            ]
-        )
+                ]
+            )   
+        
+        def file_exist_check(grTxtSaveFolder, grDrpdwnFilenames):
+            isExist = isExistFile(grTxtSaveFolder, grDrpdwnFilenames)            
+            return gr.Markdown.update(visible = True if isExist else False)
+        grTxtDlUrl.change(
+            fn=file_exist_check,
+            inputs=[grTxtSaveFolder,
+                    grDrpdwnFilenames
+                    ],
+            outputs=[
+                    grMrkdwnFileMessage
+                    ]
+            )
         
         def update_next_page(grChkboxShowNsfw, isNext=True):
             url = civitai.nextPage() if isNext else civitai.prevPage()
@@ -305,7 +337,7 @@ def on_ui_tabs():
                 grTxtPages,
                 #grTxtSaveFolder
             ]
-        )
+            )
 
         def eventTextUpdated(grTxtJsEvent):
             if grTxtJsEvent is not None:
@@ -352,7 +384,7 @@ def on_ui_tabs():
                 grTxtBaseModel,
                 grTxtSaveFolder
             ]
-        )
+            )
 
     return (civitai_interface, "CivitAi", "civitai_interface"),
 

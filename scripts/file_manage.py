@@ -106,7 +106,14 @@ def makedirs(folder):
     if not os.path.exists(folder):
         os.makedirs(folder)
         print(Fore.LIGHTCYAN_EX + f'Make folder: {folder}' + Style.RESET_ALL)
-        
+
+def isExistFile(folder, file):
+    isExist = False
+    if folder != "" and folder is not None:
+        path = os.path.join(folder, file)
+        isExist = os.path.exists(path)
+    return isExist
+
 def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     makedirs(folder)
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', html)
@@ -143,7 +150,7 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     filepath = os.path.join(folder, f'{basename}.civitai.info')
     with open(filepath, mode="w", encoding="utf-8") as f:
         json.dump(versionInfo, f, indent=2, ensure_ascii=False)
-    print(Fore.LIGHTCYAN_EX + f"Done." + Style.RESET_ALL)
+    #print(Fore.LIGHTCYAN_EX + f"Done." + Style.RESET_ALL)
 
 #def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
 def download_file_thread(folder, filename,  url):
@@ -232,7 +239,7 @@ def download_file(url, file_name):
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         if downloaded_size >= total_size:
-            print(Fore.LIGHTCYAN_EX + f"Success: {file_name_display}" + Style.RESET_ALL)
+            print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
             break
         else:
             print(f"Error: File download failed. Retrying... {file_name_display}")

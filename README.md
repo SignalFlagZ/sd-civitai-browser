@@ -38,7 +38,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Deprecate new folder checkbox and its function
 - Change version selection from dropdown to radio button
 ---
-↓ v1.3.0
+↓ v1.3
 - Changed to index based model selection
 - Add save folder textbox
 - Add dropdown list of search period
+- Highlighted if you already have the file

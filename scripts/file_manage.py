@@ -164,6 +164,7 @@ def download_file_thread(folder, filename,  url):
     thread = threading.Thread(target=download_file, args=(url, filepath))
     # Start the thread
     thread.start()
+    #download_file(url,filepath)
 
 
 def download_file(url, file_name):
@@ -191,7 +192,6 @@ def download_file(url, file_name):
 
         # Initialize the progress bar
         progress = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
-
         # Open a local file to save the download
         global isDownloading
         with open(file_name, "ab") as f:

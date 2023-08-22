@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict={}, content_type:str=None):
+    def __init__(self, url:str, json_data:dict=None, content_type:str=None):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -17,7 +17,7 @@ class civitaimodels:
         self.versionIndex = None
         self.modelVersionInfo = None
         self.saveFolder = None
-    def updateJsonData(self, json_data:dict={}, content_type:str=None):
+    def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
         self.contentType = self.contentType if content_type is None else content_type

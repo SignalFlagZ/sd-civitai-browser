@@ -70,7 +70,7 @@ def on_ui_tabs():
         with gr.Row():
             grBtnSaveText = gr.Button(value="Save trained words",interactive=False)
             grBtnSaveImages = gr.Button(value="Save model infos",interactive=False)
-            grBtnDownloadModel = gr.Button(value="Download Model",interactive=False)
+            grBtnDownloadModel = gr.Button(value="Download Model",interactive=False, elem_id='downloadbutton1')
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         
@@ -98,10 +98,11 @@ def on_ui_tabs():
             ],
             outputs=[]
         )
-        def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl):
+        def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
             download_file_thread(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
-            return "Done"
+            return
         grBtnDownloadModel.click(
+
             fn=model_download,
             inputs=[
                 grTxtSaveFolder,
@@ -110,7 +111,7 @@ def on_ui_tabs():
             ],
             outputs=[]
         )
-        
+      
         def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
             query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
             response = civitai.requestApi(query=query)

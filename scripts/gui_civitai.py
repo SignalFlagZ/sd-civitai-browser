@@ -447,6 +447,6 @@ def on_ui_tabs():
             ]
             )
 
-    return (civitai_interface, "CivitAi", "civitai_interface"),
+    return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

@@ -27,6 +27,7 @@ def on_ui_tabs():
                 grRadioContentType = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
             with gr.Column(scale=1, max_width=100, min_width=100):
                 grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
+            with gr.Column(scale=1, max_width=100, min_width=100):
                 grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value="AllTime", type="value")
             with gr.Column(scale=1, max_width=100, min_width=80):
                 grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
@@ -40,18 +41,16 @@ def on_ui_tabs():
                 grBtnPrevPage = gr.Button(value="Prev. Page", interactive=False)
             with gr.Column(scale=2,min_width=80):
                 grBtnNextPage = gr.Button(value="Next Page", interactive=False)
-            #with gr.Column(scale=1,min_width=80):
-                #grBtnLastPage = gr.Button(value="Last Page", interactive=False)
             with gr.Column(scale=1,min_width=80):
                 grTxtPages = gr.Textbox(label='Pages',show_label=False)
         with gr.Row():
+            grHtmlCards = gr.HTML()
+        with gr.Row():
             with gr.Column(scale=3):
                 grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
-            with gr.Column(scale=1):
-                grBtnGoPage = gr.Button(value="Jump to page", interactive=False, scale=1)
+            with gr.Column(scale=1,min_width=80):
+                grBtnGoPage = gr.Button(value="Jump page", interactive=False, scale=1)
 
-        with gr.Row():
-            grHtmlCards = gr.HTML()
         with gr.Row():
             with gr.Column(scale=1):
                 grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="modellist", value=None)
@@ -69,11 +68,9 @@ def on_ui_tabs():
             grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
             grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
         with gr.Row():
-            grBtnUpdateInfo = gr.Button(value='deprecated (1st - Get Model Info)',interactive=False)
-            grBtnSaveText = gr.Button(value="2nd - Save Text",interactive=False)
-            grBtnSaveImages = gr.Button(value="3rd - Save Images",interactive=False)
-            grBtnDownloadModel = gr.Button(value="4th - Download Model",interactive=False)
-            #save_model_in_new = gr.Checkbox(label="Save Model to new folder", value=False)
+            grBtnSaveText = gr.Button(value="Save trained words",interactive=False)
+            grBtnSaveImages = gr.Button(value="Save model infos",interactive=False)
+            grBtnDownloadModel = gr.Button(value="Download Model",interactive=False)
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         
@@ -164,39 +161,40 @@ def on_ui_tabs():
             ]
         )
         
-        def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
-            civitai.selectModelByName(grDrpdwnModels)
-            civitai.selectVersionByName(grRadioVersions)
-            grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions)
-            grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames['value']))
-            return  grHtmlModelInfo,\
-                    grTxtTrainedWords,\
-                    grDrpdwnFilenames,\
-                    grRadioVersions,\
-                    grDrpdwnModels,\
-                    grTxtDlUrl,\
-                    grTxtBaseModel,\
-                    grTxtSaveFolder
-        grBtnUpdateInfo.click(
-            #deprecated
-            fn=update_everything,
-            #fn=update_model_info,
-            inputs=[
-                grDrpdwnModels,
-                grRadioVersions,
-                grTxtDlUrl
-            ],
-            outputs=[
-                grHtmlModelInfo,
-                grTxtTrainedWords,
-                grDrpdwnFilenames,
-                grRadioVersions,
-                grDrpdwnModels,
-                grTxtDlUrl,
-                grTxtBaseModel,
-                grTxtSaveFolder
-            ]
-        )
+        #def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
+        #    civitai.selectModelByName(grDrpdwnModels)
+        #    civitai.selectVersionByName(grRadioVersions)
+        #    grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions)
+        #    grTxtDlUrl = gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames['value']))
+        #    return  grHtmlModelInfo,\
+        #            grTxtTrainedWords,\
+        #            grDrpdwnFilenames,\
+        #            grRadioVersions,\
+        #            grDrpdwnModels,\
+        #            grTxtDlUrl,\
+        #            grTxtBaseModel,\
+        #            grTxtSaveFolder
+        #grBtnUpdateInfo.click(
+        #    #deprecated
+        #    fn=update_everything,
+        #    #fn=update_model_info,
+        #    inputs=[
+        #        grDrpdwnModels,
+        #        grRadioVersions,
+        #        grTxtDlUrl
+        #    ],
+        #    outputs=[
+        #        grHtmlModelInfo,
+        #        grTxtTrainedWords,
+        #        grDrpdwnFilenames,
+        #        grRadioVersions,
+        #        grDrpdwnModels,
+        #        grTxtDlUrl,
+        #        grTxtBaseModel,
+        #        grTxtSaveFolder
+        #    ]
+        #)
+
         def UpdatedModels(grDrpdwnModels):
             index = civitai.getIndexByModelName(grDrpdwnModels)
             eventText = None
@@ -261,7 +259,6 @@ def on_ui_tabs():
         
         def updateDlUrl(grDrpdwnFilenames):
             return  gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames)),\
-                    gr.Button.update(interactive=False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False)
@@ -273,7 +270,6 @@ def on_ui_tabs():
         
         def updateDlUrl(grDrpdwnFilenames):
             return  gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames)),\
-                    gr.Button.update(interactive=False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False)
@@ -282,7 +278,6 @@ def on_ui_tabs():
             inputs=[grDrpdwnFilenames],
             outputs=[
                 grTxtDlUrl,
-                grBtnUpdateInfo,
                 grBtnSaveText,
                 grBtnSaveImages,
                 grBtnDownloadModel
@@ -306,7 +301,7 @@ def on_ui_tabs():
             url = civitai.nextPage() if isNext else civitai.prevPage()
             response = civitai.requestApi(url)
             if response is None:
-                return None, None, None, None, None, None, None
+                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
             civitai.updateJsonData(response)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -321,7 +316,7 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasNext),\
                     gr.Slider.update(value=civitai.getCurrentPage()),\
                     gr.Textbox.update(value=grTxtPages)
-        
+       
         grBtnNextPage.click(
             fn=update_next_page,
             inputs=[
@@ -366,7 +361,7 @@ def on_ui_tabs():
             #print(f'{newURL}')
             response = civitai.requestApi(newURL)
             if response is None:
-                return None, None, None, None, None, None, None
+                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
             civitai.updateJsonData(response)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -420,14 +415,21 @@ def on_ui_tabs():
                 else:
                     return  gr.Dropdown.update(value=None),\
                             gr.Radio.update(value=None),\
-                            gr.Html.update(value=None),\
-                            gr.Textbox.update(vlue=None),\
-                            gr.Textbox.update(vlue=None),\
+                            gr.HTML.update(value=None),\
+                            gr.Textbox.update(value=None),\
+                            gr.Textbox.update(value=None),\
                             gr.Dropdown.update(value=None),\
-                            gr.Textbox.update(vlue=None),\
-                            gr.Textbox.update(vlue=None)
+                            gr.Textbox.update(value=None),\
+                            gr.Textbox.update(value=None)
             else:
-                return None, None, None, None, None, None, None, None
+                return  gr.Dropdown.update(value=None),\
+                        gr.Radio.update(value=None),\
+                        gr.HTML.update(value=None),\
+                        gr.Textbox.update(value=None),\
+                        gr.Textbox.update(value=None),\
+                        gr.Dropdown.update(value=None),\
+                        gr.Textbox.update(value=None),\
+                        gr.Textbox.update(value=None)
         grTxtJsEvent.change(
             fn=eventTextUpdated,
             inputs=[

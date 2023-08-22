@@ -170,6 +170,7 @@ class civitaimodels:
     def getSelectedVersionName(self):
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['name']
     def getSelectedVersionBaeModel(self):
+        #print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
@@ -392,7 +393,7 @@ class civitaimodels:
         parse = urllib.parse.urlparse(url)
         strQuery = parse.query
         dictQuery = urllib.parse.parse_qs(strQuery)
-        query = {**dictQuery, **addQuery}
+        query = dictQuery | addQuery
         newURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
         return urllib.parse.urlunparse(newURL)
 

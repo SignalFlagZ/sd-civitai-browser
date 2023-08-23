@@ -4,11 +4,96 @@ from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
 from scripts.file_manage import extranetwork_folder, isExistFile,\
-                save_text_file, download_file_thread, saveImageFiles
+                save_text_file, saveImageFiles,makedirs
 from colorama import Fore, Back, Style
+#Download
+import os
+import re
+import requests
+from tqdm import tqdm
+import time
+#
 
 # Set the URL for the API endpoint
 civitai = civitaimodels("https://civitai.com/api/v1/models?limit=10")
+
+def download_file2(folder, filename,  url):
+    makedirs(folder)
+    file_name = os.path.join(folder, filename)
+    #thread = threading.Thread(target=download_file, args=(url, filepath))
+
+    # Maximum number of retries
+    max_retries = 5
+
+    # Delay between retries (in seconds)
+    retry_delay = 10
+
+    while True:
+        # Check if the file has already been partially downloaded
+        if os.path.exists(file_name):
+            # Get the size of the downloaded file
+            downloaded_size = os.path.getsize(file_name)
+
+            # Set the range of the request to start from the current size of the downloaded file
+            headers = {"Range": f"bytes={downloaded_size}-"}
+        else:
+            downloaded_size = 0
+            headers = {}
+
+        # Split filename from included path
+        tokens = re.split(re.escape('\\'), file_name)
+        file_name_display = tokens[-1]
+
+        # Initialize the progress bar
+        progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
+
+        # Open a local file to save the download
+        with open(file_name, "ab") as f:
+            while True:
+                try:
+                    # Send a GET request to the URL and save the response to the local file
+                    response = requests.get(url, headers=headers, stream=True)
+
+                    # Get the total size of the file
+                    total_size = int(response.headers.get("Content-Length", 0))
+
+                    # Update the total size of the progress bar if the `Content-Length` header is present
+                    if total_size == 0:
+                        total_size = downloaded_size
+                    progressConsole.total = total_size
+                    prg = 0
+                    # Write the response to the local file and update the progress bar
+                    for chunk in response.iter_content(chunk_size=5*1024*1024):
+                        if chunk:  # filter out keep-alive new chunks
+                            f.write(chunk)
+                            progressConsole.update(len(chunk))
+                            prg += len(chunk)
+                            yield f'{round(prg/1024/1024)}MB / {round(total_size/1024/1024)}MB'
+                    downloaded_size = os.path.getsize(file_name)
+                    # Break out of the loop if the download is successful
+                    break
+                except ConnectionError as e:
+                    # Decrement the number of retries
+                    max_retries -= 1
+
+                    # If there are no more retries, raise the exception
+                    if max_retries == 0:
+                        raise e
+
+                    # Wait for the specified delay before retrying
+                    time.sleep(retry_delay)
+        # Close the progress bar
+        progressConsole.close()
+        downloaded_size = os.path.getsize(file_name)
+        # Check if the download was successful
+        if downloaded_size >= total_size:
+            print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
+            yield 'Downloaded'
+
+        else:
+            print(f"Error: File download failed. Retrying... {file_name_display}")
+            yield 'Failed'
+        return
 
 def updateVersionsByModelID(model_ID=None):
     if model_ID is not None:
@@ -68,9 +153,15 @@ def on_ui_tabs():
             grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
             grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
         with gr.Row():
-            grBtnSaveText = gr.Button(value="Save trained words",interactive=False)
-            grBtnSaveImages = gr.Button(value="Save model infos",interactive=False)
-            grBtnDownloadModel = gr.Button(value="Download Model",interactive=False, elem_id='downloadbutton1')
+            with gr.Column(scale=1):
+                with gr.Row():
+                    grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
+                    grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
+            with gr.Column(scale=1):
+                with gr.Row():
+                    grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='downloadbutton1',min_width=80)
+                    grBtnCancel = gr.Button(value="Cancel",interactive=False, min_width=80)
+                grTextProgress = gr.Textbox(label='Progress')
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         
@@ -98,19 +189,28 @@ def on_ui_tabs():
             ],
             outputs=[]
         )
-        def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
-            download_file_thread(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
-            return
-        grBtnDownloadModel.click(
-
-            fn=model_download,
+        #def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
+        #    ret = download_file_thread2(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
+        #    print(Fore.LIGHTYELLOW_EX + f'{ret=}' + Style.RESET_ALL)
+        #    return ret
+        download = grBtnDownloadModel.click(
+            fn=download_file2,
             inputs=[
                 grTxtSaveFolder,
                 grDrpdwnFilenames,
                 grTxtDlUrl
             ],
-            outputs=[]
+            outputs=[grTextProgress,
+                    ]
         )
+        def test():
+            return gr.Textbox.update(value="Canceled")
+        grBtnCancel.click(
+            fn=test,
+            inputs=None,
+            outputs=[grTextProgress],
+            cancels=[download]
+            )
       
         def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
             query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
@@ -273,6 +373,7 @@ def on_ui_tabs():
             return  gr.Textbox.update(value=civitai.getUrlByName(grDrpdwnFilenames)),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False)
         grDrpdwnFilenames.change(
             fn=updateDlUrl,
@@ -281,7 +382,8 @@ def on_ui_tabs():
                 grTxtDlUrl,
                 grBtnSaveText,
                 grBtnSaveImages,
-                grBtnDownloadModel
+                grBtnDownloadModel,
+                grBtnCancel
                 ]
             )   
         

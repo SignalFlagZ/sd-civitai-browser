@@ -167,7 +167,7 @@ def on_ui_tabs():
                 with gr.Row():
                     grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='downloadbutton1',min_width=80)
                     grBtnCancel = gr.Button(value="Cancel",interactive=False, min_width=80)
-                    grTextProgress = gr.Textbox(label='Progress')
+                    grTextProgress = gr.Textbox(label='Download status')
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         
@@ -381,7 +381,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                     gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
-                    gr.Button.update(interactive=True if grDrpdwnFilenames else False)
+                    gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
+                    gr.Textbox.update(value="")
         grDrpdwnFilenames.change(
             fn=updateDlUrl,
             inputs=[grDrpdwnFilenames],
@@ -390,7 +391,8 @@ def on_ui_tabs():
                 grBtnSaveText,
                 grBtnSaveImages,
                 grBtnDownloadModel,
-                grBtnCancel
+                grBtnCancel,
+                grTextProgress
                 ]
             )   
         

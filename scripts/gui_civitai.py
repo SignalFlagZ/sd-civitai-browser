@@ -65,7 +65,7 @@ def download_file2(folder, filename,  url):
                     progressConsole.total = total_size
                     prg = 0
                     # Write the response to the local file and update the progress bar
-                    for chunk in response.iter_content(chunk_size=5*1024*1024):
+                    for chunk in response.iter_content(chunk_size=10*1024*1024):
                         if chunk:  # filter out keep-alive new chunks
                             f.write(chunk)
                             progressConsole.update(len(chunk))

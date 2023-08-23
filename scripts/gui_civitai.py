@@ -159,15 +159,15 @@ def on_ui_tabs():
             grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
             grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
         with gr.Row():
-            with gr.Column(scale=1):
+            with gr.Column(scale=2):
                 with gr.Row():
                     grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
                     grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
-            with gr.Column(scale=2):
-                with gr.Row():
                     grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='downloadbutton1',min_width=80)
+            with gr.Column(scale=1):
+                with gr.Row():
+                    grTextProgress = gr.Textbox(label='Download status',show_label=False)
                     grBtnCancel = gr.Button(value="Cancel",interactive=False, min_width=80)
-                    grTextProgress = gr.Textbox(label='Download status')
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         

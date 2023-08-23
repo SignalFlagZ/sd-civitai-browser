@@ -47,3 +47,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ↓ v1.4
 - Add page slider and jump button
 - Rename tab `CivitAi` to `CivitAi Browser`
+---
+↓ v1.5
+- Show download progress
+- Add download cancel button

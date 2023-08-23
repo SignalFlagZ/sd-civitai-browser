@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict={}, content_type:str=None):
+    def __init__(self, url:str, json_data:dict=None, content_type:str=None):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -17,7 +17,7 @@ class civitaimodels:
         self.versionIndex = None
         self.modelVersionInfo = None
         self.saveFolder = None
-    def updateJsonData(self, json_data:dict={}, content_type:str=None):
+    def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
         self.contentType = self.contentType if content_type is None else content_type
@@ -170,6 +170,7 @@ class civitaimodels:
     def getSelectedVersionName(self):
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['name']
     def getSelectedVersionBaeModel(self):
+        #print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
@@ -392,7 +393,7 @@ class civitaimodels:
         parse = urllib.parse.urlparse(url)
         strQuery = parse.query
         dictQuery = urllib.parse.parse_qs(strQuery)
-        query = {**dictQuery, **addQuery}
+        query = dictQuery | addQuery
         newURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
         return urllib.parse.urlunparse(newURL)
 

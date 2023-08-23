@@ -18,6 +18,7 @@ import time
 civitai = civitaimodels("https://civitai.com/api/v1/models?limit=10")
 
 def download_file2(folder, filename,  url):
+
     makedirs(folder)
     file_name = os.path.join(folder, filename)
     #thread = threading.Thread(target=download_file, args=(url, filepath))
@@ -28,7 +29,8 @@ def download_file2(folder, filename,  url):
     # Delay between retries (in seconds)
     retry_delay = 10
 
-    while True:
+    exitGenerator=False
+    while not exitGenerator:
         # Check if the file has already been partially downloaded
         if os.path.exists(file_name):
             # Get the size of the downloaded file
@@ -49,7 +51,7 @@ def download_file2(folder, filename,  url):
 
         # Open a local file to save the download
         with open(file_name, "ab") as f:
-            while True:
+            while not exitGenerator:
                 try:
                     # Send a GET request to the URL and save the response to the local file
                     response = requests.get(url, headers=headers, stream=True)
@@ -72,6 +74,9 @@ def download_file2(folder, filename,  url):
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break
+                except GeneratorExit:
+                    exitGenerator=True
+                    return
                 except ConnectionError as e:
                     # Decrement the number of retries
                     max_retries -= 1
@@ -83,6 +88,7 @@ def download_file2(folder, filename,  url):
                     # Wait for the specified delay before retrying
                     time.sleep(retry_delay)
         # Close the progress bar
+        exitGenerator=True
         progressConsole.close()
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
@@ -157,11 +163,11 @@ def on_ui_tabs():
                 with gr.Row():
                     grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
                     grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
-            with gr.Column(scale=1):
+            with gr.Column(scale=2):
                 with gr.Row():
                     grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='downloadbutton1',min_width=80)
                     grBtnCancel = gr.Button(value="Cancel",interactive=False, min_width=80)
-                grTextProgress = gr.Textbox(label='Progress')
+                    grTextProgress = gr.Textbox(label='Progress')
         with gr.Row():
             grHtmlModelInfo = gr.HTML()
         
@@ -203,10 +209,11 @@ def on_ui_tabs():
             outputs=[grTextProgress,
                     ]
         )
-        def test():
+        
+        def cancel_download():
             return gr.Textbox.update(value="Canceled")
         grBtnCancel.click(
-            fn=test,
+            fn=cancel_download,
             inputs=None,
             outputs=[grTextProgress],
             cancels=[download]

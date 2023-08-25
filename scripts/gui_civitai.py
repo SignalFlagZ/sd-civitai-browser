@@ -1,115 +1,13 @@
 import gradio as gr
-from html import escape
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
 from scripts.file_manage import extranetwork_folder, isExistFile,\
-                save_text_file, saveImageFiles,makedirs
+                save_text_file, saveImageFiles,download_file2
 from colorama import Fore, Back, Style
-#Download
-import os
-import re
-import requests
-from tqdm import tqdm
-import time
-#
 
 # Set the URL for the API endpoint
 civitai = civitaimodels("https://civitai.com/api/v1/models?limit=10")
-
-def download_file2(folder, filename,  url):
-
-    makedirs(folder)
-    file_name = os.path.join(folder, filename)
-    #thread = threading.Thread(target=download_file, args=(url, filepath))
-
-    # Maximum number of retries
-    max_retries = 5
-
-    # Delay between retries (in seconds)
-    retry_delay = 10
-
-    exitGenerator=False
-    while not exitGenerator:
-        # Check if the file has already been partially downloaded
-        if os.path.exists(file_name):
-            # Get the size of the downloaded file
-            downloaded_size = os.path.getsize(file_name)
-
-            # Set the range of the request to start from the current size of the downloaded file
-            headers = {"Range": f"bytes={downloaded_size}-"}
-        else:
-            downloaded_size = 0
-            headers = {}
-
-        # Split filename from included path
-        tokens = re.split(re.escape('\\'), file_name)
-        file_name_display = tokens[-1]
-
-        # Initialize the progress bar
-        progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
-
-        # Open a local file to save the download
-        with open(file_name, "ab") as f:
-            while not exitGenerator:
-                try:
-                    # Send a GET request to the URL and save the response to the local file
-                    response = requests.get(url, headers=headers, stream=True)
-
-                    # Get the total size of the file
-                    total_size = int(response.headers.get("Content-Length", 0))
-
-                    # Update the total size of the progress bar if the `Content-Length` header is present
-                    if total_size == 0:
-                        total_size = downloaded_size
-                    progressConsole.total = total_size
-                    prg = 0
-                    # Write the response to the local file and update the progress bar
-                    for chunk in response.iter_content(chunk_size=10*1024*1024):
-                        if chunk:  # filter out keep-alive new chunks
-                            f.write(chunk)
-                            progressConsole.update(len(chunk))
-                            prg += len(chunk)
-                            yield f'{round(prg/1024/1024)}MB / {round(total_size/1024/1024)}MB'
-                    downloaded_size = os.path.getsize(file_name)
-                    # Break out of the loop if the download is successful
-                    break
-                except GeneratorExit:
-                    exitGenerator=True
-                    return
-                except ConnectionError as e:
-                    # Decrement the number of retries
-                    max_retries -= 1
-
-                    # If there are no more retries, raise the exception
-                    if max_retries == 0:
-                        raise e
-
-                    # Wait for the specified delay before retrying
-                    time.sleep(retry_delay)
-        # Close the progress bar
-        exitGenerator=True
-        progressConsole.close()
-        downloaded_size = os.path.getsize(file_name)
-        # Check if the download was successful
-        if downloaded_size >= total_size:
-            print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
-            yield 'Downloaded'
-
-        else:
-            print(f"Error: File download failed. Retrying... {file_name_display}")
-            yield 'Failed'
-        return
-
-def updateVersionsByModelID(model_ID=None):
-    if model_ID is not None:
-        civitai.selectModelByID(model_ID)
-        if civitai.getSelectedModelIndex() is not None:
-            dict = civitai.getModelVersionsList()
-            civitai.selectVersionByName(next(iter(dict.keys()), None))
-        return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
-    else:
-        return gr.Dropdown.update(choices=[],value = None)
 
 def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
@@ -134,6 +32,8 @@ def on_ui_tabs():
                 grBtnNextPage = gr.Button(value="Next Page", interactive=False)
             with gr.Column(scale=1,min_width=80):
                 grTxtPages = gr.Textbox(label='Pages',show_label=False)
+        with gr.Row():
+            grMrkdwnErr = gr.Markdown(value=None, visible=False)
         with gr.Row():
             grHtmlCards = gr.HTML()
         with gr.Row():
@@ -172,7 +72,7 @@ def on_ui_tabs():
             grHtmlModelInfo = gr.HTML()
         
         def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
-            save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
+            return save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
         grBtnSaveText.click(
             fn=save_text,
             inputs=[
@@ -180,11 +80,11 @@ def on_ui_tabs():
                 grDrpdwnFilenames,
                 grTxtTrainedWords,
             ],
-            outputs=[]
+            outputs=[grTextProgress]
         )
 
         def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
-            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getModelVersionInfo() )
+            return saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getModelVersionInfo() )
         grBtnSaveImages.click(
             fn=save_image_files,
             inputs=[
@@ -193,7 +93,7 @@ def on_ui_tabs():
                 grHtmlModelInfo,
                 grRadioContentType,
             ],
-            outputs=[]
+            outputs=[grTextProgress]
         )
         #def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
         #    ret = download_file_thread2(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
@@ -222,6 +122,12 @@ def on_ui_tabs():
         def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
             query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
             response = civitai.requestApi(query=query)
+            err = civitai.getRequestError()
+            if err is None:
+                grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
+            else:
+                grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
+
             if response is None:
                 return gr.Dropdown.update(choices=[], value=None),\
                     gr.Radio.update(choices=[], value=None),\
@@ -230,7 +136,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=False),\
                     gr.Button.update(interactive=False),\
                     gr.Slider.update(interactive=False),\
-                    gr.Textbox.update(value=None)
+                    gr.Textbox.update(value=None),\
+                    grMrkdwnErr
             civitai.updateJsonData(response, grRadioContentType)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -246,7 +153,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasNext),\
                     gr.Button.update(interactive=enableJump),\
                     gr.Slider.update(interactive=enableJump, value=int(civitai.getCurrentPage()),maximum=int(civitai.getTotalPages())),\
-                    gr.Textbox.update(value=grTxtPages)
+                    gr.Textbox.update(value=grTxtPages),\
+                    grMrkdwnErr
         grBtnGetListAPI.click(
             fn=update_model_list,
             inputs=[
@@ -265,7 +173,8 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grBtnGoPage,
                 grSldrPage,
-                grTxtPages
+                grTxtPages,
+                grMrkdwnErr
             ]
         )
         
@@ -412,8 +321,13 @@ def on_ui_tabs():
         def update_next_page(grChkboxShowNsfw, isNext=True):
             url = civitai.nextPage() if isNext else civitai.prevPage()
             response = civitai.requestApi(url)
+            err = civitai.getRequestError()
+            if err is None:
+                grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
+            else:
+                grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
             if response is None:
-                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
+                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update(), grMrkdwnErr
             civitai.updateJsonData(response)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -427,7 +341,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
                     gr.Slider.update(value=civitai.getCurrentPage()),\
-                    gr.Textbox.update(value=grTxtPages)
+                    gr.Textbox.update(value=grTxtPages),\
+                    grMrkdwnErr
        
         grBtnNextPage.click(
             fn=update_next_page,
@@ -442,6 +357,7 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grSldrPage,
                 grTxtPages,
+                grMrkdwnErr
                 #grTxtSaveFolder
             ]
         )
@@ -472,8 +388,13 @@ def on_ui_tabs():
             newURL = civitai.updateQuery(url, addQuery)
             #print(f'{newURL}')
             response = civitai.requestApi(newURL)
+            err = civitai.getRequestError()
+            if err is None:
+                grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
+            else:
+                grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
             if response is None:
-                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
+                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update(),grMrkdwnErr
             civitai.updateJsonData(response)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -487,7 +408,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
                     gr.Slider.update(value = civitai.getCurrentPage()),\
-                    gr.Textbox.update(value=grTxtPages)
+                    gr.Textbox.update(value=grTxtPages),\
+                    grMrkdwnErr
         grBtnGoPage.click(
             fn=jump_to_page,
             inputs=[
@@ -502,9 +424,19 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grSldrPage,
                 grTxtPages,
+                grMrkdwnErr
                 #grTxtSaveFolder
             ])
-
+        
+        def updateVersionsByModelID(model_ID=None):
+            if model_ID is not None:
+                civitai.selectModelByID(model_ID)
+                if civitai.getSelectedModelIndex() is not None:
+                    dict = civitai.getModelVersionsList()
+                    civitai.selectVersionByName(next(iter(dict.keys()), None))
+                return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+            else:
+                return gr.Dropdown.update(choices=[],value = None)
         def eventTextUpdated(grTxtJsEvent):
             if grTxtJsEvent is not None:
                 grTxtJsEvent = grTxtJsEvent.split(':')

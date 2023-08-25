@@ -101,6 +101,7 @@ def save_text_file(folder, filename, trained_words):
         with open(filepath, 'w') as f:
             f.write(trained_words)
     print(Fore.LIGHTCYAN_EX + f'Save text.' + Style.RESET_ALL)
+    return "Save text"
 
 def makedirs(folder):
     if not os.path.exists(folder):
@@ -141,16 +142,20 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
             #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
                     
         except urllib.error.URLError as e:
-            print(f'Error: {e.reason}')
+            print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
+            return "Err: Save infos"
     
     filepath = os.path.join(folder, f'{basename}.html')
     with open(filepath, 'wb') as f:
         f.write(HTML.encode('utf8'))
+        print(Fore.LIGHTCYAN_EX + f"Save {basename}.html" + Style.RESET_ALL)
     #Save json_info
     filepath = os.path.join(folder, f'{basename}.civitai.info')
     with open(filepath, mode="w", encoding="utf-8") as f:
         json.dump(versionInfo, f, indent=2, ensure_ascii=False)
+        print(Fore.LIGHTCYAN_EX + f"Save {basename}.civitai.info" + Style.RESET_ALL)
     #print(Fore.LIGHTCYAN_EX + f"Done." + Style.RESET_ALL)
+    return "Save infos"
 
 #def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
 def download_file_thread(folder, filename,  url):
@@ -268,3 +273,86 @@ def download_file(url, file_name):
 #
 #    # Close the progress bar
 #    progress.close()
+
+def download_file2(folder, filename,  url):
+
+    makedirs(folder)
+    file_name = os.path.join(folder, filename)
+    #thread = threading.Thread(target=download_file, args=(url, filepath))
+
+    # Maximum number of retries
+    max_retries = 5
+
+    # Delay between retries (in seconds)
+    retry_delay = 10
+
+    exitGenerator=False
+    while not exitGenerator:
+        # Check if the file has already been partially downloaded
+        if os.path.exists(file_name):
+            # Get the size of the downloaded file
+            downloaded_size = os.path.getsize(file_name)
+
+            # Set the range of the request to start from the current size of the downloaded file
+            headers = {"Range": f"bytes={downloaded_size}-"}
+        else:
+            downloaded_size = 0
+            headers = {}
+
+        # Split filename from included path
+        tokens = re.split(re.escape('\\'), file_name)
+        file_name_display = tokens[-1]
+
+        # Initialize the progress bar
+        yield "Connecting..."
+        progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
+        prg = downloaded_size
+        # Open a local file to save the download
+        with open(file_name, "ab") as f:
+            while not exitGenerator:
+                try:
+                    # Send a GET request to the URL and save the response to the local file
+                    response = requests.get(url, headers=headers, stream=True)
+                    # Get the total size of the file
+                    total_size = int(response.headers.get("Content-Length", 0))
+
+                    # Update the total size of the progress bar if the `Content-Length` header is present
+                    if total_size == 0:
+                        total_size = downloaded_size
+                    progressConsole.total = total_size
+                    # Write the response to the local file and update the progress bar
+                    for chunk in response.iter_content(chunk_size=8388608):
+                        if chunk:  # filter out keep-alive new chunks
+                            f.write(chunk)
+                            progressConsole.update(len(chunk))
+                            prg += len(chunk)
+                            yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                    downloaded_size = os.path.getsize(file_name)
+                    # Break out of the loop if the download is successful
+                    break
+                except GeneratorExit:
+                    exitGenerator=True
+                    return
+                except ConnectionError as e:
+                    # Decrement the number of retries
+                    max_retries -= 1
+
+                    # If there are no more retries, raise the exception
+                    if max_retries == 0:
+                        raise e
+
+                    # Wait for the specified delay before retrying
+                    time.sleep(retry_delay)
+        # Close the progress bar
+        exitGenerator=True
+        progressConsole.close()
+        downloaded_size = os.path.getsize(file_name)
+        # Check if the download was successful
+        if downloaded_size >= total_size:
+            print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
+            yield 'Downloaded'
+
+        else:
+            print(f"Error: File download failed. Retrying... {file_name_display}")
+            yield 'Failed'
+        return

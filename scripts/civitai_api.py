@@ -16,6 +16,7 @@ class civitaimodels:
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None
+        self.requestError = None
         self.saveFolder = None
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
@@ -25,6 +26,7 @@ class civitaimodels:
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None
+        self.requestError = None
         self.saveFolder = None
     def setBaseUrl(self,url:str):
            self.url = url
@@ -41,6 +43,8 @@ class civitaimodels:
         self.contentType = content_type
     def getContentType(self) -> str:
         return self.contentType
+    def getRequestError(self) -> requests.exceptions.RequestException:
+        return self.requestError
     def setSaveFolder(self, path):
         self.saveFolder = path
     def getSaveFolder(self):
@@ -398,6 +402,7 @@ class civitaimodels:
         return urllib.parse.urlunparse(newURL)
 
     def requestApi(self, url=None, query=None):
+        self.requestError = None
         if url is None:
             url = self.getBaseUrl()
         if query is not None:
@@ -411,6 +416,7 @@ class civitaimodels:
             print(Style.RESET_ALL)
             #print(f"Query: {payload} URL: {response.url}")
             data = self.jsonData # No update data
+            self.requestError = e
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)

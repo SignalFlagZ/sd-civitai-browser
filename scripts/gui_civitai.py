@@ -33,6 +33,8 @@ def on_ui_tabs():
             with gr.Column(scale=1,min_width=80):
                 grTxtPages = gr.Textbox(label='Pages',show_label=False)
         with gr.Row():
+            grMrkdwnErr = gr.Markdown(value=None, visible=False)
+        with gr.Row():
             grHtmlCards = gr.HTML()
         with gr.Row():
             with gr.Column(scale=3):
@@ -70,7 +72,7 @@ def on_ui_tabs():
             grHtmlModelInfo = gr.HTML()
         
         def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
-            save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
+            return save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
         grBtnSaveText.click(
             fn=save_text,
             inputs=[
@@ -78,11 +80,11 @@ def on_ui_tabs():
                 grDrpdwnFilenames,
                 grTxtTrainedWords,
             ],
-            outputs=[]
+            outputs=[grTextProgress]
         )
 
         def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
-            saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getModelVersionInfo() )
+            return saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, civitai.getModelVersionInfo() )
         grBtnSaveImages.click(
             fn=save_image_files,
             inputs=[
@@ -91,7 +93,7 @@ def on_ui_tabs():
                 grHtmlModelInfo,
                 grRadioContentType,
             ],
-            outputs=[]
+            outputs=[grTextProgress]
         )
         #def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
         #    ret = download_file_thread2(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
@@ -120,6 +122,12 @@ def on_ui_tabs():
         def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
             query = civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
             response = civitai.requestApi(query=query)
+            err = civitai.getRequestError()
+            if err is None:
+                grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
+            else:
+                grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
+
             if response is None:
                 return gr.Dropdown.update(choices=[], value=None),\
                     gr.Radio.update(choices=[], value=None),\
@@ -128,7 +136,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=False),\
                     gr.Button.update(interactive=False),\
                     gr.Slider.update(interactive=False),\
-                    gr.Textbox.update(value=None)
+                    gr.Textbox.update(value=None),\
+                    grMrkdwnErr
             civitai.updateJsonData(response, grRadioContentType)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -144,7 +153,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasNext),\
                     gr.Button.update(interactive=enableJump),\
                     gr.Slider.update(interactive=enableJump, value=int(civitai.getCurrentPage()),maximum=int(civitai.getTotalPages())),\
-                    gr.Textbox.update(value=grTxtPages)
+                    gr.Textbox.update(value=grTxtPages),\
+                    grMrkdwnErr
         grBtnGetListAPI.click(
             fn=update_model_list,
             inputs=[
@@ -163,7 +173,8 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grBtnGoPage,
                 grSldrPage,
-                grTxtPages
+                grTxtPages,
+                grMrkdwnErr
             ]
         )
         
@@ -310,8 +321,13 @@ def on_ui_tabs():
         def update_next_page(grChkboxShowNsfw, isNext=True):
             url = civitai.nextPage() if isNext else civitai.prevPage()
             response = civitai.requestApi(url)
+            err = civitai.getRequestError()
+            if err is None:
+                grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
+            else:
+                grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
             if response is None:
-                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
+                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update(), grMrkdwnErr
             civitai.updateJsonData(response)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -325,7 +341,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
                     gr.Slider.update(value=civitai.getCurrentPage()),\
-                    gr.Textbox.update(value=grTxtPages)
+                    gr.Textbox.update(value=grTxtPages),\
+                    grMrkdwnErr
        
         grBtnNextPage.click(
             fn=update_next_page,
@@ -340,6 +357,7 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grSldrPage,
                 grTxtPages,
+                grMrkdwnErr
                 #grTxtSaveFolder
             ]
         )
@@ -370,8 +388,13 @@ def on_ui_tabs():
             newURL = civitai.updateQuery(url, addQuery)
             #print(f'{newURL}')
             response = civitai.requestApi(newURL)
+            err = civitai.getRequestError()
+            if err is None:
+                grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
+            else:
+                grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
             if response is None:
-                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
+                return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update(),grMrkdwnErr
             civitai.updateJsonData(response)
             civitai.setShowNsfw(grChkboxShowNsfw)
             grTxtPages = civitai.getPages()
@@ -385,7 +408,8 @@ def on_ui_tabs():
                     gr.Button.update(interactive=hasPrev),\
                     gr.Button.update(interactive=hasNext),\
                     gr.Slider.update(value = civitai.getCurrentPage()),\
-                    gr.Textbox.update(value=grTxtPages)
+                    gr.Textbox.update(value=grTxtPages),\
+                    grMrkdwnErr
         grBtnGoPage.click(
             fn=jump_to_page,
             inputs=[
@@ -400,6 +424,7 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grSldrPage,
                 grTxtPages,
+                grMrkdwnErr
                 #grTxtSaveFolder
             ])
         

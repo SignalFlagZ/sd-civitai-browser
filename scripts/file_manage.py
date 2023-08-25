@@ -101,6 +101,7 @@ def save_text_file(folder, filename, trained_words):
         with open(filepath, 'w') as f:
             f.write(trained_words)
     print(Fore.LIGHTCYAN_EX + f'Save text.' + Style.RESET_ALL)
+    return "Save text"
 
 def makedirs(folder):
     if not os.path.exists(folder):
@@ -141,16 +142,20 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
             #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
                     
         except urllib.error.URLError as e:
-            print(f'Error: {e.reason}')
+            print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
+            return "Err: Save infos"
     
     filepath = os.path.join(folder, f'{basename}.html')
     with open(filepath, 'wb') as f:
         f.write(HTML.encode('utf8'))
+        print(Fore.LIGHTCYAN_EX + f"Save {basename}.html" + Style.RESET_ALL)
     #Save json_info
     filepath = os.path.join(folder, f'{basename}.civitai.info')
     with open(filepath, mode="w", encoding="utf-8") as f:
         json.dump(versionInfo, f, indent=2, ensure_ascii=False)
+        print(Fore.LIGHTCYAN_EX + f"Save {basename}.civitai.info" + Style.RESET_ALL)
     #print(Fore.LIGHTCYAN_EX + f"Done." + Style.RESET_ALL)
+    return "Save infos"
 
 #def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
 def download_file_thread(folder, filename,  url):

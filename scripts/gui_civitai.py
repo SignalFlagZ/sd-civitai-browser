@@ -434,9 +434,11 @@ def on_ui_tabs():
                 if civitai.getSelectedModelIndex() is not None:
                     dict = civitai.getModelVersionsList()
                     civitai.selectVersionByName(next(iter(dict.keys()), None))
-                return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+                    #print(Fore.LIGHTYELLOW_EX + f'{dict=}' + Style.RESET_ALL)
+                #return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
+                return gr.Radio.update(choices=list(dict), value=f'{next(iter(dict.keys()), None)}')
             else:
-                return gr.Dropdown.update(choices=[],value = None)
+                return gr.Radio.update(choices=[],value = None)
         def eventTextUpdated(grTxtJsEvent):
             if grTxtJsEvent is not None:
                 grTxtJsEvent = grTxtJsEvent.split(':')

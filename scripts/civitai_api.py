@@ -236,7 +236,7 @@ class civitaimodels:
                             })
         modelInfo['images'] = pics
         modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else None
-        modelInfo['html'] = self.modelInfoHtml(modelInfo).replace('"', '\\"')
+        modelInfo['html'] = self.modelInfoHtml(modelInfo)
         self.setModelVersionInfo(modelInfo)
         return modelInfo
 

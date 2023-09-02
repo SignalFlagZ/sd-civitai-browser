@@ -11,6 +11,8 @@ from requests.exceptions import ConnectionError
 from tqdm import tqdm
 from modules.shared import opts, cmd_opts
 from modules.paths import models_path
+import tkinter as tk
+from tkinter import messagebox
 
 isDownloading = False
 
@@ -289,15 +291,24 @@ def download_file2(folder, filename,  url):
     exitGenerator=False
     while not exitGenerator:
         # Check if the file has already been partially downloaded
+        downloaded_size = 0
+        headers = {}
+        mode = "wb" #Open file mode
         if os.path.exists(file_name):
-            # Get the size of the downloaded file
-            downloaded_size = os.path.getsize(file_name)
-
-            # Set the range of the request to start from the current size of the downloaded file
-            headers = {"Range": f"bytes={downloaded_size}-"}
-        else:
-            downloaded_size = 0
-            headers = {}
+            yield "Overwrite?"
+            root = tk.Tk()
+            root.attributes('-topmost', True)
+            root.bell()
+            root.withdraw()
+            ret = messagebox.askyesno(title="File exists", message='Yes: Overwrite\n\nNo:  Continue previous download')
+            root.destroy()
+            if not ret:
+                print(Fore.LIGHTCYAN_EX + f"Continue: {file_name}" + Style.RESET_ALL)
+                mode = "ab"
+                # Get the size of the downloaded file
+                downloaded_size = os.path.getsize(file_name)
+                # Set the range of the request to start from the current size of the downloaded file
+                headers = {"Range": f"bytes={downloaded_size}-"}
 
         # Split filename from included path
         tokens = re.split(re.escape('\\'), file_name)
@@ -308,7 +319,7 @@ def download_file2(folder, filename,  url):
         progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
         prg = downloaded_size
         # Open a local file to save the download
-        with open(file_name, "ab") as f:
+        with open(file_name, mode) as f:
             while not exitGenerator:
                 try:
                     # Send a GET request to the URL and save the response to the local file

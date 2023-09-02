@@ -48,7 +48,7 @@ def on_ui_tabs():
                 grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id="eventtext1", visible=False, interactive=True, lines=1)
             with gr.Column(scale=5):
                 grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
-        with gr.Row().style(equal_height=False):
+        with gr.Row(equal_height=False):
             grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civitaibuttons")
             grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
             grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civitaimsg", visible=False)

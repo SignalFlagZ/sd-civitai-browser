@@ -123,6 +123,8 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     basename = os.path.splitext(versionName)[0] # remove extension
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    preview_url = versionInfo['images'][0]['url']
+    preview_url = urllib.parse.quote(preview_url,  safe=':/=')
     if 'images' in versionInfo:
         for img in versionInfo['images']:
             if img['type'] == 'image':

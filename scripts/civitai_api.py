@@ -283,15 +283,21 @@ class civitaimodels:
                     nsfw = ""
                     alreadyhave = ""
                     ID = item['id']
-                    imgtag = ""
+                    imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
                     if any(item['modelVersions']):
                         if len(item['modelVersions'][0]['images']) > 0:
-                            if item["modelVersions"][0]["images"][0]['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civcardnsfw'
-                            imgtag = f'<img src={item["modelVersions"][0]["images"][0]["url"]}"></img>'
-                        else:
-                            imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
-                            
+                            for img in item['modelVersions'][0]['images']:
+                                #print(f'{img["type"]}')
+                                if img['type'] == "image":
+                                    if img['nsfw'] != "None" and not self.isShowNsfw():
+                                        nsfw = 'civcardnsfw'
+                                    imgtag = f'<img src={img["url"]}"></img>'
+                                    break
+                                elif img['type'] == 'video':
+                                    if img['nsfw'] != "None" and not self.isShowNsfw():
+                                        nsfw = 'civcardnsfw'
+                                    imgtag = f'<video loop autoplay muted src={img["url"]}"></video>'
+                                    break
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
                             base_model = item["modelVersions"][0]['baseModel']
@@ -314,9 +320,11 @@ class civitaimodels:
             nsfw = None
             if pic['nsfw'] != "None" and not self.showNsfw:
                 nsfw = 'class="civnsfw"'
-            img_html = img_html +\
-                         f'<div {nsfw} style="display:flex;align-items:flex-start;">'\
-                         f'<img src={pic["url"]} style="width:20em;"></img>'
+            img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;">'
+            if pic['type'] == 'image':
+                img_html += f'<img src={pic["url"]} style="width:20em;"></img>'
+            else:
+                img_html += f'<video loop autoplay muted src={pic["url"]} style="width:20em;"></video>'
             if pic['meta']:
                 img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
                 for key, value in pic['meta'].items():

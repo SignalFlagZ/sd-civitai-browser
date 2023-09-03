@@ -52,3 +52,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show download progress
 - Add download cancel button
 - Show Civitai response error
+- File exists, overwrite and continue can be selected.
+---
+↓ v1.6
+- Support video type images (Temporarily because the video format is unknown)

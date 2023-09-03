@@ -33,6 +33,12 @@
 	height: 12em;
 	object-fit: cover;
 }
+.civmodelcard video {
+	/*filter: blur(6px);*/
+	width: 8em;
+	height: 12em;
+	object-fit: cover;
+}
 
 .civmodelcard figcaption {
 	position: absolute;
@@ -47,6 +53,12 @@
 	filter: blur(10px);
 }
 .civcardnsfw img {
+	filter: blur(4px);
+}
+.civnsfw video {
+	filter: blur(10px);
+}
+.civcardnsfw video {
 	filter: blur(4px);
 }
 

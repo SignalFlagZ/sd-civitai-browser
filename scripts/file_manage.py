@@ -124,26 +124,45 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
     if 'images' in versionInfo:
-        prevew_url = versionInfo['images'][0]['url']
-        prevew_url = urllib.parse.quote(prevew_url,  safe=':/=')
+        for img in versionInfo['images']:
+            if img['type'] == 'image':
+                preview_url = img['url']
+                preview_url = urllib.parse.quote(preview_url,  safe=':/=')
+                break
 
     urllib.request.install_opener(opener)
     HTML = html
     for i, img_url in enumerate(img_urls):
+        isVideo = False
+        for img in versionInfo['images']:
+            if img['url'] == img_url:
+                if img['type'] == 'video':
+                    isVideo = True
         #print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
-        filename = f'{basename}_{i}.png'
-        filenamethumb = f'{basename}.png'
-        if content_type == "TextualInversion":
-            filename = f'{basename}_{i}.preview.png'
-            filenamethumb = f'{basename}.preview.png'
+        if isVideo:
+            if content_type == "TextualInversion":
+                filename = f'{basename}_{i}.preview.webm'
+                filenamethumb = f'{basename}.preview.webm'
+            else:
+                filename = f'{basename}_{i}.webm'
+                filenamethumb = f'{basename}.webm'
+        else:
+            if content_type == "TextualInversion":
+                filename = f'{basename}_{i}.preview.png'
+                filenamethumb = f'{basename}.preview.png'
+            else:
+                filename = f'{basename}_{i}.png'
+                filenamethumb = f'{basename}.png'
+
         HTML = HTML.replace(img_url,f'"{filename}"')
-        if urllib.parse.urlparse(img_url).scheme:
+        url_parse = urllib.parse.urlparse(img_url)
+        if url_parse.scheme:
             img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
             try:
                 with urllib.request.urlopen(img_url) as url:
                     with open(os.path.join(folder, filename), 'wb') as f:
                         f.write(url.read())
-                        if img_url == prevew_url:
+                        if img_url == preview_url:
                             shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
                         print(Fore.LIGHTCYAN_EX + f"Save {filename}" + Style.RESET_ALL)
                 #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:

@@ -291,12 +291,12 @@ class civitaimodels:
                                 if img['type'] == "image":
                                     if img['nsfw'] != "None" and not self.isShowNsfw():
                                         nsfw = 'civcardnsfw'
-                                    imgtag = f'<img src={img["url"]}"></img>'
+                                    imgtag = f'<img src={img["url"]}></img>'
                                     break
                                 elif img['type'] == 'video':
                                     if img['nsfw'] != "None" and not self.isShowNsfw():
                                         nsfw = 'civcardnsfw'
-                                    imgtag = f'<video loop autoplay muted src={img["url"]}"></video>'
+                                    imgtag = f'<video loop autoplay muted src={img["url"]}></video>'
                                     break
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']

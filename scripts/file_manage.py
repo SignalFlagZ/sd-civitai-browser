@@ -130,24 +130,30 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     urllib.request.install_opener(opener)
     HTML = html
     for i, img_url in enumerate(img_urls):
+        #print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
         filename = f'{basename}_{i}.png'
         filenamethumb = f'{basename}.png'
         if content_type == "TextualInversion":
             filename = f'{basename}_{i}.preview.png'
             filenamethumb = f'{basename}.preview.png'
         HTML = HTML.replace(img_url,f'"{filename}"')
-        img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
-        try:
-            with urllib.request.urlopen(img_url) as url:
-                with open(os.path.join(folder, filename), 'wb') as f:
-                    f.write(url.read())
-                    if img_url == prevew_url:
-                        shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
-                    print(Fore.LIGHTCYAN_EX + f"Save {filename}" + Style.RESET_ALL)
-            #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
-        except urllib.error.URLError as e:
-            print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
-            return "Err: Save infos"
+        if urllib.parse.urlparse(img_url).scheme:
+            img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
+            try:
+                with urllib.request.urlopen(img_url) as url:
+                    with open(os.path.join(folder, filename), 'wb') as f:
+                        f.write(url.read())
+                        if img_url == prevew_url:
+                            shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
+                        print(Fore.LIGHTCYAN_EX + f"Save {filename}" + Style.RESET_ALL)
+                #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
+            except urllib.error.URLError as e:
+                print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
+                print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
+                #return "Err: Save infos"
+            except urllib.error.HTTPError as err:
+                print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
+                print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
     
     filepath = os.path.join(folder, f'{basename}.html')
     with open(filepath, 'wb') as f:

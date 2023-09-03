@@ -123,6 +123,9 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     basename = os.path.splitext(versionName)[0] # remove extension
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    if 'images' in versionInfo:
+        prevew_url = versionInfo['images'][0]['url']
+        prevew_url = urllib.parse.quote(prevew_url,  safe=':/=')
 
     urllib.request.install_opener(opener)
     HTML = html
@@ -138,11 +141,10 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
             with urllib.request.urlopen(img_url) as url:
                 with open(os.path.join(folder, filename), 'wb') as f:
                     f.write(url.read())
-                    if i == 0 and not os.path.exists(os.path.join(folder, filenamethumb)):
+                    if img_url == prevew_url:
                         shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
                     print(Fore.LIGHTCYAN_EX + f"Save {filename}" + Style.RESET_ALL)
             #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
-                    
         except urllib.error.URLError as e:
             print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
             return "Err: Save infos"

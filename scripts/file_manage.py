@@ -344,7 +344,10 @@ def download_file2(folder, filename,  url):
         file_name_display = tokens[-1]
 
         # Initialize the progress bar
-        yield "Connecting..."
+        try:
+            yield "Connecting..."
+        except Exception as e:
+            return
         progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
         prg = downloaded_size
         # Open a local file to save the download
@@ -366,7 +369,10 @@ def download_file2(folder, filename,  url):
                             f.write(chunk)
                             progressConsole.update(len(chunk))
                             prg += len(chunk)
-                            yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                            try:
+                                yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                            except Exception as e:
+                                return
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break

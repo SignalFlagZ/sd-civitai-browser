@@ -13,3 +13,16 @@ function select_model(model_name) {
 			break;
 	}
 }
+
+function copyInnerText(id) {
+	var copyText = document.getElementById(id);
+	return navigator.clipboard.writeText(copyText.innerText).then(
+		function () {
+			alert("Copied infotext")
+		}
+	).catch(
+		function (error) {
+			alert((error && error.message) || "Failed to copy infotext");
+		}
+	)
+}

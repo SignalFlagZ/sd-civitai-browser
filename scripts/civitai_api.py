@@ -283,7 +283,7 @@ class civitaimodels:
                     nsfw = ""
                     alreadyhave = ""
                     ID = item['id']
-                    imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
+                    imgtag = f'<img src="./file=html/card-no-preview.png"/>'
                     if any(item['modelVersions']):
                         if len(item['modelVersions'][0]['images']) > 0:
                             for img in item['modelVersions'][0]['images']:
@@ -296,7 +296,11 @@ class civitaimodels:
                                 elif img['type'] == 'video':
                                     if img['nsfw'] != "None" and not self.isShowNsfw():
                                         nsfw = 'civcardnsfw'
-                                    imgtag = f'<video loop autoplay muted src={img["url"]}></video>'
+                                    imgtag = f'<video loop autoplay muted poster={img["url"]}>'
+                                    imgtag += f'<source  src={img["url"]} type="video/webm"/>'
+                                    imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
+                                    imgtag += f'<img src={img["url"]} type="image/gif"/>'
+                                    imgtag += f'</video>'
                                     break
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
@@ -338,23 +342,39 @@ class civitaimodels:
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
         '''Generate HTML of model info'''
+        #function:copy to clipboard
         img_html = '<div class="sampleimgs">'
+        index = 0
         for pic in modelInfo['images']:
             nsfw = None
+            if pic['meta']:
+                infotext = self.meta2html(pic['meta'])
             if pic['nsfw'] != "None" and not self.showNsfw:
                 nsfw = 'class="civnsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;">'
             if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]} style="width:20em;"></img>'
+                img_html += f'<img src={pic["url"]} style="width:20em;" onclick="copyInnerText(\'picID{index}\')"/>'
             else:
-                img_html += f'<video loop autoplay muted src={pic["url"]} style="width:20em;"></video>'
+                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;">'
+                img_html += f'<source  src={pic["url"]} type="video/webm"/>'
+                img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
+                img_html += f'<img src={pic["url"]} type="image/gif"/>'
+                img_html += f'</video>'
             if pic['meta']:
-                img_html += '<div style="text-align:left;line-height: 1.5em;">'
-                img_html += self.meta2html(pic['meta'])
+                img_html += f'<div style="text-align:left;line-height: 1.5em;" id="picID{index}">'
+                index += 1
+                img_html += infotext
                 img_html += '</div>'
             img_html += '</div>'
         img_html += '</div>'
-        output_html = '<div>'
+        output_html = '<script>'\
+            'function copyInnerText(id) {'\
+                'var copyText = document.getElementById(id);'\
+                'return  navigator.clipboard.writeText(copyText.innerText).then('\
+            'function () {alert("Copied infotext")}).catch(function (error) {'\
+                'alert((error && error.message) || "Failed to copy infotext");})}'\
+            '</script>'
+        output_html += '<div>'
         if modelInfo['nsfw']:
             output_html += '<h1>NSFW</b></h1>'
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
@@ -377,7 +397,9 @@ class civitaimodels:
         if modelInfo["versionDescription"]:
             output_html += f'<div><h2>Version description</h2>'\
             f'<p>{modelInfo["versionDescription"]}</p></div><br/>'
-        output_html += f'<div><h2>Images</h3>{img_html}</div>'
+        output_html += f'<div><h2>Images</h3>'\
+                        f'<p>Click image to copy infotext</p>'\
+                        f'{img_html}</div>'
         return output_html
     
     def permissionsHtml(self, premissions:dict, msgType:int=2) -> str:

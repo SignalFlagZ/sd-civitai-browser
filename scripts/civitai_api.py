@@ -313,6 +313,29 @@ class civitaimodels:
         HTML = HTML + '</div>'
         return HTML
 
+    def meta2html(self, meta:dict) -> str:
+        #convert key name for infotext
+        renameKey = {
+            'prompt':'Prompt',
+            'negativePrompt': 'Negative prompt',
+            'steps': 'Steps',
+            'seed': 'Seed',
+            'sampler': 'Sampler',
+            'cfgScale': 'CFG scale',
+            'clipSkip': 'Clip skip'
+                }
+        infotext = {renameKey.get(key, key): value for key, value in meta.items()}
+        html = ""
+        if 'Prompt' in infotext:
+            html += f'{escape(str(infotext["Prompt"]))}<br/>'
+            del infotext["Prompt"]
+        if 'Negative prompt' in infotext:
+            html += f'{escape(str("Negative prompt"))}: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
+            del infotext["Negative prompt"]
+        for key, value in infotext.items():
+            html += f'{escape(str(key))}: {escape(str(value))}, '
+        return html.rstrip(', ')
+
     def modelInfoHtml(self, modelInfo:dict) -> str:
         '''Generate HTML of model info'''
         img_html = '<div class="sampleimgs">'
@@ -326,12 +349,11 @@ class civitaimodels:
             else:
                 img_html += f'<video loop autoplay muted src={pic["url"]} style="width:20em;"></video>'
             if pic['meta']:
-                img_html = img_html + '<div style="text-align:left;line-height: 1.5em;">'
-                for key, value in pic['meta'].items():
-                    img_html = img_html + f'{escape(str(key))}: {escape(str(value))}<br/>'
-                img_html = img_html + '</div>'
-            img_html = img_html + '</div>'
-        img_html = img_html + '</div>'
+                img_html += '<div style="text-align:left;line-height: 1.5em;">'
+                img_html += self.meta2html(pic['meta'])
+                img_html += '</div>'
+            img_html += '</div>'
+        img_html += '</div>'
         output_html = '<div>'
         if modelInfo['nsfw']:
             output_html += '<h1>NSFW</b></h1>'

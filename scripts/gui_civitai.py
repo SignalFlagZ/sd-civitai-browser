@@ -376,6 +376,7 @@ def on_ui_tabs():
                 grBtnNextPage,
                 grSldrPage,
                 grTxtPages,
+                grMrkdwnErr
                 #grTxtSaveFolder
             ]
             )

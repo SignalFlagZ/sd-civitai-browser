@@ -283,7 +283,7 @@ class civitaimodels:
                     nsfw = ""
                     alreadyhave = ""
                     ID = item['id']
-                    imgtag = f'<img src="./file=html/card-no-preview.png"></img>'
+                    imgtag = f'<img src="./file=html/card-no-preview.png"/>'
                     if any(item['modelVersions']):
                         if len(item['modelVersions'][0]['images']) > 0:
                             for img in item['modelVersions'][0]['images']:
@@ -296,7 +296,11 @@ class civitaimodels:
                                 elif img['type'] == 'video':
                                     if img['nsfw'] != "None" and not self.isShowNsfw():
                                         nsfw = 'civcardnsfw'
-                                    imgtag = f'<video loop autoplay muted src={img["url"]}></video>'
+                                    imgtag = f'<video loop autoplay muted poster={img["url"]}>'
+                                    imgtag += f'<source  src={img["url"]} type="video/webm"/>'
+                                    imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
+                                    imgtag += f'<img src={img["url"]} type="image/gif"/>'
+                                    imgtag += f'</video>'
                                     break
                         for file in item['modelVersions'][0]['files']:
                             file_name = file['name']
@@ -345,9 +349,13 @@ class civitaimodels:
                 nsfw = 'class="civnsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;">'
             if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]} style="width:20em;"></img>'
+                img_html += f'<img src={pic["url"]} style="width:20em;"/>'
             else:
-                img_html += f'<video loop autoplay muted src={pic["url"]} style="width:20em;"></video>'
+                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;">'
+                img_html += f'<source  src={pic["url"]} type="video/webm"/>'
+                img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
+                img_html += f'<img src={pic["url"]} type="image/gif"/>'
+                img_html += f'</video>'
             if pic['meta']:
                 img_html += '<div style="text-align:left;line-height: 1.5em;">'
                 img_html += self.meta2html(pic['meta'])

@@ -14,9 +14,9 @@ function select_model(model_name) {
 	}
 }
 
-function copyInnerText(id) {
-	var copyText = document.getElementById(id);
-	return navigator.clipboard.writeText(copyText.innerText).then(
+function copyInnerText(node) {
+	//var copyText = document.getElementById(id);
+	return navigator.clipboard.writeText(node.nextSibling.innerText).then(
 		function () {
 			alert("Copied infotext")
 		}

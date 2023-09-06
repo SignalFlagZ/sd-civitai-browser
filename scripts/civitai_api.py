@@ -378,8 +378,13 @@ class civitaimodels:
             output_html += '<h1>NSFW</b></h1>'
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
 
-        output_html += f'<div style="display:flex;align-items:baseline;gap:1em;">'\
-            f'<div>'\
+        output_html += f'<div style="">'
+        output_html += '<div style="float:right;width:35%;margin-left:1em;margin-bottom:1em;">'\
+                        '<h2>Permissions</h2>'\
+            f'{self.permissionsHtml(self.allows2permissions())}'\
+            f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
+        output_html += '</div>'
+        output_html += f'<div style="overflow-wrap: anywhere;width:70%">'\
             f'<div><b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
             f'https://civitai.com/models/{str(modelInfo["id"])}</a><br/>'\
@@ -396,11 +401,6 @@ class civitaimodels:
         if modelInfo["versionDescription"]:
             output_html += f'<div><h2>Version description</h2>'\
             f'<p>{modelInfo["versionDescription"]}</p></div>'
-        output_html += '</div>'
-
-        output_html += '<div><h2>Permissions</h2>'\
-            f'{self.permissionsHtml(self.allows2permissions())}'\
-            f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
         output_html += '</div>'
 
         output_html += f'<div><h2>Images</h3>'\

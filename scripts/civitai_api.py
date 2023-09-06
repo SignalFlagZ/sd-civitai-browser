@@ -378,7 +378,7 @@ class civitaimodels:
             output_html += '<h1>NSFW</b></h1>'
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
 
-        output_html += f'<div style="display:flex;align-items:baseline;">'\
+        output_html += f'<div style="display:flex;align-items:baseline;gap:1em;">'\
             f'<div>'\
             f'<div><b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\

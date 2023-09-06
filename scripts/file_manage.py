@@ -100,7 +100,7 @@ def save_text_file(folder, filename, trained_words):
                                         .replace(".zip",".txt")\
                         )
     if not os.path.exists(filepath):
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='UTF-8') as f:
             f.write(trained_words)
     print(Fore.LIGHTCYAN_EX + f'Save text.' + Style.RESET_ALL)
     return "Save text"

@@ -2,6 +2,7 @@
 	display: flex;
 	flex-wrap: wrap;
 }
+
 .civmodellist figure {
 	margin: 4px;
 	transition: transform .3s ease-out;
@@ -14,7 +15,8 @@
 
 .civmodelcard:hover {
 	transform: scale(1.5, 1.5);
-	position: relative;	/* need for z-index */
+	position: relative;
+	/* need for z-index */
 	z-index: var(--layer-5);
 	box-shadow: 0 0 4px 6px whitesmoke;
 }
@@ -22,7 +24,8 @@
 .civmodelcardalreadyhave:hover {
 	box-shadow: 0 0 4px 6px aquamarine;
 }
-.civmodelcard:hover figcaption{
+
+.civmodelcard:hover figcaption {
 	bottom: initial;
 	background-color: rgba(32, 32, 32, 0.9);
 }
@@ -33,6 +36,7 @@
 	height: 12em;
 	object-fit: cover;
 }
+
 .civmodelcard video {
 	/*filter: blur(6px);*/
 	width: 8em;
@@ -52,12 +56,15 @@
 .civnsfw img {
 	filter: blur(10px);
 }
+
 .civcardnsfw img {
 	filter: blur(4px);
 }
+
 .civnsfw video {
 	filter: blur(10px);
 }
+
 .civcardnsfw video {
 	filter: blur(4px);
 }
@@ -73,7 +80,7 @@
 .civitaimsg {
 	/*align-self: center;*/
 	text-align: center;
-	background-color:maroon;
+	background-color: maroon;
 	margin: 1.1em 0em 0em 0em !important;
 	max-width: 8em;
 	min-width: 8em !important;

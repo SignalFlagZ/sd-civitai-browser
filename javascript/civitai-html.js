@@ -15,14 +15,15 @@ function select_model(model_name) {
 }
 
 function copyInnerText(node) {
-	//var copyText = document.getElementById(id);
-	return navigator.clipboard.writeText(node.nextSibling.innerText).then(
-		function () {
-			alert("Copied infotext")
-		}
-	).catch(
-		function (error) {
-			alert((error && error.message) || "Failed to copy infotext");
-		}
-	)
+	if (node.nextSibling != null) {
+		return navigator.clipboard.writeText(node.nextSibling.innerText).then(
+			function () {
+				alert("Copied infotext")
+			}
+		).catch(
+			function (error) {
+				alert((error && error.message) || "Failed to copy infotext");
+			}
+		)
+	}
 }

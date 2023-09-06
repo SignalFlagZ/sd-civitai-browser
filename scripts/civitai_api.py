@@ -129,11 +129,13 @@ class civitaimodels:
                 allowCommercialUse = item['allowCommercialUse']
                 allowDerivatives = item['allowDerivatives']
                 allowDifferentLicense = item['allowDifferentLicense']
-                canSellImages = allowCommercialUse == 'Image' or allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
+                canSellImages = allowCommercialUse == 'Image' or allowCommercialUse == 'Rent' or allowCommercialUse == 'RentCivit' or allowCommercialUse == 'Sell'
+                canRentCivit = allowCommercialUse == 'Rent' or allowCommercialUse == 'RentCivit' or allowCommercialUse == 'Sell'
                 canRent = allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
                 canSell = allowCommercialUse == 'Sell'
                 permissions['allowNoCredit'] = allowNoCredit
                 permissions['canSellImages'] = canSellImages
+                permissions['canRentCivit'] = canRentCivit
                 permissions['canRent'] = canRent
                 permissions['canSell'] = canSell
                 permissions['allowDerivatives'] = allowDerivatives
@@ -350,7 +352,7 @@ class civitaimodels:
                 infotext = self.meta2html(pic['meta'])
             if pic['nsfw'] != "None" and not self.showNsfw:
                 nsfw = 'class="civnsfw"'
-            img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;">'
+            img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;gap:1em;">'
             if pic['type'] == 'image':
                 img_html += f'<img src={pic["url"]} style="width:20em;" onclick="copyInnerText(this)" />'
             else:
@@ -363,19 +365,22 @@ class civitaimodels:
                 img_html += f'<div style="text-align:left;line-height: 1.5em;">'
                 img_html += infotext
                 img_html += '</div>'
-            img_html += '</div>'
+            img_html += '</div></br>'
         img_html += '</div>'
+        
         output_html = '<script>'\
             'function copyInnerText(node) {'\
                 'return  navigator.clipboard.writeText(node.nextSibling.innerText).then('\
             'function () {alert("Copied infotext")}).catch(function (error) {'\
                 'alert((error && error.message) || "Failed to copy infotext");})}'\
             '</script>'
-        output_html += '<div>'
         if modelInfo['nsfw']:
             output_html += '<h1>NSFW</b></h1>'
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
-            f'<b>Civitai link</b> (if exist): '\
+
+        output_html += f'<div style="display:flex;align-items:baseline;gap:1em;">'\
+            f'<div>'\
+            f'<div><b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
             f'https://civitai.com/models/{str(modelInfo["id"])}</a><br/>'\
             f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br/>'\
@@ -384,47 +389,56 @@ class civitaimodels:
             f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br/>'\
             f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br/>'\
             f'<a href={modelInfo["downloadUrl"]}>'\
-            '<b>Download Here</b></a>'\
-            '</div>'\
-            '<h2>Permissions</h2>'\
-            f'<p>{self.permissionsHtml(self.allows2permissions())}'\
-            f'{escape(str(modelInfo["allow"]))}</p>'\
-            '<div><h2>Model description</h2>'\
+            '<b>Download Here</b></a></div>'
+        output_html += '<div><h2>Model description</h2>'\
             f'<p>{modelInfo["description"]}</p></div>'
+
         if modelInfo["versionDescription"]:
             output_html += f'<div><h2>Version description</h2>'\
-            f'<p>{modelInfo["versionDescription"]}</p></div><br/>'
+            f'<p>{modelInfo["versionDescription"]}</p></div>'
+        output_html += '</div>'
+
+        output_html += '<div><h2>Permissions</h2>'\
+            f'{self.permissionsHtml(self.allows2permissions())}'\
+            f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
+        output_html += '</div>'
+
         output_html += f'<div><h2>Images</h3>'\
                         f'<p>Click image to copy infotext</p>'\
                         f'{img_html}</div>'
         return output_html
     
-    def permissionsHtml(self, premissions:dict, msgType:int=2) -> str:
+    def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
+        chrCheck = '✅'
+        chrCross = '❌'
         html1 = '<div>'\
-                f'<p><strong>Check the source license yourself.</strong></p>'\
-                f'<b>{premissions["allowNoCredit"]}</b> : Use the model without crediting the creator<br/>'\
-                f'<b>{premissions["canSellImages"]}</b> : Sell images they generate<br/>'\
-                f'<b>{premissions["canRent"]}</b> : Run on services that generate images for money<br/>'\
-                f'<b>{premissions["allowDerivatives"]}</b> : Share merges using this model<br/>'\
-                f'<b>{premissions["canSell"]}</b> : Sell this model or merges using this model<br/>'\
-                f'<b>{premissions["allowDifferentLicense"]}<b> : Have different permissions when sharing merges</p>'\
-                '</div>'
+                '<p>This model permits users to:</br>'\
+                f'{chrCheck if premissions["allowNoCredit"] else chrCross} : Use the model without crediting the creator<br/>'\
+                f'{chrCheck if premissions["canSellImages"] else chrCross} : Sell images they generate<br/>'\
+                f'{chrCheck if premissions["canRent"] else chrCross} : Run on services that generate images for money<br/>'\
+                f'{chrCheck if premissions["canRentCivit"] else chrCross} : Run on Civitai<br/>'\
+                f'{chrCheck if premissions["allowDerivatives"] else chrCross} : Share merges using this model<br/>'\
+                f'{chrCheck if premissions["canSell"] else chrCross} : Sell this model or merges using this model<br/>'\
+                f'{chrCheck if premissions["allowDifferentLicense"] else chrCross} : Have different permissions when sharing merges</p>'\
+                '</p></div>'
         html2 = '<div>'\
-                f'<p><strong>Check the source license yourself.</strong><br/>'\
-                '<span style=color:red>'
-        html2 += 'Creator credit required<br/>' if not premissions["allowNoCredit"] else ''
-        html2 += 'No selling images<br/>' if not premissions["canSellImages"] else ''
-        html2 += 'No generation services<br/>' if not premissions["canRent"] else ''
-        html2 += 'No selling models<br/>' if not premissions["canSell"] else ''
-        html2 += 'No sharing merges<br/>' if not premissions["allowDerivatives"] else ''
-        html2 += 'Same permissions required<br/>' if not premissions["allowDifferentLicense"] else ''
+                '<p><span style=color:crimson>'
+        html2 += 'Creator credit required</br>' if not premissions["allowNoCredit"] else ''
+        html2 += 'No selling images</br>' if not premissions["canSellImages"] else ''
+        html2 += 'No Civitai generation</br>' if not premissions["canRentCivit"] else ''
+        html2 += 'No generation services</br>' if not premissions["canRent"] else ''
+        html2 += 'No selling models</br>' if not premissions["canSell"] else ''
+        html2 += 'No sharing merges</br>' if not premissions["allowDerivatives"] else ''
+        html2 += 'Same permissions required' if not premissions["allowDifferentLicense"] else ''
         html2 += '</span></p></div>'
+
+        html = f'<p><strong>Check the source license yourself.</strong></p>'
         if msgType == 1:
-            html = html1
+            html += html1
         elif msgType == 2:
-            html = html2
+            html += html2
         else:
-            html = html2 + html1
+            html += html2 + html1
         return html
 
     #REST API

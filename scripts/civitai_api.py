@@ -384,7 +384,7 @@ class civitaimodels:
             f'{self.permissionsHtml(self.allows2permissions())}'\
             f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
         output_html += '</div>'
-        output_html += f'<div style="overflow-wrap: anywhere;width:70%">'\
+        output_html += f'<div style="overflow-wrap: anywhere;">'\
             f'<div><b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
             f'https://civitai.com/models/{str(modelInfo["id"])}</a><br/>'\

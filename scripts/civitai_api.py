@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict=None, content_type:str=None):
+    def __init__(self, url:str, json_data:dict=None, content_type:str=None,jsID:str='Index1'):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -18,6 +18,7 @@ class civitaimodels:
         self.modelVersionInfo = None
         self.requestError = None
         self.saveFolder = None
+        self.classID = jsID
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
@@ -313,7 +314,7 @@ class civitaimodels:
                             if os.path.exists(path_file):
                                 alreadyhave = "civmodelcardalreadyhave"
                                 break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index:{index}:{ID}\')">'\
+                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{self.classID}:{index}:{ID}\')">'\
                                     +  imgtag \
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'
@@ -354,9 +355,9 @@ class civitaimodels:
                 nsfw = 'class="civnsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;gap:1em;">'
             if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]} style="width:20em;" onclick="copyInnerText(this)" />'
+                img_html += f'<img src={pic["url"]} style="width:20em;cursor:copy;" onclick="copyInnerText(this)" />'
             else:
-                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;" onclick="copyInnerText(this)">'
+                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;cursor:copy;" onclick="copyInnerText(this)">'
                 img_html += f'<source  src={pic["url"]} type="video/webm"/>'
                 img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
                 img_html += f'<img src={pic["url"]} type="image/gif"/>'
@@ -370,16 +371,21 @@ class civitaimodels:
         
         output_html = '<script>'\
             'function copyInnerText(node) {'\
-                'return  navigator.clipboard.writeText(node.nextSibling.innerText).then('\
-            'function () {alert("Copied infotext")}).catch(function (error) {'\
-                'alert((error && error.message) || "Failed to copy infotext");})}'\
+            'if (node.nextSibling != null) {'\
+            'return navigator.clipboard.writeText(node.nextSibling.innerText).then('\
+			'function () {'\
+				'alert("Copied infotext");'\
+			'}).catch('\
+			    'function (error) {'\
+				'alert((error && error.message) || "Failed to copy infotext");'\
+			'})} }'\
             '</script>'
         if modelInfo['nsfw']:
             output_html += '<h1>NSFW</b></h1>'
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
 
         output_html += f'<div style="">'
-        output_html += '<div style="float:right;width:35%;margin-left:1em;margin-bottom:1em;">'\
+        output_html += '<div style="float:right;width:35%;margin:-16px 0 1em 1em;">'\
                         '<h2>Permissions</h2>'\
             f'{self.permissionsHtml(self.allows2permissions())}'\
             f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
@@ -403,7 +409,7 @@ class civitaimodels:
             f'<p>{modelInfo["versionDescription"]}</p></div>'
         output_html += '</div>'
 
-        output_html += f'<div><h2>Images</h3>'\
+        output_html += f'<div style="clear:both;"><h2>Images</h3>'\
                         f'<p>Click image to copy infotext</p>'\
                         f'{img_html}</div>'
         return output_html

@@ -58,3 +58,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Support video type images (Temporarily because the video format is unknown)
 - Display image meta data in Infotext-compatible format (can be expanded by pasting into a prompt)
 - Click image to copy infotext
+---
+↓ v1.7 beta
+- Two tabs for separate searches (experimental)
+  - Probably cannot download at the same time

@@ -18,7 +18,7 @@ function copyInnerText(node) {
 	if (node.nextSibling != null) {
 		return navigator.clipboard.writeText(node.nextSibling.innerText).then(
 			function () {
-				alert("Copied infotext")
+				alert("Copied infotext");
 			}
 		).catch(
 			function (error) {

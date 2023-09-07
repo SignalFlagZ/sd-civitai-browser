@@ -354,9 +354,9 @@ class civitaimodels:
                 nsfw = 'class="civnsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;gap:1em;">'
             if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]} style="width:20em;" onclick="copyInnerText(this)" />'
+                img_html += f'<img src={pic["url"]} style="width:20em;cursor:copy;" onclick="copyInnerText(this)" />'
             else:
-                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;" onclick="copyInnerText(this)">'
+                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;cursor:copy;" onclick="copyInnerText(this)">'
                 img_html += f'<source  src={pic["url"]} type="video/webm"/>'
                 img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
                 img_html += f'<img src={pic["url"]} type="image/gif"/>'
@@ -370,9 +370,14 @@ class civitaimodels:
         
         output_html = '<script>'\
             'function copyInnerText(node) {'\
-                'return  navigator.clipboard.writeText(node.nextSibling.innerText).then('\
-            'function () {alert("Copied infotext")}).catch(function (error) {'\
-                'alert((error && error.message) || "Failed to copy infotext");})}'\
+            'if (node.nextSibling != null) {'\
+            'return navigator.clipboard.writeText(node.nextSibling.innerText).then('\
+			'function () {'\
+				'alert("Copied infotext");'\
+			'}).catch('\
+			    'function (error) {'\
+				'alert((error && error.message) || "Failed to copy infotext");'\
+			'})} }'\
             '</script>'
         if modelInfo['nsfw']:
             output_html += '<h1>NSFW</b></h1>'

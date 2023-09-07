@@ -384,7 +384,7 @@ class civitaimodels:
         output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
 
         output_html += f'<div style="">'
-        output_html += '<div style="float:right;width:35%;margin-left:1em;margin-bottom:1em;">'\
+        output_html += '<div style="float:right;width:35%;margin:-16px 0 1em 1em;">'\
                         '<h2>Permissions</h2>'\
             f'{self.permissionsHtml(self.allows2permissions())}'\
             f'<p>{escape(str(modelInfo["allow"]))}</p></div>'

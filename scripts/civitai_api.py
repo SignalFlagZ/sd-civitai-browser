@@ -408,7 +408,7 @@ class civitaimodels:
             f'<p>{modelInfo["versionDescription"]}</p></div>'
         output_html += '</div>'
 
-        output_html += f'<div><h2>Images</h3>'\
+        output_html += f'<div style="clear:both;"><h2>Images</h3>'\
                         f'<p>Click image to copy infotext</p>'\
                         f'{img_html}</div>'
         return output_html

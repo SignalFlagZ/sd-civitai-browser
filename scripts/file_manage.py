@@ -397,8 +397,7 @@ def download_file2(folder, filename,  url):
         if downloaded_size >= total_size:
             print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
             yield 'Downloaded'
-
         else:
             print(f"Error: File download failed. Retrying... {file_name_display}")
             yield 'Failed'
-        return
+        

@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict=None, content_type:str=None):
+    def __init__(self, url:str, json_data:dict=None, content_type:str=None,jsID:str='Index1'):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -18,6 +18,7 @@ class civitaimodels:
         self.modelVersionInfo = None
         self.requestError = None
         self.saveFolder = None
+        self.classID = jsID
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
@@ -313,7 +314,7 @@ class civitaimodels:
                             if os.path.exists(path_file):
                                 alreadyhave = "civmodelcardalreadyhave"
                                 break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index:{index}:{ID}\')">'\
+                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{self.classID}:{index}:{ID}\')">'\
                                     +  imgtag \
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'

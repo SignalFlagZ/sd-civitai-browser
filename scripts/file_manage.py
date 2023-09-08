@@ -390,14 +390,14 @@ def download_file2(folder, filename,  url):
                     # Wait for the specified delay before retrying
                     time.sleep(retry_delay)
         # Close the progress bar
+        exitGenerator=True
         progressConsole.close()
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         if downloaded_size >= total_size:
             print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
             yield 'Downloaded'
-            exitGenerator=True
         else:
             print(f"Error: File download failed. Retrying... {file_name_display}")
-            yield 'Failed. Retry.'
+            yield 'Failed'
         

@@ -2,16 +2,18 @@ import gradio as gr
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
-from scripts.file_manage import extranetwork_folder, isExistFile,\
-                save_text_file, saveImageFiles,download_file2
+
 from colorama import Fore, Back, Style
 
 # Set the URL for the API endpoint
 
 class uiCivitai():
     def __init__(self, jsID:str='Index1'):
-        self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16",jsID=jsID)
-        with gr.Column() as self.interface:
+        from scripts.file_manage import extranetwork_folder, isExistFile,\
+                save_text_file, saveImageFiles,download_file2
+        # Set the URL for the API endpoint
+        self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16")
+        with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=4):
                     grRadioContentType = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")

@@ -3,21 +3,16 @@
 function select_model(model_name) {
 	console.log(model_name);
 	let flag = model_name.split(':');
-	switch (flag[0]) {
-		case 'Index1':
-			var model_dropdown = gradioApp().querySelector('#eventtextIndex1 textarea');
-			if (model_dropdown && model_name) {
-				model_dropdown.value = model_name;
-				updateInput(model_dropdown);
-			}
-			break;
-		case 'Index2':
-			var model_dropdown = gradioApp().querySelector('#eventtextIndex2 textarea');
-			if (model_dropdown && model_name) {
-				model_dropdown.value = model_name;
-				updateInput(model_dropdown);
-			}
-			break;
+	const regex1 = /(^Index)(\d)/;
+	var match = regex1.exec(flag[0])
+	//console.log(match)
+	if (match[1] == 'Index') {
+		var selector = '#eventtext' + match[2] +' textarea'
+		var model_dropdown = gradioApp().querySelector(selector);
+		if (model_dropdown && model_name) {
+			model_dropdown.value = model_name;
+			updateInput(model_dropdown);
+		}
 	}
 }
 

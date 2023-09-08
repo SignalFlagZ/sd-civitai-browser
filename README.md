@@ -62,8 +62,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ↓ v1.7 beta
 - Two tabs for separate searches (experimental)
   - Probably cannot download at the same time
----
 ↓ v1.7 beta2
 - Separately searchable in multiple tabs
   - Simultaneous download not tested
-    - Crash when canceling download twice while downloading in other tabs

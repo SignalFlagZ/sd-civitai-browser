@@ -2,9 +2,9 @@
 
 function select_model(model_name) {
 	console.log(model_name);
-	let flag = model_name.split(':');
-	const regex1 = /(^Index)(\d)/;
-	var match = regex1.exec(flag[0])
+	//let flag = model_name.split(':');
+	const regex1 = /(^Index)(\d):/;
+	var match = regex1.exec(model_name)
 	//console.log(match)
 	if (match[1] == 'Index') {
 		var selector = '#eventtext' + match[2] +' textarea'

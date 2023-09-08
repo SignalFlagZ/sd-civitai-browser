@@ -8,7 +8,7 @@ from scripts.file_manage import extranetwork_folder
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict=None, content_type:str=None,jsID:str='Index1'):
+    def __init__(self, url:str, json_data:dict=None, content_type:str=None):
         self.jsonData = json_data
         self.contentType = content_type
         self.showNsfw = False
@@ -18,7 +18,6 @@ class civitaimodels:
         self.modelVersionInfo = None
         self.requestError = None
         self.saveFolder = None
-        self.classID = jsID
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
@@ -273,10 +272,10 @@ class civitaimodels:
 
     # HTML
     # Make model cards html
-    def modelCardsHtml(self, model_names):
+    def modelCardsHtml(self, model_names, jsID='1'):
         '''Generate HTML of model cards.'''
         HTML = '<div class="column civmodellist">'
-        for index, item in enumerate(self.jsonData['items']):
+        for index, item in enumerate(self.jsonData['items'], ):
             for k,model in model_names.items():
                 if model_names[k] == item['name']:
                     #print(f'Item:{item["modelVersions"][0]["images"]}')
@@ -314,14 +313,14 @@ class civitaimodels:
                             if os.path.exists(path_file):
                                 alreadyhave = "civmodelcardalreadyhave"
                                 break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'{self.classID}:{index}:{ID}\')">'\
+                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{str(jsID)}:{index}:{ID}\')">'\
                                     +  imgtag \
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'
         return HTML
 
     def meta2html(self, meta:dict) -> str:
-        #convert key name for infotext
+        #convert key name as infotext
         renameKey = {
             'prompt':'Prompt',
             'negativePrompt': 'Negative prompt',

@@ -2,17 +2,16 @@ import gradio as gr
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
-
 from colorama import Fore, Back, Style
 
-# Set the URL for the API endpoint
-
-class uiCivitai():
-    def __init__(self, jsID:str='Index1'):
+class components():
+    def __init__(self, jsID:str='1'):
+        '''jsID: Event ID for javascrypt'''
         from scripts.file_manage import extranetwork_folder, isExistFile,\
                 save_text_file, saveImageFiles,download_file2
-        self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16",jsID=jsID)
-        with gr.Column() as self.interface:
+        # Set the URL for the API endpoint
+        self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16")
+        with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=4):
                     grRadioContentType = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
@@ -147,7 +146,7 @@ class uiCivitai():
                 hasNext = not self.civitai.nextPage() is None
                 enableJump = hasPrev or hasNext
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names)
+                HTML = self.civitai.modelCardsHtml(model_names, jsID)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -179,40 +178,6 @@ class uiCivitai():
                     grMrkdwnErr
                 ]
             )
-            
-            #def update_everything(grDrpdwnModels, grRadioVersions, grTxtDlUrl):
-            #    self.civitai.selectModelByName(grDrpdwnModels)
-            #    self.civitai.selectVersionByName(grRadioVersions)
-            #    grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions)
-            #    grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
-            #    return  grHtmlModelInfo,\
-            #            grTxtTrainedWords,\
-            #            grDrpdwnFilenames,\
-            #            grRadioVersions,\
-            #            grDrpdwnModels,\
-            #            grTxtDlUrl,\
-            #            grTxtBaseModel,\
-            #            grTxtSaveFolder
-            #grBtnUpdateInfo.click(
-            #    #deprecated
-            #    fn=update_everything,
-            #    #fn=update_model_info,
-            #    inputs=[
-            #        grDrpdwnModels,
-            #        grRadioVersions,
-            #        grTxtDlUrl
-            #    ],
-            #    outputs=[
-            #        grHtmlModelInfo,
-            #        grTxtTrainedWords,
-            #        grDrpdwnFilenames,
-            #        grRadioVersions,
-            #        grDrpdwnModels,
-            #        grTxtDlUrl,
-            #        grTxtBaseModel,
-            #        grTxtSaveFolder
-            #    ]
-            #)
 
             def UpdatedModels(grDrpdwnModels):
                 index = self.civitai.getIndexByModelName(grDrpdwnModels)
@@ -336,7 +301,7 @@ class uiCivitai():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names)
+                HTML = self.civitai.modelCardsHtml(model_names, jsID)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -404,7 +369,7 @@ class uiCivitai():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names)
+                HTML = self.civitai.modelCardsHtml(model_names, jsID)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -495,18 +460,15 @@ class uiCivitai():
                     grTxtSaveFolder
                 ]
                 )
-    def getBlock(self):
-        return self.interface
+    def getComponents(self):
+        return self.components
         
 def on_ui_tabs():
-
+    tabNames = ('Browser1','Browser2','Browser3')
     with gr.Blocks() as civitai_interface:
-        with gr.Tab("Civitai1"):
-            interface1 = uiCivitai(jsID='Index1')        
-            interface1.getBlock()
-        with gr.Tab("Civitai2"):
-            interface2 = uiCivitai(jsID='Index2')        
-            interface2.getBlock()
+        for i,name in enumerate(tabNames):
+            with gr.Tab(name):
+                components(jsID=i+1)        
     return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

@@ -2,15 +2,25 @@ import gradio as gr
 from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
+from scripts.file_manage import (extranetwork_folder, isExistFile,
+                    save_text_file, saveImageFiles, makedirs)
 from colorama import Fore, Back, Style
+import os
+import re
+import requests
+from requests.exceptions import ConnectionError
+from tqdm import tqdm
+import time
+import tkinter as tk
+from tkinter import messagebox
 
 class components():
-    def __init__(self, jsID:str='1'):
-        '''jsID: Event ID for javascrypt'''
-        from scripts.file_manage import extranetwork_folder, isExistFile,\
-                save_text_file, saveImageFiles,download_file2
+    def __init__(self, tabID=0):
+        '''tabID: Event ID for javascrypt'''
+
         # Set the URL for the API endpoint
         self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16")
+        self.dlProcess = None
         with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=4):
@@ -46,7 +56,7 @@ class components():
             with gr.Row():
                 with gr.Column(scale=1):
                     grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="modellist", value=None)
-                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"eventtext{jsID}", visible=False, interactive=True, lines=1)
+                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"eventtext{tabID}", visible=False, interactive=True, lines=1)
                 with gr.Column(scale=5):
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
             with gr.Row(equal_height=False):
@@ -100,8 +110,8 @@ class components():
             #    ret = download_file_thread2(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
             #    print(Fore.LIGHTYELLOW_EX + f'{ret=}' + Style.RESET_ALL)
             #    return ret
-            download = grBtnDownloadModel.click(
-                fn=download_file2,
+            self.dlProcess = grBtnDownloadModel.click(
+                fn=self.download_file2,
                 inputs=[
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
@@ -117,7 +127,7 @@ class components():
                 fn=cancel_download,
                 inputs=None,
                 outputs=[grTextProgress],
-                cancels=[download]
+                cancels=[self.dlProcess]
                 )
         
             def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
@@ -146,7 +156,7 @@ class components():
                 hasNext = not self.civitai.nextPage() is None
                 enableJump = hasPrev or hasNext
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, jsID)
+                HTML = self.civitai.modelCardsHtml(model_names, tabID)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -301,7 +311,7 @@ class components():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, jsID)
+                HTML = self.civitai.modelCardsHtml(model_names, tabID)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -369,7 +379,7 @@ class components():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, jsID)
+                HTML = self.civitai.modelCardsHtml(model_names, tabID)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -460,6 +470,101 @@ class components():
                     grTxtSaveFolder
                 ]
                 )
+    def download_file2(self, folder, filename,  url):
+
+        makedirs(folder)
+        file_name = os.path.join(folder, filename)
+        #thread = threading.Thread(target=download_file, args=(url, filepath))
+
+        # Maximum number of retries
+        max_retries = 5
+
+        # Delay between retries (in seconds)
+        retry_delay = 10
+
+        exitGenerator=False
+        while not exitGenerator:
+            # Check if the file has already been partially downloaded
+            downloaded_size = 0
+            headers = {}
+            mode = "wb" #Open file mode
+            if os.path.exists(file_name):
+                yield "Overwrite?"
+                root = tk.Tk()
+                root.attributes('-topmost', True)
+                root.bell()
+                root.withdraw()
+                ret = messagebox.askyesno(title="File exists", message='Yes: Overwrite\n\nNo:  Continue previous download')
+                root.destroy()
+                if not ret:
+                    print(Fore.LIGHTCYAN_EX + f"Continue: {file_name}" + Style.RESET_ALL)
+                    mode = "ab"
+                    # Get the size of the downloaded file
+                    downloaded_size = os.path.getsize(file_name)
+                    # Set the range of the request to start from the current size of the downloaded file
+                    headers = {"Range": f"bytes={downloaded_size}-"}
+
+            # Split filename from included path
+            tokens = re.split(re.escape('\\'), file_name)
+            file_name_display = tokens[-1]
+
+            # Initialize the progress bar
+            try:
+                yield "Connecting..."
+            except Exception as e:
+                exitGenerator=True
+                return
+            progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
+            prg = downloaded_size
+            # Open a local file to save the download
+            with open(file_name, mode) as f:
+                while not exitGenerator:
+                    try:
+                        # Send a GET request to the URL and save the response to the local file
+                        response = requests.get(url, headers=headers, stream=True)
+                        # Get the total size of the file
+                        total_size = int(response.headers.get("Content-Length", 0))
+
+                        # Update the total size of the progress bar if the `Content-Length` header is present
+                        if total_size == 0:
+                            total_size = downloaded_size
+                        progressConsole.total = total_size
+                        # Write the response to the local file and update the progress bar
+                        for chunk in response.iter_content(chunk_size=8388608):
+                            if chunk:  # filter out keep-alive new chunks
+                                f.write(chunk)
+                                progressConsole.update(len(chunk))
+                                prg += len(chunk)
+                                try:
+                                    yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                                except Exception as e:
+                                    progressConsole.close()
+                                    exitGenerator=True
+                                    return
+                        downloaded_size = os.path.getsize(file_name)
+                        # Break out of the loop if the download is successful
+                        break
+                    except GeneratorExit:
+                        progressConsole.close()
+                        exitGenerator=True
+                        return
+                    except ConnectionError as e:
+                        progressConsole.close()
+                        exitGenerator=True
+                        return
+            # Close the progress bar
+            progressConsole.close()
+            downloaded_size = os.path.getsize(file_name)
+            exitGenerator=True
+            # Check if the download was successful
+            if downloaded_size >= total_size:
+                print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
+                yield 'Downloaded'
+                exitGenerator=True
+            else:
+                print(f"Error: File download failed. Retrying... {file_name_display}")
+                yield 'Failed.'
+            
     def getComponents(self):
         return self.components
         
@@ -468,7 +573,7 @@ def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         for i,name in enumerate(tabNames):
             with gr.Tab(name):
-                components(jsID=i+1)        
+                components(tabID=i)        
     return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

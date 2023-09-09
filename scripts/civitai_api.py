@@ -272,7 +272,7 @@ class civitaimodels:
 
     # HTML
     # Make model cards html
-    def modelCardsHtml(self, model_names, jsID='1'):
+    def modelCardsHtml(self, model_names, jsID=0):
         '''Generate HTML of model cards.'''
         HTML = '<div class="column civmodellist">'
         for index, item in enumerate(self.jsonData['items'], ):
@@ -313,7 +313,7 @@ class civitaimodels:
                             if os.path.exists(path_file):
                                 alreadyhave = "civmodelcardalreadyhave"
                                 break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{str(jsID)}:{index}:{ID}\')">'\
+                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{jsID}:{index}:{ID}\')">'\
                                     +  imgtag \
                                     +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'
@@ -336,15 +336,14 @@ class civitaimodels:
             html += f'{escape(str(infotext["Prompt"]))}<br/>'
             del infotext["Prompt"]
         if 'Negative prompt' in infotext:
-            html += f'{escape(str("Negative prompt"))}: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
+            html += f'<var style="font-weight:bold">{escape(str("Negative prompt"))}</var>: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
             del infotext["Negative prompt"]
         for key, value in infotext.items():
-            html += f'{escape(str(key))}: {escape(str(value))}, '
+            html += f'<var style="font-weight:bold">{escape(str(key))}</var>: {escape(str(value))}, '
         return html.rstrip(', ')
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
         '''Generate HTML of model info'''
-        #function:copy to clipboard
         img_html = '<div class="sampleimgs">'
         for pic in modelInfo['images']:
             nsfw = None
@@ -367,7 +366,7 @@ class civitaimodels:
                 img_html += '</div>'
             img_html += '</div></br>'
         img_html += '</div>'
-        
+        #function:copy to clipboard
         output_html = '<script>'\
             'function copyInnerText(node) {'\
             'if (node.nextSibling != null) {'\

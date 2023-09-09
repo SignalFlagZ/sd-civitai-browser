@@ -3,18 +3,27 @@ from modules import script_callbacks
 import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
 from colorama import Fore, Back, Style
+import itertools
 
 class components():
-    def __init__(self, tabID=0):
-        '''tabID: tab & Event ID for javascrypt'''
+    newid = itertools.count()
+    
+    def __init__(self):
+        '''id: Event ID for javascrypt'''
         from scripts.file_manage import extranetwork_folder, isExistFile,\
                 save_text_file, saveImageFiles,download_file2
         # Set the URL for the API endpoint
         self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16")
+        self.id = next(components.newid)
+        contentType = ["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"]
+        def defaultContentType():
+            value = contentType[self.id % len(contentType)]
+            return value
+
         with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=4):
-                    grRadioContentType = gr.Radio(label='Content type:', choices=["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"], value="Checkpoint", type="value")
+                    grRadioContentType = gr.Radio(label='Content type:', choices=contentType, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
                 with gr.Column(scale=1, max_width=100, min_width=100):
@@ -46,7 +55,7 @@ class components():
             with gr.Row():
                 with gr.Column(scale=1):
                     grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="modellist", value=None)
-                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"eventtext{tabID}", visible=False, interactive=True, lines=1)
+                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"eventtext{self.id}", visible=False, interactive=True, lines=1)
                 with gr.Column(scale=5):
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
             with gr.Row(equal_height=False):
@@ -146,7 +155,7 @@ class components():
                 hasNext = not self.civitai.nextPage() is None
                 enableJump = hasPrev or hasNext
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, tabID)
+                HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -301,7 +310,7 @@ class components():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, tabID)
+                HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -369,7 +378,7 @@ class components():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, tabID)
+                HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -468,7 +477,7 @@ def on_ui_tabs():
     with gr.Blocks() as civitai_interface:
         for i,name in enumerate(tabNames):
             with gr.Tab(name):
-                components(tabID=i)        
+                components()
     return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

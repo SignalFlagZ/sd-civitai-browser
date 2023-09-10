@@ -410,7 +410,7 @@ class civitaimodels:
         output_html += '</div>'
 
         output_html += f'<div style="clear:both;"><h2>Images</h3>'\
-                        f'<p>Click image to copy infotext</p>'\
+                        f'<p>Clicking on the image sends infotext to txt2img. If local, copy to clipboard</p>'\
                         f'{img_html}</div>'
         return output_html
     

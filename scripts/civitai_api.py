@@ -336,26 +336,28 @@ class civitaimodels:
             html += f'{escape(str(infotext["Prompt"]))}<br/>'
             del infotext["Prompt"]
         if 'Negative prompt' in infotext:
-            html += f'<var style="font-weight:bold">{escape(str("Negative prompt"))}</var>: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
+            html += f'<var style="font-weight:bold;">{escape(str("Negative prompt"))}</var>: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
             del infotext["Negative prompt"]
         for key, value in infotext.items():
-            html += f'<var style="font-weight:bold">{escape(str(key))}</var>: {escape(str(value))}, '
+            html += f'<var style="font-weight:bold;">{escape(str(key))}</var>: {escape(str(value))}, '
         return html.rstrip(', ')
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
         '''Generate HTML of model info'''
         img_html = '<div class="sampleimgs">'
         for pic in modelInfo['images']:
-            nsfw = None
+            nsfw = ""
+            imgStyle = 'style="width:20em;"'
             if pic['meta']:
                 infotext = self.meta2html(pic['meta'])
+                imgStyle ='style="width:20em;cursor:copy;" onclick="copyInnerText(this);"'
             if pic['nsfw'] != "None" and not self.showNsfw:
                 nsfw = 'class="civnsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;gap:1em;">'
             if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]} style="width:20em;cursor:copy;" onclick="copyInnerText(this)" />'
+                img_html += f'<img src={pic["url"]}  {imgStyle}/>'
             else:
-                img_html += f'<video loop autoplay muted poster={pic["url"]} style="width:20em;cursor:copy;" onclick="copyInnerText(this)">'
+                img_html += f'<video loop autoplay muted poster={pic["url"]} {imgStyle}>'
                 img_html += f'<source  src={pic["url"]} type="video/webm"/>'
                 img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
                 img_html += f'<img src={pic["url"]} type="image/gif"/>'

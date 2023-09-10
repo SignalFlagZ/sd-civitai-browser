@@ -7,7 +7,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.7 beta2
-- Click on the image to copy the infotext and overwrite the txt2img prompt 
+- Clicking on the image sends infotext to txt2img. If local, copy to clipboard
 - Separately searchable in multiple tabs
   
 > [!WARNING]

@@ -7,43 +7,37 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.7 beta2
+- Click on the image to copy the infotext and overwrite the txt2img prompt 
 - Separately searchable in multiple tabs
   
 > [!WARNING]
 > SD web UI crashes when canceling twice in a row. https://github.com/SignalFlagZ/sd-civitai-browser/issues/6
----
 ### v1.7 beta
 - Two tabs for separate searches (experimental)
   - Probably cannot download at the same time
----
 ### v1.6
 - Support video type images (Temporarily because the video format is unknown)
 - Display image meta data in Infotext-compatible format (can be expanded by pasting into a prompt)
 - Click image to copy infotext
----
 ### v1.5
 - Show download progress
 - Add download cancel button
 - Show Civitai response error
 - File exists, overwrite and continue can be selected.
----
 ### v1.4
 - Add page slider and jump button
 - Rename tab `CivitAi` to `CivitAi Browser`
----
 ### v1.3
 - Changed to index based model selection
 - Add save folder textbox
 - Add dropdown list of search period
 - Highlighted if you already have the file
----
 ### v1.2.0
 - NSFW models are saved in `.nsfw`
 - Show permmisions in HTML -> [reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)
 - Avoid collision when there are same model names
 - Deprecate new folder checkbox and its function
 - Change version selection from dropdown to radio button
----
 ### v1.1.0 and before
 - Apply changes made by [thetrebor](https://github.com/thetrebor/sd-civitai-browser)
 - Support LoRA

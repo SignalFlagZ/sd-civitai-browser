@@ -20,7 +20,20 @@ function copyInnerText(node) {
 	if (node.nextSibling != null) {
 		return navigator.clipboard.writeText(node.nextSibling.innerText).then(
 			function () {
-				alert("Copied infotext");
+				//alert("Copied infotext");
+				var prompt = gradioApp().querySelector('#txt2img_prompt textarea');
+				if (prompt.value == "") {
+					prompt.value = node.nextSibling.innerText;
+					alert("Infotext was copied and sent txt2img prompt.")
+				}else {
+					var response = confirm("Copied infotext.\nOverwrite txt2img prompt?");
+					if (response) {
+						prompt.value = node.nextSibling.innerText;
+						//alert("Infotext was Copied and sent txt2img prompt.")
+					} else{
+						//alert("Infotext was Copied.")
+					}
+				}
 			}
 		).catch(
 			function (error) {

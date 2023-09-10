@@ -12,6 +12,7 @@ class components():
         '''id: Event ID for javascrypt'''
         from scripts.file_manage import extranetwork_folder, isExistFile,\
                 save_text_file, saveImageFiles,download_file2
+        #self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16")
         self.id = next(components.newid)
@@ -80,7 +81,18 @@ class components():
                         grBtnCancel = gr.Button(value="Cancel",interactive=False, min_width=80)
             with gr.Row():
                 grHtmlModelInfo = gr.HTML()
-            
+                
+            #def changeTabname(type):
+            #    return gr.TabItem.Update(label=f'{type}{self.id}')
+            #grRadioContentType.change(
+            #    fn=changeTabname,
+            #    inputs=[
+            #        grRadioContentType
+            #        ],
+            #    outputs=[
+            #       self.tab
+            #        ]
+            #    )
             def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
                 return save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
             grBtnSaveText.click(
@@ -476,8 +488,8 @@ def on_ui_tabs():
     tabNames = ('Browser1','Browser2','Browser3')
     with gr.Blocks() as civitai_interface:
         for i,name in enumerate(tabNames):
-            with gr.Tab(name):
-                components()
+            with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civtab{i}") as tab:
+                components() #(tab)
     return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

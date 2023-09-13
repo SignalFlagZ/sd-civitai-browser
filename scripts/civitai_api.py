@@ -400,7 +400,7 @@ class civitaimodels:
             f'<b>Tags</b>: {escape(str(modelInfo["tags"]))}<br/>'\
             f'<b>Trained Tags</b>: {escape(str(modelInfo["trainedWords"]))}<br/>'\
             f'<a href={modelInfo["downloadUrl"]}>'\
-            '<b>Download Here</b></a></div>'
+            'Download here</a></div>'
         output_html += '<div><h2>Model description</h2>'\
             f'<p>{modelInfo["description"]}</p></div>'
 

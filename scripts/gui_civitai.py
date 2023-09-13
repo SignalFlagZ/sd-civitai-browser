@@ -8,7 +8,7 @@ import itertools
 class components():
     newid = itertools.count()
     
-    def __init__(self):
+    def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
         from scripts.file_manage import extranetwork_folder, isExistFile,\
                 save_text_file, saveImageFiles,download_file2
@@ -82,15 +82,15 @@ class components():
             with gr.Row():
                 grHtmlModelInfo = gr.HTML()
                 
-            #def changeTabname(type):
-            #    return gr.TabItem.Update(label=f'{type}{self.id}')
+            #def renameTab(type):
+            #    return gr.TabItem.update(label=f'{self.id}:{type}')
             #grRadioContentType.change(
-            #    fn=changeTabname,
+            #    fn = renameTab,
             #    inputs=[
             #        grRadioContentType
-            #        ],
+            #       ],
             #    outputs=[
-            #       self.tab
+            #            self.tab
             #        ]
             #    )
             def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
@@ -101,9 +101,9 @@ class components():
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
                     grTxtTrainedWords,
-                ],
+                    ],
                 outputs=[grTextProgress]
-            )
+                )
 
             def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
                 return saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, self.civitai.getModelVersionInfo() )
@@ -114,9 +114,9 @@ class components():
                     grDrpdwnFilenames,
                     grHtmlModelInfo,
                     grRadioContentType,
-                ],
+                    ],
                 outputs=[grTextProgress]
-            )
+                )
             #def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
             #    ret = download_file_thread2(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
             #    print(Fore.LIGHTYELLOW_EX + f'{ret=}' + Style.RESET_ALL)
@@ -127,10 +127,10 @@ class components():
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
                     grTxtDlUrl
-                ],
+                    ],
                 outputs=[grTextProgress,
                         ]
-            )
+                )
             
             def cancel_download():
                 return gr.Textbox.update(value="Canceled")
@@ -485,11 +485,14 @@ class components():
         return self.components
         
 def on_ui_tabs():
+    ver = 'v1.7 beta2'
     tabNames = ('Browser1','Browser2','Browser3')
     with gr.Blocks() as civitai_interface:
-        for i,name in enumerate(tabNames):
-            with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civtab{i}") as tab:
-                components() #(tab)
+        with gr.Tabs():
+            for i,name in enumerate(tabNames):
+                with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civtab{i}") as tab:
+                    components() #(tab)
+        gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
     return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

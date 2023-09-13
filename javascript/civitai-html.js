@@ -28,7 +28,6 @@ function trigger_key_down(element, key){
 	element.dispatchEvent(e);
 }
 
-
 function copyInnerText(node) {
 	if (node.nextSibling != null) {
 		//let ret = navigator.clipboard.writeText(node.nextSibling.innerText;

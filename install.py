@@ -8,13 +8,13 @@ system = platform.system()
 if system == 'Windows':
     pass
 elif  system == 'Linux':
-    if not launch.is_installed("tkinter"):
-        launch.run_pip("install tkinter", "requirements for sd-civitai-browser")
+    if not launch.is_installed("pytk"):
+        launch.run_pip("install pytk", "requirements for sd-civitai-browser")
 elif system == 'Darwin':
-    if not launch.is_installed("tkinter"):
+    if not launch.is_installed("pytk"):
         # I don't know much
-        launch.run_pip("install tkinter", "requirements for sd-civitai-browser")
+        launch.run_pip("install pytk", "requirements for sd-civitai-browser")
         pass
 else:
-    if not launch.is_installed("tkinter"):
-        launch.run_pip("install tkinter", "requirements for sd-civitai-browser")
+    if not launch.is_installed("pytk"):
+        launch.run_pip("install pytk", "requirements for sd-civitai-browser")

@@ -8,13 +8,8 @@ system = platform.system()
 if system == 'Windows':
     pass
 elif  system == 'Linux':
-    if not launch.is_installed("pytk"):
-        launch.run_pip("install pytk", "requirements for sd-civitai-browser")
+    pass
 elif system == 'Darwin':
-    if not launch.is_installed("pytk"):
-        # I don't know much
-        launch.run_pip("install pytk", "requirements for sd-civitai-browser")
-        pass
+    pass
 else:
-    if not launch.is_installed("pytk"):
-        launch.run_pip("install pytk", "requirements for sd-civitai-browser")
+    pass

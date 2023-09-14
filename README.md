@@ -5,13 +5,20 @@ An extension to help download models from CivitAi without leaving WebUI
 
 https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-40a9-b826-30ff20bf7bb3
 
+## Requirements
+- tkinter
+  - Some Linux systems require python3-tk to be installed.
+
 ## Versions
+
 ### v1.7 beta2
+- If there is no tkinter module, continue with limited functionality (experimental)
 - Clicking on the image sends infotext to txt2img. If local, copy to clipboard
 - Separately searchable in multiple tabs
   
 > [!WARNING]
 > SD web UI crashes when canceling twice in a row. https://github.com/SignalFlagZ/sd-civitai-browser/issues/6
+
 ### v1.7 beta
 - Two tabs for separate searches (experimental)
   - Probably cannot download at the same time

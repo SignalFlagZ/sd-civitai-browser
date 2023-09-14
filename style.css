@@ -21,6 +21,9 @@
 	box-shadow: 0 0 4px 6px whitesmoke;
 }
 
+.civmodelcardalreadyhave {
+	box-shadow: 0 0 1px 3px aquamarine;
+}
 .civmodelcardalreadyhave:hover {
 	box-shadow: 0 0 4px 6px aquamarine;
 }

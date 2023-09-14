@@ -14,10 +14,9 @@ from modules.paths import models_path
 try:
     import tkinter as tk
 except ImportError:
-    noTk = True
+    tk = None
     print(Fore.LIGHTYELLOW_EX + f'Not found tkinter. Limited functionality.' + Style.RESET_ALL)
 else:
-    noTk = False
     from tkinter import messagebox
 
 isDownloading = False
@@ -330,7 +329,7 @@ def download_file2(folder, filename,  url):
         headers = {}
         mode = "wb" #Open file mode
         if os.path.exists(file_name):
-            if noTk:
+            if tk is None:
                 print(Fore.LIGHTCYAN_EX + f"Overwrite: {file_name}" + Style.RESET_ALL)
             else:
                 yield "Overwrite?"

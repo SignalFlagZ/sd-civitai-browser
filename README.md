@@ -12,6 +12,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ## Versions
 
 ### v1.7 beta2
+- If there is no tkinter module, continue with limited functionality (experimental)
 - Clicking on the image sends infotext to txt2img. If local, copy to clipboard
 - Separately searchable in multiple tabs
   

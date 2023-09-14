@@ -11,8 +11,14 @@ from requests.exceptions import ConnectionError
 from tqdm import tqdm
 from modules.shared import opts, cmd_opts
 from modules.paths import models_path
-import tkinter as tk
-from tkinter import messagebox
+try:
+    import tkinter as tk
+except ImportError:
+    noTk = True
+    print(Fore.LIGHTYELLOW_EX + f'Not found tkinter. Limited functionality.' + Style.RESET_ALL)
+else:
+    noTk = False
+    from tkinter import messagebox
 
 isDownloading = False
 
@@ -324,20 +330,23 @@ def download_file2(folder, filename,  url):
         headers = {}
         mode = "wb" #Open file mode
         if os.path.exists(file_name):
-            yield "Overwrite?"
-            root = tk.Tk()
-            root.attributes('-topmost', True)
-            root.bell()
-            root.withdraw()
-            ret = messagebox.askyesno(title="File exists", message='Yes: Overwrite\n\nNo:  Continue previous download')
-            root.destroy()
-            if not ret:
-                print(Fore.LIGHTCYAN_EX + f"Continue: {file_name}" + Style.RESET_ALL)
-                mode = "ab"
-                # Get the size of the downloaded file
-                downloaded_size = os.path.getsize(file_name)
-                # Set the range of the request to start from the current size of the downloaded file
-                headers = {"Range": f"bytes={downloaded_size}-"}
+            if noTk:
+                print(Fore.LIGHTCYAN_EX + f"Overwrite: {file_name}" + Style.RESET_ALL)
+            else:
+                yield "Overwrite?"
+                root = tk.Tk()
+                root.attributes('-topmost', True)
+                root.bell()
+                root.withdraw()
+                ret = messagebox.askyesno(title="File exists", message='Yes: Overwrite\n\nNo:  Continue previous download')
+                root.destroy()
+                if not ret:
+                    print(Fore.LIGHTCYAN_EX + f"Continue: {file_name}" + Style.RESET_ALL)
+                    mode = "ab"
+                    # Get the size of the downloaded file
+                    downloaded_size = os.path.getsize(file_name)
+                    # Set the range of the request to start from the current size of the downloaded file
+                    headers = {"Range": f"bytes={downloaded_size}-"}
 
         # Split filename from included path
         tokens = re.split(re.escape('\\'), file_name)

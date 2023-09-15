@@ -491,8 +491,8 @@ class components():
         
 def on_ui_tabs():
     ver = 'v1.7 beta2'
-    ver += '' if hasTk() else ' Restricted mode. Install tkinter.'
-    print_lc(f'{scripts.basedir()}')
+    ver += '' if hasTk() else ' Cloud mode. No tkinter found.'
+    #print_lc(f'{scripts.basedir()}')
     tabNames = ('Browser1','Browser2','Browser3')
     with gr.Blocks() as civitai_interface:
         with gr.Tabs():

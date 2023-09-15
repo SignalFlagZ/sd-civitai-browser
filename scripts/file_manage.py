@@ -14,13 +14,19 @@ from modules.paths import models_path
 try:
     import tkinter as tk
 except ImportError:
-    noTk = True
-    print(Fore.LIGHTYELLOW_EX + f'Not found tkinter. Limited functionality.' + Style.RESET_ALL)
+    tk = None
+    print(Fore.LIGHTYELLOW_EX + f'Civitai-Browser: tkinter not found. Limited functionality.' + Style.RESET_ALL)
 else:
-    noTk = False
     from tkinter import messagebox
 
+print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
+print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
+print_n = lambda  x: print("Civitai-Browser: " + x )
+
 isDownloading = False
+
+def hasTk() -> bool:
+    return False if tk is None else True
 
 def contenttype_folder(content_type):
     if content_type == "Checkpoint":
@@ -108,13 +114,13 @@ def save_text_file(folder, filename, trained_words):
     if not os.path.exists(filepath):
         with open(filepath, 'w', encoding='UTF-8') as f:
             f.write(trained_words)
-    print(Fore.LIGHTCYAN_EX + f'Save text.' + Style.RESET_ALL)
+    print_n('Save text.')
     return "Save text"
 
 def makedirs(folder):
     if not os.path.exists(folder):
         os.makedirs(folder)
-        print(Fore.LIGHTCYAN_EX + f'Make folder: {folder}' + Style.RESET_ALL)
+        print_lc(f'Make folder: {folder}')
 
 def isExistFile(folder, file):
     isExist = False
@@ -172,26 +178,24 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
                         f.write(url.read())
                         if img_url == preview_url:
                             shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
-                        print(Fore.LIGHTCYAN_EX + f"Save {filename}" + Style.RESET_ALL)
+                        print_n(f"Save {filename}")
                 #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
             except urllib.error.URLError as e:
-                print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
-                print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
+                print_ly(f'Error: {e.reason}')
+                print_ly(f'URL: {img_url}')
                 #return "Err: Save infos"
             except urllib.error.HTTPError as err:
-                print(Fore.LIGHTYELLOW_EX + f'Error: {e.reason}'+ Style.RESET_ALL)
-                print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
-    
+                print_ly(f'Error: {e.reason}')
+                print_ly(f'URL: {img_url}')
     filepath = os.path.join(folder, f'{basename}.html')
     with open(filepath, 'wb') as f:
         f.write(HTML.encode('utf8'))
-        print(Fore.LIGHTCYAN_EX + f"Save {basename}.html" + Style.RESET_ALL)
+        print_n(f"Save {basename}.html")
     #Save json_info
     filepath = os.path.join(folder, f'{basename}.civitai.info')
     with open(filepath, mode="w", encoding="utf-8") as f:
         json.dump(versionInfo, f, indent=2, ensure_ascii=False)
-        print(Fore.LIGHTCYAN_EX + f"Save {basename}.civitai.info" + Style.RESET_ALL)
-    #print(Fore.LIGHTCYAN_EX + f"Done." + Style.RESET_ALL)
+        print_n(f"Save {basename}.civitai.info")
     return "Save infos"
 
 #def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
@@ -275,16 +279,16 @@ def download_file(url, file_name):
         # Close the progress bar
         progress.close()
         if (isDownloading == False):
-            print (Fore.LIGHTYELLOW_EX + f'Canceled!' + Style.RESET_ALL)
+            print_ly(f'Canceled!')
             break
         isDownloading = False
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         if downloaded_size >= total_size:
-            print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
+            print_n(f"Save: {file_name_display}")
             break
         else:
-            print(f"Error: File download failed. Retrying... {file_name_display}")
+            print_ly(f"Error: File download failed. Retrying... {file_name_display}")
 
 #def download_file(url, file_name):
 #    # Download the file and save it to a local file
@@ -330,8 +334,8 @@ def download_file2(folder, filename,  url):
         headers = {}
         mode = "wb" #Open file mode
         if os.path.exists(file_name):
-            if noTk:
-                print(Fore.LIGHTCYAN_EX + f"Overwrite: {file_name}" + Style.RESET_ALL)
+            if tk is None:
+                print_n(f"Overwrite: {file_name}")
             else:
                 yield "Overwrite?"
                 root = tk.Tk()
@@ -341,7 +345,7 @@ def download_file2(folder, filename,  url):
                 ret = messagebox.askyesno(title="File exists", message='Yes: Overwrite\n\nNo:  Continue previous download')
                 root.destroy()
                 if not ret:
-                    print(Fore.LIGHTCYAN_EX + f"Continue: {file_name}" + Style.RESET_ALL)
+                    print_n(f"Continue: {file_name}")
                     mode = "ab"
                     # Get the size of the downloaded file
                     downloaded_size = os.path.getsize(file_name)
@@ -403,10 +407,10 @@ def download_file2(folder, filename,  url):
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         if downloaded_size >= total_size:
-            print(Fore.LIGHTCYAN_EX + f"Save: {file_name_display}" + Style.RESET_ALL)
+            print_n(f"Save: {file_name_display}")
             yield 'Downloaded'
             exitGenerator=True
         else:
-            print(f"Error: File download failed. Retrying... {file_name_display}")
+            print_ly(f"Error: File download failed. Retrying... {file_name_display}")
             yield 'Failed. Retry.'
         

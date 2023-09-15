@@ -32,7 +32,7 @@ function copyInnerText(node) {
 	if (node.nextSibling != null) {
 		//let ret = navigator.clipboard.writeText(node.nextSibling.innerText;
 		//alert("Copied infotext");
-		let response = confirm("Send txt2img?");
+		let response = confirm("Send to txt2img?");
 		if (response) {
 			let prompt = gradioApp().querySelector('#txt2img_prompt textarea');
 			let paste = gradioApp().querySelector('#paste');

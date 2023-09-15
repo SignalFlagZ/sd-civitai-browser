@@ -4,6 +4,11 @@ import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
 from colorama import Fore, Back, Style
 import itertools
+from scripts.file_manage import hasTk
+
+print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
+print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
+print_n = lambda  x: print("Civitai-Browser: " + x )
 
 class components():
     newid = itertools.count()
@@ -486,6 +491,8 @@ class components():
         
 def on_ui_tabs():
     ver = 'v1.7 beta2'
+    ver += '' if hasTk() else ' Restricted mode. Install tkinter.'
+    print_lc(f'{scripts.basedir()}')
     tabNames = ('Browser1','Browser2','Browser3')
     with gr.Blocks() as civitai_interface:
         with gr.Tabs():

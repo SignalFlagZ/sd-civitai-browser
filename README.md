@@ -8,6 +8,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ## Requirements
 - tkinter
   - Some Linux systems require python3-tk to be installed.
+  - The tkinter module, which displays the local GUI, does not work on cloud services.
+  - Without tkinter, it will run in cloud mode and some functions will be limited.
 
 ## Versions
 

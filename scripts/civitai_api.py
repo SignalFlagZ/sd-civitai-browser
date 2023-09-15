@@ -6,6 +6,10 @@ import requests
 from colorama import Fore, Back, Style
 from scripts.file_manage import extranetwork_folder
 
+print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
+print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
+print_n = lambda  x: print("Civitai-Browser: " + x )
+
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str, json_data:dict=None, content_type:str=None):
@@ -121,7 +125,7 @@ class civitaimodels:
             [->Reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
         permissions = {}
         if self.modelIndex is None:
-            print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )
+            print_ly('Select item first.')
         else:
             if self.modelIndex is not None:
                 item = self.jsonData['items'][self.modelIndex]
@@ -145,7 +149,7 @@ class civitaimodels:
         '''Return modelVersions list. Select item before.'''
         versionNames = {}
         if self.modelIndex is None:
-            print(Fore.LIGHTYELLOW_EX + 'Select item first.' + Style.RESET_ALL )
+            print_ly('Select item first.')
         else:
             item = self.jsonData['items'][self.modelIndex]
             for version in item['modelVersions']:
@@ -192,7 +196,7 @@ class civitaimodels:
         '''not yet'''
         modelInfo = {}
         if self.modelIndex is None:
-            print(Fore.LIGHTYELLOW_EX + f'Select item first. {self.modelID}' + Style.RESET_ALL )
+            print_ly(f'Select item first. {self.modelID}')
         else:
             for index, item in enumerate(self.jsonData['items']):
                 if int(item['id']) == self.modelID:
@@ -481,8 +485,9 @@ class civitaimodels:
             response = requests.get( url, params=query, timeout=(10,15))
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
-            print(Style.RESET_ALL)
+            #print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
+            #print(Style.RESET_ALL)
+            print_ly(f"Request error: {e}")
             #print(f"Query: {payload} URL: {response.url}")
             data = self.jsonData # No update data
             self.requestError = e

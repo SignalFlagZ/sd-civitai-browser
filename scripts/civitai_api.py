@@ -5,6 +5,7 @@ import urllib.parse
 import requests
 from colorama import Fore, Back, Style
 from scripts.file_manage import extranetwork_folder
+from modules.shared import opts
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -453,7 +454,7 @@ class civitaimodels:
 
     #REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None):
-        query = {'types': content_type, 'sort': sort_type}
+        query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards }
         if not period == "AllTime":
             query |= {'period': period}
         if use_search_term != "No" and search_term:

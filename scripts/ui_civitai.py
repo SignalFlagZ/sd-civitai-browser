@@ -1,10 +1,10 @@
 import gradio as gr
 from modules import script_callbacks
-import modules.scripts as scripts
 from scripts.civitai_api import civitaimodels
 from colorama import Fore, Back, Style
 import itertools
 from scripts.file_manage import hasTk
+
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -19,7 +19,7 @@ class components():
                 save_text_file, saveImageFiles,download_file2
         #self.tab = tab
         # Set the URL for the API endpoint
-        self.civitai = civitaimodels("https://civitai.com/api/v1/models?limit=16")
+        self.civitai = civitaimodels("https://civitai.com/api/v1/models")
         self.id = next(components.newid)
         contentType = ["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"]
         def defaultContentType():
@@ -500,6 +500,6 @@ def on_ui_tabs():
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civtab{i}") as tab:
                     components() #(tab)
         gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
-    return (civitai_interface, "CivitAi Browser", "civitai_interface_sfz"),
+    return [(civitai_interface, "CivitAi Browser", "civitai_interface_sfz")]
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

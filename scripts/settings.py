@@ -8,11 +8,11 @@ def on_ui_settings():
         key='civsfz_number_of_tabs',
         info=shared.OptionInfo(
             3 ,
-            label='Number of tabs',
+            label='Number of tabs (requires Reload UI)',
             component=gr.Slider,
             component_args={'minimum': 1, 'maximum': 8, 'step': 1},
             section=section,
-        ).needs_reload_ui()
+        )   # .needs_reload_ui()
     )
     shared.opts.add_option(
         key='civsfz_number_of_cards',

@@ -14,7 +14,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ## Versions
 
 ### v1.7 beta2
-- The number of cards per page can now be changed.
+- The number of tabs can be changed in Settings
+- The number of cards per page can now be changed
 - Add Civitai Browser to Settings
 - If there is no tkinter module, continue with limited functionality (experimental)
 - Clicking on the image sends infotext to txt2img. If local, copy to clipboard

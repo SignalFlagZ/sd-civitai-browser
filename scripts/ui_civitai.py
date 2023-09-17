@@ -4,7 +4,7 @@ from scripts.civitai_api import civitaimodels
 from colorama import Fore, Back, Style
 import itertools
 from scripts.file_manage import hasTk
-
+from modules.shared import opts
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -492,8 +492,9 @@ class components():
 def on_ui_tabs():
     ver = 'v1.7 beta2'
     ver += '' if hasTk() else ' Cloud mode. No tkinter found.'
-    #print_lc(f'{scripts.basedir()}')
-    tabNames = ('Browser1','Browser2','Browser3')
+    tabNames = []
+    for i in range(1, opts.civsfz_number_of_tabs + 1):
+        tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
         with gr.Tabs():
             for i,name in enumerate(tabNames):

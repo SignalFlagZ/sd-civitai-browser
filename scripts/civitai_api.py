@@ -56,18 +56,28 @@ class civitaimodels:
         return self.saveFolder
 
     # Models
-    def getModelNames(self) -> dict: #include nsfw models
-        model_dict = {}
-        for item in self.jsonData['items']:
-            model_dict[item['name']] = item['name']
-        return model_dict
-    def getModelNamesSfw(self) -> dict: #sfw models
-        '''Return SFW items names.'''
-        model_dict = {}
-        for item in self.jsonData['items']:
-            if not item['nsfw']:
-                model_dict[item['name']] = item['name']
-        return model_dict   
+    def getModels(self, showNsfw = False) -> list:
+        '''Return: [(str: Model name, str: index)]'''
+        model_list = [] 
+        for index, item in enumerate(self.jsonData['items']):
+            if showNsfw :
+                model_list.append((item['name'], index))
+            elif not item['nsfw']:
+                model_list.append((item['name'], index))
+        return model_list
+
+    #def getModelNames(self) -> dict: #include nsfw models
+    #    model_dict = {}
+    #    for item in self.jsonData['items']:
+    #        model_dict[item['name']] = item['name']
+    #    return model_dict
+    #def getModelNamesSfw(self) -> dict: #sfw models
+    #    '''Return SFW items names.'''
+    #    model_dict = {}
+    #    for item in self.jsonData['items']:
+    #        if not item['nsfw']:
+    #            model_dict[item['name']] = item['name']
+    #    return model_dict   
         
     # Model
     def getModelNameByID(self, id:int) -> str:
@@ -82,6 +92,8 @@ class civitaimodels:
             if item['name'] == name:
                 id = int(item['id'])
         return id
+    def getModelNameByIndex(self, index:int) -> str:
+        return self.jsonData['items'][index]['name']
     def isNsfwModelByID(self, id:int) -> bool:
         nsfw = None
         for item in self.jsonData['items']:
@@ -277,7 +289,52 @@ class civitaimodels:
 
     # HTML
     # Make model cards html
-    def modelCardsHtml(self, model_names, jsID=0):
+    def modelCardsHtml(self, models, jsID=0):
+        '''Generate HTML of model cards.'''
+        HTML = '<div class="column civmodellist">'
+        #print_ly(f"{models=}")
+        for model in models:
+            index = model[1]
+            item = self.jsonData['items'][model[1]]
+            #model_name = escape(item["name"].replace("'","\\'"),quote=True)
+            nsfw = ""
+            alreadyhave = ""
+            ID = item['id']
+            imgtag = f'<img src="./file=html/card-no-preview.png"/>'
+            if any(item['modelVersions']):
+                if len(item['modelVersions'][0]['images']) > 0:
+                    for img in item['modelVersions'][0]['images']:
+                        #print(f'{img["type"]}')
+                        if img['type'] == "image":
+                            if img['nsfw'] != "None" and not self.isShowNsfw():
+                                nsfw = 'civcardnsfw'
+                            imgtag = f'<img src={img["url"]}></img>'
+                            break
+                        elif img['type'] == 'video':
+                            if img['nsfw'] != "None" and not self.isShowNsfw():
+                                nsfw = 'civcardnsfw'
+                            imgtag = f'<video loop autoplay muted poster={img["url"]}>'
+                            imgtag += f'<source  src={img["url"]} type="video/webm"/>'
+                            imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
+                            imgtag += f'<img src={img["url"]} type="image/gif"/>'
+                            imgtag += f'</video>'
+                            break
+                for file in item['modelVersions'][0]['files']:
+                    file_name = file['name']
+                    base_model = item["modelVersions"][0]['baseModel']
+                    folder = extranetwork_folder(self.getContentType(),item["name"],base_model, item['nsfw'])
+                    path_file = os.path.join(folder, file_name)
+                    #print(f"{path_file}")
+                    if os.path.exists(path_file):
+                        alreadyhave = "civmodelcardalreadyhave"
+                        break
+            HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{jsID}:{index}:{ID}\')">'\
+                            +  imgtag \
+                            +  f'<figcaption>{item["name"]}</figcaption></figure>'
+        HTML = HTML + '</div>'
+        return HTML
+
+    def modelCardsHtml0(self, model_names, jsID=0):
         '''Generate HTML of model cards.'''
         HTML = '<div class="column civmodellist">'
         for index, item in enumerate(self.jsonData['items'], ):

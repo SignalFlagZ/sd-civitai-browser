@@ -409,13 +409,13 @@ class civitaimodels:
         img_html = '<div class="sampleimgs">'
         for pic in modelInfo['images']:
             nsfw = ""
-            imgStyle = 'style="width:20em;"'
+            imgStyle ='style="vertical-align: top;width: 35%;height: 30em;object-fit: contain;"'
             if pic['meta']:
                 infotext = self.meta2html(pic['meta'])
-                imgStyle ='style="width:20em;cursor:copy;" onclick="copyInnerText(this);"'
+                imgStyle = 'style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="copyInnerText(this);"'
             if pic['nsfw'] != "None" and not self.showNsfw:
                 nsfw = 'class="civnsfw"'
-            img_html +=  f'<div {nsfw} style="display:flex;align-items:flex-start;gap:1em;">'
+            img_html +=  f'<div {nsfw} style="display:flex;margin-top: 1em">'
             if pic['type'] == 'image':
                 img_html += f'<img src={pic["url"]}  {imgStyle}/>'
             else:
@@ -425,10 +425,10 @@ class civitaimodels:
                 img_html += f'<img src={pic["url"]} type="image/gif"/>'
                 img_html += f'</video>'
             if pic['meta']:
-                img_html += f'<div style="text-align:left;line-height: 1.5em;">'
+                img_html += f'<div style="width: 65%;padding-left: 1em;height: 30em;overflow-y: auto;overflow-wrap: anywhere;">'
                 img_html += infotext
                 img_html += '</div>'
-            img_html += '</div></br>'
+            img_html += '</div>'
         img_html += '</div>'
         #function:copy to clipboard
         output_html = '<script>'\
@@ -444,7 +444,7 @@ class civitaimodels:
             '</script>'
         if modelInfo['nsfw']:
             output_html += '<h1>NSFW</b></h1>'
-        output_html += f'<h1>Model: {escape(str(modelInfo["model_name"]))}</h1>'\
+        output_html += f'<h1>{escape(str(modelInfo["model_name"]))}</h1>'\
 
         output_html += f'<div style="">'
         output_html += '<div style="float:right;width:35%;margin:-16px 0 1em 1em;">'\

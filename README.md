@@ -13,6 +13,9 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 
+### v1.7 beta3
+- Fix a mistake when there are models with the same name
+- Change model html styles
 ### v1.7 beta2
 - The number of tabs can be changed in Settings
 - The number of cards per page can now be changed

@@ -1,3 +1,4 @@
+
 .civmodellist {
 	display: flex;
 	flex-wrap: wrap;
@@ -18,7 +19,7 @@
 	position: relative;
 	/* need for z-index */
 	z-index: var(--layer-5);
-	box-shadow: 0 0 4px 6px whitesmoke;
+	box-shadow: 0 0 4px 6px rgb(121 138 159);
 }
 
 .civmodelcardalreadyhave {
@@ -26,11 +27,6 @@
 }
 .civmodelcardalreadyhave:hover {
 	box-shadow: 0 0 4px 6px aquamarine;
-}
-
-.civmodelcard:hover figcaption {
-	bottom: initial;
-	background-color: rgba(32, 32, 32, 0.9);
 }
 
 .civmodelcard img {
@@ -52,8 +48,13 @@
 	bottom: 5px;
 	left: 5px;
 	word-break: break-word;
-	background-color: rgba(32, 32, 32, 0.5);
+	background-color:rgb(121 138 159 / 85%);
 	/*transition: bottom .3s ease-out;*/
+}
+
+.civmodelcard:hover figcaption {
+	bottom: initial;
+	/*background-color: rgba(121 138 159 / 60%);*/
 }
 
 .civnsfw img {

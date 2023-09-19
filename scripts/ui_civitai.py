@@ -5,6 +5,7 @@ from colorama import Fore, Back, Style
 import itertools
 from scripts.file_manage import hasTk
 from modules.shared import opts
+import re
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -171,9 +172,11 @@ class components():
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
                 enableJump = hasPrev or hasNext
-                model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, self.id)
-                return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
+                #model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
+                #HTML = self.civitai.modelCardsHtml(model_names, self.id)
+                models = self.civitai.getModels(grChkboxShowNsfw)
+                HTML = self.civitai.modelCardsHtml(models, self.id)
+                return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
@@ -206,10 +209,13 @@ class components():
             )
 
             def UpdatedModels(grDrpdwnModels):
-                index = self.civitai.getIndexByModelName(grDrpdwnModels)
+                #print_ly(f"{grDrpdwnModels=}")
                 eventText = None
                 if grDrpdwnModels is not None:
-                    eventText = 'Index:' + str(index)
+                    match = re.match(r'(.*)\:\((\d+)\)$',grDrpdwnModels)
+                    if match:
+                        index = match.group(2)
+                        eventText = 'Index:' + str(index)
                 return gr.Textbox.update(value=eventText)
             grDrpdwnModels.change(
                 fn=UpdatedModels,
@@ -326,9 +332,11 @@ class components():
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
-                model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, self.id)
-                return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
+                #model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
+                #HTML = self.civitai.modelCardsHtml(model_names, self.id)
+                models = self.civitai.getModels(grChkboxShowNsfw)
+                HTML = self.civitai.modelCardsHtml(models, self.id)
+                return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
@@ -394,9 +402,11 @@ class components():
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
                 hasNext = not self.civitai.nextPage() is None
-                model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
-                HTML = self.civitai.modelCardsHtml(model_names, self.id)
-                return  gr.Dropdown.update(choices=[v for k, v in model_names.items()], value=None),\
+                #model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
+                #HTML = self.civitai.modelCardsHtml(model_names, self.id)
+                models = self.civitai.getModels(grChkboxShowNsfw)
+                HTML = self.civitai.modelCardsHtml(models, self.id)
+                return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
@@ -443,7 +453,7 @@ class components():
                         grRadioVersions = updateVersionsByModelID(self.civitai.getSelectedModelID())
                         grHtmlModelInfo,grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions['value'])
                         grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
-                        grDrpdwnModels = gr.Dropdown.update(value=self.civitai.getSelectedModelName())
+                        grDrpdwnModels = gr.Dropdown.update(value=f'{self.civitai.getSelectedModelName()}:({index})')
                         return  grDrpdwnModels,\
                                 grRadioVersions,\
                                 grHtmlModelInfo,\
@@ -490,7 +500,7 @@ class components():
         return self.components
         
 def on_ui_tabs():
-    ver = 'v1.7 beta2'
+    ver = 'v1.7 beta3'
     ver += '' if hasTk() else ' Cloud mode. No tkinter found.'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):

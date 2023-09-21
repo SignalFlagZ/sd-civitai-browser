@@ -43,3 +43,16 @@ function copyInnerText(node) {
 		}
 	}
 }
+
+function overwriteColors(colorsText) {
+	//console.log(c);
+	let colors = colorsText.split(',');
+	querySelectSetColor('.civmodelcard figcaption', colors[0]);
+}
+
+function querySelectSetColor(q, c) {
+	let elements = gradioApp().querySelectorAll(q);
+	for (let i = 0; i < elements.length; i++) {
+		elements[i].style.backgroundColor = c + 'DD';
+	}
+}

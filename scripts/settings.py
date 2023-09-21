@@ -24,5 +24,14 @@ def on_ui_settings():
             section=section,
         )
     )
-
+    shared.opts.add_option(
+        key='civsfz_figcaption_background_color',
+        info=shared.OptionInfo(
+            '#798a9f' ,
+            label='figcaption background color',
+            component=gr.ColorPicker,
+            #component_args={'value': '#798a9f'},
+            section=section,
+        )
+    )
 script_callbacks.on_ui_settings(on_ui_settings)

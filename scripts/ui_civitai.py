@@ -1,11 +1,11 @@
+import os
 import gradio as gr
 from modules import script_callbacks
-from scripts.civitai_api import civitaimodels
 from colorama import Fore, Back, Style
 import itertools
-from scripts.file_manage import hasTk
 from modules.shared import opts
 import re
+from scripts.civitai_api import civitaimodels
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -124,10 +124,6 @@ class components():
                     ],
                 outputs=[grTextProgress]
                 )
-            #def model_download(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl): # progress=gr.Progress()
-            #    ret = download_file_thread2(grTxtSaveFolder, grDrpdwnFilenames, grTxtDlUrl)
-            #    print(Fore.LIGHTYELLOW_EX + f'{ret=}' + Style.RESET_ALL)
-            #    return ret
             download = grBtnDownloadModel.click(
                 fn=download_file2,
                 inputs=[
@@ -509,10 +505,10 @@ class components():
             
     def getComponents(self):
         return self.components
-        
+
 def on_ui_tabs():
     ver = 'v1.7 beta3'
-    ver += '' if hasTk() else ' Cloud mode. No tkinter found.'
+    #ver += '' if tk else ' Cloud mode. No tkinter found.'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

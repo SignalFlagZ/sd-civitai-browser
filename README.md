@@ -12,7 +12,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
   - Without tkinter, it will run in cloud mode and some functions will be limited.
 
 ## Versions
-
+### v1.7
+- Stop using tkinter. It was causing a crash.
 ### v1.7 beta3
 - Fix a mistake when there are models with the same name
 - Change model html styles
@@ -23,10 +24,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - If there is no tkinter module, continue with limited functionality (experimental)
 - Clicking on the image sends infotext to txt2img. If local, copy to clipboard
 - Separately searchable in multiple tabs
-  
-> [!WARNING]
-> SD web UI crashes when canceling twice in a row. https://github.com/SignalFlagZ/sd-civitai-browser/issues/6
-
 ### v1.7 beta
 - Two tabs for separate searches (experimental)
   - Probably cannot download at the same time

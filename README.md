@@ -7,7 +7,10 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.7
-- Stop using tkinter. It was causing a crash.
+- Some colors of card can now be set in Settings
+  - When you press the Get List button, the settings will be loaded and will be reflected when you display a new cards
+  - To return to default, search for `civsfz` from config.json and delete that line
+- Stop using tkinter. It was causing a crash
 ### v1.7 beta3
 - Fix a mistake when there are models with the same name
 - Change model html styles

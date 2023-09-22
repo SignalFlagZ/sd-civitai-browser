@@ -152,7 +152,9 @@ class components():
                     grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
                 else:
                     grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
-                colorText = f'{opts.civsfz_figcaption_background_color}'
+                colorText = f'{opts.civsfz_figcaption_background_color};'\
+                            f'{opts.civsfz_default_shadow_color};'\
+                            f'{opts.civsfz_alreadyhave_shadow_color}'
                 if response is None:
                     return gr.Dropdown.update(choices=[], value=None),\
                         gr.Radio.update(choices=[], value=None),\
@@ -507,7 +509,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7.0'
+    ver = 'v1.7.1'
     #ver += '' if tk else ' Cloud mode. No tkinter found.'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):

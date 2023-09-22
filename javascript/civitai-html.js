@@ -46,13 +46,16 @@ function copyInnerText(node) {
 
 function overwriteColors(colorsText) {
 	//console.log(c);
-	let colors = colorsText.split(',');
-	querySelectSetColor('.civmodelcard figcaption', colors[0]);
+	let colors = colorsText.split(';');
+	querySelectSetColor('.civmodelcard figcaption', '--civsfz-figcaption-background-color', colors[0] + 'd9');
+	querySelectSetColor('.civmodelcard', '--civsfz-default-shadow-color', colors[1] + 'ee');
+	querySelectSetColor('.civmodelcardalreadyhave', '--civsfz-alreadyhave-shadow-color', colors[2] + 'ee');
 }
 
-function querySelectSetColor(q, c) {
+function querySelectSetColor(q, p, c) {
 	let elements = gradioApp().querySelectorAll(q);
-	for (let i = 0; i < elements.length; i++) {
-		elements[i].style.backgroundColor = c + 'DD';
-	}
+	elements.forEach((elem) => {
+		elem.style.setProperty(p, c);
+	});
+
 }

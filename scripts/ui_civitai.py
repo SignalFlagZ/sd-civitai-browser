@@ -507,7 +507,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7 beta3'
+    ver = 'v1.7'
     #ver += '' if tk else ' Cloud mode. No tkinter found.'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):

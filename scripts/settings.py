@@ -24,5 +24,32 @@ def on_ui_settings():
             section=section,
         )
     )
+    shared.opts.add_option(
+        key='civsfz_figcaption_background_color',
+        info=shared.OptionInfo(
+            '#798a9f' ,
+            label='Model name background color',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_default_shadow_color',
+        info=shared.OptionInfo(
+            '#798a9f' ,
+            label='Frame color of cards',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_alreadyhave_shadow_color',
+        info=shared.OptionInfo(
+            '#7fffd4' ,
+            label='Frame color of cards you already have',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
 
 script_callbacks.on_ui_settings(on_ui_settings)

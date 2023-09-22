@@ -1,4 +1,10 @@
 
+:root {
+	--civsfz-figcaption-background-color: rgb(121 138 159 /85%);
+	--civsfz-default-shadow-color: #798a9f;
+	--civsfz-alreadyhave-shadow-color:  #7fffd4;
+}
+
 .civmodellist {
 	display: flex;
 	flex-wrap: wrap;
@@ -19,14 +25,14 @@
 	position: relative;
 	/* need for z-index */
 	z-index: var(--layer-5);
-	box-shadow: 0 0 4px 6px rgb(121 138 159);
+	box-shadow: 0 0 4px 6px var(--civsfz-default-shadow-color);
 }
 
 .civmodelcardalreadyhave {
-	box-shadow: 0 0 1px 3px aquamarine;
+	box-shadow: 0 0 1px 3px var(--civsfz-alreadyhave-shadow-color);
 }
 .civmodelcardalreadyhave:hover {
-	box-shadow: 0 0 4px 6px aquamarine;
+	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
 }
 
 .civmodelcard img {
@@ -48,13 +54,12 @@
 	bottom: 5px;
 	left: 5px;
 	word-break: break-word;
-	background-color:rgb(121 138 159 / 85%);
+	background-color: var(--civsfz-figcaption-background-color);
 	/*transition: bottom .3s ease-out;*/
 }
 
 .civmodelcard:hover figcaption {
 	bottom: initial;
-	/*background-color: rgba(121 138 159 / 60%);*/
 }
 
 .civnsfw img {

@@ -43,3 +43,19 @@ function copyInnerText(node) {
 		}
 	}
 }
+
+function overwriteColors(colorsText) {
+	//console.log(c);
+	let colors = colorsText.split(';');
+	querySelectSetColor('.civmodelcard figcaption', '--civsfz-figcaption-background-color', colors[0] + 'd9');
+	querySelectSetColor('.civmodelcard', '--civsfz-default-shadow-color', colors[1] + 'ee');
+	querySelectSetColor('.civmodelcardalreadyhave', '--civsfz-alreadyhave-shadow-color', colors[2] + 'ee');
+}
+
+function querySelectSetColor(q, p, c) {
+	let elements = gradioApp().querySelectorAll(q);
+	elements.forEach((elem) => {
+		elem.style.setProperty(p, c);
+	});
+
+}

@@ -5,12 +5,6 @@ An extension to help download models from CivitAi without leaving WebUI
 
 https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-40a9-b826-30ff20bf7bb3
 
-## Requirements
-- tkinter
-  - Some Linux systems require python3-tk to be installed.
-  - The tkinter module, which displays the local GUI, does not work on cloud services.
-  - Without tkinter, it will run in cloud mode and some functions will be limited.
-
 ## Versions
 ### v1.7
 - Stop using tkinter. It was causing a crash.

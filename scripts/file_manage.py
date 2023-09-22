@@ -15,22 +15,12 @@ from requests.exceptions import ConnectionError
 from tqdm import tqdm
 from modules.shared import opts, cmd_opts
 from modules.paths import models_path
-try:
-    import tkinter as tk
-except ImportError:
-    tk = None
-    print(Fore.LIGHTYELLOW_EX + f'Civitai-Browser: tkinter not found. Limited functionality.' + Style.RESET_ALL)
-else:
-    from tkinter import messagebox
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_n = lambda  x: print("Civitai-Browser: " + x )
 
 isDownloading = False
-
-def hasTk() -> bool:
-    return False if tk is None else True
 
 def contenttype_folder(content_type):
     if content_type == "Checkpoint":
@@ -320,7 +310,6 @@ def download_file(url, file_name):
 #    progress.close()
 
 def download_file2(folder, filename,  url):
-
     makedirs(folder)
     file_name = os.path.join(folder, filename)
     #thread = threading.Thread(target=download_file, args=(url, filepath))
@@ -338,23 +327,14 @@ def download_file2(folder, filename,  url):
         headers = {}
         mode = "wb" #Open file mode
         if os.path.exists(file_name):
-            if tk is None:
-                print_n(f"Overwrite: {file_name}")
-            else:
-                yield "Overwrite?"
-                root = tk.Tk()
-                root.attributes('-topmost', True)
-                root.bell()
-                root.withdraw()
-                ret = messagebox.askyesno(title="File exists", message='Yes: Overwrite\n\nNo:  Continue previous download')
-                root.destroy()
-                if not ret:
-                    print_n(f"Continue: {file_name}")
-                    mode = "ab"
-                    # Get the size of the downloaded file
-                    downloaded_size = os.path.getsize(file_name)
-                    # Set the range of the request to start from the current size of the downloaded file
-                    headers = {"Range": f"bytes={downloaded_size}-"}
+            yield "Overwrite?"
+            #if not overWrite:
+            #    print_n(f"Continue: {file_name}")
+            #    mode = "ab"
+            #    # Get the size of the downloaded file
+            #    downloaded_size = os.path.getsize(file_name)
+            #    # Set the range of the request to start from the current size of the downloaded file
+            #    headers = {"Range": f"bytes={downloaded_size}-"}
 
         # Split filename from included path
         tokens = re.split(re.escape('\\'), file_name)
@@ -364,9 +344,10 @@ def download_file2(folder, filename,  url):
         try:
             yield "Connecting..."
         except Exception as e:
+            exitGenerator=True
             return
         progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
-        prg = downloaded_size
+        prg = 0 #downloaded_size
         # Open a local file to save the download
         with open(file_name, mode) as f:
             while not exitGenerator:
@@ -381,7 +362,7 @@ def download_file2(folder, filename,  url):
                         total_size = downloaded_size
                     progressConsole.total = total_size
                     # Write the response to the local file and update the progress bar
-                    for chunk in response.iter_content(chunk_size=8388608):
+                    for chunk in response.iter_content(chunk_size=4*1024*1024):
                         if chunk:  # filter out keep-alive new chunks
                             f.write(chunk)
                             progressConsole.update(len(chunk))
@@ -389,12 +370,15 @@ def download_file2(folder, filename,  url):
                             try:
                                 yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
                             except Exception as e:
+                                exitGenerator=True
+                                progressConsole.close()
                                 return
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break
                 except GeneratorExit:
                     exitGenerator=True
+                    progressConsole.close()
                     return
                 except ConnectionError as e:
                     # Decrement the number of retries
@@ -402,8 +386,8 @@ def download_file2(folder, filename,  url):
 
                     # If there are no more retries, raise the exception
                     if max_retries == 0:
-                        raise e
-
+                        progressConsole.close()
+                        return
                     # Wait for the specified delay before retrying
                     time.sleep(retry_delay)
         # Close the progress bar

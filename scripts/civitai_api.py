@@ -334,53 +334,6 @@ class civitaimodels:
         HTML = HTML + '</div>'
         return HTML
 
-    def modelCardsHtml0(self, model_names, jsID=0):
-        '''Generate HTML of model cards.'''
-        HTML = '<div class="column civmodellist">'
-        for index, item in enumerate(self.jsonData['items'], ):
-            for k,model in model_names.items():
-                if model_names[k] == item['name']:
-                    #print(f'Item:{item["modelVersions"][0]["images"]}')
-                    model_name = escape(item["name"].replace("'","\\'"),quote=True)
-                    #print(f'{model_name}')
-                    #print(f'Length: {len(item["modelVersions"][0]["images"])}')
-                    nsfw = ""
-                    alreadyhave = ""
-                    ID = item['id']
-                    imgtag = f'<img src="./file=html/card-no-preview.png"/>'
-                    if any(item['modelVersions']):
-                        if len(item['modelVersions'][0]['images']) > 0:
-                            for img in item['modelVersions'][0]['images']:
-                                #print(f'{img["type"]}')
-                                if img['type'] == "image":
-                                    if img['nsfw'] != "None" and not self.isShowNsfw():
-                                        nsfw = 'civcardnsfw'
-                                    imgtag = f'<img src={img["url"]}></img>'
-                                    break
-                                elif img['type'] == 'video':
-                                    if img['nsfw'] != "None" and not self.isShowNsfw():
-                                        nsfw = 'civcardnsfw'
-                                    imgtag = f'<video loop autoplay muted poster={img["url"]}>'
-                                    imgtag += f'<source  src={img["url"]} type="video/webm"/>'
-                                    imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
-                                    imgtag += f'<img src={img["url"]} type="image/gif"/>'
-                                    imgtag += f'</video>'
-                                    break
-                        for file in item['modelVersions'][0]['files']:
-                            file_name = file['name']
-                            base_model = item["modelVersions"][0]['baseModel']
-                            folder = extranetwork_folder(self.getContentType(),item["name"],base_model, item['nsfw'])
-                            path_file = os.path.join(folder, file_name)
-                            #print(f"{path_file}")
-                            if os.path.exists(path_file):
-                                alreadyhave = "civmodelcardalreadyhave"
-                                break
-                    HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{jsID}:{index}:{ID}\')">'\
-                                    +  imgtag \
-                                    +  f'<figcaption>{item["name"]}</figcaption></figure>'
-        HTML = HTML + '</div>'
-        return HTML
-
     def meta2html(self, meta:dict) -> str:
         #convert key name as infotext
         renameKey = {

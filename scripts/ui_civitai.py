@@ -51,7 +51,7 @@ class components():
             with gr.Row():
                 grMrkdwnErr = gr.Markdown(value=None, visible=False)
             with gr.Row():
-                grHtmlCards = gr.HTML()
+                grHtmlCards = gr.HTML(elem_classes='civmodelcardshtml')
                 grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
             with gr.Row():
                 with gr.Column(scale=3):

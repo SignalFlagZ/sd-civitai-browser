@@ -8,7 +8,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ## Versions
 ### v1.7
 - Model card size can be set in Settings
-- Model card hover size can be set in Settings
+- Model card zooming size can be set in Settings
 - Some colors of card can now be set in Settings
   - When you press the Get List button, the settings will be loaded and will be reflected when you display a new cards
   - To return to default, search for `civsfz` from config.json and delete that line

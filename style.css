@@ -1,8 +1,12 @@
 
-:root {
+.civmodelcard {
 	--civsfz-figcaption-background-color: rgb(121 138 159 /85%);
 	--civsfz-default-shadow-color: #798a9f;
 	--civsfz-alreadyhave-shadow-color:  #7fffd4;
+	--civsfz-hover-scale: 1.5;
+	--civsfz-card-width: 8;
+	--civsfz-card-height: 12;
+	--civsfz-card-size-unit: 1em;
 }
 
 .civmodellist {
@@ -21,7 +25,7 @@
 }
 
 .civmodelcard:hover {
-	transform: scale(1.5, 1.5);
+	transform: scale(var(--civsfz-hover-scale), var(--civsfz-hover-scale));
 	position: relative;
 	/* need for z-index */
 	z-index: var(--layer-5);
@@ -37,15 +41,15 @@
 
 .civmodelcard img {
 	/*filter: blur(6px);*/
-	width: 8em;
-	height: 12em;
+	width:  calc(var(--civsfz-card-width) * var(--civsfz-card-size-unit));
+	height: calc(var(--civsfz-card-height) * var(--civsfz-card-size-unit));
 	object-fit: cover;
 }
 
 .civmodelcard video {
 	/*filter: blur(6px);*/
-	width: 8em;
-	height: 12em;
+	width:  calc(var(--civsfz-card-width) * var(--civsfz-card-size-unit));
+	height: calc(var(--civsfz-card-height) * var(--civsfz-card-size-unit));
 	object-fit: cover;
 }
 

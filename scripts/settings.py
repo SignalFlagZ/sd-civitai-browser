@@ -25,10 +25,41 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
+        key='civsfz_card_size_width',
+        info=shared.OptionInfo(
+            8 ,
+            label='Card width (unit:1em)',
+            component=gr.Slider,
+            component_args={'minimum': 5, 'maximum': 30, 'step': 1},
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_card_size_height',
+        info=shared.OptionInfo(
+            12 ,
+            label='Card height (unit:1em)',
+            component=gr.Slider,
+            component_args={'minimum': 5, 'maximum': 30, 'step': 1},
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_hover_zoom_magnification',
+        info=shared.OptionInfo(
+            1.5 ,
+            label='Zoom magnification when hovering',
+            component=gr.Slider,
+            component_args={'minimum': 1, 'maximum': 2.4, 'step': 0.1},
+            section=section,
+        )
+    )
+ 
+    shared.opts.add_option(
         key='civsfz_figcaption_background_color',
         info=shared.OptionInfo(
             '#798a9f' ,
-            label='Model name background color',
+            label='Background color of model name',
             component=gr.ColorPicker,
             section=section,
         )

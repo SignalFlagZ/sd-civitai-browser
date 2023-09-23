@@ -53,7 +53,7 @@ class components():
                 grMrkdwnErr = gr.Markdown(value=None, visible=False)
             with gr.Row():
                 grHtmlCards = gr.HTML()
-                grTxtColors = gr.Textbox(label="HTML Colors", value="", visible=False, interactive=False, lines=1)
+                grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
             with gr.Row():
                 with gr.Column(scale=3):
                     grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
@@ -152,9 +152,14 @@ class components():
                     grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
                 else:
                     grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
-                colorText = f'{opts.civsfz_figcaption_background_color};'\
-                            f'{opts.civsfz_default_shadow_color};'\
-                            f'{opts.civsfz_alreadyhave_shadow_color}'
+                propertiesText = ';'.join([
+                    str(opts.civsfz_figcaption_background_color),
+                    str(opts.civsfz_default_shadow_color),
+                    str(opts.civsfz_alreadyhave_shadow_color),
+                    str(opts.civsfz_hover_zoom_magnification),
+                    str(opts.civsfz_card_size_width),
+                    str(opts.civsfz_card_size_height)
+                    ])
                 if response is None:
                     return gr.Dropdown.update(choices=[], value=None),\
                         gr.Radio.update(choices=[], value=None),\
@@ -165,7 +170,7 @@ class components():
                         gr.Slider.update(interactive=False),\
                         gr.Textbox.update(value=None),\
                         grMrkdwnErr,\
-                        gr.Textbox.update(value=colorText)
+                        gr.Textbox.update(value=propertiesText)
                 self.civitai.updateJsonData(response, grRadioContentType)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
@@ -185,7 +190,7 @@ class components():
                         gr.Slider.update(interactive=enableJump, value=int(self.civitai.getCurrentPage()),maximum=int(self.civitai.getTotalPages())),\
                         gr.Textbox.update(value=grTxtPages),\
                         grMrkdwnErr,\
-                        gr.Textbox.update(value=colorText)
+                        gr.Textbox.update(value=propertiesText)
             grBtnGetListAPI.click(
                 fn=update_model_list,
                 inputs=[
@@ -206,7 +211,7 @@ class components():
                     grSldrPage,
                     grTxtPages,
                     grMrkdwnErr,
-                    grTxtColors
+                    grTxtPropaties
                 ]
             )
 
@@ -499,9 +504,9 @@ class components():
                 ]
                 )
             grHtmlCards.change(
-                _js = '(x) => overwriteColors(x)',
+                _js = '(x) => overwriteProperties(x)',
                 fn = None,
-                inputs=[grTxtColors],
+                inputs=[grTxtPropaties],
                 outputs=[]                
                 )
             
@@ -509,14 +514,10 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7.1'
-    #ver += '' if tk else ' Cloud mode. No tkinter found.'
+    ver = 'v1.7.2'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
-    #print_lc(f'{opts.civsfz_figcaption_background_color}')
-    #customCss = f'.civmodelcard figcaption {{background-color:{opts.civsfz_figcaption_background_color} !important;}}'
-    #print_lc(f'{customCss}')
     with gr.Blocks() as civitai_interface:
         with gr.Tabs():
             for i,name in enumerate(tabNames):

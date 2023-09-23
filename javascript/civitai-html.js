@@ -47,12 +47,12 @@ function copyInnerText(node) {
 function overwriteProperties(propertiesText) {
 	//console.log(c);
 	let p = propertiesText.split(';');
-	querySelectSetProperty('.civmodelcard', '--civsfz-figcaption-background-color', p[0] + 'd9');
-	querySelectSetProperty('.civmodelcard', '--civsfz-default-shadow-color', p[1] + 'f0');
-	querySelectSetProperty('.civmodelcard', '--civsfz-alreadyhave-shadow-color', p[2] + 'f0');
-	querySelectSetProperty('.civmodelcard', '--civsfz-hover-scale', p[3]); 
-	querySelectSetProperty('.civmodelcard', '--civsfz-card-width', p[4]); 
-	querySelectSetProperty('.civmodelcard', '--civsfz-card-height', p[5]); 
+	querySelectSetProperty('.civmodelcardshtml', '--civsfz-figcaption-background-color', p[0] + 'd9');
+	querySelectSetProperty('.civmodelcardshtml', '--civsfz-default-shadow-color', p[1] + 'f0');
+	querySelectSetProperty('.civmodelcardshtml', '--civsfz-alreadyhave-shadow-color', p[2] + 'f0');
+	querySelectSetProperty('.civmodelcardshtml', '--civsfz-hover-scale', p[3]); 
+	querySelectSetProperty('.civmodelcardshtml', '--civsfz-card-width', p[4]); 
+	querySelectSetProperty('.civmodelcardshtml', '--civsfz-card-height', p[5]); 
 
 }
 

@@ -10,7 +10,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Model card size can be set in Settings
 - Model card zooming size can be set in Settings
 - Some colors of card can now be set in Settings
-  - When you press the Get List button, the settings will be loaded and will be reflected when you display a new cards
+  - Settings will take effect on the next cards rendering
   - To return to default, search for `civsfz` from config.json and delete that line
 - Stop using tkinter. It was causing a crash
 ### v1.7 beta3

@@ -1,4 +1,5 @@
 import os
+import datetime
 from html import escape
 import json
 import urllib.parse
@@ -291,7 +292,8 @@ class civitaimodels:
     # Make model cards html
     def modelCardsHtml(self, models, jsID=0):
         '''Generate HTML of model cards.'''
-        HTML = '<div class="column civmodellist">'
+        HTML = f'<!-- {datetime.datetime.now()} -->' # for trigger event
+        HTML += '<div class="column civmodellist">'
         #print_ly(f"{models=}")
         for model in models:
             index = model[1]

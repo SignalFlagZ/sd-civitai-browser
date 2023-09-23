@@ -1,4 +1,3 @@
-import os
 import gradio as gr
 from modules import script_callbacks
 from colorama import Fore, Back, Style
@@ -152,14 +151,7 @@ class components():
                     grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
                 else:
                     grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
-                propertiesText = ';'.join([
-                    str(opts.civsfz_figcaption_background_color),
-                    str(opts.civsfz_default_shadow_color),
-                    str(opts.civsfz_alreadyhave_shadow_color),
-                    str(opts.civsfz_hover_zoom_magnification),
-                    str(opts.civsfz_card_size_width),
-                    str(opts.civsfz_card_size_height)
-                    ])
+
                 if response is None:
                     return gr.Dropdown.update(choices=[], value=None),\
                         gr.Radio.update(choices=[], value=None),\
@@ -169,8 +161,7 @@ class components():
                         gr.Button.update(interactive=False),\
                         gr.Slider.update(interactive=False),\
                         gr.Textbox.update(value=None),\
-                        grMrkdwnErr,\
-                        gr.Textbox.update(value=propertiesText)
+                        grMrkdwnErr
                 self.civitai.updateJsonData(response, grRadioContentType)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
@@ -189,8 +180,7 @@ class components():
                         gr.Button.update(interactive=enableJump),\
                         gr.Slider.update(interactive=enableJump, value=int(self.civitai.getCurrentPage()),maximum=int(self.civitai.getTotalPages())),\
                         gr.Textbox.update(value=grTxtPages),\
-                        grMrkdwnErr,\
-                        gr.Textbox.update(value=propertiesText)
+                        grMrkdwnErr
             grBtnGetListAPI.click(
                 fn=update_model_list,
                 inputs=[
@@ -210,8 +200,7 @@ class components():
                     grBtnGoPage,
                     grSldrPage,
                     grTxtPages,
-                    grMrkdwnErr,
-                    grTxtPropaties
+                    grMrkdwnErr
                 ]
             )
 
@@ -503,7 +492,22 @@ class components():
                     grTxtSaveFolder
                 ]
                 )
+
+            def updatePropertiesText():
+                propertiesText = ';'.join([
+                    str(opts.civsfz_figcaption_background_color),
+                    str(opts.civsfz_default_shadow_color),
+                    str(opts.civsfz_alreadyhave_shadow_color),
+                    str(opts.civsfz_hover_zoom_magnification),
+                    str(opts.civsfz_card_size_width),
+                    str(opts.civsfz_card_size_height)
+                    ])
+                return gr.Textbox.update(value=propertiesText)
             grHtmlCards.change(
+                fn=updatePropertiesText,
+                inputs=[],
+                outputs=[grTxtPropaties]
+                ).then(
                 _js = '(x) => overwriteProperties(x)',
                 fn = None,
                 inputs=[grTxtPropaties],

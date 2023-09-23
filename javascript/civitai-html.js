@@ -44,15 +44,19 @@ function copyInnerText(node) {
 	}
 }
 
-function overwriteColors(colorsText) {
+function overwriteProperties(propertiesText) {
 	//console.log(c);
-	let colors = colorsText.split(';');
-	querySelectSetColor('.civmodelcard figcaption', '--civsfz-figcaption-background-color', colors[0] + 'd9');
-	querySelectSetColor('.civmodelcard', '--civsfz-default-shadow-color', colors[1] + 'ee');
-	querySelectSetColor('.civmodelcardalreadyhave', '--civsfz-alreadyhave-shadow-color', colors[2] + 'ee');
+	let p = propertiesText.split(';');
+	querySelectSetProperty('.civmodelcard', '--civsfz-figcaption-background-color', p[0] + 'd9');
+	querySelectSetProperty('.civmodelcard', '--civsfz-default-shadow-color', p[1] + 'f0');
+	querySelectSetProperty('.civmodelcard', '--civsfz-alreadyhave-shadow-color', p[2] + 'f0');
+	querySelectSetProperty('.civmodelcard', '--civsfz-hover-scale', p[3]); 
+	querySelectSetProperty('.civmodelcard', '--civsfz-card-width', p[4]); 
+	querySelectSetProperty('.civmodelcard', '--civsfz-card-height', p[5]); 
+
 }
 
-function querySelectSetColor(q, p, c) {
+function querySelectSetProperty(q, p, c) {
 	let elements = gradioApp().querySelectorAll(q);
 	elements.forEach((elem) => {
 		elem.style.setProperty(p, c);

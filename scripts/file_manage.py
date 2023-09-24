@@ -15,6 +15,7 @@ from requests.exceptions import ConnectionError
 from tqdm import tqdm
 from modules.shared import opts, cmd_opts
 from modules.paths import models_path
+from modules.hashes import calculate_sha256
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -309,7 +310,7 @@ def download_file(url, file_name):
 #    # Close the progress bar
 #    progress.close()
 
-def download_file2(folder, filename,  url):
+def download_file2(folder, filename,  url, hash):
     makedirs(folder)
     file_name = os.path.join(folder, filename)
     #thread = threading.Thread(target=download_file, args=(url, filepath))
@@ -393,15 +394,22 @@ def download_file2(folder, filename,  url):
         # Close the progress bar
         progressConsole.close()
         downloaded_size = os.path.getsize(file_name)
+        sha256 = calculate_sha256(file_name).upper()
+        print_lc(f'Model file hash : {hash}')
+        print_lc(f'Downloaded hash : {sha256}')
         # Check if the download was successful
-        if downloaded_size >= total_size:
+        if sha256 == hash.upper():
             print_n(f"Save: {file_name_display}")
             yield 'Downloaded'
             exitGenerator=True
+            return
         else:
-            print_ly(f"Error: File download failed. Retrying... {file_name_display}")
-            yield 'Failed. Retry.'
-        
+            print_ly(f"Error: File download failed. {file_name_display}")
+            exitGenerator=True
+            yield 'Failed.'
+            return
+
+
 def open_folder(f):
 	'''[reference](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/5ef669de080814067961f28357256e8fe27544f4/modules/ui_common.py#L109)'''
 	

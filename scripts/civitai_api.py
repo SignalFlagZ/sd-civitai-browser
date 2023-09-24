@@ -244,8 +244,7 @@ class civitaimodels:
         modelInfo['trainedWords'] = ", ".join(version['trainedWords'])
         modelInfo['baseModel'] = version['baseModel']
         modelInfo['versionDescription'] = version['description']
-        for file in version['files']:
-            modelInfo['files'][file['name']] = file['downloadUrl']
+        modelInfo['files'] = version['files']
         pics = []
         for pic in version['images']:
             pics.append({ 'id' : pic['id'],
@@ -275,6 +274,22 @@ class civitaimodels:
             if file['name'] == model_filename:
                 dl_url = file['downloadUrl']
         return dl_url
+    def getHashByName(self, model_filename=None):
+        if self.modelIndex is None:
+            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select model first. {model_filename}' + Style.RESET_ALL )
+            return
+        if self.versionIndex is None:
+            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select version first. {model_filename}' + Style.RESET_ALL )
+            return
+        #print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
+        item = self.jsonData['items'][self.modelIndex]
+        version = item['modelVersions'][self.versionIndex]
+        sha256 = None
+        for file in version['files']:
+            if file['name'] == model_filename:
+                sha256 = file['hashes']['SHA256']
+        return sha256
+
 
     # Pages
     def getCurrentPage(self) -> str:

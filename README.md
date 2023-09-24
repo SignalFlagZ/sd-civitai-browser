@@ -7,6 +7,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.7
+- Check the hash value of the downloaded file
 - Model card size can be set in Settings
 - Model card zooming size can be set in Settings
 - Some colors of card can now be set in Settings

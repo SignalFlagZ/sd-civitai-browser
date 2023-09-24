@@ -75,6 +75,7 @@ class components():
                 grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
+                grTxtHash = gr.Textbox(label="File hash", interactive=False, value=None, visible=False)
             with gr.Row():
                 with gr.Column(scale=2):
                     with gr.Row():
@@ -128,7 +129,8 @@ class components():
                 inputs=[
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
-                    grTxtDlUrl
+                    grTxtDlUrl,
+                    grTxtHash
                     ],
                 outputs=[grTextProgress,
                         ]
@@ -234,7 +236,7 @@ class components():
                     dict = self.civitai.makeModelInfo()             
                     return  gr.HTML.update(value=dict['html']),\
                             gr.Textbox.update(value=dict['trainedWords']),\
-                            gr.Dropdown.update(choices=[k for k, v in dict['files'].items()], value=next(iter(dict['files'].keys()), None)),\
+                            gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name']),\
                             gr.Textbox.update(value=dict['baseModel']),\
                             gr.Textbox.update(value=path)
                 else:
@@ -263,18 +265,11 @@ class components():
                 if filename is not None:
                     isExist = file_exist_check(folder, filename)
                 return gr.Markdown.update(visible = True if isExist else False)
-                
             grTxtSaveFolder.blur(
                 fn=save_folder_changed,
                 inputs={grTxtSaveFolder,grDrpdwnFilenames},
                 outputs=[grMrkdwnFileMessage])
-            
-            def updateDlUrl(grDrpdwnFilenames):
-                return  gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames)),\
-                        gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
-                        gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
-                        gr.Button.update(interactive=True if grDrpdwnFilenames else False)
-            
+          
             grTxtSaveFolder.change(
                 fn=self.civitai.setSaveFolder,
                 inputs={grTxtSaveFolder},
@@ -282,6 +277,7 @@ class components():
             
             def updateDlUrl(grDrpdwnFilenames):
                 return  gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames)),\
+                        gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames)),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
@@ -292,6 +288,7 @@ class components():
                 inputs=[grDrpdwnFilenames],
                 outputs=[
                     grTxtDlUrl,
+                    grTxtHash,
                     grBtnSaveText,
                     grBtnSaveImages,
                     grBtnDownloadModel,
@@ -449,11 +446,13 @@ class components():
                         grRadioVersions = updateVersionsByModelID(self.civitai.getSelectedModelID())
                         grHtmlModelInfo,grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder = update_model_info(grRadioVersions['value'])
                         grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
+                        grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames['value']))
                         grDrpdwnModels = gr.Dropdown.update(value=f'{self.civitai.getSelectedModelName()}:({index})')
                         return  grDrpdwnModels,\
                                 grRadioVersions,\
                                 grHtmlModelInfo,\
                                 grTxtDlUrl,\
+                                grTxtHash,\
                                 grTxtTrainedWords,\
                                 grDrpdwnFilenames,\
                                 grTxtBaseModel,\
@@ -464,6 +463,7 @@ class components():
                                 gr.HTML.update(value=None),\
                                 gr.Textbox.update(value=None),\
                                 gr.Textbox.update(value=None),\
+                                gr.Textbox.update(value=None),\
                                 gr.Dropdown.update(value=None),\
                                 gr.Textbox.update(value=None),\
                                 gr.Textbox.update(value=None)
@@ -471,6 +471,7 @@ class components():
                     return  gr.Dropdown.update(value=None),\
                             gr.Radio.update(value=None),\
                             gr.HTML.update(value=None),\
+                            gr.Textbox.update(value=None),\
                             gr.Textbox.update(value=None),\
                             gr.Textbox.update(value=None),\
                             gr.Dropdown.update(value=None),\
@@ -486,6 +487,7 @@ class components():
                     grRadioVersions,
                     grHtmlModelInfo,
                     grTxtDlUrl,
+                    grTxtHash,
                     grTxtTrainedWords,
                     grDrpdwnFilenames,
                     grTxtBaseModel,

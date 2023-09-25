@@ -7,7 +7,7 @@ function select_model(model_name) {
 	let match = regex1.exec(model_name);
 	//console.log(match);
 	if (match[1] == 'Index') {
-		let selector = '#eventtext' + match[2] + ' textarea';
+		let selector = '#civsfz_eventtext' + match[2] + ' textarea';
 		let model_dropdown = gradioApp().querySelector(selector);
 		if (model_dropdown && model_name) {
 			model_dropdown.value = model_name;
@@ -47,12 +47,12 @@ function copyInnerText(node) {
 function overwriteProperties(propertiesText) {
 	//console.log(c);
 	let p = propertiesText.split(';');
-	querySelectSetProperty('.civmodelcardshtml', '--civsfz-figcaption-background-color', p[0] + 'd9');
-	querySelectSetProperty('.civmodelcardshtml', '--civsfz-default-shadow-color', p[1] + 'f0');
-	querySelectSetProperty('.civmodelcardshtml', '--civsfz-alreadyhave-shadow-color', p[2] + 'f0');
-	querySelectSetProperty('.civmodelcardshtml', '--civsfz-hover-scale', p[3]); 
-	querySelectSetProperty('.civmodelcardshtml', '--civsfz-card-width', p[4]); 
-	querySelectSetProperty('.civmodelcardshtml', '--civsfz-card-height', p[5]); 
+	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-figcaption-background-color', p[0] + 'd9');
+	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-default-shadow-color', p[1] + 'f0');
+	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhave-shadow-color', p[2] + 'f0');
+	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[3]); 
+	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[4]); 
+	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[5]); 
 
 }
 

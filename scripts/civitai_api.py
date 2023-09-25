@@ -324,7 +324,7 @@ class civitaimodels:
     def modelCardsHtml(self, models, jsID=0):
         '''Generate HTML of model cards.'''
         HTML = f'<!-- {datetime.datetime.now()} -->' # for trigger event
-        HTML += '<div class="column civmodellist">'
+        HTML += '<div class="column civsfz-modellist">'
         #print_ly(f"{models=}")
         for model in models:
             index = model[1]
@@ -340,12 +340,12 @@ class civitaimodels:
                         #print(f'{img["type"]}')
                         if img['type'] == "image":
                             if img['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civcardnsfw'
+                                nsfw = 'civsfz-cardnsfw'
                             imgtag = f'<img src={img["url"]}></img>'
                             break
                         elif img['type'] == 'video':
                             if img['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civcardnsfw'
+                                nsfw = 'civsfz-cardnsfw'
                             imgtag = f'<video loop autoplay muted poster={img["url"]}>'
                             imgtag += f'<source  src={img["url"]} type="video/webm"/>'
                             imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
@@ -359,9 +359,9 @@ class civitaimodels:
                     path_file = os.path.join(folder, file_name)
                     #print(f"{path_file}")
                     if os.path.exists(path_file):
-                        alreadyhave = "civmodelcardalreadyhave"
+                        alreadyhave = "civsfz-modelcardalreadyhave"
                         break
-            HTML = HTML +  f'<figure class="civmodelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{jsID}:{index}:{ID}\')">'\
+            HTML = HTML +  f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             +  imgtag \
                             +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'
@@ -400,7 +400,7 @@ class civitaimodels:
                 infotext = self.meta2html(pic['meta'])
                 imgStyle = 'style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="copyInnerText(this);"'
             if pic['nsfw'] != "None" and not self.showNsfw:
-                nsfw = 'class="civnsfw"'
+                nsfw = 'class="civsfz-nsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;margin-top: 1em">'
             if pic['type'] == 'image':
                 img_html += f'<img src={pic["url"]}  {imgStyle}/>'

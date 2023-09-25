@@ -1,5 +1,5 @@
 
-.civmodelcardshtml {
+.civsfz-modelcardshtml {
 	--civsfz-figcaption-background-color: rgb(121 138 159 /85%);
 	--civsfz-default-shadow-color: #798a9f;
 	--civsfz-alreadyhave-shadow-color:  #7fffd4;
@@ -9,22 +9,22 @@
 	--civsfz-card-size-unit: 1em;
 }
 
-.civmodellist {
+.civsfz-modellist {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.civmodellist figure {
+.civsfz-modellist figure {
 	margin: 4px;
 	transition: transform .3s ease-out;
 	cursor: pointer;
 }
 
-.civmodelcard {
+.civsfz-modelcard {
 	position: relative;
 }
 
-.civmodelcard:hover {
+.civsfz-modelcard:hover {
 	transform: scale(var(--civsfz-hover-scale), var(--civsfz-hover-scale));
 	position: relative;
 	/* need for z-index */
@@ -32,28 +32,28 @@
 	box-shadow: 0 0 4px 6px var(--civsfz-default-shadow-color);
 }
 
-.civmodelcardalreadyhave {
+.civsfz-modelcardalreadyhave {
 	box-shadow: 0 0 1px 3px var(--civsfz-alreadyhave-shadow-color);
 }
-.civmodelcardalreadyhave:hover {
+.civsfz-modelcardalreadyhave:hover {
 	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
 }
 
-.civmodelcard img {
+.civsfz-modelcard img {
 	/*filter: blur(6px);*/
 	width:  calc(var(--civsfz-card-width) * var(--civsfz-card-size-unit));
 	height: calc(var(--civsfz-card-height) * var(--civsfz-card-size-unit));
 	object-fit: cover;
 }
 
-.civmodelcard video {
+.civsfz-modelcard video {
 	/*filter: blur(6px);*/
 	width:  calc(var(--civsfz-card-width) * var(--civsfz-card-size-unit));
 	height: calc(var(--civsfz-card-height) * var(--civsfz-card-size-unit));
 	object-fit: cover;
 }
 
-.civmodelcard figcaption {
+.civsfz-modelcard figcaption {
 	position: absolute;
 	bottom: 5px;
 	left: 5px;
@@ -62,35 +62,35 @@
 	/*transition: bottom .3s ease-out;*/
 }
 
-.civmodelcard:hover figcaption {
+.civsfz-modelcard:hover figcaption {
 	bottom: initial;
 }
 
-.civnsfw img {
+.civsfz-nsfw img {
 	filter: blur(12px);
 }
 
-.civcardnsfw img {
+.civsfz-cardnsfw img {
 	filter: blur(6px);
 }
 
-.civnsfw video {
+.civsfz-nsfw video {
 	filter: blur(12px);
 }
 
-.civcardnsfw video {
+.civsfz-cardnsfw video {
 	filter: blur(6px);
 }
 
 /*https: //github.com/gradio-app/gradio/issues/3337#issuecomment-1449589285*/
-.civitaibuttons {
+.civsfz-s-buttons {
 	margin: 1.2em 0em 0.55em 0em !important;
 	max-width: 2.5em;
 	min-width: 2.5em !important;
 	height: 2.4em;
 }
 
-.civitaimsg {
+.civsfz-msg {
 	/*align-self: center;*/
 	text-align: center;
 	background-color: maroon;

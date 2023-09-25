@@ -67,19 +67,19 @@
 }
 
 .civnsfw img {
-	filter: blur(10px);
+	filter: blur(12px);
 }
 
 .civcardnsfw img {
-	filter: blur(4px);
+	filter: blur(6px);
 }
 
 .civnsfw video {
-	filter: blur(10px);
+	filter: blur(12px);
 }
 
 .civcardnsfw video {
-	filter: blur(4px);
+	filter: blur(6px);
 }
 
 /*https: //github.com/gradio-app/gradio/issues/3337#issuecomment-1449589285*/

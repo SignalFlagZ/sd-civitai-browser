@@ -231,7 +231,7 @@ class components():
                     path = extranetwork_folder( self.civitai.getContentType(),
                                                 self.civitai.getSelectedModelName(),
                                                 self.civitai.getSelectedVersionBaeModel(),
-                                                self.civitai.isNsfwModel()
+                                                self.civitai.treatAsNsfw() #isNsfwModel()
                                             )
                     dict = self.civitai.makeModelInfo()             
                     return  gr.HTML.update(value=dict['html']),\

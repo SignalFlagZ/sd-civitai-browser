@@ -7,8 +7,10 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 
-- Move the file that failed to download to the trash
 ### v1.7
+- If the first image is of type `X`, treat the model as nsfw
+  - Note that the save folder will change
+- Move the file that failed to download to the trash
 - Check the hash value of the downloaded file
 - Model card size can be set in Settings
 - Model card zooming size can be set in Settings

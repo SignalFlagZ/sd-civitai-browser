@@ -63,7 +63,7 @@ class civitaimodels:
         for index, item in enumerate(self.jsonData['items']):
             if showNsfw :
                 model_list.append((item['name'], index))
-            elif not item['nsfw']:
+            elif not self.treatAsNsfw(modelIndex=index):  #item['nsfw']:
                 model_list.append((item['name'], index))
         return model_list
 
@@ -119,6 +119,23 @@ class civitaimodels:
         return self.modelIndex
     def isNsfwModel(self) -> bool:
         return self.jsonData['items'][self.modelIndex]['nsfw']
+    def treatAsNsfw(self, modelIndex=None, versionIndex=None):
+        modelIndex = self.modelIndex if modelIndex is None else modelIndex
+        modelIndex = 0 if modelIndex is None else modelIndex
+        versionIndex = self.versionIndex if versionIndex is None else versionIndex
+        versionIndex = 0 if versionIndex is None else versionIndex
+        ret = self.jsonData['items'][modelIndex]['nsfw']
+        if opts.civsfz_treat_x_as_nsfw:
+            try:
+                picNsfw = self.jsonData['items'][modelIndex]['modelVersions'][versionIndex]['images'][0]['nsfw']
+            except Exception as e:
+                #print_ly(f'{e}')
+                pass
+            else:
+                #print_lc(f'{picNsfw}')
+                if picNsfw == 'X':
+                    ret = True
+        return ret
     def getIndexByModelName(self, name:str) -> int:
         retIndex = None
         if name is not None:
@@ -205,7 +222,6 @@ class civitaimodels:
         item = self.jsonData['items'][self.modelIndex]
         version_dict = item['modelVersions'][self.versionIndex]
         return version_dict
-
     def makeModelInfo2(self, versionName:str) -> dict:
         '''not yet'''
         modelInfo = {}
@@ -339,7 +355,7 @@ class civitaimodels:
                 for file in item['modelVersions'][0]['files']:
                     file_name = file['name']
                     base_model = item["modelVersions"][0]['baseModel']
-                    folder = extranetwork_folder(self.getContentType(),item["name"],base_model, item['nsfw'])
+                    folder = extranetwork_folder(self.getContentType(),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
                     path_file = os.path.join(folder, file_name)
                     #print(f"{path_file}")
                     if os.path.exists(path_file):

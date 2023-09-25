@@ -16,6 +16,13 @@ from tqdm import tqdm
 from modules.shared import opts, cmd_opts
 from modules.paths import models_path
 from modules.hashes import calculate_sha256
+try:
+    from send2trash import send2trash
+    send2trash_installed = True
+except ImportError:
+    print("Recycle bin cannot be used.")
+    send2trash_installed = False
+
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
@@ -406,9 +413,17 @@ def download_file2(folder, filename,  url, hash):
         else:
             print_ly(f"Error: File download failed. {file_name_display}")
             exitGenerator=True
+            removeFile(file_name)
             yield 'Failed.'
             return
 
+def removeFile(file):
+    if send2trash_installed:
+        send2trash(file.replace('/','\\'))
+        print_lc('Move file to trash')
+    else:
+        print_lc('File is not deleted. send2trash module is missing.')
+    return
 
 def open_folder(f):
 	'''[reference](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/5ef669de080814067961f28357256e8fe27544f4/modules/ui_common.py#L109)'''

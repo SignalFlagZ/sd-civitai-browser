@@ -54,7 +54,16 @@ def on_ui_settings():
             section=section,
         )
     )
- 
+    shared.opts.add_option(
+        key='civsfz_treat_x_as_nsfw',
+        info=shared.OptionInfo(
+            True ,
+            label='If the first image is of type "X", treat the model as nsfw',
+            component=gr.Checkbox,
+            section=section,
+        )
+    )
+     
     shared.opts.add_option(
         key='civsfz_figcaption_background_color',
         info=shared.OptionInfo(

@@ -6,7 +6,11 @@ An extension to help download models from CivitAi without leaving WebUI
 https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-40a9-b826-30ff20bf7bb3
 
 ## Versions
+
 ### v1.7
+- If the first image is of type `X`, treat the model as nsfw
+  - Note that the save folder will change
+- Move the file that failed to download to the trash
 - Check the hash value of the downloaded file
 - Model card size can be set in Settings
 - Model card zooming size can be set in Settings

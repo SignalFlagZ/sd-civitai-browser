@@ -51,7 +51,7 @@ class components():
             with gr.Row():
                 grMrkdwnErr = gr.Markdown(value=None, visible=False)
             with gr.Row():
-                grHtmlCards = gr.HTML(elem_classes='civmodelcardshtml')
+                grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
                 grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
             with gr.Row():
                 with gr.Column(scale=3):
@@ -61,14 +61,14 @@ class components():
 
             with gr.Row():
                 with gr.Column(scale=1):
-                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="modellist", value=None)
-                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"eventtext{self.id}", visible=False, interactive=True, lines=1)
+                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="civsfz_modellist", value=None)
+                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                 with gr.Column(scale=5):
-                    grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="versionlist", value=None)
+                    grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="civsfz_versionlist", value=None)
             with gr.Row(equal_height=False):
-                grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civitaibuttons")
+                grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civsfz-s-buttons")
                 grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
-                grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civitaimsg", visible=False)
+                grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
                 grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
             with gr.Row():
                 txt_list = ""
@@ -81,7 +81,7 @@ class components():
                     with gr.Row():
                         grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
                         grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
-                        grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='downloadbutton1',min_width=80)
+                        grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='civsfz_downloadbutton1',min_width=80)
                 with gr.Column(scale=1):
                     with gr.Row():
                         grTextProgress = gr.Textbox(label='Download status',show_label=False)
@@ -520,17 +520,17 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7.2'
+    ver = 'v1.7.4'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
         with gr.Tabs():
             for i,name in enumerate(tabNames):
-                with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civtab{i}") as tab:
+                with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
                     components() #(tab)
         gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
-    return [(civitai_interface, "CivitAi Browser", "civitai_interface_sfz")]
+    return [(civitai_interface, "CivitAi Browser(sfz)", "civsfz_interface")]
 
 script_callbacks.on_ui_tabs(on_ui_tabs)
 

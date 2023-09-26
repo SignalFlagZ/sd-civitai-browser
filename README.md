@@ -5,9 +5,23 @@ An extension to help download models from CivitAi without leaving WebUI
 
 https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-40a9-b826-30ff20bf7bb3
 
-## Versions
+## Features
+- Search Civitai models in ***multiple tabs***
+- List models as ***card image***
+- Safe display in ***sfw*** search
+- Highlight models ***you have***
+- Display/***save*** model information ***in HTML***
+- ***Json data*** of model is also ***saved*** in the same folder as the model file
+- If the sample image has meta data, display it with ***infotext compatibility***
+- Click on the image to ***send to txt2img***
+- Check downloaded model file with ***SHA256***
+- ***Automatically*** set save folder, or specify it directly
+- Card ***size and colors*** can be changed in Settings
 
+## Versions
 ### v1.7
+- Rename elements class/id
+- Change to unique name 
 - If the first image is of type `X`, treat the model as nsfw
   - Note that the save folder will change
 - Move the file that failed to download to the trash

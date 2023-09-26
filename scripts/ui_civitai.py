@@ -530,7 +530,7 @@ def on_ui_tabs():
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
                     components() #(tab)
         gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
-    return [(civitai_interface, "CivitAi Browser sfz", "civsfz_interface")]
+    return [(civitai_interface, "CivitAi Browser(sfz)", "civsfz_interface")]
 
 script_callbacks.on_ui_tabs(on_ui_tabs)
 

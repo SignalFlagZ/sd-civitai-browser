@@ -3,7 +3,7 @@ from modules import script_callbacks
 from modules import shared
 
 def on_ui_settings():
-    section = 'civitai_browser_sfz', 'Civitai Browser'
+    section = 'civitai_browser_sfz', 'CivitAi Browser(sfz)'
     shared.opts.add_option(
         key='civsfz_number_of_tabs',
         info=shared.OptionInfo(

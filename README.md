@@ -1,4 +1,4 @@
-# sd-civitai-browser
+# sd-civitai-browser (CivBrowser)
 An extension to help download models from CivitAi without leaving WebUI
 
 # Modifications

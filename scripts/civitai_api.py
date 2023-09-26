@@ -8,9 +8,9 @@ from colorama import Fore, Back, Style
 from scripts.file_manage import extranetwork_folder
 from modules.shared import opts
 
-print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
-print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
-print_n = lambda  x: print("Civitai-Browser: " + x )
+print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
+print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
+print_n = lambda  x: print("CivBrowser: " + x )
 
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''

@@ -24,9 +24,9 @@ except ImportError:
     send2trash_installed = False
 
 
-print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
-print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "Civitai-Browser: " + x + Style.RESET_ALL )
-print_n = lambda  x: print("Civitai-Browser: " + x )
+print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
+print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
+print_n = lambda  x: print("CivBrowser: " + x )
 
 isDownloading = False
 

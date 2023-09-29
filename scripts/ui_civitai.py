@@ -75,7 +75,7 @@ class components():
                 grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
-                grTxtHash = gr.Textbox(label="File hash", interactive=False, value=None, visible=False)
+                grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
             with gr.Row():
                 with gr.Column(scale=2):
                     with gr.Row():
@@ -462,7 +462,7 @@ class components():
                                 gr.Radio.update(value=None),\
                                 gr.HTML.update(value=None),\
                                 gr.Textbox.update(value=None),\
-                                gr.Textbox.update(value=None),\
+                                gr.Textbox.update(value=""),\
                                 gr.Textbox.update(value=None),\
                                 gr.Dropdown.update(value=None),\
                                 gr.Textbox.update(value=None),\
@@ -472,7 +472,7 @@ class components():
                             gr.Radio.update(value=None),\
                             gr.HTML.update(value=None),\
                             gr.Textbox.update(value=None),\
-                            gr.Textbox.update(value=None),\
+                            gr.Textbox.update(value=""),\
                             gr.Textbox.update(value=None),\
                             gr.Dropdown.update(value=None),\
                             gr.Textbox.update(value=None),\

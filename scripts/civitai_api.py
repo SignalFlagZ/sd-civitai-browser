@@ -300,9 +300,10 @@ class civitaimodels:
         #print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
         item = self.jsonData['items'][self.modelIndex]
         version = item['modelVersions'][self.versionIndex]
-        sha256 = None
+        sha256 = ""
         for file in version['files']:
-            if file['name'] == model_filename:
+            #print_lc(f'{file["hashes"]=}')
+            if file['name'] == model_filename and 'SHA256' in file['hashes']:
                 sha256 = file['hashes']['SHA256']
         return sha256
 

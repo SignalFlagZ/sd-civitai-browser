@@ -82,6 +82,19 @@
 	filter: blur(6px);
 }
 
+.civsfz-save-buttons {
+	position: sticky;
+	position: -webkit-sticky;	/* Safari */
+	top: 1em;
+	z-index: 1;
+}
+.civsfz-back-to-top {
+	text-align: right;
+	position:sticky;
+	position: -webkit-sticky;	/* Safari */
+	bottom: 1em;
+}
+
 /*https: //github.com/gradio-app/gradio/issues/3337#issuecomment-1449589285*/
 .civsfz-s-buttons {
 	margin: 1.2em 0em 0.55em 0em !important;

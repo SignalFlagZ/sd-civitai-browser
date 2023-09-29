@@ -401,21 +401,29 @@ def download_file2(folder, filename,  url, hash):
         # Close the progress bar
         progressConsole.close()
         downloaded_size = os.path.getsize(file_name)
-        sha256 = calculate_sha256(file_name).upper()
         # Check if the download was successful
-        if sha256 == hash.upper():
-            print_n(f"Save: {file_name_display}")
-            yield 'Downloaded'
-            exitGenerator=True
-            return
+        sha256 = calculate_sha256(file_name).upper()
+        #print_lc(f'Model file hash : {hash}')
+        if hash != "":
+            if sha256 == hash.upper():
+                print_n(f"Save: {file_name_display}")
+                yield 'Downloaded'
+                exitGenerator=True
+                return
+            else:
+                print_ly(f"Error: File download failed. {file_name_display}")
+                print_lc(f'Model file hash : {hash}')
+                print_lc(f'Downloaded hash : {sha256}')
+                exitGenerator=True
+                removeFile(file_name)
+                yield 'Failed.'
+                return
         else:
-            print_ly(f"Error: File download failed. {file_name_display}")
-            print_lc(f'Model file hash : {hash}')
-            print_lc(f'Downloaded hash : {sha256}')
-            exitGenerator=True
-            removeFile(file_name)
-            yield 'Failed.'
-            return
+                print_n(f"Save: {file_name_display}")
+                print_ly("No hash value provided. Unable to confirm file.")
+                yield 'Downloaded. No hash.'
+                exitGenerator=True
+                return
 
 def removeFile(file):
     if send2trash_installed:

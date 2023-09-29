@@ -39,7 +39,7 @@ class components():
             with gr.Row():
                 grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
-            with gr.Row():
+            with gr.Row(elem_id=f"civsfz_apicontrol{self.id}",):
                 with gr.Column(scale=4):
                     grBtnGetListAPI = gr.Button(label="Get List", value="Get List")
                 with gr.Column(scale=2,min_width=80):
@@ -61,10 +61,10 @@ class components():
 
             with gr.Row():
                 with gr.Column(scale=1):
-                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id="civsfz_modellist", value=None)
+                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id=f"civsfz_modellist{self.id}", value=None)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                 with gr.Column(scale=5):
-                    grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id="civsfz_versionlist", value=None)
+                    grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
             with gr.Row(equal_height=False):
                 grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civsfz-s-buttons")
                 grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
@@ -75,19 +75,22 @@ class components():
                 grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
-                grTxtHash = gr.Textbox(label="File hash", interactive=False, value=None, visible=False)
-            with gr.Row():
+                grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
+            with gr.Row(elem_classes ="civsfz-save-buttons"):
                 with gr.Column(scale=2):
                     with gr.Row():
                         grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
                         grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
-                        grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id='civsfz_downloadbutton1',min_width=80)
+                        grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id=f'civsfz_downloadbutton{self.id}',min_width=80)
                 with gr.Column(scale=1):
                     with gr.Row():
                         grTextProgress = gr.Textbox(label='Download status',show_label=False)
-                        grBtnCancel = gr.Button(value="Cancel",interactive=False, min_width=80)
+                        grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
             with gr.Row():
-                grHtmlModelInfo = gr.HTML()
+                with gr.Column():
+                    grHtmlModelInfo = gr.HTML()
+                    with gr.Row(elem_classes='civsfz-back-to-top'):
+                        grHtmlBackToTop = gr.HTML(value=f"<a href='#civsfz_apicontrol{self.id}'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></a>")
                 
             #def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')
@@ -462,7 +465,7 @@ class components():
                                 gr.Radio.update(value=None),\
                                 gr.HTML.update(value=None),\
                                 gr.Textbox.update(value=None),\
-                                gr.Textbox.update(value=None),\
+                                gr.Textbox.update(value=""),\
                                 gr.Textbox.update(value=None),\
                                 gr.Dropdown.update(value=None),\
                                 gr.Textbox.update(value=None),\
@@ -472,7 +475,7 @@ class components():
                             gr.Radio.update(value=None),\
                             gr.HTML.update(value=None),\
                             gr.Textbox.update(value=None),\
-                            gr.Textbox.update(value=None),\
+                            gr.Textbox.update(value=""),\
                             gr.Textbox.update(value=None),\
                             gr.Dropdown.update(value=None),\
                             gr.Textbox.update(value=None),\
@@ -520,7 +523,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7.4'
+    ver = 'v1.7.5'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

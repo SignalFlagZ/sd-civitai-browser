@@ -61,5 +61,13 @@ function querySelectSetProperty(q, p, c) {
 	elements.forEach((elem) => {
 		elem.style.setProperty(p, c);
 	});
+}
 
+function back_to_top(q) {
+	const elem = gradioApp().querySelector(q);
+	elem.scrollIntoView({
+		behavior: 'smooth',
+		block: 'start',
+		inline: 'nearest'
+	});
 }

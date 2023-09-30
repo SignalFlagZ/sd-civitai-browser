@@ -93,6 +93,7 @@
 	position:sticky;
 	position: -webkit-sticky;	/* Safari */
 	bottom: 1em;
+	cursor: pointer;
 }
 
 /*https: //github.com/gradio-app/gradio/issues/3337#issuecomment-1449589285*/

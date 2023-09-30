@@ -90,7 +90,7 @@ class components():
                 with gr.Column():
                     grHtmlModelInfo = gr.HTML()
                     with gr.Row(elem_classes='civsfz-back-to-top'):
-                        grHtmlBackToTop = gr.HTML(value=f"<a href='#civsfz_apicontrol{self.id}'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></a>")
+                        grHtmlBackToTop = gr.HTML(value=f"<div onclick='back_to_top(\"#civsfz_apicontrol{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
                 
             #def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')

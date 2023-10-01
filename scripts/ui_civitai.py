@@ -39,20 +39,21 @@ class components():
             with gr.Row():
                 grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
-            with gr.Row(elem_id=f"civsfz_apicontrol{self.id}",):
-                with gr.Column(scale=4):
-                    grBtnGetListAPI = gr.Button(label="Get List", value="Get List")
-                with gr.Column(scale=2,min_width=80):
-                    grBtnPrevPage = gr.Button(value="Prev. Page", interactive=False)
-                with gr.Column(scale=2,min_width=80):
-                    grBtnNextPage = gr.Button(value="Next Page", interactive=False)
-                with gr.Column(scale=1,min_width=80):
-                    grTxtPages = gr.Textbox(label='Pages',show_label=False)
-            with gr.Row():
-                grMrkdwnErr = gr.Markdown(value=None, visible=False)
-            with gr.Row():
-                grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
-                grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
+            with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
+                with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons"):
+                    with gr.Column(scale=4):
+                        grBtnGetListAPI = gr.Button(label="Get List", value="Get List")
+                    with gr.Column(scale=2,min_width=80):
+                        grBtnPrevPage = gr.Button(value="Prev. Page", interactive=False)
+                    with gr.Column(scale=2,min_width=80):
+                        grBtnNextPage = gr.Button(value="Next Page", interactive=False)
+                    with gr.Column(scale=1,min_width=80):
+                        grTxtPages = gr.Textbox(label='Pages',show_label=False)
+                with gr.Row():
+                    grMrkdwnErr = gr.Markdown(value=None, visible=False)
+                with gr.Row():
+                    grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
+                    grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
             with gr.Row():
                 with gr.Column(scale=3):
                     grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
@@ -66,7 +67,7 @@ class components():
                 with gr.Column(scale=5):
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
             with gr.Row(equal_height=False):
-                grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civsfz-s-buttons")
+                grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civsfz-small-buttons")
                 grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
                 grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
                 grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
@@ -90,7 +91,7 @@ class components():
                 with gr.Column():
                     grHtmlModelInfo = gr.HTML()
                     with gr.Row(elem_classes='civsfz-back-to-top'):
-                        grHtmlBackToTop = gr.HTML(value=f"<div onclick='back_to_top(\"#civsfz_apicontrol{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
+                        grHtmlBackToTop = gr.HTML(value=f"<div onclick='back_to_top(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
                 
             #def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')

@@ -61,7 +61,7 @@ class components():
 
             with gr.Row():
                 with gr.Column(scale=1):
-                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=True, elem_id=f"civsfz_modellist{self.id}", value=None)
+                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                 with gr.Column(scale=5):
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
@@ -209,25 +209,25 @@ class components():
                 ]
             )
 
-            def UpdatedModels(grDrpdwnModels):
-                #print_ly(f"{grDrpdwnModels=}")
-                eventText = None
-                if grDrpdwnModels is not None:
-                    match = re.match(r'(.*)\:\((\d+)\)$',grDrpdwnModels)
-                    if match:
-                        index = match.group(2)
-                        eventText = 'Index:' + str(index)
-                return gr.Textbox.update(value=eventText)
-            grDrpdwnModels.change(
-                fn=UpdatedModels,
-                inputs=[
-                    grDrpdwnModels,
-                ],
-                outputs=[
-                    #grRadioVersions,
-                    grTxtJsEvent
-                ]
-            )
+            #def UpdatedModels(grDrpdwnModels):
+            #    #print_ly(f"{grDrpdwnModels=}")
+            #    eventText = None
+            #    if grDrpdwnModels is not None:
+            #        match = re.match(r'(.*)\:\((\d+)\)$',grDrpdwnModels)
+            #        if match:
+            #            index = match.group(2)
+            #            eventText = 'Index:' + str(index)
+            #    return gr.Textbox.update(value=eventText)
+            #grDrpdwnModels.change(
+            #    fn=UpdatedModels,
+            #    inputs=[
+            #        grDrpdwnModels,
+            #    ],
+            #    outputs=[
+            #        #grRadioVersions,
+            #        grTxtJsEvent
+            #    ]
+            #)
             
             def  update_model_info(model_version=None):
                 if model_version is not None and self.civitai.selectVersionByName(model_version) is not None:

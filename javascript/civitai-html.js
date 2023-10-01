@@ -2,11 +2,12 @@
 
 function select_model(model_name) {
 	console.log(model_name);
-	//let flag = model_name.split(':');
-	const regex1 = /(^Index)(\d):/;
+	// model_name-> selector:tab_id:
+	const regex1 = /(^.+?)(\d):/;
 	let match = regex1.exec(model_name);
 	//console.log(match);
 	if (match[1] == 'Index') {
+		scroll_to('#civsfz_model-data' + match[2]);
 		let selector = '#civsfz_eventtext' + match[2] + ' textarea';
 		let model_dropdown = gradioApp().querySelector(selector);
 		if (model_dropdown && model_name) {
@@ -71,7 +72,7 @@ function querySelectSetProperty(q, p, c) {
 	});
 }
 
-function back_to_top(q) {
+function scroll_to(q) {
 	const elem = gradioApp().querySelector(q);
 	elem.scrollIntoView({
 		behavior: 'smooth',

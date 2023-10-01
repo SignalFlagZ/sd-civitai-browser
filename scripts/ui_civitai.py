@@ -54,13 +54,13 @@ class components():
                 with gr.Row():
                     grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
                     grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
-            with gr.Row():
-                with gr.Column(scale=3):
-                    grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
-                with gr.Column(scale=1,min_width=80):
-                    grBtnGoPage = gr.Button(value="Jump page", interactive=False, scale=1)
+                with gr.Row(elem_classes="civsfz-jump-page-control"):
+                    with gr.Column(scale=3):
+                        grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
+                    with gr.Column(scale=1,min_width=80):
+                        grBtnGoPage = gr.Button(value="Jump page", interactive=False, scale=1)
 
-            with gr.Row():
+            with gr.Row(elem_id=f'civsfz_model-data{self.id}'):
                 with gr.Column(scale=1):
                     grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
@@ -89,9 +89,9 @@ class components():
                         grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
             with gr.Row():
                 with gr.Column():
-                    grHtmlModelInfo = gr.HTML()
+                    grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
                     with gr.Row(elem_classes='civsfz-back-to-top'):
-                        grHtmlBackToTop = gr.HTML(value=f"<div onclick='back_to_top(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
+                        grHtmlBackToTop = gr.HTML(value=f"<div onclick='scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
                 
             #def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')

@@ -20,7 +20,7 @@ def on_ui_settings():
             12 ,
             label='Number of cards per page',
             component=gr.Slider,
-            component_args={'minimum': 8, 'maximum': 36, 'step': 1},
+            component_args={'minimum': 8, 'maximum': 48, 'step': 1},
             section=section,
         )
     )

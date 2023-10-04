@@ -40,7 +40,7 @@ class components():
                 grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
-                with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons"):
+                with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-elements"):
                     with gr.Column(scale=4):
                         grBtnGetListAPI = gr.Button(label="Get List", value="Get List")
                     with gr.Column(scale=2,min_width=80):
@@ -54,7 +54,7 @@ class components():
                 with gr.Row():
                     grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
                     grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
-                with gr.Row(elem_classes="civsfz-jump-page-control"):
+                with gr.Row(elem_classes="civsfz-jump-page-control civsfz-sticky-elements"):
                     with gr.Column(scale=3):
                         grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
                     with gr.Column(scale=1,min_width=80):
@@ -77,7 +77,7 @@ class components():
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                 grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-            with gr.Row(elem_classes ="civsfz-save-buttons"):
+            with gr.Row(elem_classes ="civsfz-save-buttons civsfz-sticky-elements"):
                 with gr.Column(scale=2):
                     with gr.Row():
                         grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)

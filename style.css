@@ -85,7 +85,7 @@
 .civsfz-save-buttons {
 	position: sticky;
 	position: -webkit-sticky;	/* Safari */
-	top: 1em;
+	top: 0em;
 	z-index: 1;
 }
 .civsfz-back-to-top {
@@ -98,14 +98,18 @@
 .civsfz-navigation-buttons {
 	position: sticky;
 	position: -webkit-sticky; /* Safari */
-	top: 6px;
+	top: 0em;
 	z-index: 1;
 }
 .civsfz-jump-page-control {
 	position: sticky;
 	position: -webkit-sticky; /* Safari */
-	bottom: 6px;
+	bottom: 0px;
 	z-index: 1;
+}
+.civsfz-sticky-elements {
+	backdrop-filter: brightness(0.35);
+	padding: 0.5em 0;
 }
 /*https: //github.com/gradio-app/gradio/issues/3337#issuecomment-1449589285*/
 .civsfz-small-buttons {

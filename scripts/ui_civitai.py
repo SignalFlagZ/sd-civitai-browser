@@ -497,6 +497,11 @@ class components():
                     grTxtBaseModel,
                     grTxtSaveFolder
                 ]
+                ).then(
+                _js=f'() => {{scroll_to("#civsfz_model-data{self.id}");}}',
+                fn=None,
+                inputs=[],
+                outputs=[]    
                 )
 
             def updatePropertiesText():

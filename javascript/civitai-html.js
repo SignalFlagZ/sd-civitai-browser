@@ -1,5 +1,13 @@
 "use strict";
 
+onUiLoaded(civbrowser_start_it_up)
+function civbrowser_start_it_up() {
+	//make tab sticky
+	let elem = gradioApp().querySelector('#civsfz_tab-element').firstChild;
+	elem.classList.add("civsfz-sticky-element");
+	elem.classList.add("civsfz-tabbar");
+}
+
 function select_model(model_name) {
 	console.log(model_name);
 	// model_name-> selector:tab_id:
@@ -54,7 +62,8 @@ function copyInnerText(node) {
 }
 
 function overwriteProperties(propertiesText) {
-	//console.log(c);
+	//let propertiesText = gradioApp().querySelector('#' + elem_id + ' textarea').value;
+	//console.log(elem_id, propertiesText)
 	let p = propertiesText.split(';');
 	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-figcaption-background-color', p[0] + 'd9');
 	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-default-shadow-color', p[1] + 'f0');
@@ -62,7 +71,6 @@ function overwriteProperties(propertiesText) {
 	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[3]); 
 	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[4]); 
 	querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[5]); 
-
 }
 
 function querySelectSetProperty(q, p, c) {

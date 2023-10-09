@@ -82,10 +82,16 @@
 	filter: blur(6px);
 }
 
+.civsfz-tabbar {
+	position: sticky !important;
+	position: -webkit-sticky;
+	top: 0em;
+	z-index: 2;
+}
 .civsfz-save-buttons {
 	position: sticky;
 	position: -webkit-sticky;	/* Safari */
-	top: 0em;
+	top: 3em;
 	z-index: 1;
 }
 .civsfz-back-to-top {
@@ -98,7 +104,7 @@
 .civsfz-navigation-buttons {
 	position: sticky;
 	position: -webkit-sticky; /* Safari */
-	top: 0em;
+	top: 3em;
 	z-index: 1;
 }
 .civsfz-jump-page-control {
@@ -107,7 +113,7 @@
 	bottom: 0px;
 	z-index: 1;
 }
-.civsfz-sticky-elements {
+.civsfz-sticky-element {
 	backdrop-filter: brightness(0.35);
 	padding: 0.5em 0;
 }

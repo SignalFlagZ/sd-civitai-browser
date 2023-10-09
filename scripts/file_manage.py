@@ -63,9 +63,9 @@ def contenttype_folder(content_type):
             folder = os.path.join(models_path,"ControlNet")
     elif content_type == "Poses":
         if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "Poses")
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Poses")
         else:            
-            folder = os.path.join(models_path,"Poses")
+            folder = os.path.join(models_path,"OtherModels/Poses")
     elif content_type == "Upscaler":
         if cmd_opts.ckpt_dir:
             folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Upscaler")

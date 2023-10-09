@@ -20,6 +20,10 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.7
+- Add content types `Upscaler`,`MotionModule`,`Wildcards`,`Workflows`,`Other` (experimental)
+  - Save the newly added contenttype files to the `OtherModels` folder. Where should we save the files?
+  - Unable to reach stability matrix models folder
+- Change default period to `Month`
 - Make navigation buttons sticky
 - Show save buttons and back-to-top button sticky
 - Add back-to-top button

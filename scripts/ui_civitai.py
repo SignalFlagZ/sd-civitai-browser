@@ -21,19 +21,21 @@ class components():
         # Set the URL for the API endpoint
         self.civitai = civitaimodels("https://civitai.com/api/v1/models")
         self.id = next(components.newid)
-        contentType = ["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE"]
+        contentTypes = self.civitai.getContentTypes()
         def defaultContentType():
-            value = contentType[self.id % len(contentType)]
+            value = contentTypes[self.id % len(contentTypes)]
             return value
+        def defaultPeriod():
+            return "Month"
 
         with gr.Column() as self.components:
             with gr.Row():
-                with gr.Column(scale=4):
-                    grRadioContentType = gr.Radio(label='Content type:', choices=contentType, value=defaultContentType)
+                with gr.Column(scale=6):
+                    grRadioContentType = gr.Radio(label='Content type:', choices=contentTypes, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
-                    grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
-                with gr.Column(scale=1, max_width=100, min_width=100):
-                    grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value="AllTime", type="value")
+                    with gr.Row():
+                        grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
+                        grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value=defaultPeriod, type="value")
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
             with gr.Row():

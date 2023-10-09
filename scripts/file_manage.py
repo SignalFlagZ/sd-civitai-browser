@@ -66,6 +66,32 @@ def contenttype_folder(content_type):
             folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "Poses")
         else:            
             folder = os.path.join(models_path,"Poses")
+    elif content_type == "Upscaler":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Upscaler")
+        else:            
+            folder = os.path.join(models_path,"OtherModels/Upscaler")
+    elif content_type == "MotionModule":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/MotionModule")
+        else:            
+            folder = os.path.join(models_path,"OtherModels/MotionModule")
+    elif content_type == "Wildcards":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Wildcards")
+        else:            
+            folder = os.path.join(models_path,"OtherModels/Wildcards")
+    elif content_type == "Workflows":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Workflows")
+        else:            
+            folder = os.path.join(models_path,"OtherModels/Workflows")
+    elif content_type == "Other":
+        if cmd_opts.ckpt_dir:
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Other")
+        else:            
+            folder = os.path.join(models_path,"OtherModels/Other")
+    
     return folder
 
 def escaped_modelpath(folder, model_name):

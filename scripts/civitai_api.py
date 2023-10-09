@@ -55,6 +55,8 @@ class civitaimodels:
         self.saveFolder = path
     def getSaveFolder(self):
         return self.saveFolder
+    def getContentTypes(self) -> list:
+        return ["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE", "Upscaler", "MotionModule", "Wildcards", "Workflows", "Other"]
 
     # Models
     def getModels(self, showNsfw = False) -> list:

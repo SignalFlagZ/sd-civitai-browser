@@ -239,10 +239,14 @@ class components():
                                                 self.civitai.getSelectedVersionBaeModel(),
                                                 self.civitai.treatAsNsfw() #isNsfwModel()
                                             )
-                    dict = self.civitai.makeModelInfo()             
+                    dict = self.civitai.makeModelInfo()
+                    if dict['files'] == []:
+                        drpdwn =  gr.Dropdown.update(choices=[], value="")
+                    else:
+                        drpdwn =  gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name'])  
                     return  gr.HTML.update(value=dict['html']),\
                             gr.Textbox.update(value=dict['trainedWords']),\
-                            gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name']),\
+                            drpdwn,\
                             gr.Textbox.update(value=dict['baseModel']),\
                             gr.Textbox.update(value=path)
                 else:

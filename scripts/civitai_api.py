@@ -263,6 +263,7 @@ class civitaimodels:
         modelInfo['baseModel'] = version['baseModel']
         modelInfo['versionDescription'] = version['description']
         modelInfo['files'] = version['files']
+        #print_lc(f'{modelInfo["files"]=}')
         pics = []
         for pic in version['images']:
             pics.append({ 'id' : pic['id'],

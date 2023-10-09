@@ -25,6 +25,8 @@ class components():
         def defaultContentType():
             value = contentTypes[self.id % len(contentTypes)]
             return value
+        def defaultPeriod():
+            return "Month"
 
         with gr.Column() as self.components:
             with gr.Row():
@@ -33,7 +35,7 @@ class components():
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     with gr.Row():
                         grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
-                        grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value="AllTime", type="value")
+                        grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value=defaultPeriod, type="value")
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
             with gr.Row():

@@ -63,9 +63,9 @@ def contenttype_folder(content_type):
             folder = os.path.join(models_path,"ControlNet")
     elif content_type == "Poses":
         if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "Poses")
+            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Poses")
         else:            
-            folder = os.path.join(models_path,"Poses")
+            folder = os.path.join(models_path,"OtherModels/Poses")
     elif content_type == "Upscaler":
         if cmd_opts.ckpt_dir:
             folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Upscaler")
@@ -405,8 +405,8 @@ def download_file2(folder, filename,  url, hash):
                                 yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
                             except Exception as e:
                                 exitGenerator=True
-                                progressConsole.close()
-                                return
+                                # progressConsole.close()
+                                break
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break

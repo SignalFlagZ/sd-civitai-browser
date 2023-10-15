@@ -56,7 +56,7 @@ class civitaimodels:
     def getSaveFolder(self):
         return self.saveFolder
     def getContentTypes(self) -> list:
-        return ["Checkpoint","TextualInversion","LORA","LoCon","Poses","Controlnet","Hypernetwork","AestheticGradient", "VAE", "Upscaler", "MotionModule", "Wildcards", "Workflows", "Other"]
+        return ["Checkpoint","TextualInversion","LORA","LoCon","Controlnet","Hypernetwork","AestheticGradient", "VAE", "Poses", "Upscaler", "MotionModule", "Wildcards", "Workflows", "Other"]
 
     # Models
     def getModels(self, showNsfw = False) -> list:
@@ -263,6 +263,7 @@ class civitaimodels:
         modelInfo['baseModel'] = version['baseModel']
         modelInfo['versionDescription'] = version['description']
         modelInfo['files'] = version['files']
+        #print_lc(f'{modelInfo["files"]=}')
         pics = []
         for pic in version['images']:
             pics.append({ 'id' : pic['id'],

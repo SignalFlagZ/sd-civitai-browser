@@ -42,7 +42,7 @@ class components():
                 grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
-                with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-elements"):
+                with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-element"):
                     with gr.Column(scale=4):
                         grBtnGetListAPI = gr.Button(label="Get List", value="Get List")
                     with gr.Column(scale=2,min_width=80):
@@ -55,8 +55,8 @@ class components():
                     grMrkdwnErr = gr.Markdown(value=None, visible=False)
                 with gr.Row():
                     grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
-                    grTxtPropaties = gr.Textbox(label="CSS Properties", value="", visible=False, interactive=False, lines=1)
-                with gr.Row(elem_classes="civsfz-jump-page-control civsfz-sticky-elements"):
+                    grTxtPropaties = gr.Textbox(elem_id="civsfz_css-properties", label="CSS Properties", value="", visible=False, interactive=False, lines=1)
+                with gr.Row(elem_classes="civsfz-jump-page-control civsfz-sticky-element"):
                     with gr.Column(scale=3):
                         grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
                     with gr.Column(scale=1,min_width=80):
@@ -79,7 +79,7 @@ class components():
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                 grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-            with gr.Row(elem_classes ="civsfz-save-buttons civsfz-sticky-elements"):
+            with gr.Row(elem_classes ="civsfz-save-buttons civsfz-sticky-element"):
                 with gr.Column(scale=2):
                     with gr.Row():
                         grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
@@ -239,10 +239,14 @@ class components():
                                                 self.civitai.getSelectedVersionBaeModel(),
                                                 self.civitai.treatAsNsfw() #isNsfwModel()
                                             )
-                    dict = self.civitai.makeModelInfo()             
+                    dict = self.civitai.makeModelInfo()
+                    if dict['files'] == []:
+                        drpdwn =  gr.Dropdown.update(choices=[], value="")
+                    else:
+                        drpdwn =  gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name'])  
                     return  gr.HTML.update(value=dict['html']),\
                             gr.Textbox.update(value=dict['trainedWords']),\
-                            gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name']),\
+                            drpdwn,\
                             gr.Textbox.update(value=dict['baseModel']),\
                             gr.Textbox.update(value=path)
                 else:
@@ -536,7 +540,7 @@ def on_ui_tabs():
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
-        with gr.Tabs():
+        with gr.Tabs(elem_id='civsfz_tab-element'):
             for i,name in enumerate(tabNames):
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
                     components() #(tab)

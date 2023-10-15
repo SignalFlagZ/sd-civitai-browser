@@ -405,8 +405,8 @@ def download_file2(folder, filename,  url, hash):
                                 yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
                             except Exception as e:
                                 exitGenerator=True
-                                progressConsole.close()
-                                return
+                                # progressConsole.close()
+                                break
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break

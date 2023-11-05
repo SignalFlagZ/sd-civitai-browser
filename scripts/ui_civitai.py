@@ -5,6 +5,7 @@ import itertools
 from modules.shared import opts
 import re
 from scripts.civitai_api import civitaimodels
+from scripts.file_manage import open_folder
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -69,7 +70,7 @@ class components():
                 with gr.Column(scale=5):
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
             with gr.Row(equal_height=False):
-                grBtnFolder = gr.Button(value='📁',interactive=False, elem_classes ="civsfz-small-buttons")
+                grBtnFolder = gr.Button(value='📂',interactive=True, elem_classes ="civsfz-small-buttons")
                 grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
                 grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
                 grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
@@ -531,11 +532,17 @@ class components():
                 outputs=[]                
                 )
             
+            grBtnFolder.click(
+                fn=open_folder,
+                inputs=[grTxtSaveFolder],
+                outputs=[]
+                )
+            
     def getComponents(self):
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7.5'
+    ver = 'v1.7.7'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

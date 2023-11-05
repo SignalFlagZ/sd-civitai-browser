@@ -460,27 +460,31 @@ def removeFile(file):
     return
 
 def open_folder(f):
-	'''[reference](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/5ef669de080814067961f28357256e8fe27544f4/modules/ui_common.py#L109)'''
-	
-	if not os.path.exists(f):
-		print(f'Folder "{f}" does not exist. After you create an image, the folder will be created.')
-		return
-	elif not os.path.isdir(f):
-		print(f"""
-WARNING
-An open_folder request was made with an argument that is not a folder.
-This could be an error or a malicious attempt to run code on your computer.
-Requested path was: {f}
-""", file=sys.stderr)
-		return
-
-	if not shared.cmd_opts.hide_ui_dir_config:
-		path = os.path.normpath(f)
-		if platform.system() == "Windows":
-			os.startfile(path)
-		elif platform.system() == "Darwin":
-			sp.Popen(["open", path])
-		elif "microsoft-standard-WSL2" in platform.uname().release:
-			sp.Popen(["wsl-open", path])
-		else:
-			sp.Popen(["xdg-open", path])
+    '''
+    [reference](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/5ef669de080814067961f28357256e8fe27544f4/modules/ui_common.py#L109)
+    '''
+    if not f:
+        return
+    count = 0
+    while not os.path.isdir(f):
+        count += 1
+        print_lc(f'Not found "{f}"')
+        newf = os.path.abspath(os.path.join(f, os.pardir))
+        if newf == f:
+            break
+        if count >5:
+            print_lc(f'Not found the folder')
+            return
+        f = newf
+    path = os.path.normpath(f)
+    if os.path.isdir(path):
+        if platform.system() == "Windows":
+            os.startfile(path)
+        elif platform.system() == "Darwin":
+            sp.Popen(["open", path])
+        elif "microsoft-standard-WSL2" in platform.uname().release:
+            sp.Popen(["wsl-open", path])
+        else:
+            sp.Popen(["xdg-open", path])
+    else:
+        print_lc(f'Not found "{path}"')

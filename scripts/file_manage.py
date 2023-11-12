@@ -389,26 +389,31 @@ def download_file2(folder, filename,  url, hash, api_key):
             while not exitGenerator:
                 try:
                     # Send a GET request to the URL and save the response to the local file
-                    response = requests.get(url, headers=headers, stream=True)
-                    # Get the total size of the file
-                    total_size = int(response.headers.get("Content-Length", 0))
-
-                    # Update the total size of the progress bar if the `Content-Length` header is present
-                    if total_size == 0:
-                        total_size = downloaded_size
-                    progressConsole.total = total_size
-                    # Write the response to the local file and update the progress bar
-                    for chunk in response.iter_content(chunk_size=4*1024*1024):
-                        if chunk:  # filter out keep-alive new chunks
-                            f.write(chunk)
-                            progressConsole.update(len(chunk))
-                            prg += len(chunk)
-                            try:
-                                yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
-                            except Exception as e:
-                                exitGenerator=True
-                                # progressConsole.close()
-                                break
+                    with requests.get(url, headers=headers, stream=True) as response:
+                        # Get the total size of the file
+                        #print_lc(f"Res: {response.headers.items()=}")
+                        if 'Content-Length' in response.headers:
+                            total_size = int(response.headers.get("Content-Length", 0))
+                        else:
+                            yield "May need an API key"
+                            exitGenerator=True
+                            return
+                        # Update the total size of the progress bar if the `Content-Length` header is present
+                        if total_size == 0:
+                            total_size = downloaded_size
+                        progressConsole.total = total_size
+                        # Write the response to the local file and update the progress bar
+                        for chunk in response.iter_content(chunk_size=4*1024*1024):
+                            if chunk:  # filter out keep-alive new chunks
+                                f.write(chunk)
+                                progressConsole.update(len(chunk))
+                                prg += len(chunk)
+                                try:
+                                    yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                                except Exception as e:
+                                    exitGenerator=True
+                                    # progressConsole.close()
+                                    break
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break

@@ -110,13 +110,13 @@ class components():
             #            self.tab
             #        ]
             #    )
-            def check_key_length(key):
-                return key[0:32]
-            grTxtApiKey.change(
-                fn=check_key_length,
-                inputs=[grTxtApiKey],
-                outputs=[grTxtApiKey],
-                )
+            #def check_key_length(key):
+            #    return key[0:32]
+            #grTxtApiKey.change(
+            #    fn=check_key_length,
+            #    inputs=[grTxtApiKey],
+            #    outputs=[grTxtApiKey],
+            #    )
             
             def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
                 return save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)

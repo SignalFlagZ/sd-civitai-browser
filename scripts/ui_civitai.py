@@ -4,7 +4,7 @@ from colorama import Fore, Back, Style
 import itertools
 from modules.shared import opts
 import re
-from scripts.civitai_api import civitaimodels
+from scripts.civitai_browse_api import civitaimodels
 from scripts.file_manage import open_folder
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -13,7 +13,7 @@ print_n = lambda  x: print("CivBrowser: " + x )
 
 class components():
     newid = itertools.count()
-    
+
     def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
         from scripts.file_manage import extranetwork_folder, isExistFile,\
@@ -98,7 +98,7 @@ class components():
                     grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
                     with gr.Row(elem_classes='civsfz-back-to-top'):
                         grHtmlBackToTop = gr.HTML(value=f"<div onclick='scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
-                
+
             #def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')
             #grRadioContentType.change(
@@ -117,7 +117,7 @@ class components():
             #    inputs=[grTxtApiKey],
             #    outputs=[grTxtApiKey],
             #    )
-            
+
             def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
                 return save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
             grBtnSaveText.click(
@@ -154,7 +154,7 @@ class components():
                 outputs=[grTextProgress,
                         ]
                 )
-            
+
             def cancel_download():
                 return gr.Textbox.update(value="Canceled")
             grBtnCancel.click(
@@ -163,7 +163,7 @@ class components():
                 outputs=[grTextProgress],
                 cancels=[download]
                 )
-        
+
             def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
                 query = self.civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
                 response = self.civitai.requestApi(query=query)
@@ -215,7 +215,7 @@ class components():
                 outputs=[
                     grDrpdwnModels,
                     grRadioVersions,
-                    grHtmlCards,            
+                    grHtmlCards,
                     grBtnPrevPage,
                     grBtnNextPage,
                     grBtnGoPage,
@@ -244,7 +244,7 @@ class components():
             #        grTxtJsEvent
             #    ]
             #)
-            
+
             def  update_model_info(model_version=None):
                 if model_version is not None and self.civitai.selectVersionByName(model_version) is not None:
                     path = extranetwork_folder( self.civitai.getContentType(),
@@ -256,7 +256,7 @@ class components():
                     if dict['files'] == []:
                         drpdwn =  gr.Dropdown.update(choices=[], value="")
                     else:
-                        drpdwn =  gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name'])  
+                        drpdwn =  gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name'])
                     return  gr.HTML.update(value=dict['html']),\
                             gr.Textbox.update(value=dict['trainedWords']),\
                             drpdwn,\
@@ -281,7 +281,7 @@ class components():
                     grTxtSaveFolder
                 ]
                 )
-            
+
             def save_folder_changed(folder, filename):
                 self.civitai.setSaveFolder(folder)
                 isExist = None
@@ -292,12 +292,12 @@ class components():
                 fn=save_folder_changed,
                 inputs={grTxtSaveFolder,grDrpdwnFilenames},
                 outputs=[grMrkdwnFileMessage])
-          
+
             grTxtSaveFolder.change(
                 fn=self.civitai.setSaveFolder,
                 inputs={grTxtSaveFolder},
                 outputs=[])
-            
+
             def updateDlUrl(grDrpdwnFilenames):
                 return  gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames)),\
                         gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames)),\
@@ -318,10 +318,10 @@ class components():
                     grBtnCancel,
                     grTextProgress
                     ]
-                )   
-            
+                )
+
             def file_exist_check(grTxtSaveFolder, grDrpdwnFilenames):
-                isExist = isExistFile(grTxtSaveFolder, grDrpdwnFilenames)            
+                isExist = isExistFile(grTxtSaveFolder, grDrpdwnFilenames)
                 return gr.Markdown.update(visible = True if isExist else False)
             grTxtDlUrl.change(
                 fn=file_exist_check,
@@ -332,7 +332,7 @@ class components():
                         grMrkdwnFileMessage
                         ]
                 )
-            
+
             def update_next_page(grChkboxShowNsfw, isNext=True):
                 url = self.civitai.nextPage() if isNext else self.civitai.prevPage()
                 response = self.civitai.requestApi(url)
@@ -360,7 +360,7 @@ class components():
                         gr.Slider.update(value=self.civitai.getCurrentPage()),\
                         gr.Textbox.update(value=grTxtPages),\
                         grMrkdwnErr
-        
+
             grBtnNextPage.click(
                 fn=update_next_page,
                 inputs=[
@@ -447,7 +447,7 @@ class components():
                     grMrkdwnErr
                     #grTxtSaveFolder
                 ])
-            
+
             def updateVersionsByModelID(model_ID=None):
                 if model_ID is not None:
                     self.civitai.selectModelByID(model_ID)
@@ -520,7 +520,7 @@ class components():
                 _js=f'() => {{scroll_to("#civsfz_model-data{self.id}");}}',
                 fn=None,
                 inputs=[],
-                outputs=[]    
+                outputs=[]
                 )
 
             def updatePropertiesText():
@@ -541,15 +541,15 @@ class components():
                 _js = '(x) => overwriteProperties(x)',
                 fn = None,
                 inputs=[grTxtPropaties],
-                outputs=[]                
+                outputs=[]
                 )
-            
+
             grBtnFolder.click(
                 fn=open_folder,
                 inputs=[grTxtSaveFolder],
                 outputs=[]
                 )
-            
+
     def getComponents(self):
         return self.components
 

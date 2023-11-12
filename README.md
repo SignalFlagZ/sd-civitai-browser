@@ -19,6 +19,11 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Card ***size and colors*** can be changed in Settings
 
 ## Versions
+### v1.8
+- Support API Key
+  - Some models require your API key when downloading
+  - Models that fail to download may require an API key, but are indistinguishable from those that truly fail.
+  - API key is not saved for security reasons
 ### v1.7
 - Add open folder button
 - Make tab bar sticky

@@ -343,7 +343,7 @@ def download_file(url, file_name):
 #    # Close the progress bar
 #    progress.close()
 
-def download_file2(folder, filename,  url, hash):
+def download_file2(folder, filename,  url, hash, api_key):
     makedirs(folder)
     file_name = os.path.join(folder, filename)
     #thread = threading.Thread(target=download_file, args=(url, filepath))
@@ -359,6 +359,8 @@ def download_file2(folder, filename,  url, hash):
         # Check if the file has already been partially downloaded
         downloaded_size = 0
         headers = {}
+        if len(api_key) == 32:
+            headers = {"Authorization": f"Bearer {api_key}"}
         mode = "wb" #Open file mode
         if os.path.exists(file_name):
             yield "Overwrite?"

@@ -69,18 +69,21 @@ class components():
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                 with gr.Column(scale=5):
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
+            with gr.Row():
+                txt_list = ""
+                grTxtTrainedWords = gr.Textbox(
+                    label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
             with gr.Row(equal_height=False):
                 grBtnFolder = gr.Button(value='📂',interactive=True, elem_classes ="civsfz-small-buttons")
                 grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
                 grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
                 grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
             with gr.Row():
-                txt_list = ""
-                grTxtTrainedWords = gr.Textbox(label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                 grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-            with gr.Row(elem_classes ="civsfz-save-buttons civsfz-sticky-element"):
+                grTxtApiKey = gr.Textbox(label='API Key', value="", type="password", lines=1)
+            with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
                 with gr.Column(scale=2):
                     with gr.Row():
                         grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
@@ -107,6 +110,14 @@ class components():
             #            self.tab
             #        ]
             #    )
+            def check_key_length(key):
+                return key[0:32]
+            grTxtApiKey.change(
+                fn=check_key_length,
+                inputs=[grTxtApiKey],
+                outputs=[grTxtApiKey],
+                )
+            
             def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
                 return save_text_file(grTxtSaveFolder, grDrpdwnFilenames, trained_words)
             grBtnSaveText.click(
@@ -137,7 +148,8 @@ class components():
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
                     grTxtDlUrl,
-                    grTxtHash
+                    grTxtHash,
+                    grTxtApiKey
                     ],
                 outputs=[grTextProgress,
                         ]
@@ -542,7 +554,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.7.7'
+    ver = 'v1.8.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

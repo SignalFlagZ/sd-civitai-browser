@@ -24,6 +24,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
   - Some models require your API key when downloading
   - Models that fail to download may require an API key, but are indistinguishable from those that truly fail.
   - API key is not saved for security reasons
+  - If there is no Content-Length in the request response, an API Key may be required.
 ### v1.7
 - Add open folder button
 - Make tab bar sticky

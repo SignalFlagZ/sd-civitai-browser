@@ -272,26 +272,26 @@ def download_file(url, file_name):
             while isDownloading:
                 try:
                     # Send a GET request to the URL and save the response to the local file
-                    response = requests.get(url, headers=headers, stream=True)
+                    with requests.Sessions() as request:
+                        response = request.get(url, headers=headers, stream=True, timeout=(10,15))
+                        # Get the total size of the file
+                        total_size = int(response.headers.get("Content-Length", 0))
 
-                    # Get the total size of the file
-                    total_size = int(response.headers.get("Content-Length", 0))
+                        # Update the total size of the progress bar if the `Content-Length` header is present
+                        if total_size == 0:
+                            total_size = downloaded_size
+                        progress.total = total_size 
 
-                    # Update the total size of the progress bar if the `Content-Length` header is present
-                    if total_size == 0:
-                        total_size = downloaded_size
-                    progress.total = total_size 
-
-                    # Write the response to the local file and update the progress bar
-                    for chunk in response.iter_content(chunk_size=1024):
-                        if chunk:  # filter out keep-alive new chunks
-                            f.write(chunk)
-                            progress.update(len(chunk))
-                        if (isDownloading == False):
-                            response.close
-                            break
-                    downloaded_size = os.path.getsize(file_name)
-                    # Break out of the loop if the download is successful
+                        # Write the response to the local file and update the progress bar
+                        for chunk in response.iter_content(chunk_size=1024):
+                            if chunk:  # filter out keep-alive new chunks
+                                f.write(chunk)
+                                progress.update(len(chunk))
+                            if (isDownloading == False):
+                                response.close
+                                break
+                        downloaded_size = os.path.getsize(file_name)
+                        # Break out of the loop if the download is successful
                     break
                 except ConnectionError as e:
                     # Decrement the number of retries
@@ -389,9 +389,19 @@ def download_file2(folder, filename,  url, hash, api_key):
             while not exitGenerator:
                 try:
                     # Send a GET request to the URL and save the response to the local file
-                    with requests.get(url, headers=headers, stream=True) as response:
-                        # Get the total size of the file
-                        #print_lc(f"Res: {response.headers.items()=}")
+                    with requests.Session() as request:
+                        try:
+                            response = request.get(url, headers=headers, stream=True, timeout=(4.5,4.5)) # Get the total size of the file
+                            response.raise_for_status()
+                        except requests.exceptions.RequestException as e:
+                            print_ly(f"Request error: {e}")
+                            exitGenerator = True
+                            yield "Connection Error"
+                            return
+                        except ConnectionError as e:
+                            exitGenerator = True
+                            yield "Connection Error"
+                            return
                         if 'Content-Length' in response.headers:
                             total_size = int(response.headers.get("Content-Length", 0))
                         else:
@@ -403,17 +413,23 @@ def download_file2(folder, filename,  url, hash, api_key):
                             total_size = downloaded_size
                         progressConsole.total = total_size
                         # Write the response to the local file and update the progress bar
-                        for chunk in response.iter_content(chunk_size=4*1024*1024):
-                            if chunk:  # filter out keep-alive new chunks
-                                f.write(chunk)
-                                progressConsole.update(len(chunk))
-                                prg += len(chunk)
-                                try:
-                                    yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
-                                except Exception as e:
-                                    exitGenerator=True
-                                    # progressConsole.close()
-                                    break
+                        try:
+                            for chunk in response.iter_content(chunk_size=2*1024*1024):
+                                if chunk:  # filter out keep-alive new chunks
+                                    f.write(chunk)
+                                    progressConsole.update(len(chunk))
+                                    prg += len(chunk)
+                                    try:
+                                        yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                                    except Exception as e:
+                                        exitGenerator=True
+                                        progressConsole.close()
+                                        break
+                        except Exception as e:
+                            print_ly(e)
+                            exitGenerator=True
+                            progressConsole.close()
+                            return
                     downloaded_size = os.path.getsize(file_name)
                     # Break out of the loop if the download is successful
                     break
@@ -421,16 +437,7 @@ def download_file2(folder, filename,  url, hash, api_key):
                     exitGenerator=True
                     progressConsole.close()
                     return
-                except ConnectionError as e:
-                    # Decrement the number of retries
-                    max_retries -= 1
 
-                    # If there are no more retries, raise the exception
-                    if max_retries == 0:
-                        progressConsole.close()
-                        return
-                    # Wait for the specified delay before retrying
-                    time.sleep(retry_delay)
         # Close the progress bar
         progressConsole.close()
         downloaded_size = os.path.getsize(file_name)

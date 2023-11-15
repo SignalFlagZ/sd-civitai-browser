@@ -4,6 +4,7 @@ from colorama import Fore, Back, Style
 import itertools
 from modules.shared import opts
 import re
+import scripts as scripts
 from scripts.civitai_api import civitaimodels
 from scripts.file_manage import open_folder
 

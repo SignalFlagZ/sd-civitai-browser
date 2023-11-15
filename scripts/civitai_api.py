@@ -530,8 +530,9 @@ class civitaimodels:
             query = urllib.parse.urlencode(query, quote_via=urllib.parse.quote)
         # Make a GET request to the API
         try:
-            response = requests.get( url, params=query, timeout=(10,15))
-            response.raise_for_status()
+            with requests.Session() as request:
+                response = request.get( url, params=query, timeout=(10,15))
+                response.raise_for_status()
         except requests.exceptions.RequestException as e:
             #print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
             #print(Style.RESET_ALL)

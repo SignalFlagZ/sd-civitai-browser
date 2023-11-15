@@ -20,9 +20,10 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.8
+- The model download timeout was set to 4 seconds because it was forcibly disconnected after about 5 seconds
 - Support API Key
   - Some models require your API key when downloading
-  - Models that fail to download may require an API key, but are indistinguishable from those that truly fail.
+  - Models that fail to download may require an API key, but are indistinguishable from those that truly fail
   - API key is not saved for security reasons
   - If there is no Content-Length in the request response, an API Key may be required.
 ### v1.7

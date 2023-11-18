@@ -3,6 +3,7 @@ from modules import script_callbacks
 from colorama import Fore, Back, Style
 import itertools
 from modules.shared import opts
+from modules.shared_cmd_options import cmd_opts
 import re
 import scripts as scripts
 from scripts.civitai_api import civitaimodels
@@ -24,12 +25,17 @@ class components():
         self.civitai = civitaimodels("https://civitai.com/api/v1/models")
         self.id = next(components.newid)
         contentTypes = self.civitai.getContentTypes()
+        self.APIKey = ""
+        if cmd_opts.civsfz_api_key:
+            self.APIKey = cmd_opts.civsfz_api_key[0:32]
+            #print(f"{self.APIKey=}")
         def defaultContentType():
             value = contentTypes[self.id % len(contentTypes)]
             return value
         def defaultPeriod():
             return "Month"
-
+        def cmdoptsAPIKey():
+            return self.APIKey
         with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=6):
@@ -83,7 +89,8 @@ class components():
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                 grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-                grTxtApiKey = gr.Textbox(label='API Key', value="", type="password", lines=1)
+                grTxtApiKey = gr.Textbox(
+                    label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
             with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
                 with gr.Column(scale=2):
                     with gr.Row():
@@ -555,7 +562,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.8.0'
+    ver = 'v1.8.1'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

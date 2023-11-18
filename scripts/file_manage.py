@@ -7,7 +7,6 @@ import shutil
 import json
 import re
 import platform
-import sys
 import subprocess as sp
 from modules import shared
 from colorama import Fore, Back, Style
@@ -359,7 +358,8 @@ def download_file2(folder, filename,  url, hash, api_key):
         # Check if the file has already been partially downloaded
         downloaded_size = 0
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0'}
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0'
+            }
         if len(api_key) == 32:
             headers.update({"Authorization": f"Bearer {api_key}"})
         mode = "wb" #Open file mode
@@ -390,7 +390,12 @@ def download_file2(folder, filename,  url, hash, api_key):
             while not exitGenerator:
             # Send a GET request to the URL and save the response to the local file
                 try:
-                    with requests.get(url, headers=headers, stream=True, timeout=(4.5,4.0)) as response: # Get the total size of the file
+                    with requests.Session() as session:
+                        #session.headers['Connection'] = 'close'
+                        session.verify = True
+                        #session.headers['Connection'] = 'keep-alive'
+                        response = session.get(url, headers=headers, stream=True, timeout=(
+                            4.5, 4.5))  # Get the total size of the file
                         response.raise_for_status()
                         if 'Content-Length' in response.headers:
                             total_size = int(response.headers.get("Content-Length", 0))
@@ -415,6 +420,11 @@ def download_file2(folder, filename,  url, hash, api_key):
                                     exitGenerator=True
                                     progressConsole.close()
                                     break
+                except requests.exceptions.Timeout as e:
+                    print_ly(f"{e}")
+                    exitGenerator = True
+                    yield "Timeout Error"
+                    return
                 except ConnectionError as e:
                     print_ly(f"{e}")
                     exitGenerator = True

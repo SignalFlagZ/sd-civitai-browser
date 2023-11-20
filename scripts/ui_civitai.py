@@ -3,7 +3,13 @@ from modules import script_callbacks
 from colorama import Fore, Back, Style
 import itertools
 from modules.shared import opts
-from modules.shared_cmd_options import cmd_opts
+try:
+    # SD web UI >= v1.6.0-RC
+    from modules.shared_cmd_options import cmd_opts
+except ImportError:
+    # SD web UI < v1.6.0-RC
+    # SD.Next
+    from modules.shared import cmd_opts
 import re
 import scripts as scripts
 from scripts.civitai_api import civitaimodels

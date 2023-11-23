@@ -381,15 +381,13 @@ def download_file2(folder, filename,  url, hash, api_key):
         except Exception as e:
             exitGenerator=True
             return
-        progressConsole = tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=False)
-        prg = 0 #downloaded_size
         # Open a local file to save the download
         with open(file_name, mode) as f:
             while not exitGenerator:
             # Send a GET request to the URL and save the response to the local file
                 try:
                     with requests.Session() as session:
-                        #session.headers['Connection'] = 'close'
+                        session.headers['Connection'] = 'close'
                         #session.headers['Connection'] = 'keep-alive'
                         response = session.get(url, headers=headers, stream=True, timeout=(
                             4.5, 4.5))  # Get the total size of the file
@@ -399,19 +397,21 @@ def download_file2(folder, filename,  url, hash, api_key):
                             # Update the total size of the progress bar if the `Content-Length` header is present
                             if total_size == 0:
                                 total_size = downloaded_size
-                            progressConsole.total = total_size
-                            for chunk in response.iter_content(chunk_size=4*1024*1024):
-                                if chunk:  # filter out keep-alive new chunks
-                                    f.write(chunk)
-                                    progressConsole.update(len(chunk))
-                                    prg += len(chunk)
-                                    try:
-                                        yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
-                                    except Exception as e:
-                                        response.close()
-                                        exitGenerator=True
-                                        progressConsole.close()
-                                        break
+                            with tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=True) as progressConsole:
+                                prg = 0 #downloaded_size
+                                progressConsole.total = total_size
+                                for chunk in response.iter_content(chunk_size=4*1024*1024):
+                                    if chunk:  # filter out keep-alive new chunks
+                                        f.write(chunk)
+                                        progressConsole.update(len(chunk))
+                                        prg += len(chunk)
+                                        try:
+                                            yield f'{round(prg/1048576)}MB / {round(total_size/1048576)}MB'
+                                        except Exception as e:
+                                            response.close()
+                                            exitGenerator=True
+                                            progressConsole.close()
+                                            break
                             downloaded_size = os.path.getsize(file_name)
                             # Break out of the loop if the download is successful
                             break
@@ -423,7 +423,6 @@ def download_file2(folder, filename,  url, hash, api_key):
                                 print_lc("Apply API key")
                                 yield "Apply API key"
                             else:
-                                progressConsole.close()
                                 exitGenerator=True
                                 return
 
@@ -438,19 +437,16 @@ def download_file2(folder, filename,  url, hash, api_key):
                 except requests.exceptions.RequestException as e:
                     print_ly(f"{e}")
                     exitGenerator=True
-                    progressConsole.close()
                     yield "Request Error"
                 except Exception as e:
                     print_ly(e)
                     exitGenerator=True
-                    progressConsole.close()
                     return
                 # Decrement the number of retries
                 max_retries -= 1
                 # If there are no more retries, raise the exception
                 if max_retries == 0:
                     exitGenerator = True
-                    progressConsole.close()
                     yield "Retry limit"
                     return
                 # Wait for the specified delay before retrying
@@ -458,7 +454,6 @@ def download_file2(folder, filename,  url, hash, api_key):
                 time.sleep(retry_delay)
 
         # Close the progress bar
-        progressConsole.close()
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         sha256 = calculate_sha256(file_name).upper()

@@ -264,6 +264,8 @@ class civitaimodels:
         modelInfo['versionDescription'] = version['description']
         modelInfo['files'] = version['files']
         #print_lc(f'{modelInfo["files"]=}')
+        for index,file in enumerate(modelInfo['files']):
+            modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
         pics = []
         for pic in version['images']:
             pics.append({ 'id' : pic['id'],

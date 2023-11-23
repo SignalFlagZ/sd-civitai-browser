@@ -295,7 +295,6 @@ def download_file(url, file_name):
                 except ConnectionError as e:
                     # Decrement the number of retries
                     max_retries -= 1
-
                     # If there are no more retries, raise the exception
                     if max_retries == 0:
                         raise e
@@ -382,27 +381,29 @@ def download_file2(folder, filename,  url, hash, api_key):
             exitGenerator=True
             return
         # Open a local file to save the download
-        with open(file_name, mode) as f:
-            while not exitGenerator:
-            # Send a GET request to the URL and save the response to the local file
-                try:
-                    with requests.Session() as session:
-                        session.headers['Connection'] = 'close'
-                        #session.headers['Connection'] = 'keep-alive'
-                        response = session.get(url, headers=headers, stream=True, timeout=(
-                            4.5, 4.5))  # Get the total size of the file
-                        response.raise_for_status()
-                        if 'Content-Length' in response.headers:
-                            total_size = int(response.headers.get("Content-Length", 0))
-                            # Update the total size of the progress bar if the `Content-Length` header is present
-                            if total_size == 0:
-                                total_size = downloaded_size
-                            with tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=True) as progressConsole:
-                                prg = 0 #downloaded_size
-                                progressConsole.total = total_size
+
+        while not exitGenerator:
+        # Send a GET request to the URL and save the response to the local file
+            try:
+                with requests.Session() as session:
+                    #session.headers['Connection'] = 'close'
+                    #session.headers['Connection'] = 'keep-alive'
+                    #session.headers.update(headers)
+                    response = session.get(url, headers=headers, stream=True, timeout=(4, 4))  # Get the total size of the file
+                    response.raise_for_status()
+                    #print_lc(f"{response.headers=}")
+                    if 'Content-Length' in response.headers:
+                        total_size = int(response.headers.get("Content-Length", 0))
+                        # Update the total size of the progress bar if the `Content-Length` header is present
+                        if total_size == 0:
+                            total_size = downloaded_size
+                        with tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=True) as progressConsole:
+                            prg = 0 #downloaded_size
+                            progressConsole.total = total_size
+                            with open(file_name, mode) as file:
                                 for chunk in response.iter_content(chunk_size=4*1024*1024):
                                     if chunk:  # filter out keep-alive new chunks
-                                        f.write(chunk)
+                                        file.write(chunk)
                                         progressConsole.update(len(chunk))
                                         prg += len(chunk)
                                         try:
@@ -412,48 +413,48 @@ def download_file2(folder, filename,  url, hash, api_key):
                                             exitGenerator=True
                                             progressConsole.close()
                                             break
-                            downloaded_size = os.path.getsize(file_name)
-                            # Break out of the loop if the download is successful
-                            break
+                        downloaded_size = os.path.getsize(file_name)
+                        # Break out of the loop if the download is successful
+                        break
+                    else:
+                        print_lc("May need API key")
+                        yield "May need API key"
+                        if len(api_key) == 32:
+                            headers.update({"Authorization": f"Bearer {api_key}"})
+                            print_lc("Apply API key")
+                            yield "Apply API key"
                         else:
-                            print_lc("May need API key")
-                            yield "May need API key"
-                            if len(api_key) == 32:
-                                headers.update({"Authorization": f"Bearer {api_key}"})
-                                print_lc("Apply API key")
-                                yield "Apply API key"
-                            else:
-                                exitGenerator=True
-                                return
+                            exitGenerator=True
+                            return
 
-                except requests.exceptions.Timeout as e:
-                    print_ly(f"{e}")
-                    exitGenerator = True
-                    yield "Timeout Error"
-                except ConnectionError as e:
-                    print_ly(f"{e}")
-                    exitGenerator = True
-                    yield "Connection Error"
-                except requests.exceptions.RequestException as e:
-                    print_ly(f"{e}")
-                    exitGenerator=True
-                    yield "Request Error"
-                except Exception as e:
-                    print_ly(e)
-                    exitGenerator=True
-                    return
-                # Decrement the number of retries
-                max_retries -= 1
-                # If there are no more retries, raise the exception
-                if max_retries == 0:
-                    exitGenerator = True
-                    yield "Retry limit"
-                    return
-                # Wait for the specified delay before retrying
-                yield f"Retry wait {retry_delay}s"
-                time.sleep(retry_delay)
+            except requests.exceptions.Timeout as e:
+                print_ly(f"{e}")
+                exitGenerator = True
+                yield "Timeout Error"
+            except ConnectionError as e:
+                print_ly(f"{e}")
+                exitGenerator = True
+                yield "Connection Error"
+            except requests.exceptions.RequestException as e:
+                print_ly(f"{e}")
+                exitGenerator=True
+                yield "Request Error"
+            except Exception as e:
+                print_ly(e)
+                exitGenerator=True
+                return
+            # Decrement the number of retries
+            max_retries -= 1
+            # If there are no more retries, raise the exception
+            if max_retries == 0:
+                exitGenerator = True
+                yield "Retry limit"
+                return
+            # Wait for the specified delay before retrying
+            print_lc(f"Retry wait {retry_delay}s")
+            yield f"Retry wait {retry_delay}s"
+            time.sleep(retry_delay)
 
-        # Close the progress bar
         downloaded_size = os.path.getsize(file_name)
         # Check if the download was successful
         sha256 = calculate_sha256(file_name).upper()

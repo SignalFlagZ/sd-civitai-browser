@@ -21,6 +21,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.8
+- Add sort types
 - The model download timeout was set to 4 seconds because it was forcibly disconnected after about 5 seconds
 - Support API Key
   - Some models require your API key when downloading

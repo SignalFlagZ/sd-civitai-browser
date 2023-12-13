@@ -30,7 +30,7 @@ class components():
         # Set the URL for the API endpoint
         self.civitai = civitaimodels("https://civitai.com/api/v1/models")
         self.id = next(components.newid)
-        contentTypes = self.civitai.getContentTypes()
+        contentTypes = self.civitai.getTypeOptions()
         self.APIKey = ""
         if cmd_opts.civsfz_api_key:
             self.APIKey = cmd_opts.civsfz_api_key[0:32]
@@ -42,13 +42,15 @@ class components():
             return "Month"
         def cmdoptsAPIKey():
             return self.APIKey
+
         with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=6):
                     grRadioContentType = gr.Radio(label='Content type:', choices=contentTypes, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     with gr.Row():
-                        grDrpdwnSortType = gr.Dropdown(label='Sort List by:', choices=["Newest","Most Downloaded","Highest Rated","Most Liked"], value="Newest", type="value")
+                        grDrpdwnSortType = gr.Dropdown(
+                            label='Sort List by:', choices=self.civitai.getSortOptions(), value="Newest", type="value")
                         grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value=defaultPeriod, type="value")
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)

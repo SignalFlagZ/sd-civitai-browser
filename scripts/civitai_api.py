@@ -55,9 +55,35 @@ class civitaimodels:
         self.saveFolder = path
     def getSaveFolder(self):
         return self.saveFolder
-    def getContentTypes(self) -> list:
-        return ["Checkpoint","TextualInversion","LORA","LoCon","Controlnet","Hypernetwork","AestheticGradient", "VAE", "Poses", "Upscaler", "MotionModule", "Wildcards", "Workflows", "Other"]
-
+    def getTypeOptions(self) -> list:
+        return [
+            "Checkpoint",
+            "TextualInversion",
+            "Hypernetwork",
+            "AestheticGradient",
+            "LORA",
+            "LoCon",
+            "Controlnet",
+            "Upscaler",
+            "MotionModule",
+            "VAE",
+            "Poses",
+            "Wildcards",
+            "Workflows",
+            "Other"
+        ]
+    def getSortOptions(self) -> list:
+        return [
+            "Highest Rated",
+            "Most Downloaded",
+            "Most Liked",
+            "Most Buzz",
+            "Most Discussed",
+            "Most Collected",
+            "Most Images",
+            "Newest"
+        ]
+    
     # Models
     def getModels(self, showNsfw = False) -> list:
         '''Return: [(str: Model name, str: index)]'''

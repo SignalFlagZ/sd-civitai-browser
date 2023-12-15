@@ -59,10 +59,10 @@ class civitaimodels:
         return [
             "Checkpoint",
             "TextualInversion",
-            "Hypernetwork",
-            "AestheticGradient",
             "LORA",
             "LoCon",
+            "Hypernetwork",
+            "AestheticGradient",
             "Controlnet",
             "Upscaler",
             "MotionModule",

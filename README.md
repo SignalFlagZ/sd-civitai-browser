@@ -5,6 +5,7 @@ An extension to help download models from CivitAi without leaving WebUI
 
 https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-40a9-b826-30ff20bf7bb3
 
+***If you fork, please replace prefix `civsfz` in the file name, function name, css class name, etc. with your own prefix to avoid conflicts.***
 ## Features
 - Search Civitai models in ***multiple tabs***
 - List models as ***card image***
@@ -20,6 +21,11 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Support ***API Key***
 
 ## Versions
+### v1.9
+- Rename files to avoid conflicts with other extensions
+  - Why do python file conflicts occur? For example, api.py is used by many people and no problems occur.
+- Add prefix `civsfz` to javascript function names to make them unique
+- If you fork, please replace `civsfz` in the file name, function name, css class name, etc. with your own prefix to avoid conflicts.
 ### v1.8
 - Add sort types
 - The model download timeout was set to 4 seconds because it was forcibly disconnected after about 5 seconds

@@ -12,8 +12,8 @@ except ImportError:
     from modules.shared import cmd_opts
 import re
 import scripts as scripts
-from scripts.civitai_api import civitaimodels
-from scripts.file_manage import open_folder
+from scripts.civsfz_api import civitaimodels
+from scripts.civsfz_filemanage import open_folder
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -24,7 +24,7 @@ class components():
     
     def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
-        from scripts.file_manage import extranetwork_folder, isExistFile,\
+        from scripts.civsfz_filemanage import extranetwork_folder, isExistFile,\
                 save_text_file, saveImageFiles,download_file2
         #self.tab = tab
         # Set the URL for the API endpoint
@@ -113,7 +113,8 @@ class components():
                 with gr.Column():
                     grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
                     with gr.Row(elem_classes='civsfz-back-to-top'):
-                        grHtmlBackToTop = gr.HTML(value=f"<div onclick='scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
+                        grHtmlBackToTop = gr.HTML(
+                            value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
                 
             #def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')
@@ -533,7 +534,7 @@ class components():
                     grTxtSaveFolder
                 ]
                 ).then(
-                _js=f'() => {{scroll_to("#civsfz_model-data{self.id}");}}',
+                _js=f'() => {{civsfz_scroll_to("#civsfz_model-data{self.id}");}}',
                 fn=None,
                 inputs=[],
                 outputs=[]    
@@ -554,7 +555,7 @@ class components():
                 inputs=[],
                 outputs=[grTxtPropaties]
                 ).then(
-                _js = '(x) => overwriteProperties(x)',
+                _js='(x) => civsfz_overwriteProperties(x)',
                 fn = None,
                 inputs=[grTxtPropaties],
                 outputs=[]                
@@ -570,7 +571,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.8.1'
+    ver = 'v1.9.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

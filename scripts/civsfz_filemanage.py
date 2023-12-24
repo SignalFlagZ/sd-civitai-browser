@@ -389,7 +389,7 @@ def download_file2(folder, filename,  url, hash, api_key):
                     #session.headers['Connection'] = 'close'
                     #session.headers['Connection'] = 'keep-alive'
                     #session.headers.update(headers)
-                    response = session.get(url, headers=headers, stream=True, timeout=(4, 4))  # Get the total size of the file
+                    response = session.get(url, headers=headers, stream=True, timeout=(10, 10))  # Get the total size of the file
                     response.raise_for_status()
                     #print_lc(f"{response.headers=}")
                     if 'Content-Length' in response.headers:

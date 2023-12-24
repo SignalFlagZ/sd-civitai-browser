@@ -5,7 +5,7 @@ import json
 import urllib.parse
 import requests
 from colorama import Fore, Back, Style
-from scripts.file_manage import extranetwork_folder
+from scripts.civsfz_filemanage import extranetwork_folder
 from modules.shared import opts
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -393,7 +393,7 @@ class civitaimodels:
                     if os.path.exists(path_file):
                         alreadyhave = "civsfz-modelcardalreadyhave"
                         break
-            HTML = HTML +  f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="select_model(\'Index{jsID}:{index}:{ID}\')">'\
+            HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             +  imgtag \
                             +  f'<figcaption>{item["name"]}</figcaption></figure>'
         HTML = HTML + '</div>'
@@ -430,7 +430,7 @@ class civitaimodels:
             imgStyle ='style="vertical-align: top;width: 35%;height: 30em;object-fit: contain;"'
             if pic['meta']:
                 infotext = self.meta2html(pic['meta'])
-                imgStyle = 'style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="copyInnerText(this);"'
+                imgStyle = 'style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="civsfz_copyInnerText(this);"'
             if pic['nsfw'] != "None" and not self.showNsfw:
                 nsfw = 'class="civsfz-nsfw"'
             img_html +=  f'<div {nsfw} style="display:flex;margin-top: 1em">'
@@ -450,7 +450,7 @@ class civitaimodels:
         img_html += '</div>'
         #function:copy to clipboard
         output_html = '<script>'\
-            'function copyInnerText(node) {'\
+            'function civsfz_copyInnerText(node) {'\
             'if (node.nextSibling != null) {'\
             'return navigator.clipboard.writeText(node.nextSibling.innerText).then('\
 			'function () {'\

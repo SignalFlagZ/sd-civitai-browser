@@ -53,6 +53,10 @@ function civsfz_copyInnerText(node) {
 		if (response) {
 			let prompt = gradioApp().querySelector('#txt2img_prompt textarea');
 			let paste = gradioApp().querySelector('#paste');
+			if (paste == null) {
+				//SD.Next
+				paste = gradioApp().querySelector('#txt2img_paste');
+			}
 			prompt.value = node.nextSibling.innerText;
 			civsfz_trigger_event(prompt, 'input');
 			civsfz_trigger_event(paste, 'click');

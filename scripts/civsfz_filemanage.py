@@ -341,7 +341,7 @@ def download_file(url, file_name):
 #    # Close the progress bar
 #    progress.close()
 
-def download_file2(folder, filename,  url, hash, api_key):
+def download_file2(folder, filename,  url, hash, api_key, early_access):
     makedirs(folder)
     file_name = os.path.join(folder, filename)
     #thread = threading.Thread(target=download_file, args=(url, filepath))
@@ -417,15 +417,21 @@ def download_file2(folder, filename,  url, hash, api_key):
                         # Break out of the loop if the download is successful
                         break
                     else:
-                        print_lc("May need API key")
-                        yield "May need API key"
-                        if len(api_key) == 32:
-                            headers.update({"Authorization": f"Bearer {api_key}"})
-                            print_lc("Apply API key")
-                            yield "Apply API key"
-                        else:
+                        if int(early_access) > 0:
+                            print_ly("Early Access")
+                            yield "Early Access"
                             exitGenerator=True
                             return
+                        else:
+                            print_lc("May need API key")
+                            yield "May need API key"
+                            if len(api_key) == 32:
+                                headers.update({"Authorization": f"Bearer {api_key}"})
+                                print_lc("Apply API key")
+                                yield "Apply API key"
+                            else:
+                                exitGenerator=True
+                                return
 
             except requests.exceptions.Timeout as e:
                 print_ly(f"{e}")

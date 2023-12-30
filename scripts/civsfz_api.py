@@ -241,6 +241,8 @@ class civitaimodels:
     def getSelectedVersionBaeModel(self):
         #print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
+    def getSelectedEarlyAccessTimeFrame(self):
+        return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessTimeFrame']
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo
     def getModelVersionInfo(self) -> str:
@@ -303,6 +305,7 @@ class civitaimodels:
         modelInfo['images'] = pics
         modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else None
         modelInfo['html'] = self.modelInfoHtml(modelInfo)
+        modelInfo['earlyAccessTimeFrame'] = version['earlyAccessTimeFrame']
         self.setModelVersionInfo(modelInfo)
         return modelInfo
 

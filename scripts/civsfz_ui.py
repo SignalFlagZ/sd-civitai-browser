@@ -290,7 +290,7 @@ class components():
                             gr.Textbox.update(value=None), \
                             gr.Textbox.update(value=None)
             def update_DownloadButoon(grTxtEarlyAccess):
-                return gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else False),\
+                return gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
                     gr.Textbox.update(
                         value="" if grTxtEarlyAccess == "0" else f"Early Access:{grTxtEarlyAccess}")
             grRadioVersions.change(

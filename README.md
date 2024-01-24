@@ -22,7 +22,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.9
-- Disable download button for Early Access models
+- ~~Disable download button for Early Access models~~
+  - Early access supports may be able to download the model. Not tested.
 - Rename files to avoid conflicts with other extensions
   - Why do python file conflicts occur? For example, api.py is used by many people and no problems occur.
 - Add prefix `civsfz` to javascript function names to make them unique

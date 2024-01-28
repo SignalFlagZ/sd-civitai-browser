@@ -108,9 +108,10 @@ def escaped_modelpath(folder, model_name):
                                     "&": r"_and_",
                                     "*": r"_",
                                     "\"": r"",
-                                    "\\": r""
+                                    "\\": r"",
+                                    "/": r"/" if opts.civsfz_treat_slash_as_folder_separator else r"_"
                                 })
-    return os.path.join(folder,model_name.translate(escapechars))
+    return os.path.join(folder, model_name.translate(escapechars))
 
 def extranetwork_folder(content_type, model_name:str = "",base_model:str="", nsfw:bool=False):
     folder = contenttype_folder(content_type)

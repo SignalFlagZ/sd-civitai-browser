@@ -22,12 +22,14 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.9
+- Add an checkbox to the settings to specify whether to treat "/" as a folder separator (default:`True` for backward compatibility)
+  - If you change it, some models may not be able to confirm the existence of the file.
 - ~~Disable download button for Early Access models~~
   - Early access supporters may be able to download the model. Not tested.
 - Rename files to avoid conflicts with other extensions
   - Why do python file conflicts occur? For example, api.py is used by many people and no problems occur.
 - Add prefix `civsfz` to javascript function names to make them unique
-- If you fork, please replace `civsfz` in the file name, function names, css class names, etc. with your own prefix to avoid conflicts.
+- If you fork, please replace `civsfz` in the file names, function names, css class names, etc. with your own prefix to avoid conflicts.
 ### v1.8
 - Add sort types
 - The model download timeout was set to 4 seconds because it was forcibly disconnected after about 5 seconds

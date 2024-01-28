@@ -63,7 +63,15 @@ def on_ui_settings():
             section=section,
         )
     )
-     
+    shared.opts.add_option(
+        key='civsfz_treat_slash_as_folder_separator',
+        info=shared.OptionInfo(
+            True,
+            label=r'Treat "/" as folder separator. If you change this, some models may not be able to confirm the existence of the file.',
+            component=gr.Checkbox,
+            section=section,
+        )
+    )
     shared.opts.add_option(
         key='civsfz_figcaption_background_color',
         info=shared.OptionInfo(

@@ -85,7 +85,7 @@ def on_ui_settings():
         key='civsfz_default_shadow_color',
         info=shared.OptionInfo(
             '#798a9f' ,
-            label='Frame color of cards',
+            label='Frame color of card',
             component=gr.ColorPicker,
             section=section,
         )
@@ -94,7 +94,7 @@ def on_ui_settings():
         key='civsfz_alreadyhave_shadow_color',
         info=shared.OptionInfo(
             '#7fffd4' ,
-            label='Frame color of cards you already have',
+            label='Frame color of card you already have',
             component=gr.ColorPicker,
             section=section,
         )
@@ -103,7 +103,7 @@ def on_ui_settings():
         key='civsfz_modelcard_sd2_color',
         info=shared.OptionInfo(
             '#FFD700',
-            label='Top border color of SD2',
+            label='Top border color of SD2 model card',
             component=gr.ColorPicker,
             section=section,
         )
@@ -112,7 +112,7 @@ def on_ui_settings():
         key='civsfz_modelcard_sdxl_color',
         info=shared.OptionInfo(
             '#D7322E',
-            label='Top border color of SDXL',
+            label='Top border color of SDXL model card',
             component=gr.ColorPicker,
             section=section,
         )

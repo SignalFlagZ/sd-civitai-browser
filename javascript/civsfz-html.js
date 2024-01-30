@@ -75,6 +75,8 @@ function civsfz_overwriteProperties(propertiesText) {
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[3]);
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[4]);
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[5]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-modelcard-sd2-color', p[6]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-modelcard-sdxl-color', p[7]);
 }
 
 function civsfz_querySelectSetProperty(q, p, c) {

@@ -7,6 +7,8 @@
 	--civsfz-card-width: 8;
 	--civsfz-card-height: 12;
 	--civsfz-card-size-unit: 1em;
+	--civsfz-modelcard-sd2-color: #FFD700;
+	--civsfz-modelcard-sdxl-color: #D7322E;
 }
 
 .civsfz-modellist {
@@ -37,6 +39,13 @@
 }
 .civsfz-modelcardalreadyhave:hover {
 	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
+}
+
+.civsfz-modelcard-SD2 {
+	border-top: solid 2px var(--civsfz-modelcard-sd2-color);
+}
+.civsfz-modelcard-SDXL {
+	border-top: solid 2px var(--civsfz-modelcard-sdxl-color);
 }
 
 .civsfz-modelcard img {

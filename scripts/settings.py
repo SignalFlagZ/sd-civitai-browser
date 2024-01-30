@@ -99,5 +99,22 @@ def on_ui_settings():
             section=section,
         )
     )
-
+    shared.opts.add_option(
+        key='civsfz_modelcard_sd2_color',
+        info=shared.OptionInfo(
+            '#FFD700',
+            label='Top border color of SD2',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_modelcard_sdxl_color',
+        info=shared.OptionInfo(
+            '#D7322E',
+            label='Top border color of SDXL',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
 script_callbacks.on_ui_settings(on_ui_settings)

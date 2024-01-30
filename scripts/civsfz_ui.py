@@ -572,7 +572,9 @@ class components():
                     str(opts.civsfz_alreadyhave_shadow_color),
                     str(opts.civsfz_hover_zoom_magnification),
                     str(opts.civsfz_card_size_width),
-                    str(opts.civsfz_card_size_height)
+                    str(opts.civsfz_card_size_height),
+                    str(opts.civsfz_modelcard_sd2_color),
+                    str(opts.civsfz_modelcard_sdxl_color)
                     ])
                 return gr.Textbox.update(value=propertiesText)
             grHtmlCards.change(

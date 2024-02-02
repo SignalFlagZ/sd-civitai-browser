@@ -82,6 +82,24 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
+        key='civsfz_figcaption_sd2_background_color',
+        info=shared.OptionInfo(
+            '#9da079',
+            label='Background color of SD2 model name',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_figcaption_sdxl_background_color',
+        info=shared.OptionInfo(
+            '#d54b44',
+            label='Background color of SDXL model name',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
         key='civsfz_default_shadow_color',
         info=shared.OptionInfo(
             '#798a9f' ,
@@ -99,22 +117,5 @@ def on_ui_settings():
             section=section,
         )
     )
-    shared.opts.add_option(
-        key='civsfz_modelcard_sd2_color',
-        info=shared.OptionInfo(
-            '#FFD700',
-            label='Top border color of SD2 model card',
-            component=gr.ColorPicker,
-            section=section,
-        )
-    )
-    shared.opts.add_option(
-        key='civsfz_modelcard_sdxl_color',
-        info=shared.OptionInfo(
-            '#D7322E',
-            label='Top border color of SDXL model card',
-            component=gr.ColorPicker,
-            section=section,
-        )
-    )
+
 script_callbacks.on_ui_settings(on_ui_settings)

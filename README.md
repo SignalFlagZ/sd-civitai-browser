@@ -11,6 +11,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - List models as ***card image***
 - Safe display in ***sfw*** search
 - Highlight models ***you have***
+- Show ***base model*** with background color of model name
 - Display/***save*** model information ***in HTML***
 - ***Json data*** of model is also ***saved*** in the same folder as the model file
 - If the sample image has meta data, display it with ***infotext compatibility***
@@ -22,7 +23,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.9
-- Display base model in top frame color
+- Show base model with background color of model name
+- ~~Display base model in top frame color~~
   - Color can be changed in Settings
 - Add an checkbox to the settings to specify whether to treat "/" as a folder separator (default:`True` for backward compatibility)
   - If you change it, some models may not be able to confirm the existence of the file.

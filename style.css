@@ -1,14 +1,14 @@
 
 .civsfz-modelcardshtml {
-	--civsfz-figcaption-background-color: rgb(121 138 159 /85%);
+	--civsfz-figcaption-background-color: rgba(121, 138, 160, 0.85);
 	--civsfz-default-shadow-color: #798a9f;
 	--civsfz-alreadyhave-shadow-color:  #7fffd4;
 	--civsfz-hover-scale: 1.5;
 	--civsfz-card-width: 8;
 	--civsfz-card-height: 12;
 	--civsfz-card-size-unit: 1em;
-	--civsfz-modelcard-sd2-color: #FFD700;
-	--civsfz-modelcard-sdxl-color: #D7322E;
+	--civsfz-figcaption-sd2-background-color: rgba(157, 160, 121, 0.85);
+	--civsfz-figcaption-sdxl-background-color: #d54b44d9;
 }
 
 .civsfz-modellist {
@@ -41,11 +41,11 @@
 	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
 }
 
-.civsfz-modelcard-SD2 {
-	border-top: solid 2px var(--civsfz-modelcard-sd2-color);
+.civsfz-modelcard.civsfz-figcaption-SD2 figcaption {
+	background-color: var(--civsfz-figcaption-sd2-background-color);
 }
-.civsfz-modelcard-SDXL {
-	border-top: solid 2px var(--civsfz-modelcard-sdxl-color);
+.civsfz-modelcard.civsfz-figcaption-SDXL figcaption {
+	background-color: var(--civsfz-figcaption-sdxl-background-color);
 }
 
 .civsfz-modelcard img {

@@ -568,13 +568,13 @@ class components():
             def updatePropertiesText():
                 propertiesText = ';'.join([
                     str(opts.civsfz_figcaption_background_color),
+                    str(opts.civsfz_figcaption_sd2_background_color),
+                    str(opts.civsfz_figcaption_sdxl_background_color),
                     str(opts.civsfz_default_shadow_color),
                     str(opts.civsfz_alreadyhave_shadow_color),
                     str(opts.civsfz_hover_zoom_magnification),
                     str(opts.civsfz_card_size_width),
-                    str(opts.civsfz_card_size_height),
-                    str(opts.civsfz_modelcard_sd2_color),
-                    str(opts.civsfz_modelcard_sdxl_color)
+                    str(opts.civsfz_card_size_height)
                     ])
                 return gr.Textbox.update(value=propertiesText)
             grHtmlCards.change(
@@ -598,7 +598,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.9.3'
+    ver = 'v1.9.4'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

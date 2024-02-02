@@ -392,9 +392,9 @@ class civitaimodels:
                     file_name = file['name']
                     base_model = item["modelVersions"][0]['baseModel']
                     if "SD 2" in base_model:
-                        baseModel = "civsfz-modelcard-SD2"
+                        baseModel = "civsfz-figcaption-SD2"
                     elif "SDXL" in base_model:
-                        baseModel = "civsfz-modelcard-SDXL"
+                        baseModel = "civsfz-figcaption-SDXL"
                     folder = extranetwork_folder(self.getContentType(),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
                     path_file = os.path.join(folder, file_name)
                     #print(f"{path_file}")

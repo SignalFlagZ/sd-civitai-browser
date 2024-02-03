@@ -586,13 +586,14 @@ class civitaimodels:
         if query is not None:
             query = urllib.parse.urlencode(query, quote_via=urllib.parse.quote)
         # Use undocumented and slightly strange param
+        #print_ly(f'{baseModels=}')
         baseModelQuery = ""
         if baseModels:
             for baseModel in baseModels:
                 param = {'baseModels': baseModel}
                 encodedParam = urllib.parse.urlencode(
                     param, quote_via=urllib.parse.quote)
-                print_ly(f'{encodedParam=}')
+                #print_ly(f'{encodedParam=}')
                 if query is not None:
                     query += '&'
                 query += encodedParam

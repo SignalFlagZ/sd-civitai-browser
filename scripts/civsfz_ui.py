@@ -45,17 +45,18 @@ class components():
 
         with gr.Column() as self.components:
             with gr.Row():
-                with gr.Column(scale=6):
+                with gr.Column(scale=5):
                     grRadioContentType = gr.Radio(label='Content type:', choices=contentTypes, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     with gr.Row():
                         grDrpdwnSortType = gr.Dropdown(
                             label='Sort List by:', choices=self.civitai.getSortOptions(), value="Newest", type="value")
                         grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value=defaultPeriod, type="value")
+                with gr.Column(scale=1, max_width=100, min_width=100):
+                    grDrpdwnBasemodels = gr.Dropdown(label="Base Models (experimental)", choices=self.civitai.getBasemodelOptions(
+                    ), value=None, type="value", multiselect=True)
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
-            with gr.Row():
-                grChkbxgBasemodels = gr.CheckboxGroup(label="Base Models", choices=self.civitai.getBasemodelOptions(), value=None, type="value")
             with gr.Row():
                 grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
@@ -185,11 +186,11 @@ class components():
                 cancels=[download]
                 )
         
-            def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grChkbxgBasemodels):
+            def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
                 query = self.civitai.makeRequestQuery(
                     grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
                 response = self.civitai.requestApi(
-                    query=query, baseModels=grChkbxgBasemodels) # Use undocumented and slightly strange param
+                    query=query, baseModels=grDrpdwnBasemodels)  # Use undocumented and slightly strange param
 
                 err = self.civitai.getRequestError()
                 if err is None:
@@ -235,7 +236,7 @@ class components():
                     grTxtSearchTerm,
                     grChkboxShowNsfw,
                     grDrpdwnPeriod,
-                    grChkbxgBasemodels
+                    grDrpdwnBasemodels
                 ],
                 outputs=[
                     grDrpdwnModels,
@@ -604,7 +605,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.9.5'
+    ver = 'v1.9.6'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

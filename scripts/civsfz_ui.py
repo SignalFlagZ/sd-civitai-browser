@@ -188,10 +188,9 @@ class components():
         
             def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
                 query = self.civitai.makeRequestQuery(
-                    grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
+                    grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
                 response = self.civitai.requestApi(
-                    query=query, baseModels=grDrpdwnBasemodels)  # Use undocumented and slightly strange param
-
+                    query=query) 
                 err = self.civitai.getRequestError()
                 if err is None:
                     grMrkdwnErr = gr.Markdown.update(value=None, visible=False)

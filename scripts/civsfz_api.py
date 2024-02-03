@@ -388,7 +388,7 @@ class civitaimodels:
             #model_name = escape(item["name"].replace("'","\\'"),quote=True)
             nsfw = ""
             alreadyhave = ""
-            baseModel = ""
+            baseModel = item['modelVersions'][0]['baseModel']
             ID = item['id']
             imgtag = f'<img src="./file=html/card-no-preview.png"/>'
             if any(item['modelVersions']):
@@ -412,16 +412,16 @@ class civitaimodels:
                 for file in item['modelVersions'][0]['files']:
                     file_name = file['name']
                     base_model = item["modelVersions"][0]['baseModel']
-                    if "SD 2" in base_model:
-                        baseModel = "civsfz-figcaption-SD2"
-                    elif "SDXL" in base_model:
-                        baseModel = "civsfz-figcaption-SDXL"
                     folder = extranetwork_folder(self.getContentType(),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
                     path_file = os.path.join(folder, file_name)
                     #print(f"{path_file}")
                     if os.path.exists(path_file):
                         alreadyhave = "civsfz-modelcardalreadyhave"
                         break
+            if "SD 2" in base_model:
+                baseModel = "civsfz-figcaption-SD2"
+            elif "SDXL" in base_model:
+                baseModel = "civsfz-figcaption-SDXL"
             HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave} {baseModel}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             +  imgtag \
                             +  f'<figcaption>{item["name"]}</figcaption></figure>'

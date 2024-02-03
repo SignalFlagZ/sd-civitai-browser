@@ -388,7 +388,7 @@ class civitaimodels:
             #model_name = escape(item["name"].replace("'","\\'"),quote=True)
             nsfw = ""
             alreadyhave = ""
-            baseModel = item['modelVersions'][0]['baseModel']
+            baseModel = ""
             ID = item['id']
             imgtag = f'<img src="./file=html/card-no-preview.png"/>'
             if any(item['modelVersions']):
@@ -409,9 +409,9 @@ class civitaimodels:
                             imgtag += f'<img src={img["url"]} type="image/gif"/>'
                             imgtag += f'</video>'
                             break
+                base_model = item["modelVersions"][0]['baseModel']
                 for file in item['modelVersions'][0]['files']:
                     file_name = file['name']
-                    base_model = item["modelVersions"][0]['baseModel']
                     folder = extranetwork_folder(self.getContentType(),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
                     path_file = os.path.join(folder, file_name)
                     #print(f"{path_file}")

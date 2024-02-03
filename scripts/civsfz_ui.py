@@ -55,6 +55,8 @@ class components():
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
             with gr.Row():
+                grChkbxgBasemodels = gr.CheckboxGroup(label="Base Models", choices=self.civitai.getBasemodelOptions(), value=None, type="value")
+            with gr.Row():
                 grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
@@ -183,9 +185,12 @@ class components():
                 cancels=[download]
                 )
         
-            def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod):
-                query = self.civitai.makeRequestQuery(grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
-                response = self.civitai.requestApi(query=query)
+            def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grChkbxgBasemodels):
+                query = self.civitai.makeRequestQuery(
+                    grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm)
+                response = self.civitai.requestApi(
+                    query=query, baseModels=grChkbxgBasemodels) # Use undocumented and slightly strange param
+
                 err = self.civitai.getRequestError()
                 if err is None:
                     grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
@@ -229,7 +234,8 @@ class components():
                     grRadioSearchType,
                     grTxtSearchTerm,
                     grChkboxShowNsfw,
-                    grDrpdwnPeriod
+                    grDrpdwnPeriod,
+                    grChkbxgBasemodels
                 ],
                 outputs=[
                     grDrpdwnModels,
@@ -598,7 +604,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.9.4'
+    ver = 'v1.9.5'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

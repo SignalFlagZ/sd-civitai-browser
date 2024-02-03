@@ -83,6 +83,27 @@ class civitaimodels:
             "Most Images",
             "Newest"
         ]
+    def getBasemodelOptions(self) -> list:
+        return [
+            "SD 1.4",
+            "SD 1.5",
+            "SD 1.5 LCM",
+            "SD 2.0",
+            "SD 2.0 768",
+            "SD 2.1",
+            "SD 2.1 768",
+            "SD 2.1 Unclip",
+            "SDXL 0.9",
+            "SDXL 1.0",
+            "SDXL 1.0 LCM",
+            "SDXL Distilled",
+            "SDXL Turbo",
+            "SVD",
+            "SVD XT",
+            "Playground v2",
+            "PixArt a",
+            "Other"
+        ]
     
     # Models
     def getModels(self, showNsfw = False) -> list:
@@ -539,7 +560,7 @@ class civitaimodels:
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None):
         query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards }
         if not period == "AllTime":
-            query |= {'period': period}
+            query |= {'period': period}   
         if use_search_term != "No" and search_term:
             #search_term = search_term.replace(" ","%20")
             if use_search_term == "User name":
@@ -558,12 +579,23 @@ class civitaimodels:
         newURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
         return urllib.parse.urlunparse(newURL)
 
-    def requestApi(self, url=None, query=None):
+    def requestApi(self, url=None, query=None, baseModels=None):
         self.requestError = None
         if url is None:
             url = self.getBaseUrl()
         if query is not None:
             query = urllib.parse.urlencode(query, quote_via=urllib.parse.quote)
+        # Use undocumented and slightly strange param
+        baseModelQuery = ""
+        if baseModels:
+            for baseModel in baseModels:
+                param = {'baseModels': baseModel}
+                encodedParam = urllib.parse.urlencode(
+                    param, quote_via=urllib.parse.quote)
+                print_ly(f'{encodedParam=}')
+                if query is not None:
+                    query += '&'
+                query += encodedParam
         # Make a GET request to the API
         try:
             with requests.Session() as request:

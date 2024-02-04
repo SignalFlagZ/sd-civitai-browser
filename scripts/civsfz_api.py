@@ -16,7 +16,7 @@ class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str, json_data:dict=None, content_type:str=None):
         self.jsonData = json_data
-        self.contentType = content_type
+        #self.contentType = content_type
         self.showNsfw = False
         self.baseUrl = url
         self.modelIndex = None
@@ -27,7 +27,7 @@ class civitaimodels:
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
-        self.contentType = self.contentType if content_type is None else content_type
+        #self.contentType = self.contentType if content_type is None else content_type
         self.showNsfw = False
         self.modelIndex = None
         self.versionIndex = None
@@ -45,10 +45,10 @@ class civitaimodels:
         self.showNsfw = showNsfw
     def isShowNsfw(self) -> bool:
         return self.showNsfw
-    def setContentType(self, content_type:str):
-        self.contentType = content_type
-    def getContentType(self) -> str:
-        return self.contentType
+    #def setContentType(self, content_type:str):
+    #    self.contentType = content_type
+    #def getContentType(self) -> str:
+    #    return self.contentType
     def getRequestError(self) -> requests.exceptions.RequestException:
         return self.requestError
     def setSaveFolder(self, path):
@@ -200,6 +200,12 @@ class civitaimodels:
     def getSelectedModelID(self) -> str:
         item = self.jsonData['items'][self.modelIndex]
         return int(item['id'])
+    def getSelectedModelType(self) -> str:
+        item = self.jsonData['items'][self.modelIndex]
+        return item['type']
+    def getModelTypeByIndex(self, index:int) -> str:
+        item = self.jsonData['items'][index]
+        return item['type'] 
     def allows2permissions(self) -> dict:
         '''Convert allows to permissions. Select model first.
             [->Reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
@@ -412,7 +418,7 @@ class civitaimodels:
                 base_model = item["modelVersions"][0]['baseModel']
                 for file in item['modelVersions'][0]['files']:
                     file_name = file['name']
-                    folder = extranetwork_folder(self.getContentType(),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
+                    folder = extranetwork_folder(self.getModelTypeByIndex(index),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
                     path_file = os.path.join(folder, file_name)
                     #print(f"{path_file}")
                     if os.path.exists(path_file):
@@ -430,6 +436,7 @@ class civitaimodels:
             HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             + imgtag \
                             + f'<figcaption>{item["name"]}</figcaption>' \
+                            + f'<div class="civsfz-modeltype">{item["type"]}</div>' \
                             + f'<div class="civsfz-basemodel {baseModelColor}">{base_model}</div>' \
                             + '</figure>'
         HTML = HTML + '</div>'
@@ -510,6 +517,7 @@ class civitaimodels:
             f'<div><b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
             f'https://civitai.com/models/{str(modelInfo["id"])}</a><br/>'\
+            f'<b>Type</b>: {escape(str(modelInfo["type"]))}<br/>'\
             f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br/>'\
             f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br/>'\
             f'<b>Base Model</b>: {escape(str(modelInfo["baseModel"]))}<br/>'\

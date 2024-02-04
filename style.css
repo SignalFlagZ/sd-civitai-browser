@@ -90,8 +90,20 @@
 	font-size: smaller;
 }
 .civsfz-modelcard:hover .civsfz-basemodel {
-	top:-1.5em;
+	top: -1.5em;
 }
+.civsfz-modelcard .civsfz-modeltype  {
+ 	position: absolute;
+ 	top: 0px;
+ 	left: 0px;
+ 	word-break: break-word;
+ 	font-size: smaller;
+	background-color: var(--civsfz-figcaption-background-color);
+ }
+.civsfz-modelcard:hover .civsfz-modeltype {
+	top: -1.5em;
+}
+
 .civsfz-nsfw img {
 	filter: blur(12px);
 }

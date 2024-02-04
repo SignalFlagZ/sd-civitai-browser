@@ -46,7 +46,8 @@ class components():
         with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=5):
-                    grRadioContentType = gr.Radio(label='Content type:', choices=contentTypes, value=defaultContentType)
+                    grRadioContentType = gr.CheckboxGroup(
+                        label='Content types:', choices=contentTypes, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     with gr.Row():
                         grDrpdwnSortType = gr.Dropdown(
@@ -151,15 +152,15 @@ class components():
                 outputs=[grTextProgress]
                 )
 
-            def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType):
-                return saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, grRadioContentType, self.civitai.getModelVersionInfo() )
+            def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo):
+                return saveImageFiles(grTxtSaveFolder, grDrpdwnFilenames, grHtmlModelInfo, self.civitai.getSelectedModelType(), self.civitai.getModelVersionInfo() )
             grBtnSaveImages.click(
                 fn=save_image_files,
                 inputs=[
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
                     grHtmlModelInfo,
-                    grRadioContentType,
+                    
                     ],
                 outputs=[grTextProgress]
                 )
@@ -207,7 +208,7 @@ class components():
                         gr.Slider.update(interactive=False),\
                         gr.Textbox.update(value=None),\
                         grMrkdwnErr
-                self.civitai.updateJsonData(response, grRadioContentType)
+                self.civitai.updateJsonData(response) #, grRadioContentType)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
@@ -272,7 +273,7 @@ class components():
             
             def  update_model_info(model_version=None):
                 if model_version is not None and self.civitai.selectVersionByName(model_version) is not None:
-                    path = extranetwork_folder( self.civitai.getContentType(),
+                    path = extranetwork_folder( self.civitai.getSelectedModelType(),
                                                 self.civitai.getSelectedModelName(),
                                                 self.civitai.getSelectedVersionBaeModel(),
                                                 self.civitai.treatAsNsfw() #isNsfwModel()
@@ -605,7 +606,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.9.7'
+    ver = 'v1.9.8'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

@@ -24,6 +24,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.9
+- Search for multiple model types at the same time
+- Show model type on a card
 - Changed model card design to display base model
   - Since there were many changes to Settings, it is recommended to delete prefix `civsfz` lines in config.json.
 - Add filter for Base Models (experimental)

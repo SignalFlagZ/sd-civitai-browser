@@ -46,7 +46,7 @@ class components():
         with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=5):
-                    grRadioContentType = gr.CheckboxGroup(
+                    grChkbxGrpContentType = gr.CheckboxGroup(
                         label='Content types:', choices=contentTypes, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     with gr.Row():
@@ -187,9 +187,9 @@ class components():
                 cancels=[download]
                 )
         
-            def update_model_list(grRadioContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
+            def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
                 query = self.civitai.makeRequestQuery(
-                    grRadioContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
+                    grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
                 response = self.civitai.requestApi(
                     query=query) 
                 err = self.civitai.getRequestError()
@@ -230,7 +230,7 @@ class components():
             grBtnGetListAPI.click(
                 fn=update_model_list,
                 inputs=[
-                    grRadioContentType,
+                    grChkbxGrpContentType,
                     grDrpdwnSortType,
                     grRadioSearchType,
                     grTxtSearchTerm,

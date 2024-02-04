@@ -388,7 +388,7 @@ class civitaimodels:
             #model_name = escape(item["name"].replace("'","\\'"),quote=True)
             nsfw = ""
             alreadyhave = ""
-            baseModel = ""
+            baseModelColor = ""
             ID = item['id']
             imgtag = f'<img src="./file=html/card-no-preview.png"/>'
             if any(item['modelVersions']):
@@ -418,13 +418,20 @@ class civitaimodels:
                     if os.path.exists(path_file):
                         alreadyhave = "civsfz-modelcardalreadyhave"
                         break
-            if "SD 2" in base_model:
-                baseModel = "civsfz-figcaption-SD2"
+            if "SD 1" in base_model:
+                baseModelColor = "civsfz-bgcolor-SD1"
+            elif "SD 2" in base_model:
+                baseModelColor = "civsfz-bgcolor-SD2"
             elif "SDXL" in base_model:
-                baseModel = "civsfz-figcaption-SDXL"
-            HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave} {baseModel}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
-                            +  imgtag \
-                            +  f'<figcaption>{item["name"]}</figcaption></figure>'
+                baseModelColor = "civsfz-bgcolor-SDXL"
+            else:
+                baseModelColor = "civsfz-bgcolor-base"
+                
+            HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
+                            + imgtag \
+                            + f'<figcaption>{item["name"]}</figcaption>' \
+                            + f'<div class="civsfz-basemodel {baseModelColor}">{base_model}</div>' \
+                            + '</figure>'
         HTML = HTML + '</div>'
         return HTML
 

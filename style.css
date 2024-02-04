@@ -7,8 +7,9 @@
 	--civsfz-card-width: 8;
 	--civsfz-card-height: 12;
 	--civsfz-card-size-unit: 1em;
-	--civsfz-figcaption-sd2-background-color: rgba(157, 160, 121, 0.85);
-	--civsfz-figcaption-sdxl-background-color: #d54b44d9;
+	--civsfz-sd1-background-color: #87ba39d9;
+	--civsfz-sd2-background-color: #54c696d9;
+	--civsfz-sdxl-background-color: #d54b44d9;
 }
 
 .civsfz-modellist {
@@ -41,11 +42,17 @@
 	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
 }
 
-.civsfz-modelcard.civsfz-figcaption-SD2 figcaption {
-	background-color: var(--civsfz-figcaption-sd2-background-color);
+.civsfz-bgcolor-base {
+	background-color: var(--civsfz-figcaption-background-color);
 }
-.civsfz-modelcard.civsfz-figcaption-SDXL figcaption {
-	background-color: var(--civsfz-figcaption-sdxl-background-color);
+.civsfz-bgcolor-SD1 {
+	background-color: var(--civsfz-sd1-background-color);
+}
+.civsfz-bgcolor-SD2 {
+	background-color: var(--civsfz-sd2-background-color);
+}
+.civsfz-bgcolor-SDXL {
+	background-color: var(--civsfz-sdxl-background-color);
 }
 
 .civsfz-modelcard img {
@@ -75,6 +82,16 @@
 	bottom: initial;
 }
 
+.civsfz-modelcard .civsfz-basemodel {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	word-break: break-word;
+	font-size: smaller;
+}
+.civsfz-modelcard:hover .civsfz-basemodel {
+	top:-1.5em;
+}
 .civsfz-nsfw img {
 	filter: blur(12px);
 }

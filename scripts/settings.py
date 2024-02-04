@@ -82,19 +82,28 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
-        key='civsfz_figcaption_sd2_background_color',
+        key='civsfz_sd1_background_color',
         info=shared.OptionInfo(
-            '#9da079',
-            label='Background color for SD2 model names',
+            '#87ba39',
+            label='Background color for SD1 models',
             component=gr.ColorPicker,
             section=section,
         )
     )
     shared.opts.add_option(
-        key='civsfz_figcaption_sdxl_background_color',
+        key='civsfz_sd2_background_color',
+        info=shared.OptionInfo(
+            '#54c696',
+            label='Background color for SD2 models',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
+        key='civsfz_sdxl_background_color',
         info=shared.OptionInfo(
             '#d54b44',
-            label='Background color for SDXL model names',
+            label='Background color for SDXL models',
             component=gr.ColorPicker,
             section=section,
         )

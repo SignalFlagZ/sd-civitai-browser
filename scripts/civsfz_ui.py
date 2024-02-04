@@ -574,8 +574,9 @@ class components():
             def updatePropertiesText():
                 propertiesText = ';'.join([
                     str(opts.civsfz_figcaption_background_color),
-                    str(opts.civsfz_figcaption_sd2_background_color),
-                    str(opts.civsfz_figcaption_sdxl_background_color),
+                    str(opts.civsfz_sd1_background_color), 
+                    str(opts.civsfz_sd2_background_color),
+                    str(opts.civsfz_sdxl_background_color),
                     str(opts.civsfz_default_shadow_color),
                     str(opts.civsfz_alreadyhave_shadow_color),
                     str(opts.civsfz_hover_zoom_magnification),
@@ -604,7 +605,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.9.6'
+    ver = 'v1.9.7'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

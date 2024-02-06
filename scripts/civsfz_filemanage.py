@@ -31,7 +31,7 @@ print_n = lambda  x: print("CivBrowser: " + x )
 isDownloading = False
 ckpt_dir = shared.cmd_opts.ckpt_dir or sd_models.model_path
 
-def escaped_modelpath(folder, model_name):
+def escaped_filename(model_name):
     escapechars = str.maketrans({   " ": r"_",
                                     "(": r"",
                                     ")": r"",
@@ -49,15 +49,15 @@ def escaped_modelpath(folder, model_name):
                                     "\\": r"",
                                     "/": r"/" if opts.civsfz_treat_slash_as_folder_separator else r"_"
                                 })
-    return os.path.join(folder, model_name.translate(escapechars))
+    return model_name.translate(escapechars)
 
-def type_folder(type:str):
+def type_path(type: str) -> Path:
     try:
-        dictFolder = json.loads(opts.civsfz_save_type_folders)
+        folderSetting = json.loads(opts.civsfz_save_type_folders)
     except json.JSONDecodeError as e:
         print(e)
         print_ly('Failed to decode JSON. Check Settings.')
-        dictFolder = {}
+        folderSetting = {}
         
     if type == "Checkpoint":
         base = ckpt_dir
@@ -110,26 +110,28 @@ def type_folder(type:str):
         base = models_path
         folder = os.path.join(models_path, "OtherModels/Other")
 
-    optFolder = dictFolder.get(type, "")
+    optFolder = folderSetting.get(type, "")
     if optFolder == "":
         pType = Path(folder)
     else:
         pType = Path(base) / Path(optFolder)
-    return str(pType)
+    return pType
 
+def basemodel_path(baseModel: str) -> Path:
+    basemodelPath = ""
+    if not 'SD 1' in baseModel:
+        basemodelPath = '_' + baseModel.replace(' ', '_').replace('.', '_')
+    return Path(basemodelPath)
 
-def model_folder(content_type, model_name: str = "", base_model: str = "", nsfw: bool = False):
-    typeFolder = type_folder(content_type)
-    return typeFolder
-
-def extranetwork_folder(content_type, model_name:str = "",base_model:str="", nsfw:bool=False):
-    folder = model_folder(content_type)
-    if not 'SD 1' in base_model:
-        folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
+def generate_model_save_path(content_type, model_name:str = "",base_model:str="", nsfw:bool=False) -> Path:
+    typePath = type_path(content_type)
+    basemodelPath = basemodel_path(base_model)
+    modelPath = typePath / basemodelPath
     if nsfw:
-        folder = os.path.join(folder, '.nsfw')
-    modelFolder = escaped_modelpath(folder, model_name)
-    return modelFolder
+        modelPath = typePath / basemodelPath / Path('.nsfw')
+    filename = escaped_filename(model_name)
+    modelPath = modelPath / Path(filename)
+    return modelPath
 
 def save_text_file(folder, filename, trained_words):
     makedirs(folder)

@@ -24,7 +24,7 @@ class components():
     
     def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
-        from scripts.civsfz_filemanage import extranetwork_folder, isExistFile,\
+        from scripts.civsfz_filemanage import generate_model_save_path, isExistFile, \
                 save_text_file, saveImageFiles,download_file2
         #self.tab = tab
         # Set the URL for the API endpoint
@@ -273,7 +273,7 @@ class components():
             
             def  update_model_info(model_version=None):
                 if model_version is not None and self.civitai.selectVersionByName(model_version) is not None:
-                    path = extranetwork_folder( self.civitai.getSelectedModelType(),
+                    path = generate_model_save_path(self.civitai.getSelectedModelType(),
                                                 self.civitai.getSelectedModelName(),
                                                 self.civitai.getSelectedVersionBaeModel(),
                                                 self.civitai.treatAsNsfw() #isNsfwModel()

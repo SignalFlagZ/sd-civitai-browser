@@ -3,9 +3,10 @@ import datetime
 from html import escape
 import json
 import urllib.parse
+from pathlib import Path
 import requests
 from colorama import Fore, Back, Style
-from scripts.civsfz_filemanage import extranetwork_folder
+from scripts.civsfz_filemanage import generate_model_save_path
 from modules.shared import opts
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -418,10 +419,11 @@ class civitaimodels:
                 base_model = item["modelVersions"][0]['baseModel']
                 for file in item['modelVersions'][0]['files']:
                     file_name = file['name']
-                    folder = extranetwork_folder(self.getModelTypeByIndex(index),item["name"],base_model,self.treatAsNsfw(modelIndex=index)) #item['nsfw'])
-                    path_file = os.path.join(folder, file_name)
+                    folder = generate_model_save_path(self.getModelTypeByIndex(
+                        index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
+                    path_file = folder / Path(file_name)
                     #print(f"{path_file}")
-                    if os.path.exists(path_file):
+                    if path_file.exists():
                         alreadyhave = "civsfz-modelcardalreadyhave"
                         break
             if "SD 1" in base_model:

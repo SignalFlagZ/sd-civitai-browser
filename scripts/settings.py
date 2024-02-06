@@ -130,7 +130,7 @@ def on_ui_settings():
         key='civsfz_save_type_folders',
         info=shared.OptionInfo(
             '',
-            label='Save folders for Types. JSON string. The path is relative path from the base folder of each type or absolute path. Folder delimiter is "/".',
+            label='Save folders for Types. JSON string. The path is relative path from the base folder of each type or absolute path. Folder separator is "/".',
             component=gr.Textbox,
             component_args={'lines': 4, 'info': 'Example: "{\n\
     "Checkpoint": "",\n\

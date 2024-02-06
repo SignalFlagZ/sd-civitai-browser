@@ -30,6 +30,7 @@ print_n = lambda  x: print("CivBrowser: " + x )
 
 isDownloading = False
 ckpt_dir = shared.cmd_opts.ckpt_dir or sd_models.model_path
+pre_opt_folder = None
 
 def escaped_filename(model_name):
     escapechars = str.maketrans({   " ": r"_",
@@ -52,15 +53,17 @@ def escaped_filename(model_name):
     return model_name.translate(escapechars)
 
 def type_path(type: str) -> Path:
-    if opts.civsfz_save_type_folders != "" :       
+    global pre_opt_folder, ckpt_dir
+    if opts.civsfz_save_type_folders != "":
         try:
             folderSetting = json.loads(opts.civsfz_save_type_folders)
         except json.JSONDecodeError as e:
-            print_ly(f'Check subfolder setting: {e}')
-            #print_ly('Failed to decode JSON. Check Settings.')
+            if pre_opt_folder != opts.civsfz_save_type_folders:
+                print_ly(f'Check subfolder setting: {e}')
             folderSetting = {}
     else:
-        folderSetting = {}
+        folderSetting = {}       
+    pre_opt_folder = opts.civsfz_save_type_folders
         
     if type == "Checkpoint":
         base = ckpt_dir

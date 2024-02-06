@@ -52,11 +52,14 @@ def escaped_filename(model_name):
     return model_name.translate(escapechars)
 
 def type_path(type: str) -> Path:
-    try:
-        folderSetting = json.loads(opts.civsfz_save_type_folders)
-    except json.JSONDecodeError as e:
-        print(e)
-        print_ly('Failed to decode JSON. Check Settings.')
+    if opts.civsfz_save_type_folders != "" :       
+        try:
+            folderSetting = json.loads(opts.civsfz_save_type_folders)
+        except json.JSONDecodeError as e:
+            print_ly(f'Check subfolder setting: {e}')
+            #print_ly('Failed to decode JSON. Check Settings.')
+            folderSetting = {}
+    else:
         folderSetting = {}
         
     if type == "Checkpoint":

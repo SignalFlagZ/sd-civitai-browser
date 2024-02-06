@@ -47,7 +47,7 @@ class components():
             with gr.Row():
                 with gr.Column(scale=5):
                     grChkbxGrpContentType = gr.CheckboxGroup(
-                        label='Content types:', choices=contentTypes, value=defaultContentType)
+                        label='Types:', choices=contentTypes, value=defaultContentType)
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     with gr.Row():
                         grDrpdwnSortType = gr.Dropdown(
@@ -606,7 +606,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.9.8'
+    ver = 'v1.10.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

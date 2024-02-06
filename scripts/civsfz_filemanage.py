@@ -6,9 +6,10 @@ import urllib.parse
 import shutil
 import json
 import re
+from pathlib import Path
 import platform
 import subprocess as sp
-from modules import shared
+from modules import shared, sd_models
 from colorama import Fore, Back, Style
 from requests.exceptions import ConnectionError
 from tqdm import tqdm
@@ -28,70 +29,7 @@ print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET
 print_n = lambda  x: print("CivBrowser: " + x )
 
 isDownloading = False
-
-def contenttype_folder(content_type):
-    if content_type == "Checkpoint":
-        if cmd_opts.ckpt_dir:
-            folder = cmd_opts.ckpt_dir #"models/Stable-diffusion"
-        else:            
-            folder = os.path.join(models_path,"Stable-diffusion") 
-    elif content_type == "Hypernetwork":
-        folder = cmd_opts.hypernetwork_dir #"models/hypernetworks"
-    elif content_type == "TextualInversion":
-        folder = cmd_opts.embeddings_dir #"embeddings"
-    elif content_type == "AestheticGradient":
-        folder = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
-    elif content_type == "LORA":
-        folder = cmd_opts.lora_dir #"models/Lora"
-    elif content_type == "LoCon":
-        if "lyco_dir" in cmd_opts:
-            folder = f"{cmd_opts.lyco_dir}"
-        elif "lyco_dir_backcompat" in cmd_opts: #A1111 V1.5.1
-            folder = f"{cmd_opts.lyco_dir_backcompat}"
-        else:
-            folder = os.path.join(models_path,"LyCORIS")
-    elif content_type == "VAE":
-        if cmd_opts.vae_dir:
-            folder = cmd_opts.vae_dir #"models/VAE"
-        else:
-            folder = os.path.join(models_path,"VAE")
-    elif content_type == "Controlnet":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "ControlNet")
-        else:            
-            folder = os.path.join(models_path,"ControlNet")
-    elif content_type == "Poses":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Poses")
-        else:            
-            folder = os.path.join(models_path,"OtherModels/Poses")
-    elif content_type == "Upscaler":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Upscaler")
-        else:            
-            folder = os.path.join(models_path,"OtherModels/Upscaler")
-    elif content_type == "MotionModule":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/MotionModule")
-        else:            
-            folder = os.path.join(models_path,"OtherModels/MotionModule")
-    elif content_type == "Wildcards":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Wildcards")
-        else:            
-            folder = os.path.join(models_path,"OtherModels/Wildcards")
-    elif content_type == "Workflows":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Workflows")
-        else:            
-            folder = os.path.join(models_path,"OtherModels/Workflows")
-    elif content_type == "Other":
-        if cmd_opts.ckpt_dir:
-            folder = os.path.join(os.path.join(cmd_opts.ckpt_dir, os.pardir), "OtherModels/Other")
-        else:            
-            folder = os.path.join(models_path,"OtherModels/Other")
-    
-    return folder
+ckpt_dir = shared.cmd_opts.ckpt_dir or sd_models.model_path
 
 def escaped_modelpath(folder, model_name):
     escapechars = str.maketrans({   " ": r"_",
@@ -113,23 +51,85 @@ def escaped_modelpath(folder, model_name):
                                 })
     return os.path.join(folder, model_name.translate(escapechars))
 
+def type_folder(type:str):
+    try:
+        dictFolder = json.loads(opts.civsfz_save_type_folders)
+    except json.JSONDecodeError as e:
+        print(e)
+        print_ly('Failed to decode JSON. Check Settings.')
+        dictFolder = {}
+        
+    if type == "Checkpoint":
+        base = ckpt_dir
+        folder = ckpt_dir
+    elif type == "Hypernetwork":
+        base = cmd_opts.hypernetwork_dir
+        folder = base
+    elif type == "TextualInversion":
+        base = cmd_opts.embeddings_dir
+        folder = base
+    elif type == "AestheticGradient":
+        base = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+        folder = base
+    elif type == "LORA":
+        base = cmd_opts.lora_dir  # "models/Lora"
+        folder = base
+    elif type == "LoCon":
+        if "lyco_dir" in cmd_opts:
+            base = f"{cmd_opts.lyco_dir}"
+        elif "lyco_dir_backcompat" in cmd_opts:  # A1111 V1.5.1
+            base = f"{cmd_opts.lyco_dir_backcompat}"
+        else:
+            base = os.path.join(models_path, "LyCORIS")
+        folder = base
+    elif type == "VAE":
+        if cmd_opts.vae_dir:
+            base = cmd_opts.vae_dir  # "models/VAE"
+        else:
+            base = os.path.join(models_path, "VAE")
+        folder = base
+    elif type == "Controlnet":
+        base = models_path
+        folder = os.path.join(models_path, "ControlNet")
+    elif type == "Poses":
+        base = models_path
+        folder = os.path.join(models_path, "OtherModels/Poses")
+    elif type == "Upscaler":
+        base = models_path
+        folder = os.path.join(models_path, "OtherModels/Upscaler")
+    elif type == "MotionModule":
+        base = models_path
+        folder = os.path.join(models_path, "OtherModels/MotionModule")
+    elif type == "Wildcards":
+        base = models_path
+        folder = os.path.join(models_path, "OtherModels/Wildcards")
+    elif type == "Workflows":
+        base = models_path
+        folder = os.path.join(models_path, "OtherModels/Workflows")
+    elif type == "Other":
+        base = models_path
+        folder = os.path.join(models_path, "OtherModels/Other")
+
+    optFolder = dictFolder.get(type, "")
+    if optFolder == "":
+        pType = Path(folder)
+    else:
+        pType = Path(base) / Path(optFolder)
+    return str(pType)
+
+
+def model_folder(content_type, model_name: str = "", base_model: str = "", nsfw: bool = False):
+    typeFolder = type_folder(content_type)
+    return typeFolder
+
 def extranetwork_folder(content_type, model_name:str = "",base_model:str="", nsfw:bool=False):
-    folder = contenttype_folder(content_type)
-#    if use_new_folder:
-        #model_folder = os.path.join(new_folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
-#        model_folder = escaped_modelpath(new_folder, model_name)
-#        if not os.path.exists(new_folder):
-#            if make_dir: os.makedirs(new_folder)
-#        if not os.path.exists(model_folder):
-#            if make_dir: os.makedirs(model_folder)
-#    else:
-        #model_folder = os.path.join(folder,model_name.replace(" ","_").replace("(","").replace(")","").replace("|","").replace(":","-").replace(",","_").replace("\\",""))
+    folder = model_folder(content_type)
     if not 'SD 1' in base_model:
         folder = os.path.join(folder, '_' + base_model.replace(' ','_').replace('.','_'))
     if nsfw:
         folder = os.path.join(folder, '.nsfw')
-    model_folder = escaped_modelpath(folder, model_name)
-    return model_folder
+    modelFolder = escaped_modelpath(folder, model_name)
+    return modelFolder
 
 def save_text_file(folder, filename, trained_words):
     makedirs(folder)

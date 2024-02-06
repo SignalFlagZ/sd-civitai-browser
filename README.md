@@ -23,6 +23,9 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Support ***API Key***
 
 ## Versions
+### v1.10
+- Add save folder setting
+  - Specify path for each model type in JSON string
 ### v1.9
 - Search for multiple model types at the same time
 - Show model type on a card

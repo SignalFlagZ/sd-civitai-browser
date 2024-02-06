@@ -126,5 +126,29 @@ def on_ui_settings():
             section=section,
         )
     )
-
+    shared.opts.add_option(
+        key='civsfz_save_type_folders',
+        info=shared.OptionInfo(
+            '{\n\
+    "Checkpoint": "",\n\
+    "VAE": "",\n\
+    "TextualInversion": "",\n\
+    "LORA": "",\n\
+    "LoCon": "",\n\
+    "Hypernetwork": "",\n\
+    "AestheticGradient": "",\n\
+    "Controlnet": "ControlNet",\n\
+    "Upscaler": "OtherModels/Upscaler",\n\
+    "MotionModule": "OtherModels/MotionModule",\n\
+    "Poses": "OtherModels/Poses",\n\
+    "Wildcards": "OtherModels/Wildcards",\n\
+    "Workflows": "OtherModels/Workflows",\n\
+    "Other": "OtherModels/Other"\n\
+}',
+            label='Save folders for Types. JSON string. The path is relative path from the base folder of each type or absolute path. Folder delimiter is "/".',
+            component=gr.Textbox,
+            component_args={'lines': 4},
+            section=section,
+        )
+    )
 script_callbacks.on_ui_settings(on_ui_settings)

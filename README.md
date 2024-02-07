@@ -24,7 +24,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.10
-- Add save folder setting
+- Add save folder setting \([How to set it up](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki#how-to-set-save-folders-by-type-v1100-and-above)\)
   - Specify path for each model type in JSON string
 ### v1.9
 - Search for multiple model types at the same time

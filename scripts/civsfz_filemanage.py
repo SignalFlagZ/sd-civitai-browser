@@ -368,6 +368,11 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0'
             }
+        if int(early_access) > 0:
+            print_lc("Early Access model")
+            if len(api_key) == 32:
+                headers.update({"Authorization": f"Bearer {api_key}"})
+                print_lc("Apply API key")
         mode = "wb" #Open file mode
         if os.path.exists(file_name):
             yield "Overwrite?"
@@ -427,8 +432,9 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
                         break
                     else:
                         if int(early_access) > 0:
-                            print_ly("Early Access")
-                            yield "Early Access"
+                            print_ly(
+                                "Download canceled. Early Access!")
+                            yield "Early Access!"
                             exitGenerator=True
                             return
                         else:

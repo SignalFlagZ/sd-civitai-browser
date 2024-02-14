@@ -296,10 +296,6 @@ class components():
                             gr.Textbox.update(value=None),\
                             gr.Textbox.update(value=None), \
                             gr.Textbox.update(value=None)
-            def update_DownloadButoon(grTxtEarlyAccess):
-                return gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
-                    gr.Textbox.update(
-                        value="" if grTxtEarlyAccess == "0" else f"Early Access:{grTxtEarlyAccess}")
             grRadioVersions.change(
                 fn=update_model_info,
                 inputs=[
@@ -313,17 +309,7 @@ class components():
                     grTxtSaveFolder,
                     grTxtEarlyAccess
                 ]
-                ).then(
-                fn=update_DownloadButoon,
-                inputs=[
-                    grTxtEarlyAccess
-                ],
-                outputs=[
-                    grBtnDownloadModel,
-                    grTextProgress
-                ]
-
-                    )
+                )
             
             def save_folder_changed(folder, filename):
                 self.civitai.setSaveFolder(folder)
@@ -349,6 +335,9 @@ class components():
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Textbox.update(value="")
+            def update_DownloadButoon(grTxtEarlyAccess):
+                return  gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
+                        gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"Early Access:{grTxtEarlyAccess}")
             grDrpdwnFilenames.change(
                 fn=updateDlUrl,
                 inputs=[grDrpdwnFilenames],
@@ -361,7 +350,17 @@ class components():
                     grBtnCancel,
                     grTextProgress
                     ]
-                )   
+            ).then(
+                fn=update_DownloadButoon,
+                inputs=[
+                    grTxtEarlyAccess
+                ],
+                outputs=[
+                    grBtnDownloadModel,
+                    grTextProgress
+                ]
+
+            )
             
             def file_exist_check(grTxtSaveFolder, grDrpdwnFilenames):
                 isExist = isExistFile(grTxtSaveFolder, grDrpdwnFilenames)            

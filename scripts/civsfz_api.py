@@ -266,10 +266,10 @@ class civitaimodels:
         return self.versionIndex
     def getSelectedVersionName(self):
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['name']
-    def getSelectedVersionBaeModel(self):
+    def getSelectedVersionBaseModel(self):
         #print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
-    def getSelectedEarlyAccessTimeFrame(self):
+    def getSelectedVersionEarlyAccessTimeFrame(self):
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessTimeFrame']
     def setModelVersionInfo(self, modelInfo:str):
         self.modelVersionInfo = modelInfo

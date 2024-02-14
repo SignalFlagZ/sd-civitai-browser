@@ -100,7 +100,7 @@ class components():
             with gr.Row():
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
-                grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
+                grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=True)
                 grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
                 grTxtApiKey = gr.Textbox(
                     label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
@@ -275,7 +275,7 @@ class components():
                 if model_version is not None and self.civitai.selectVersionByName(model_version) is not None:
                     path = generate_model_save_path(self.civitai.getSelectedModelType(),
                                                 self.civitai.getSelectedModelName(),
-                                                self.civitai.getSelectedVersionBaeModel(),
+                                                self.civitai.getSelectedVersionBaseModel(),
                                                 self.civitai.treatAsNsfw() #isNsfwModel()
                                             )
                     dict = self.civitai.makeModelInfo()
@@ -288,7 +288,7 @@ class components():
                             drpdwn,\
                             gr.Textbox.update(value=dict['baseModel']),\
                             gr.Textbox.update(value=path),\
-                            gr.Textbox.update(value=self.civitai.getSelectedEarlyAccessTimeFrame())
+                            gr.Textbox.update(value=self.civitai.getSelectedVersionEarlyAccessTimeFrame())
                 else:
                     return  gr.HTML.update(value=None),\
                             gr.Textbox.update(value=None),\

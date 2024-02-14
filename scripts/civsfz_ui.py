@@ -64,11 +64,11 @@ class components():
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
                 with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-element"):
                     with gr.Column(scale=4):
-                        grBtnGetListAPI = gr.Button(label="Get List", value="Get List")
+                        grBtnGetListAPI = gr.Button(label="Get cards", value="GET cards")
                     with gr.Column(scale=2,min_width=80):
-                        grBtnPrevPage = gr.Button(value="Prev. Page", interactive=False)
+                        grBtnPrevPage = gr.Button(value="PREV", interactive=False)
                     with gr.Column(scale=2,min_width=80):
-                        grBtnNextPage = gr.Button(value="Next Page", interactive=False)
+                        grBtnNextPage = gr.Button(value="NEXT", interactive=False)
                     with gr.Column(scale=1,min_width=80):
                         grTxtPages = gr.Textbox(label='Pages',show_label=False)
                 with gr.Row():
@@ -80,7 +80,7 @@ class components():
                     with gr.Column(scale=3):
                         grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
                     with gr.Column(scale=1,min_width=80):
-                        grBtnGoPage = gr.Button(value="Jump page", interactive=False, scale=1)
+                        grBtnGoPage = gr.Button(value="JUMP", interactive=False, scale=1)
 
             with gr.Row(elem_id=f'civsfz_model-data{self.id}'):
                 with gr.Column(scale=1):
@@ -100,7 +100,7 @@ class components():
             with gr.Row():
                 grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                 grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
-                grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=True)
+                grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
                 grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
                 grTxtApiKey = gr.Textbox(
                     label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
@@ -605,7 +605,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.10.0'
+    ver = 'v1.10.1'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

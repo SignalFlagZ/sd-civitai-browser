@@ -468,12 +468,25 @@ class civitaimodels:
                 baseModelColor = "civsfz-bgcolor-SDXL"
             else:
                 baseModelColor = "civsfz-bgcolor-base"
+            
+            ea = item["modelVersions"][0]['earlyAccessTimeFrame']
+            strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
+            dtPub = datetime.datetime.fromisoformat(strPub)
+            dtNow = datetime.datetime.now(datetime.timezone.utc)
+            dtDiff = dtNow - dtPub
+            strEaBlock = ""
+            if ea > 0:
+                if ea <= int(dtDiff.days):
+                    strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
+                else:
+                    strEaBlock = f'<div class="civsfz-early-access-in">EA</div>'
                 
             HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             + imgtag \
                             + f'<figcaption>{item["name"]}</figcaption>' \
                             + f'<div class="civsfz-modeltype">{item["type"]}</div>' \
                             + f'<div class="civsfz-basemodel {baseModelColor}">{base_model}</div>' \
+                            + strEaBlock \
                             + '</figure>'
         HTML = HTML + '</div>'
         return HTML

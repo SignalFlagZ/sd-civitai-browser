@@ -27,11 +27,13 @@
 
 .civsfz-modelcard {
 	position: relative;
+	overflow: hidden;
 }
 
 .civsfz-modelcard:hover {
 	transform: scale(var(--civsfz-hover-scale), var(--civsfz-hover-scale));
 	position: relative;
+	overflow: visible;
 	/* need for z-index */
 	z-index: var(--layer-5);
 	box-shadow: 0 0 4px 6px var(--civsfz-default-shadow-color);
@@ -114,7 +116,7 @@
 	background-color: var(--civsfz-early-access-out-background-color);
 }
 .civsfz-modelcard:hover .civsfz-early-access-out {
-	bottom: -1.5em;
+	right: -1em;
 }
 .civsfz-modelcard .civsfz-early-access-in {
 	position: absolute;
@@ -125,7 +127,7 @@
 	background-color: var(--civsfz-early-access-in-background-color);
 }
 .civsfz-modelcard:hover .civsfz-early-access-in {
-	bottom: -1.5em;
+	right: -1em;
 }
 
 .civsfz-nsfw img {

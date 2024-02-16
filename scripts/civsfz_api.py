@@ -1,5 +1,6 @@
 import os
 import datetime
+from dateutil import tz
 from html import escape
 import json
 import urllib.parse
@@ -280,19 +281,49 @@ class civitaimodels:
         item = self.jsonData['items'][self.modelIndex]
         version_dict = item['modelVersions'][self.versionIndex]
         return version_dict
+
     def makeModelInfo2(self, versionName:str) -> dict:
         '''not yet'''
         modelInfo = {}
         if self.modelIndex is None:
             print_ly(f'Select item first. {self.modelID}')
-        else:
-            for index, item in enumerate(self.jsonData['items']):
-                if int(item['id']) == self.modelID:
-                    modelInfo = self.jsonData['items'][index]
-                for version in item['modelVersions']:
-                    if version['name'] == versionName:
-                        modelInfo['modelVersion'] = version
+            return modelInfo
+        if self.versionIndex is None:
+            print_ly(f'Select version first. {self.modelID}')
+            return modelInfo
+
+        for index, item in enumerate(self.jsonData['items']):
+            if int(item['id']) == self.modelID:
+                modelInfo = self.jsonData['items'][index]
+            for version in item['modelVersions']:
+                if version['name'] == versionName:
+                    modelInfo['modelVersion'] = version
         return modelInfo
+
+    def getCreatedDatetime(self) -> datetime.datetime :
+        item = self.jsonData['items'][self.modelIndex]
+        version_dict = item['modelVersions'][self.versionIndex]
+        strCreatedAt = version_dict['createdAt'].replace('Z', '+00:00') # < Python 3.11
+        dtCreatedAt = datetime.datetime.fromisoformat(strCreatedAt)
+        #print_lc(f'{dtCreatedAt} {dtCreatedAt.tzinfo}')
+        return dtCreatedAt
+    def getUpdatedDatetime(self) -> datetime.datetime:
+        item = self.jsonData['items'][self.modelIndex]
+        version_dict = item['modelVersions'][self.versionIndex]
+        strUpdatedAt = version_dict['updatedAt'].replace(
+            'Z', '+00:00')  # < Python 3.11
+        dtUpdatedAt = datetime.datetime.fromisoformat(strUpdatedAt)
+        #print_lc(f'{dtUpdatedAt} {dtUpdatedAt.tzinfo}')
+        return dtUpdatedAt
+    def getPublishedDatetime(self) -> datetime.datetime:
+        item = self.jsonData['items'][self.modelIndex]
+        version_dict = item['modelVersions'][self.versionIndex]
+        strPublishedAt = version_dict['publishedAt'].replace(
+            'Z', '+00:00')  # < Python 3.11
+        dtPublishedAt = datetime.datetime.fromisoformat(strPublishedAt)
+        #print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
+        return dtPublishedAt
+
     def makeModelInfo(self) -> dict:
         modelInfo = {
             'description':"",
@@ -315,6 +346,9 @@ class civitaimodels:
         modelInfo['allow']['allowDifferentLicense'] = item['allowDifferentLicense']
         modelInfo['version_name'] = version['name']
         modelInfo['modelId'] = version['modelId']
+        modelInfo['createdAt'] = version['createdAt']
+        modelInfo['updatedAt'] = version['updatedAt']
+        modelInfo['publishedAt'] = version['publishedAt']
         modelInfo['trainedWords'] = ", ".join(version['trainedWords'])
         modelInfo['baseModel'] = version['baseModel']
         modelInfo['versionDescription'] = version['description']
@@ -519,6 +553,9 @@ class civitaimodels:
             f'<div><b>Civitai link</b> (if exist): '\
             f'<a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">'\
             f'https://civitai.com/models/{str(modelInfo["id"])}</a><br/>'\
+            f'<b>Created</b>: {escape(self.getCreatedDatetime().astimezone(tz.tzlocal()).replace(microsecond=0).isoformat())}<br/>'\
+            f'<b>Published</b>: {escape(self.getPublishedDatetime().astimezone(tz.tzlocal()).replace(microsecond=0).isoformat())}<br/>'\
+            f'<b>Updated</b>: {escape(self.getUpdatedDatetime().astimezone(tz.tzlocal()).replace(microsecond=0).isoformat())}<br/>'\
             f'<b>Type</b>: {escape(str(modelInfo["type"]))}<br/>'\
             f'<b>Version</b>: {escape(str(modelInfo["version_name"]))}<br/>'\
             f'<b>Uploaded by</b>: {escape(str(modelInfo["creator"]))}<br/>'\

@@ -1,4 +1,5 @@
 import gradio as gr
+import datetime
 from modules import script_callbacks
 from colorama import Fore, Back, Style
 import itertools
@@ -336,8 +337,17 @@ class components():
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Textbox.update(value="")
             def update_DownloadButoon(grTxtEarlyAccess):
+                msg = ""
+                if grTxtEarlyAccess != "":
+                    dtPub = self.civitai.getPublishedDatetime()
+                    dtNow = datetime.datetime.now(datetime.timezone.utc)
+                    dtDiff = dtNow - dtPub
+                    if int(grTxtEarlyAccess) <= int(dtDiff.days):
+                        msg = f" - {dtDiff.days} days passed"
+                    else:
+                        msg = f" - only {dtDiff.days} days passed"
                 return  gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
-                        gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"Early Access:{grTxtEarlyAccess}")
+                        gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"Early Access:{grTxtEarlyAccess}{msg} ")
             grDrpdwnFilenames.change(
                 fn=updateDlUrl,
                 inputs=[grDrpdwnFilenames],
@@ -605,7 +615,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.10.1'
+    ver = 'v1.10.2'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

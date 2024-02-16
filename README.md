@@ -24,6 +24,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.10
+- Show elapsed days on Early Access models
+- Add model creation date/time, publication date/time, update date/time in HTML
 - Add save folder setting \([How to set it up](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki#how-to-set-save-folders-by-type-v1100-and-above)\)
   - Specify path for each model type in JSON string
 ### v1.9

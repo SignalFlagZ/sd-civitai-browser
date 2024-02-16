@@ -77,6 +77,7 @@
 	position: absolute;
 	bottom: 5px;
 	left: 5px;
+	right: 5px;
 	word-break: break-word;
 	background-color: var(--civsfz-figcaption-background-color);
 	/*transition: bottom .3s ease-out;*/

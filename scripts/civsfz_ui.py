@@ -343,11 +343,11 @@ class components():
                     dtNow = datetime.datetime.now(datetime.timezone.utc)
                     dtDiff = dtNow - dtPub
                     if int(grTxtEarlyAccess) <= int(dtDiff.days):
-                        msg = f" - {dtDiff.days} days passed"
+                        msg = f"Early Access: expired {dtDiff.days}/{grTxtEarlyAccess}"
                     else:
-                        msg = f" - only {dtDiff.days} days passed"
+                        msg = f"Early Access: {dtDiff.days}/{grTxtEarlyAccess}"
                 return  gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
-                        gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"Early Access:{grTxtEarlyAccess}{msg} ")
+                        gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"{msg} ")
             grDrpdwnFilenames.change(
                 fn=updateDlUrl,
                 inputs=[grDrpdwnFilenames],

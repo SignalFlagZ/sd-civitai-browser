@@ -430,6 +430,7 @@ class civitaimodels:
             nsfw = ""
             alreadyhave = ""
             baseModelColor = ""
+            strEaBlock = ""
             ID = item['id']
             imgtag = f'<img src="./file=html/card-no-preview.png"/>'
             if any(item['modelVersions']):
@@ -460,26 +461,26 @@ class civitaimodels:
                     if path_file.exists():
                         alreadyhave = "civsfz-modelcardalreadyhave"
                         break
-            if "SD 1" in base_model:
-                baseModelColor = "civsfz-bgcolor-SD1"
-            elif "SD 2" in base_model:
-                baseModelColor = "civsfz-bgcolor-SD2"
-            elif "SDXL" in base_model:
-                baseModelColor = "civsfz-bgcolor-SDXL"
-            else:
-                baseModelColor = "civsfz-bgcolor-base"
-            
-            ea = item["modelVersions"][0]['earlyAccessTimeFrame']
-            strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
-            dtPub = datetime.datetime.fromisoformat(strPub)
-            dtNow = datetime.datetime.now(datetime.timezone.utc)
-            dtDiff = dtNow - dtPub
-            strEaBlock = ""
-            if ea > 0:
-                if ea <= int(dtDiff.days):
-                    strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
+                if "SD 1" in base_model:
+                    baseModelColor = "civsfz-bgcolor-SD1"
+                elif "SD 2" in base_model:
+                    baseModelColor = "civsfz-bgcolor-SD2"
+                elif "SDXL" in base_model:
+                    baseModelColor = "civsfz-bgcolor-SDXL"
                 else:
-                    strEaBlock = f'<div class="civsfz-early-access-in">EA</div>'
+                    baseModelColor = "civsfz-bgcolor-base"
+                
+                ea = item["modelVersions"][0]['earlyAccessTimeFrame']
+                strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
+                dtPub = datetime.datetime.fromisoformat(strPub)
+                dtNow = datetime.datetime.now(datetime.timezone.utc)
+                dtDiff = dtNow - dtPub
+
+                if ea > 0:
+                    if ea <= int(dtDiff.days):
+                        strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
+                    else:
+                        strEaBlock = f'<div class="civsfz-early-access-in">EA</div>'
                 
             HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             + imgtag \

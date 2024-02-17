@@ -429,6 +429,7 @@ class civitaimodels:
             #model_name = escape(item["name"].replace("'","\\'"),quote=True)
             nsfw = ""
             alreadyhave = ""
+            base_model = ""
             baseModelColor = ""
             strEaBlock = ""
             ID = item['id']
@@ -471,12 +472,11 @@ class civitaimodels:
                     baseModelColor = "civsfz-bgcolor-base"
                 
                 ea = item["modelVersions"][0]['earlyAccessTimeFrame']
-                strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
-                dtPub = datetime.datetime.fromisoformat(strPub)
-                dtNow = datetime.datetime.now(datetime.timezone.utc)
-                dtDiff = dtNow - dtPub
-
                 if ea > 0:
+                    strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
+                    dtPub = datetime.datetime.fromisoformat(strPub)
+                    dtNow = datetime.datetime.now(datetime.timezone.utc)
+                    dtDiff = dtNow - dtPub
                     if ea <= int(dtDiff.days):
                         strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
                     else:

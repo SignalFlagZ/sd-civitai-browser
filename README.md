@@ -24,6 +24,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.10
+- Cut file name length to 254 characters
 - Show Early Access on card
   - The background color changes during and outside the period
 - Show elapsed days on Early Access models

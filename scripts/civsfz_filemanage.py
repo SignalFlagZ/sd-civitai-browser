@@ -33,6 +33,7 @@ ckpt_dir = shared.cmd_opts.ckpt_dir or sd_models.model_path
 pre_opt_folder = None
 
 def escaped_filename(model_name):
+    MAX_LENGTH = 254
     escapechars = str.maketrans({   " ": r"_",
                                     "(": r"",
                                     ")": r"",
@@ -50,7 +51,13 @@ def escaped_filename(model_name):
                                     "\\": r"",
                                     "/": r"/" if opts.civsfz_treat_slash_as_folder_separator else r"_"
                                 })
-    return model_name.translate(escapechars)
+    new_name = model_name.translate(escapechars)
+    if len(new_name) > MAX_LENGTH:
+        new_name = re.sub('_+', '_', new_name)
+        if len(new_name) > MAX_LENGTH:
+            new_name = new_name[0:MAX_LENGTH-1]
+
+    return new_name
 
 def type_path(type: str) -> Path:
     global pre_opt_folder, ckpt_dir

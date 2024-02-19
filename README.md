@@ -21,6 +21,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - ***Automatically*** set save folder, or specify it directly
 - Card ***size and colors*** can be changed in Settings
 - Support ***API Key***
+- Show the ***Early Access*** period of models
 
 ## Versions
 ### v1.10

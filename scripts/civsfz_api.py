@@ -470,6 +470,8 @@ class civitaimodels:
                     baseModelColor = "civsfz-bgcolor-SD2"
                 elif "SDXL" in base_model:
                     baseModelColor = "civsfz-bgcolor-SDXL"
+                elif "Pony" in base_model:
+                    baseModelColor = "civsfz-bgcolor-SDXL"
                 else:
                     baseModelColor = "civsfz-bgcolor-base"
                 

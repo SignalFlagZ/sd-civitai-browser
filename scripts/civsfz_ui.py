@@ -1,5 +1,5 @@
 import gradio as gr
-import datetime
+from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from colorama import Fore, Back, Style
 import itertools
@@ -12,6 +12,7 @@ except ImportError:
     # SD.Next
     from modules.shared import cmd_opts
 import re
+import math
 import scripts as scripts
 from scripts.civsfz_api import civitaimodels
 from scripts.civsfz_filemanage import open_folder
@@ -340,12 +341,18 @@ class components():
                 msg = ""
                 if grTxtEarlyAccess != "":
                     dtPub = self.civitai.getPublishedDatetime()
-                    dtNow = datetime.datetime.now(datetime.timezone.utc)
-                    dtDiff = dtNow - dtPub
-                    if int(grTxtEarlyAccess) <= int(dtDiff.days):
-                        msg = f"Early Access: expired {dtDiff.days}/{grTxtEarlyAccess}"
+                    dtNow = datetime.now(timezone.utc)
+                    dtEndat = dtPub + timedelta(days=int(grTxtEarlyAccess))
+                    tdDiff = dtNow - dtEndat
+                    # print_lc(f'{tdDiff=}')
+                    if tdDiff / timedelta(days=1) >= 0:
+                        msg = f"Early Access: expired" # {dtDiff.days}/{grTxtEarlyAccess}
+                    elif tdDiff / timedelta(hours=1) >= -1:
+                        msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(minutes=1)))} minutes left"
+                    elif tdDiff / timedelta(hours=1) >= -24:
+                        msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(hours=1)))} hours left"
                     else:
-                        msg = f"Early Access: {dtDiff.days}/{grTxtEarlyAccess}"
+                        msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(days=1)))} days left"
                 return  gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
                         gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"{msg} ")
             grDrpdwnFilenames.change(

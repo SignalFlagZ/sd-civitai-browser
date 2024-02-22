@@ -101,6 +101,7 @@ class civitaimodels:
             "SDXL 1.0 LCM",
             "SDXL Distilled",
             "SDXL Turbo",
+            "SDXL Lightning",
             "Stable Cascade",
             "SVD",
             "SVD XT",

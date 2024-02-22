@@ -24,6 +24,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v1.11
+- Get search choices from Civitai after launch and keep them up to date
 ### v1.10
 - Cut file name length to 254 characters
 - Show Early Access on card

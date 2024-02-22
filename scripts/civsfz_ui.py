@@ -54,7 +54,8 @@ class components():
                     with gr.Row():
                         grDrpdwnSortType = gr.Dropdown(
                             label='Sort List by:', choices=self.civitai.getSortOptions(), value="Newest", type="value")
-                        grDrpdwnPeriod = gr.Dropdown(label='Period', choices=["AllTime", "Year", "Month", "Week", "Day"], value=defaultPeriod, type="value")
+                        grDrpdwnPeriod = gr.Dropdown(label='Period', choices=self.civitai.getPeriodOptions(
+                        ), value=defaultPeriod, type="value")
                 with gr.Column(scale=1, max_width=100, min_width=100):
                     grDrpdwnBasemodels = gr.Dropdown(label="Base Models (experimental)", choices=self.civitai.getBasemodelOptions(
                     ), value=None, type="value", multiselect=True)
@@ -622,7 +623,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.10.2'
+    ver = 'v1.11.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

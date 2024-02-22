@@ -14,9 +14,15 @@ print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RES
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_n = lambda  x: print("CivBrowser: " + x )
 
+typeOptions = None
+sortOptions = None
+basemodelOptions = None
+periodOptions = None
+
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str, json_data:dict=None, content_type:str=None):
+        global typeOptions
         self.jsonData = json_data
         #self.contentType = content_type
         self.showNsfw = False
@@ -26,6 +32,9 @@ class civitaimodels:
         self.modelVersionInfo = None
         self.requestError = None
         self.saveFolder = None
+        if typeOptions is None:
+            self.getOptions()
+
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
@@ -58,57 +67,16 @@ class civitaimodels:
     def getSaveFolder(self):
         return self.saveFolder
     def getTypeOptions(self) -> list:
-        return [
-            "Checkpoint",
-            "TextualInversion",
-            "LORA",
-            "LoCon",
-            "Hypernetwork",
-            "AestheticGradient",
-            "Controlnet",
-            "Upscaler",
-            "MotionModule",
-            "VAE",
-            "Poses",
-            "Wildcards",
-            "Workflows",
-            "Other"
-        ]
+        #global typeOptions, sortOptions, basemodelOptions
+        return typeOptions
     def getSortOptions(self) -> list:
-        return [
-            "Highest Rated",
-            "Most Downloaded",
-            "Most Liked",
-            "Most Buzz",
-            "Most Discussed",
-            "Most Collected",
-            "Most Images",
-            "Newest"
-        ]
+        #global typeOptions, sortOptions, basemodelOptions
+        return sortOptions
     def getBasemodelOptions(self) -> list:
-        return [
-            "SD 1.4",
-            "SD 1.5",
-            "SD 1.5 LCM",
-            "SD 2.0",
-            "SD 2.0 768",
-            "SD 2.1",
-            "SD 2.1 768",
-            "SD 2.1 Unclip",
-            "SDXL 0.9",
-            "SDXL 1.0",
-            "Pony",
-            "SDXL 1.0 LCM",
-            "SDXL Distilled",
-            "SDXL Turbo",
-            "SDXL Lightning",
-            "Stable Cascade",
-            "SVD",
-            "SVD XT",
-            "Playground v2",
-            "PixArt a",
-            "Other"
-        ]
+        #global typeOptions, sortOptions, basemodelOptions
+        return basemodelOptions
+    def getPeriodOptions(self) -> list:
+        return periodOptions
     
     # Models
     def getModels(self, showNsfw = False) -> list:
@@ -671,7 +639,7 @@ class civitaimodels:
             #print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
             #print(Style.RESET_ALL)
             print_ly(f"Request error: {e}")
-            #print(f"Query: {payload} URL: {response.url}")
+            #print(f"{response=}")
             data = self.jsonData # No update data
             self.requestError = e
         else:
@@ -683,3 +651,130 @@ class civitaimodels:
         #  exit()            
         return data
     
+    def requestApiOptions(self, url=None, query=None):
+        self.requestError = None
+        if url is None:
+            url = self.getBaseUrl()
+        if query is not None:
+            query = urllib.parse.urlencode(
+                query, doseq=True, quote_via=urllib.parse.quote)
+        # print_lc(f'{query=}')
+
+        # Make a GET request to the API
+        try:
+            with requests.Session() as request:
+                response = request.get(url, params=query, timeout=(10, 15))
+                response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            # print(f"{response=}")
+            response.encoding = "utf-8"
+            data = json.loads(response.text)
+        else:
+            data = ""
+        # Check the status code of the response
+        # if response.status_code != 200:
+        #  print("Request failed with status code: {}".format(response.status_code))
+        #  exit()
+        return data
+
+    def getOptions(self):
+        '''Get choices from Civitai'''
+        global typeOptions, sortOptions, basemodelOptions, periodOptions
+        url = self.getBaseUrl()
+        query = { 'types': ""}
+        data = self.requestApiOptions(url, query)
+        try:
+            types = data[0]['unionErrors'][0]['issues'][0]['options']
+        except KeyError:
+            typeOptions = [
+                "Checkpoint",
+                "TextualInversion",
+                "LORA",
+                "LoCon",
+                "Hypernetwork",
+                "AestheticGradient",
+                "Controlnet",
+                "Upscaler",
+                "MotionModule",
+                "VAE",
+                "Poses",
+                "Wildcards",
+                "Workflows",
+                "Other"
+            ]
+        else:
+            print_lc(f'Set types')
+            priorityTypes = [
+                "Checkpoint",
+                "TextualInversion",
+                "LORA",
+                "LoCon"
+            ]
+            dictPriority = {
+                priorityTypes[i]: priorityTypes[i] for i in range(0, len(priorityTypes))}
+            dict_types = dictPriority | {types[i]: types[i]
+                                         for i in range(0, len(types))}
+            typeOptions = [dictPriority.get(
+                key, key) for key, value in dict_types.items()]
+
+        query = {'baseModels': ""}
+        data = self.requestApiOptions(url, query)
+        try:
+            basemodelOptions = data[0]['unionErrors'][0]['issues'][0]['options']
+        except KeyError:
+            basemodelOptions = [
+                "SD 1.4",
+                "SD 1.5",
+                "SD 1.5 LCM",
+                "SD 2.0",
+                "SD 2.0 768",
+                "SD 2.1",
+                "SD 2.1 768",
+                "SD 2.1 Unclip",
+                "SDXL 0.9",
+                "SDXL 1.0",
+                "Pony",
+                "SDXL 1.0 LCM",
+                "SDXL Distilled",
+                "SDXL Turbo",
+                "SDXL Lightning",
+                "Stable Cascade",
+                "SVD",
+                "SVD XT",
+                "Playground v2",
+                "PixArt a",
+                "Other"
+            ]
+        else:
+            print_lc(f'Set base models')
+        query = {'sort': ""}
+        data = self.requestApiOptions(url, query)
+        try:
+            sortOptions = data[0]['options']
+        except KeyError:
+            sortOptions = [
+                "Highest Rated",
+                "Most Downloaded",
+                "Most Liked",
+                "Most Buzz",
+                "Most Discussed",
+                "Most Collected",
+                "Most Images",
+                "Newest"
+            ]
+        else:
+            print_lc(f'Set sorts')
+        query = {'period': ""}
+        data = self.requestApiOptions(url, query)
+        try:
+            sortOptions = data[0]['options']
+        except KeyError:
+            sortOptions = [
+                "Day",
+                "Week",
+                "Month",
+                "Year",
+                "AllTime"
+            ]
+        else:
+            print_lc(f'Set periods')

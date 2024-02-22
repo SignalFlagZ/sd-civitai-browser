@@ -767,9 +767,9 @@ class civitaimodels:
         query = {'period': ""}
         data = self.requestApiOptions(url, query)
         try:
-            sortOptions = data[0]['options']
+            periodOptions = data[0]['options']
         except KeyError:
-            sortOptions = [
+            periodOptions = [
                 "Day",
                 "Week",
                 "Month",

@@ -331,7 +331,7 @@ class civitaimodels:
             modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
         pics = []
         for pic in version['images']:
-            pics.append({ 'id' : pic['id'] if 'id' in pic else None,
+            pics.append({ 'id' : pic['id'] if 'id' in pic else "",
                             'nsfw' : pic['nsfw'],
                             'url': pic["url"],
                             'meta' : pic['meta'],

@@ -650,7 +650,6 @@ class civitaimodels:
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
-            self.requestError = None
         # Check the status code of the response
         #if response.status_code != 200:
         #  print("Request failed with status code: {}".format(response.status_code))

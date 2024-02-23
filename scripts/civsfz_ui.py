@@ -202,7 +202,7 @@ class components():
                             'currentPage': "1",
                             'totalPages': "1",
                             }
-                        }
+                        } if self.civitai.getRequestError() is None else None
                 elif grRadioSearchType == "Version ID":
                     url = f"{self.civitai.getBaseUrl()}-versions/{query}"
                     response = self.civitai.requestApi(url=url)
@@ -212,7 +212,7 @@ class components():
                             'currentPage': "1",
                             'totalPages': "1",
                             }
-                        } if response is not None else None
+                    } if self.civitai.getRequestError() is None else None
                 else:
                     response = self.civitai.requestApi(
                         query=query) 
@@ -644,7 +644,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.11.4'
+    ver = 'v1.11.5'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

@@ -5,6 +5,20 @@ from modules import shared
 def on_ui_settings():
     section = 'Civsfz_Browser', 'CivBrowser'
     shared.opts.add_option(
+        key='civsfz_msg1',
+        info=shared.OptionInfo(
+            "To set the API key, add command line option as `--civsfz-api-key <YOUR_API_KEY>`. "
+            "The settings here are saved in the `settings.json` file. If you do not know this, there is a risk of your API key being leaked. "
+            "That's why I'm making it impossible to set it here. "
+            "When set on the command line, the API key will be displayed on the console screen at startup. "
+            "Please remember this.",
+            label='About API key',
+            component=gr.Markdown,
+            component_args={},
+            section=section,
+        )   # .needs_reload_ui()
+    )
+    shared.opts.add_option(
         key='civsfz_number_of_tabs',
         info=shared.OptionInfo(
             3 ,

@@ -25,6 +25,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.11
+- Add search by model ID
 - Change the default setting so that `/` is not treated as a folder separator.
 - Get search choices from Civitai after launch and keep them up to date
 ### v1.10

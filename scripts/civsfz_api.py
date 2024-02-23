@@ -18,15 +18,15 @@ typeOptions = None
 sortOptions = None
 basemodelOptions = None
 periodOptions = None
-
+searchTypes =["No", "Model name", "User name", "Tag", "Model ID"]
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
-    def __init__(self, url:str, json_data:dict=None, content_type:str=None):
+    def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
         global typeOptions
         self.jsonData = json_data
         #self.contentType = content_type
         self.showNsfw = False
-        self.baseUrl = url
+        self.baseUrl = r"https://civitai.com/api/v1/models" if url is None else url
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None
@@ -77,6 +77,8 @@ class civitaimodels:
         return basemodelOptions
     def getPeriodOptions(self) -> list:
         return periodOptions
+    def getSearchTypes(self) -> list:
+        return searchTypes
     
     # Models
     def getModels(self, showNsfw = False) -> list:
@@ -329,7 +331,7 @@ class civitaimodels:
             modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
         pics = []
         for pic in version['images']:
-            pics.append({ 'id' : pic['id'],
+            pics.append({ 'id' : pic['id'] if 'id' in pic else None,
                             'nsfw' : pic['nsfw'],
                             'url': pic["url"],
                             'meta' : pic['meta'],
@@ -599,19 +601,22 @@ class civitaimodels:
 
     #REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None):
-        query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards }
-        if not period == "AllTime":
-            query |= {'period': period}   
-        if use_search_term != "No" and search_term:
-            #search_term = search_term.replace(" ","%20")
-            if use_search_term == "User name":
-                query |= {'username': search_term }
-            elif use_search_term == "Tag":
-                query |= {'tag': search_term }
-            else:
-                query |= {'query': search_term }
-        if base_models:
-            query |= {'baseModels': base_models }
+        if use_search_term == "Model ID" or use_search_term == "Version ID":
+            query = str.strip(search_term)
+        else:
+            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards }
+            if not period == "AllTime":
+                query |= {'period': period}   
+            if use_search_term != "No" and search_term:
+                #search_term = search_term.replace(" ","%20")
+                if use_search_term == "User name":
+                    query |= {'username': search_term }
+                elif use_search_term == "Tag":
+                    query |= {'tag': search_term }
+                else:
+                    query |= {'query': search_term }
+            if base_models:
+                query |= {'baseModels': base_models }
         return query
 
     def updateQuery(self, url:str , addQuery:dict) -> str:
@@ -645,6 +650,7 @@ class civitaimodels:
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
+            self.requestError = None
         # Check the status code of the response
         #if response.status_code != 200:
         #  print("Request failed with status code: {}".format(response.status_code))

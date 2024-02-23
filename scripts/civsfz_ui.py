@@ -30,7 +30,7 @@ class components():
                 save_text_file, saveImageFiles,download_file2
         #self.tab = tab
         # Set the URL for the API endpoint
-        self.civitai = civitaimodels("https://civitai.com/api/v1/models")
+        self.civitai = civitaimodels()
         self.id = next(components.newid)
         contentTypes = self.civitai.getTypeOptions()
         self.APIKey = ""
@@ -62,7 +62,7 @@ class components():
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
             with gr.Row():
-                grRadioSearchType = gr.Radio(label="Search", choices=["No", "Model name", "User name", "Tag"],value="No")
+                grRadioSearchType = gr.Radio(label="Search", choices=self.civitai.getSearchTypes(),value="No")
                 grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
                 with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-element"):
@@ -193,8 +193,29 @@ class components():
             def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
                 query = self.civitai.makeRequestQuery(
                     grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
-                response = self.civitai.requestApi(
-                    query=query) 
+                if grRadioSearchType == "Model ID":
+                    url = f"{self.civitai.getBaseUrl()}/{query}"
+                    response = self.civitai.requestApi(url=url)
+                    response = {
+                        "items":[response],
+                        'metadata': {
+                            'currentPage': "1",
+                            'totalPages': "1",
+                            }
+                        }
+                elif grRadioSearchType == "Version ID":
+                    url = f"{self.civitai.getBaseUrl()}-versions/{query}"
+                    response = self.civitai.requestApi(url=url)
+                    response = {
+                        "items":[response],
+                        'metadata': {
+                            'currentPage': "1",
+                            'totalPages': "1",
+                            }
+                        } if response is not None else None
+                else:
+                    response = self.civitai.requestApi(
+                        query=query) 
                 err = self.civitai.getRequestError()
                 if err is None:
                     grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
@@ -623,7 +644,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.11.2'
+    ver = 'v1.11.3'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

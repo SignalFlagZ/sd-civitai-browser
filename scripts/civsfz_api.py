@@ -24,7 +24,7 @@ class civitaimodels:
     def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
         global typeOptions
         self.jsonData = json_data
-        #self.contentType = content_type
+        # self.contentType = content_type
         self.showNsfw = False
         self.baseUrl = r"https://civitai.com/api/v1/models" if url is None else url
         self.modelIndex = None
@@ -38,7 +38,7 @@ class civitaimodels:
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
-        #self.contentType = self.contentType if content_type is None else content_type
+        # self.contentType = self.contentType if content_type is None else content_type
         self.showNsfw = False
         self.modelIndex = None
         self.versionIndex = None
@@ -46,9 +46,9 @@ class civitaimodels:
         self.requestError = None
         self.saveFolder = None
     def setBaseUrl(self,url:str):
-           self.url = url
+        self.url = url
     def getBaseUrl(self) -> str:
-            return self.baseUrl
+        return self.baseUrl
     def getJsonData(self) -> dict:
         return self.jsonData
 
@@ -56,9 +56,9 @@ class civitaimodels:
         self.showNsfw = showNsfw
     def isShowNsfw(self) -> bool:
         return self.showNsfw
-    #def setContentType(self, content_type:str):
+    # def setContentType(self, content_type:str):
     #    self.contentType = content_type
-    #def getContentType(self) -> str:
+    # def getContentType(self) -> str:
     #    return self.contentType
     def getRequestError(self) -> requests.exceptions.RequestException:
         return self.requestError
@@ -67,19 +67,19 @@ class civitaimodels:
     def getSaveFolder(self):
         return self.saveFolder
     def getTypeOptions(self) -> list:
-        #global typeOptions, sortOptions, basemodelOptions
+        # global typeOptions, sortOptions, basemodelOptions
         return typeOptions
     def getSortOptions(self) -> list:
-        #global typeOptions, sortOptions, basemodelOptions
+        # global typeOptions, sortOptions, basemodelOptions
         return sortOptions
     def getBasemodelOptions(self) -> list:
-        #global typeOptions, sortOptions, basemodelOptions
+        # global typeOptions, sortOptions, basemodelOptions
         return basemodelOptions
     def getPeriodOptions(self) -> list:
         return periodOptions
     def getSearchTypes(self) -> list:
         return searchTypes
-    
+
     # Models
     def getModels(self, showNsfw = False) -> list:
         '''Return: [(str: Model name, str: index)]'''
@@ -91,19 +91,19 @@ class civitaimodels:
                 model_list.append((item['name'], index))
         return model_list
 
-    #def getModelNames(self) -> dict: #include nsfw models
+    # def getModelNames(self) -> dict: #include nsfw models
     #    model_dict = {}
     #    for item in self.jsonData['items']:
     #        model_dict[item['name']] = item['name']
     #    return model_dict
-    #def getModelNamesSfw(self) -> dict: #sfw models
+    # def getModelNamesSfw(self) -> dict: #sfw models
     #    '''Return SFW items names.'''
     #    model_dict = {}
     #    for item in self.jsonData['items']:
     #        if not item['nsfw']:
     #            model_dict[item['name']] = item['name']
-    #    return model_dict   
-        
+    #    return model_dict
+
     # Model
     def getModelNameByID(self, id:int) -> str:
         name = None
@@ -139,7 +139,7 @@ class civitaimodels:
             for index, item in enumerate(self.jsonData['items']):
                 if item['name'] == name:
                     self.modelIndex = index
-            #print(f'{name} - {self.modelIndex}')
+            # print(f'{name} - {self.modelIndex}')
         return self.modelIndex
     def isNsfwModel(self) -> bool:
         return self.jsonData['items'][self.modelIndex]['nsfw']
@@ -153,10 +153,10 @@ class civitaimodels:
             try:
                 picNsfw = self.jsonData['items'][modelIndex]['modelVersions'][versionIndex]['images'][0]['nsfw']
             except Exception as e:
-                #print_ly(f'{e}')
+                # print_ly(f'{e}')
                 pass
             else:
-                #print_lc(f'{picNsfw}')
+                # print_lc(f'{picNsfw}')
                 if picNsfw == 'X':
                     ret = True
         return ret
@@ -222,7 +222,7 @@ class civitaimodels:
         item = self.jsonData['items'][self.modelIndex]
         for index, model in enumerate(item['modelVersions']):
             if int(model['id']) == int(ID):
-                    self.versionIndex = index
+                self.versionIndex = index
         return self.versionIndex
     def selectVersionByName(self, name:str) -> int:
         '''Select model version by name. Select model first.
@@ -236,12 +236,12 @@ class civitaimodels:
             item = self.jsonData['items'][self.modelIndex]
             for index, model in enumerate(item['modelVersions']):
                 if model['name'] == name:
-                        self.versionIndex = index
+                    self.versionIndex = index
         return self.versionIndex
     def getSelectedVersionName(self):
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['name']
     def getSelectedVersionBaseModel(self):
-        #print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
+        # print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
     def getSelectedVersionEarlyAccessTimeFrame(self):
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessTimeFrame']
@@ -278,7 +278,7 @@ class civitaimodels:
         version_dict = item['modelVersions'][self.versionIndex]
         strCreatedAt = version_dict['createdAt'].replace('Z', '+00:00') # < Python 3.11
         dtCreatedAt = datetime.datetime.fromisoformat(strCreatedAt)
-        #print_lc(f'{dtCreatedAt} {dtCreatedAt.tzinfo}')
+        # print_lc(f'{dtCreatedAt} {dtCreatedAt.tzinfo}')
         return dtCreatedAt
     def getUpdatedDatetime(self) -> datetime.datetime:
         item = self.jsonData['items'][self.modelIndex]
@@ -286,7 +286,7 @@ class civitaimodels:
         strUpdatedAt = version_dict['updatedAt'].replace(
             'Z', '+00:00')  # < Python 3.11
         dtUpdatedAt = datetime.datetime.fromisoformat(strUpdatedAt)
-        #print_lc(f'{dtUpdatedAt} {dtUpdatedAt.tzinfo}')
+        # print_lc(f'{dtUpdatedAt} {dtUpdatedAt.tzinfo}')
         return dtUpdatedAt
     def getPublishedDatetime(self) -> datetime.datetime:
         item = self.jsonData['items'][self.modelIndex]
@@ -294,7 +294,7 @@ class civitaimodels:
         strPublishedAt = version_dict['publishedAt'].replace(
             'Z', '+00:00')  # < Python 3.11
         dtPublishedAt = datetime.datetime.fromisoformat(strPublishedAt)
-        #print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
+        # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
         return dtPublishedAt
 
     def makeModelInfo(self) -> dict:
@@ -326,17 +326,27 @@ class civitaimodels:
         modelInfo['baseModel'] = version['baseModel']
         modelInfo['versionDescription'] = version['description']
         modelInfo['files'] = version['files']
-        #print_lc(f'{modelInfo["files"]=}')
+        # print_lc(f'{modelInfo["files"]=}')
         for index,file in enumerate(modelInfo['files']):
             modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
         pics = []
         for pic in version['images']:
-            pics.append({ 'id' : pic['id'] if 'id' in pic else "",
-                            'nsfw' : pic['nsfw'],
-                            'url': pic["url"],
-                            'meta' : pic['meta'],
-                            'type' : pic['type'],
-                            })
+            pics.append(
+                {
+                    "id": pic["id"] if "id" in pic else "",
+                    "nsfw": pic["nsfw"],
+                    "url": pic["url"],
+                    "meta": (
+                        pic["meta"]
+                        if "meta" in pic
+                        else {
+                            "meta": "Missing from API response.",
+                            "warning": "Saving model info is not recommended."
+                        }
+                    ),
+                    "type": pic["type"],
+                }
+            )
         modelInfo['images'] = pics
         modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else None
         modelInfo['html'] = self.modelInfoHtml(modelInfo)
@@ -346,12 +356,12 @@ class civitaimodels:
 
     def getUrlByName(self, model_filename=None):
         if self.modelIndex is None:
-            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select model first. {model_filename}' + Style.RESET_ALL )
+            # print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select model first. {model_filename}' + Style.RESET_ALL )
             return
         if self.versionIndex is None:
-            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select version first. {model_filename}' + Style.RESET_ALL )
+            # print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select version first. {model_filename}' + Style.RESET_ALL )
             return
-        #print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
+        # print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
         item = self.jsonData['items'][self.modelIndex]
         version = item['modelVersions'][self.versionIndex]
         dl_url = None
@@ -361,21 +371,20 @@ class civitaimodels:
         return dl_url
     def getHashByName(self, model_filename=None):
         if self.modelIndex is None:
-            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select model first. {model_filename}' + Style.RESET_ALL )
+            # print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select model first. {model_filename}' + Style.RESET_ALL )
             return
         if self.versionIndex is None:
-            #print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select version first. {model_filename}' + Style.RESET_ALL )
+            # print(Fore.LIGHTYELLOW_EX + f'getUrlByName: Select version first. {model_filename}' + Style.RESET_ALL )
             return
-        #print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
+        # print(Fore.LIGHTYELLOW_EX + f'File name . {model_filename}' + Style.RESET_ALL )
         item = self.jsonData['items'][self.modelIndex]
         version = item['modelVersions'][self.versionIndex]
         sha256 = ""
         for file in version['files']:
-            #print_lc(f'{file["hashes"]=}')
+            # print_lc(f'{file["hashes"]=}')
             if file['name'] == model_filename and 'SHA256' in file['hashes']:
                 sha256 = file['hashes']['SHA256']
         return sha256
-
 
     # Pages
     def getCurrentPage(self) -> str:
@@ -395,11 +404,11 @@ class civitaimodels:
         '''Generate HTML of model cards.'''
         HTML = f'<!-- {datetime.datetime.now()} -->' # for trigger event
         HTML += '<div class="column civsfz-modellist">'
-        #print_ly(f"{models=}")
+        # print_ly(f"{models=}")
         for model in models:
             index = model[1]
             item = self.jsonData['items'][model[1]]
-            #model_name = escape(item["name"].replace("'","\\'"),quote=True)
+            # model_name = escape(item["name"].replace("'","\\'"),quote=True)
             nsfw = ""
             alreadyhave = ""
             base_model = ""
@@ -410,7 +419,7 @@ class civitaimodels:
             if any(item['modelVersions']):
                 if len(item['modelVersions'][0]['images']) > 0:
                     for img in item['modelVersions'][0]['images']:
-                        #print(f'{img["type"]}')
+                        # print(f'{img["type"]}')
                         if img['type'] == "image":
                             if img['nsfw'] != "None" and not self.isShowNsfw():
                                 nsfw = 'civsfz-cardnsfw'
@@ -431,7 +440,7 @@ class civitaimodels:
                     folder = generate_model_save_path(self.getModelTypeByIndex(
                         index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
                     path_file = folder / Path(file_name)
-                    #print(f"{path_file}")
+                    # print(f"{path_file}")
                     if path_file.exists():
                         alreadyhave = "civsfz-modelcardalreadyhave"
                         break
@@ -445,7 +454,7 @@ class civitaimodels:
                     baseModelColor = "civsfz-bgcolor-SDXL"
                 else:
                     baseModelColor = "civsfz-bgcolor-base"
-                
+
                 ea = item["modelVersions"][0]['earlyAccessTimeFrame']
                 if ea > 0:
                     strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
@@ -456,7 +465,7 @@ class civitaimodels:
                         strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
                     else:
                         strEaBlock = f'<div class="civsfz-early-access-in">EA</div>'
-                
+
             HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
                             + imgtag \
                             + f'<figcaption>{item["name"]}</figcaption>' \
@@ -468,7 +477,7 @@ class civitaimodels:
         return HTML
 
     def meta2html(self, meta:dict) -> str:
-        #convert key name as infotext
+        # convert key name as infotext
         renameKey = {
             'prompt':'Prompt',
             'negativePrompt': 'Negative prompt',
@@ -516,7 +525,7 @@ class civitaimodels:
                 img_html += '</div>'
             img_html += '</div>'
         img_html += '</div>'
-        #function:copy to clipboard
+        # function:copy to clipboard
         output_html = '<script>'\
             'function civsfz_copyInnerText(node) {'\
             'if (node.nextSibling != null) {'\
@@ -565,7 +574,7 @@ class civitaimodels:
                         f'<p>Clicking on the image sends infotext to txt2img. If local, copy to clipboard</p>'\
                         f'{img_html}</div>'
         return output_html
-    
+
     def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
         chrCheck = '✅'
         chrCross = '❌'
@@ -599,7 +608,7 @@ class civitaimodels:
             html += html2 + html1
         return html
 
-    #REST API
+    # REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None):
         if use_search_term == "Model ID" or use_search_term == "Version ID":
             query = str.strip(search_term)
@@ -608,7 +617,7 @@ class civitaimodels:
             if not period == "AllTime":
                 query |= {'period': period}   
             if use_search_term != "No" and search_term:
-                #search_term = search_term.replace(" ","%20")
+                # search_term = search_term.replace(" ","%20")
                 if use_search_term == "User name":
                     query |= {'username': search_term }
                 elif use_search_term == "Tag":
@@ -633,7 +642,7 @@ class civitaimodels:
             url = self.getBaseUrl()
         if query is not None:
             query = urllib.parse.urlencode(query, doseq=True, quote_via=urllib.parse.quote)
-        #print_lc(f'{query=}')
+        # print_lc(f'{query=}')
 
         # Make a GET request to the API
         try:
@@ -641,21 +650,21 @@ class civitaimodels:
                 response = request.get( url, params=query, timeout=(10,15))
                 response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            #print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
-            #print(Style.RESET_ALL)
+            # print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
+            # print(Style.RESET_ALL)
             print_ly(f"Request error: {e}")
-            #print(f"{response=}")
+            # print(f"{response=}")
             data = self.jsonData # No update data
             self.requestError = e
         else:
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
         # Check the status code of the response
-        #if response.status_code != 200:
+        # if response.status_code != 200:
         #  print("Request failed with status code: {}".format(response.status_code))
-        #  exit()            
+        #  exit()
         return data
-    
+
     def requestApiOptions(self, url=None, query=None):
         self.requestError = None
         if url is None:

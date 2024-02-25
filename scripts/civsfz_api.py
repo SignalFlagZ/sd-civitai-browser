@@ -14,6 +14,9 @@ print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RES
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_n = lambda  x: print("CivBrowser: " + x )
 
+baseUrl = "https://civitai.com"
+modelsApi = "/api/v1/models"
+imagesApi = "/api/v1/images"
 typeOptions = None
 sortOptions = None
 basemodelOptions = None
@@ -26,7 +29,7 @@ class civitaimodels:
         self.jsonData = json_data
         # self.contentType = content_type
         self.showNsfw = False
-        self.baseUrl = r"https://civitai.com/api/v1/models" if url is None else url
+        self.baseUrl = baseUrl if url is None else url
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None
@@ -49,6 +52,10 @@ class civitaimodels:
         self.url = url
     def getBaseUrl(self) -> str:
         return self.baseUrl
+    def getModelsApiUrl(self):
+        return self.baseUrl + modelsApi
+    def getImagesApiUrl(self):
+        return self.baseUrl + imagesApi
     def getJsonData(self) -> dict:
         return self.jsonData
 
@@ -306,6 +313,9 @@ class civitaimodels:
         }
         item = self.jsonData['items'][self.modelIndex]
         version = item['modelVersions'][self.versionIndex]
+
+        imagesData = self.requestImages(item['id'])
+        # print_lc(f'{imagesData=}')
         modelInfo['id'] = item['id']
         modelInfo['model_name'] = item['name']
         modelInfo['type'] = item['type']
@@ -330,7 +340,15 @@ class civitaimodels:
         for index,file in enumerate(modelInfo['files']):
             modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
         pics = []
-        for pic in version['images']:
+
+        for index,pic in enumerate(version["images"]):
+            if imagesData is None:
+                meta = {
+                    "meta": "Missing from API response.",
+                    "warning": "Saving model info is not recommended."
+                    }
+            else:
+                meta = imagesData["items"][index]['meta']
             pics.append(
                 {
                     "id": pic["id"] if "id" in pic else "",
@@ -339,10 +357,7 @@ class civitaimodels:
                     "meta": (
                         pic["meta"]
                         if "meta" in pic
-                        else {
-                            "meta": "Missing from API response.",
-                            "warning": "Saving model info is not recommended."
-                        }
+                        else meta
                     ),
                     "type": pic["type"],
                 }
@@ -500,7 +515,7 @@ class civitaimodels:
         return html.rstrip(', ')
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
-        '''Generate HTML of model info'''
+        '''Generate HTML of model info'''    
         img_html = '<div class="sampleimgs">'
         for pic in modelInfo['images']:
             nsfw = ""
@@ -639,7 +654,7 @@ class civitaimodels:
     def requestApi(self, url=None, query=None):
         self.requestError = None
         if url is None:
-            url = self.getBaseUrl()
+            url = self.getModelsApiUrl()
         if query is not None:
             query = urllib.parse.urlencode(query, doseq=True, quote_via=urllib.parse.quote)
         # print_lc(f'{query=}')
@@ -665,10 +680,16 @@ class civitaimodels:
         #  exit()
         return data
 
+    def requestImages(self, modelId=None):
+        if modelId == None:
+            return None
+        params = {'modelId': modelId}
+        return self.requestApi(self.getImagesApiUrl(), params)
+
     def requestApiOptions(self, url=None, query=None):
         self.requestError = None
         if url is None:
-            url = self.getBaseUrl()
+            url = self.getModelsApiUrl()
         if query is not None:
             query = urllib.parse.urlencode(
                 query, doseq=True, quote_via=urllib.parse.quote)
@@ -694,7 +715,7 @@ class civitaimodels:
     def getOptions(self):
         '''Get choices from Civitai'''
         global typeOptions, sortOptions, basemodelOptions, periodOptions
-        url = self.getBaseUrl()
+        url = self.getModelsApiUrl()
         query = { 'types': ""}
         data = self.requestApiOptions(url, query)
         try:

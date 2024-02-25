@@ -339,15 +339,25 @@ class civitaimodels:
             modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
 
         pics = []
-        imagesData = None # self.requestImages(item["id"])
+        imagesData = self.requestImagesByVersionId(version["id"], len(version['images']) + 10)
+        # print_lc(f'{version["id"]=}')
         for index,pic in enumerate(version["images"]):
+            imageId = int(Path(urllib.parse.unquote(
+                urllib.parse.urlparse(pic["url"]).path.split("/")[-1]
+            )).stem)
+            # print_lc(f"{imageId=}")
             if imagesData is None:
                 meta = {
                     "meta": "Missing meta info from API response.",
                     "warning": "In v1.12.0, inofotext of a different image was displayed, so it was hidden.",
                 }
             else:
-                meta = imagesData["items"][index]['meta']
+                meta = {}
+                for pic2 in imagesData["items"]:
+                    # print_lc(f"{pic2['id']=}")
+                    if pic2["id"] == imageId:
+                        meta = pic2["meta"]
+                        break
             pics.append(
                 {
                     "id": pic["id"] if "id" in pic else "",
@@ -679,10 +689,13 @@ class civitaimodels:
         #  exit()
         return data
 
-    def requestImages(self, modelId=None):
-        if modelId == None:
+    def requestImagesByVersionId(self, versionId=None, limit=None):
+        if versionId == None:
             return None
-        params = {'modelId': modelId}
+        params = {"modelVersionId": versionId,
+                  "sort": "Oldest"}
+        if limit is not None:
+            params |= {"limit": limit}
         return self.requestApi(self.getImagesApiUrl(), params)
 
     def requestApiOptions(self, url=None, query=None):

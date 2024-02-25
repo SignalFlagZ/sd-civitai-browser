@@ -313,8 +313,6 @@ class civitaimodels:
         }
         item = self.jsonData['items'][self.modelIndex]
         version = item['modelVersions'][self.versionIndex]
-
-        imagesData = self.requestImages(item['id'])
         # print_lc(f'{imagesData=}')
         modelInfo['id'] = item['id']
         modelInfo['model_name'] = item['name']
@@ -339,14 +337,15 @@ class civitaimodels:
         # print_lc(f'{modelInfo["files"]=}')
         for index,file in enumerate(modelInfo['files']):
             modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
-        pics = []
 
+        pics = []
+        imagesData = None # self.requestImages(item["id"])
         for index,pic in enumerate(version["images"]):
             if imagesData is None:
                 meta = {
-                    "meta": "Missing from API response.",
-                    "warning": "Saving model info is not recommended."
-                    }
+                    "meta": "Missing meta info from API response.",
+                    "warning": "In v1.12.0, inofotext of a different image was displayed, so it was hidden.",
+                }
             else:
                 meta = imagesData["items"][index]['meta']
             pics.append(

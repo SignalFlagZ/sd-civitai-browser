@@ -26,6 +26,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ## Versions
 ### v1.12
 - The meta key was missing from the API response, so retrieve it from the images API (Experimental)
+  - Hide the infotext because it was displaying infotext different from the image (v1.12.1)
 ### v1.11
 - Add search by model ID
 - Change the default setting so that `/` is not treated as a folder separator.

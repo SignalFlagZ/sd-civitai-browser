@@ -340,34 +340,25 @@ class civitaimodels:
 
         pics = []
         imagesData = self.requestImagesByVersionId(version["id"], len(version['images']) + 10)
-        # print_lc(f'{version["id"]=}')
+        metas = {str(img["id"]):img["meta"] for img in imagesData["items"]}
+        # print_lc(f'{metas=}')
         for index,pic in enumerate(version["images"]):
-            imageId = int(Path(urllib.parse.unquote(
+            imageId = str(Path(urllib.parse.unquote(
                 urllib.parse.urlparse(pic["url"]).path.split("/")[-1]
             )).stem)
             # print_lc(f"{imageId=}")
             if imagesData is None:
-                meta = {
+                metas = { imageId: {
                     "meta": "Missing meta info from API response.",
-                    "warning": "In v1.12.0, inofotext of a different image was displayed, so it was hidden.",
+                    "warning": "In v1.12.0, inofotext of a different image was displayed, so it was hidden."
+                    }
                 }
-            else:
-                meta = {}
-                for pic2 in imagesData["items"]:
-                    # print_lc(f"{pic2['id']=}")
-                    if pic2["id"] == imageId:
-                        meta = pic2["meta"]
-                        break
             pics.append(
                 {
-                    "id": pic["id"] if "id" in pic else "",
+                    "id": pic["id"] if "id" in pic else imageId,
                     "nsfw": pic["nsfw"],
                     "url": pic["url"],
-                    "meta": (
-                        pic["meta"]
-                        if "meta" in pic
-                        else meta
-                    ),
+                    "meta": metas[imageId] if imageId in metas else {},
                     "type": pic["type"],
                 }
             )

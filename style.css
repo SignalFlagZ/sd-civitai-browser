@@ -111,24 +111,26 @@
 
 .civsfz-modelcard .civsfz-early-access-out {
 	position: absolute;
-	bottom: 0px;
-	right: 0px;
+	top: 1.4em;
+	right: 0em;
 	font-size: smaller;
 	background-color: var(--civsfz-early-access-out-background-color);
 }
 .civsfz-modelcard:hover .civsfz-early-access-out {
-	right: -1em;
+	top: -1.5em;
+	right: -1.2em;
 }
 .civsfz-modelcard .civsfz-early-access-in {
 	position: absolute;
-	bottom: 0px;
-	right: 0px;
+	top: 1.4em;
+	right: 0em;
 	word-break: break-word;
 	font-size: smaller;
 	background-color: var(--civsfz-early-access-in-background-color);
 }
 .civsfz-modelcard:hover .civsfz-early-access-in {
-	right: -1em;
+	top: -1.5em;
+	right: -1.2em;
 }
 
 .civsfz-nsfw img {

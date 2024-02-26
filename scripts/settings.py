@@ -141,27 +141,15 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
-        key='civsfz_save_type_folders',
+        key="civsfz_save_type_folders",
         info=shared.OptionInfo(
-            '',
-            label='Save folders for Types. JSON string. The path is relative path from the base folder of each type or absolute path. Folder separator is "/".',
+            "",
+            label='Save folders for Types. Set JSON Key-Value pair. The key is the type and the value is the path. The path is relative path from the base folder of each type or absolute path. Folder separator is "/".',
             component=gr.Textbox,
-            component_args={'lines': 4, 'info': 'Example: {\n\
-    "Checkpoint": "",\n\
-    "VAE": "",\n\
-    "TextualInversion": "",\n\
-    "LORA": "",\n\
-    "LoCon": "",\n\
-    "Hypernetwork": "",\n\
-    "AestheticGradient": "",\n\
-    "Controlnet": "ControlNet",\n\
-    "Upscaler": "OtherModels/Upscaler",\n\
-    "MotionModule": "OtherModels/MotionModule",\n\
-    "Poses": "OtherModels/Poses",\n\
-    "Wildcards": "OtherModels/Wildcards",\n\
-    "Workflows": "OtherModels/Workflows",\n\
-    "Other": "OtherModels/Other"\n\
-}', 'placeholder': '{\n\
+            component_args={
+                "lines": 4,
+                "info": 'Example: { "LoCon": "../Lora/LyCORIS" }',
+                "placeholder": '{\n\
     "Checkpoint": "MY_SUBFOLDER",\n\
     "VAE": "",\n\
     "TextualInversion": "",\n\
@@ -176,8 +164,9 @@ def on_ui_settings():
     "Wildcards": "OtherModels/Wildcards",\n\
     "Workflows": "OtherModels/Workflows",\n\
     "Other": "OtherModels/Other"\n\
-}'},
+}',
+            },
             section=section,
-        )
+        ),
     )
 script_callbacks.on_ui_settings(on_ui_settings)

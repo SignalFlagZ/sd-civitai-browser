@@ -178,7 +178,7 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     basename = os.path.splitext(versionName)[0] # remove extension
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    preview_url = versionInfo['images'][0]['url']
+    preview_url = versionInfo["modelVersions"][0]["images"][0]["url"]
     preview_url = urllib.parse.quote(preview_url,  safe=':/=')
     if 'images' in versionInfo:
         for img in versionInfo['images']:
@@ -191,11 +191,11 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     HTML = html
     for i, img_url in enumerate(img_urls):
         isVideo = False
-        for img in versionInfo['images']:
+        for img in versionInfo["modelVersions"][0]["images"]:
             if img['url'] == img_url:
                 if img['type'] == 'video':
                     isVideo = True
-        #print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
+        # print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
         if isVideo:
             if content_type == "TextualInversion":
                 filename = f'{basename}_{i}.preview.webm'
@@ -222,11 +222,11 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
                         if img_url == preview_url:
                             shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
                         print_n(f"Save {filename}")
-                #with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
+                # with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
             except urllib.error.URLError as e:
                 print_ly(f'Error: {e.reason}')
                 print_ly(f'URL: {img_url}')
-                #return "Err: Save infos"
+                # return "Err: Save infos"
             except urllib.error.HTTPError as err:
                 print_ly(f'Error: {e.reason}')
                 print_ly(f'URL: {img_url}')
@@ -234,14 +234,14 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     with open(filepath, 'wb') as f:
         f.write(HTML.encode('utf8'))
         print_n(f"Save {basename}.html")
-    #Save json_info
-    filepath = os.path.join(folder, f'{basename}.civitai.info')
+    # Save json_info
+    filepath = os.path.join(folder, f'{basename}.civitai.json')
     with open(filepath, mode="w", encoding="utf-8") as f:
         json.dump(versionInfo, f, indent=2, ensure_ascii=False)
-        print_n(f"Save {basename}.civitai.info")
+        print_n(f"Save {basename}.civitai.json")
     return "Save infos"
 
-#def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
+# def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
 def download_file_thread(folder, filename,  url):
     global isDownloading
     if isDownloading:
@@ -332,7 +332,7 @@ def download_file(url, file_name):
         else:
             print_ly(f"Error: File download failed. Retrying... {file_name_display}")
 
-#def download_file(url, file_name):
+# def download_file(url, file_name):
 #    # Download the file and save it to a local file
 #    response = requests.get(url, stream=True)
 #

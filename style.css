@@ -200,3 +200,7 @@
 	max-width: 8em;
 	min-width: 8em !important;
 }
+
+.civsfz-modelBasicInfo td {
+	min-width: 7em;
+}

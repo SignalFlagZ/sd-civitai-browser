@@ -24,6 +24,10 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v1.13
+- Change info file format
+- Change info file extension to json
+- Change design of model information
 ### v1.12
 - Check the match between image and infotext using image ID
 - The meta key was missing from the API response, so retrieve it from the images API (Experimental)

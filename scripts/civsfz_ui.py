@@ -302,17 +302,26 @@ class components():
                                                 self.civitai.getSelectedVersionBaseModel(),
                                                 self.civitai.treatAsNsfw() #isNsfwModel()
                                             )
-                    dict = self.civitai.makeModelInfo()
-                    if dict['files'] == []:
+                    dict = self.civitai.makeModelInfo2()
+                    if dict['modelVersions'][0]["files"] == []:
                         drpdwn =  gr.Dropdown.update(choices=[], value="")
                     else:
-                        drpdwn =  gr.Dropdown.update(choices=[f['name'] for f in dict['files']], value=dict['files'][0]['name'])  
-                    return  gr.HTML.update(value=dict['html']),\
-                            gr.Textbox.update(value=dict['trainedWords']),\
-                            drpdwn,\
-                            gr.Textbox.update(value=dict['baseModel']),\
-                            gr.Textbox.update(value=path),\
-                            gr.Textbox.update(value=self.civitai.getSelectedVersionEarlyAccessTimeFrame())
+                        drpdwn = gr.Dropdown.update(
+                            choices=[
+                                f["name"] for f in dict["modelVersions"][0]["files"]
+                            ],
+                            value=dict["modelVersions"][0]["files"][0]["name"],
+                        )
+                    return (
+                        gr.HTML.update(value=dict["html"]),
+                        gr.Textbox.update(value=", ".join(dict["trainedWords"])),
+                        drpdwn,
+                        gr.Textbox.update(value=dict["baseModel"]),
+                        gr.Textbox.update(value=path),
+                        gr.Textbox.update(
+                            value=self.civitai.getSelectedVersionEarlyAccessTimeFrame()
+                        ),
+                    )
                 else:
                     return  gr.HTML.update(value=None),\
                             gr.Textbox.update(value=None),\
@@ -359,7 +368,8 @@ class components():
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Textbox.update(value="")
-            def update_DownloadButoon(grTxtEarlyAccess):
+
+            def checkEarlyAccess(grTxtEarlyAccess):
                 msg = ""
                 if grTxtEarlyAccess != "":
                     dtPub = self.civitai.getPublishedDatetime()
@@ -375,8 +385,8 @@ class components():
                         msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(hours=1)))} hours left"
                     else:
                         msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(days=1)))} days left"
-                return  gr.Button.update(interactive=True if grTxtEarlyAccess == "0" else True),\
-                        gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"{msg} ")
+                return gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"{msg} ")
+
             grDrpdwnFilenames.change(
                 fn=updateDlUrl,
                 inputs=[grDrpdwnFilenames],
@@ -390,15 +400,13 @@ class components():
                     grTextProgress
                     ]
             ).then(
-                fn=update_DownloadButoon,
+                fn=checkEarlyAccess,
                 inputs=[
                     grTxtEarlyAccess
                 ],
                 outputs=[
-                    grBtnDownloadModel,
                     grTextProgress
                 ]
-
             )
 
             def file_exist_check(grTxtSaveFolder, grDrpdwnFilenames):
@@ -644,7 +652,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.12.2'
+    ver = 'v1.13.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

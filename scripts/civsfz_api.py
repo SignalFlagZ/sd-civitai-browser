@@ -213,18 +213,24 @@ class civitaimodels:
                 permissions['allowDerivatives'] = allowDerivatives
                 permissions['allowDifferentLicense'] = allowDifferentLicense
         return permissions
-    def getModelVersionsList(self):
+    def getModelVersionsList(self) -> list:
         '''Return modelVersions list. Select item before.'''
-        versionNames = {}
+        versionNames = []
         if self.modelIndex is None:
             print_ly('Select item first.')
         else:
             item = self.jsonData['items'][self.modelIndex]
-            for version in item['modelVersions']:
-                versionNames[version['name']] = version["name"]
+            versionNames = [ (version['name'],i) for i,version in enumerate(item['modelVersions'])]
+                #versionNames[version['name']] = version["name"]
         return versionNames
 
     # Version
+    def selectVersionByIndex(self, index:int) -> int:
+        numVersions = len(self.jsonData['items'][self.modelIndex]['modelVersions'])
+        index = 0 if index < 0 else index
+        index = numVersions -1 if index > numVersions-1 else index
+        self.versionIndex = index
+        return self.versionIndex
     def selectVersionByID(self, ID:int) -> int:
         item = self.jsonData['items'][self.modelIndex]
         for index, model in enumerate(item['modelVersions']):

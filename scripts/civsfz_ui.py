@@ -296,7 +296,7 @@ class components():
             # )
 
             def  update_model_info(model_version=None):
-                if model_version is not None and self.civitai.selectVersionByName(model_version) is not None:
+                if model_version is not None and self.civitai.selectVersionByIndex(model_version) is not None:
                     path = generate_model_save_path(self.civitai.getSelectedModelType(),
                                                 self.civitai.getSelectedModelName(),
                                                 self.civitai.getSelectedVersionBaseModel(),
@@ -541,11 +541,11 @@ class components():
                 if model_ID is not None:
                     self.civitai.selectModelByID(model_ID)
                     if self.civitai.getSelectedModelIndex() is not None:
-                        dict = self.civitai.getModelVersionsList()
-                        self.civitai.selectVersionByName(next(iter(dict.keys()), None))
+                        list = self.civitai.getModelVersionsList()
+                        self.civitai.selectVersionByIndex(0)
                         # print(Fore.LIGHTYELLOW_EX + f'{dict=}' + Style.RESET_ALL)
                     # return gr.Dropdown.update(choices=[k for k, v in dict.items()], value=f'{next(iter(dict.keys()), None)}')
-                    return gr.Radio.update(choices=list(dict), value=f'{next(iter(dict.keys()), None)}')
+                    return gr.Radio.update(choices=list, value=0)
                 else:
                     return gr.Radio.update(choices=[],value = None)
             def eventTextUpdated(grTxtJsEvent):
@@ -652,7 +652,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.13.0'
+    ver = 'v1.13.1'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

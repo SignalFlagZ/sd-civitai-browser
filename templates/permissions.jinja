@@ -1,0 +1,28 @@
+{# Permissions #}
+<div>
+    {% set chrCheck = '✅' %}
+    {% set chrCross = '❌' %}
+	<div>
+		<p><strong>Check the source license yourself.</strong></p>
+        <p>This model permits users to:<br/>
+	        {% if allowNoCredit %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Use the model without crediting the creator<br/>
+        	{% if canSellImages %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Sell images they generate<br/>
+			{% if canRent %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Run on services that generate images for money<br />
+			{% if canRentCivit %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Run on Civitai<br />
+			{% if allowDerivatives %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Share merges using this model<br />
+			{% if canSell %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Sell this model or merges using this model<br />
+			{% if allowDifferentLicense %} {{ chrCheck }} {% else %} {{ chrCross }} {% endif %} : Have different permissions when sharing merges model<br />
+        </p>
+	</div>
+	<div>
+		<p><span style=color:crimson>
+			{% if not allowNoCredit %} Creator credit required<br/> {% endif %}
+			{% if not canSellImages %} No selling images<br/> {% endif %}
+			{% if not canRentCivit %} No Civitai generation<br/> {% endif %}
+			{% if not canRent %} No generation services<br/> {% endif %}
+			{% if not canSell %} No selling models<br /> {% endif %}
+			{% if not allowDerivatives %} No sharing merges<br /> {% endif %}
+			{% if not allowDifferentLicense %} Same permissions required<br /> {% endif %}
+		</span></p>
+	</div>
+</div>

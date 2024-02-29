@@ -9,6 +9,7 @@ import requests
 from colorama import Fore, Back, Style
 from scripts.civsfz_filemanage import generate_model_save_path
 from modules.shared import opts
+from jinja2 import Environment, FileSystemLoader
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -545,16 +546,12 @@ class civitaimodels:
             'clipSkip': 'Clip skip'
                 }
         infotext = {renameKey.get(key, key): value for key, value in meta.items()}
-        html = ""
-        if 'Prompt' in infotext:
-            html += f'{escape(str(infotext["Prompt"]))}<br/>'
-            del infotext["Prompt"]
-        if 'Negative prompt' in infotext:
-            html += f'<var style="font-weight:bold;">{escape(str("Negative prompt"))}</var>: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
-            del infotext["Negative prompt"]
-        for key, value in infotext.items():
-            html += f'<var style="font-weight:bold;">{escape(str(key))}</var>: {escape(str(value))}, '
-        return html.rstrip(', ')
+        templatesPath = Path.joinpath(
+            Path(__file__).parent, Path("../templates"))
+        environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+        template = environment.get_template("infotext.jinja")
+        content = template.render({'infotext': infotext})
+        return content
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
         '''Generate HTML of model info'''    
@@ -661,37 +658,12 @@ class civitaimodels:
         return output_html
 
     def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
-        chrCheck = '✅'
-        chrCross = '❌'
-        html1 = '<div>'\
-                '<p>This model permits users to:</br>'\
-                f'{chrCheck if premissions["allowNoCredit"] else chrCross} : Use the model without crediting the creator<br/>'\
-                f'{chrCheck if premissions["canSellImages"] else chrCross} : Sell images they generate<br/>'\
-                f'{chrCheck if premissions["canRent"] else chrCross} : Run on services that generate images for money<br/>'\
-                f'{chrCheck if premissions["canRentCivit"] else chrCross} : Run on Civitai<br/>'\
-                f'{chrCheck if premissions["allowDerivatives"] else chrCross} : Share merges using this model<br/>'\
-                f'{chrCheck if premissions["canSell"] else chrCross} : Sell this model or merges using this model<br/>'\
-                f'{chrCheck if premissions["allowDifferentLicense"] else chrCross} : Have different permissions when sharing merges</p>'\
-                '</p></div>'
-        html2 = '<div>'\
-                '<p><span style=color:crimson>'
-        html2 += 'Creator credit required</br>' if not premissions["allowNoCredit"] else ''
-        html2 += 'No selling images</br>' if not premissions["canSellImages"] else ''
-        html2 += 'No Civitai generation</br>' if not premissions["canRentCivit"] else ''
-        html2 += 'No generation services</br>' if not premissions["canRent"] else ''
-        html2 += 'No selling models</br>' if not premissions["canSell"] else ''
-        html2 += 'No sharing merges</br>' if not premissions["allowDerivatives"] else ''
-        html2 += 'Same permissions required' if not premissions["allowDifferentLicense"] else ''
-        html2 += '</span></p></div>'
-
-        html = f'<p><strong>Check the source license yourself.</strong></p>'
-        if msgType == 1:
-            html += html1
-        elif msgType == 2:
-            html += html2
-        else:
-            html += html2 + html1
-        return html
+        templatesPath = Path.joinpath(
+            Path(__file__).parent, Path("../templates"))
+        environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+        template = environment.get_template("permissions.jinja")
+        content = template.render(premissions)
+        return content
 
     # REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None):

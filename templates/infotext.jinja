@@ -1,0 +1,12 @@
+{# meta to infotext #}
+<div>
+	{{ infotext['Prompt'] }}</br>
+	<var style="font-weight:bold;">Negative prompt</var>: {{ infotext['Negative prompt'] }}</br>
+	</br>
+	{% for key, value in infotext.items()%}
+		{% if not key in ('Prompt','Negative prompt') %}
+			<var style="font-weight:bold;">{{  key  }}</var>: {{value}}
+			{{ ", " if not loop.last else "" }}
+		{% endif %}
+	{% endfor %}
+</div>

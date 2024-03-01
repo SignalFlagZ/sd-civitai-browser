@@ -1,0 +1,44 @@
+
+{{ forTrigger }}
+<div class="column civsfz-modellist">
+{%- for card in cards %}
+	{%- set nsfw = 'civsfz-cardnsfw' if card['isNsfw'] else '' %}
+	{%- if card['have'] == 'new' %}
+		{%- set alreadyhave = 'civsfz-modelcardalreadyhave' %}
+	{%- elif card['have'] == 'old' %}
+		{%- set alreadyhave = 'civsfz-modelcardalreadyhad' %}
+	{%- endif %}	
+	{%- if "SD 1" in card['baseModel'] %}
+		{%- set baseModelColor = 'civsfz-bgcolor-SD1' %}
+	{%- elif "SD 2" in card['baseModel'] %}
+		{%- set baseModelColor = 'civsfz-bgcolor-SD2' %}
+	{%- elif "SDXL" in card['baseModel'] %}
+		{%- set baseModelColor = 'civsfz-bgcolor-SDXL' %}
+	{%- elif "PONY" in card['baseModel'] %}
+		{%- set baseModelColor = 'civsfz-bgcolor-SDXL' %}
+	{%- else %}
+		{%- set baseModelColor = 'civsfz-bgcolor-base' %}
+	{%- endif %}
+	<figure class="civsfz-modelcard {{ nsfw }} {{ alreadyhave }}" onclick="civsfz_select_model('Index{{ card['jsId'] }}:{{ card['index'] }}:{{ card['id'] }}')">
+		{%- if card['imgType'] == 'image' %}
+			<img src={{ card['imgsrc'] }}/>
+		{%- elif card['imgType'] == 'video' %}
+			<video loop autoplay muted poster={{ card['imgsrc'] }}>'
+				<source src={{ card['imgsrc'] }} type="video/webm" />'
+				<source src={{ card['imgsrc'] }} type="video/mp4" />'
+				<img src={{ card['imgsrc'] }} type="image/gif" />'
+			</video>
+		{%- else %}
+			<img src="./file=html/card-no-preview.png" />
+		{%- endif %}
+		<figcaption>{{ card['name'] }}</figcaption>
+		<div class="civsfz-modeltype">{{ card['type'] }}</div>
+		<div class="civsfz-basemodel {{ baseModelColor }}">{{ card['baseModel'] }}</div>
+		{%- if card['ea'] == 'in' %}
+			<div class="civsfz-early-access-in">EA</div>
+		{%- elif card['ea'] == 'out' %}
+			<div class="civsfz-early-access-out">EA</div>	
+		{%- endif %}
+	</figure>
+{%- endfor %}
+</div>

@@ -11,6 +11,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - List models as ***card image***
 - Safe display in ***sfw*** search
 - Highlight models ***you have***
+- Highlight models that ***can be updated*** 
 - Searchable by specifying ***Base Models*** (experimental)
 - Show ***Base Model*** on a model card
 - Display/***save*** model information ***in HTML***
@@ -24,6 +25,9 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v1.14
+- Add color frames to cards that can be updated
+- Use jinja template engine
 ### v1.13
 - Fix an issue where API responses changed and permissions could not be displayed correctly. #33
 - Fix an issue where the version could not be selected correctly with multiple versions with the same name.

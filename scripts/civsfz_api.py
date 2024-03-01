@@ -9,6 +9,7 @@ import requests
 from colorama import Fore, Back, Style
 from scripts.civsfz_filemanage import generate_model_save_path
 from modules.shared import opts
+from jinja2 import Environment, FileSystemLoader
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -22,6 +23,11 @@ sortOptions = None
 basemodelOptions = None
 periodOptions = None
 searchTypes =["No", "Model name", "User name", "Tag", "Model ID"]
+
+templatesPath = Path.joinpath(
+    Path(__file__).parent, Path("../templates"))
+environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
@@ -399,7 +405,7 @@ class civitaimodels:
         imagesData = None
         # Request images by model ID
         imagesData = self.requestImagesByVersionId(version["id"], len(version["images"]) + 15)
-        metas = {str(img["id"]): img["meta"] for img in imagesData["items"]}
+        metas = {str(img["id"]): img["meta"] if 'meta' in img else None for img in imagesData["items"]}
         for index, pic in enumerate(version["images"]):
             imageId = str(Path(urllib.parse.unquote(
                 urllib.parse.urlparse(pic["url"]).path.split("/")[-1])).stem
@@ -467,59 +473,47 @@ class civitaimodels:
     # Make model cards html
     def modelCardsHtml(self, models, jsID=0):
         '''Generate HTML of model cards.'''
-        HTML = f'<!-- {datetime.datetime.now()} -->' # for trigger event
-        HTML += '<div class="column civsfz-modellist">'
-        # print_ly(f"{models=}")
+        cards = []
         for model in models:
             index = model[1]
             item = self.jsonData['items'][model[1]]
-            # model_name = escape(item["name"].replace("'","\\'"),quote=True)
-            nsfw = ""
-            alreadyhave = ""
             base_model = ""
-            baseModelColor = ""
-            strEaBlock = ""
-            ID = item['id']
-            imgtag = f'<img src="./file=html/card-no-preview.png"/>'
+            param = {
+                'name':     item['name'],
+                'index':    index,
+                'jsId':     jsID,
+                'id':       item['id'],
+                'isNsfw':   False,
+                'type':     item['type'],
+                'have':     "",
+                'ea':       "",
+                'imgType':  ""
+                }
             if any(item['modelVersions']):
                 if len(item['modelVersions'][0]['images']) > 0:
-                    for img in item['modelVersions'][0]['images']:
-                        # print(f'{img["type"]}')
-                        if img['type'] == "image":
-                            if img['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civsfz-cardnsfw'
-                            imgtag = f'<img src={img["url"]}></img>'
-                            break
-                        elif img['type'] == 'video':
-                            if img['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civsfz-cardnsfw'
-                            imgtag = f'<video loop autoplay muted poster={img["url"]}>'
-                            imgtag += f'<source  src={img["url"]} type="video/webm"/>'
-                            imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
-                            imgtag += f'<img src={img["url"]} type="image/gif"/>'
-                            imgtag += f'</video>'
-                            break
+                    img  = item['modelVersions'][0]['images'][0]
+                    param['imgType'] = img['type']
+                    param['imgsrc'] = img["url"]
+                    if img['nsfw'] != "None" and not self.isShowNsfw():
+                        param['isNsfw'] = True
                 base_model = item["modelVersions"][0]['baseModel']
-                for file in item['modelVersions'][0]['files']:
-                    file_name = file['name']
-                    folder = generate_model_save_path(self.getModelTypeByIndex(
-                        index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
-                    path_file = folder / Path(file_name)
-                    #print_lc(f"{path_file}")
-                    if path_file.exists():
-                        alreadyhave = "civsfz-modelcardalreadyhave"
+                param['baseModel'] = base_model
+                    
+                folder = generate_model_save_path(self.getModelTypeByIndex(
+                    index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
+                for i,ver in enumerate(item['modelVersions']):
+                    for file in ver['files']:
+                        file_name = file['name']
+                        path_file = folder / Path(file_name)
+                        if path_file.exists():
+                            if i == 0:
+                                param['have'] = 'new'
+                                break
+                            else:
+                                param['have'] = 'old'
+                                break
+                    if param['have'] != "":
                         break
-                if "SD 1" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SD1"
-                elif "SD 2" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SD2"
-                elif "SDXL" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SDXL"
-                elif "Pony" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SDXL"
-                else:
-                    baseModelColor = "civsfz-bgcolor-base"
-
                 ea = item["modelVersions"][0]['earlyAccessTimeFrame']
                 if ea > 0:
                     strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
@@ -527,19 +521,15 @@ class civitaimodels:
                     dtNow = datetime.datetime.now(datetime.timezone.utc)
                     dtDiff = dtNow - dtPub
                     if ea <= int(dtDiff.days):
-                        strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
+                        param['ea'] = 'out'
                     else:
-                        strEaBlock = f'<div class="civsfz-early-access-in">EA</div>'
-
-            HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
-                            + imgtag \
-                            + f'<figcaption>{item["name"]}</figcaption>' \
-                            + f'<div class="civsfz-modeltype">{item["type"]}</div>' \
-                            + f'<div class="civsfz-basemodel {baseModelColor}">{base_model}</div>' \
-                            + strEaBlock \
-                            + '</figure>'
-        HTML = HTML + '</div>'
-        return HTML
+                        param['ea'] = 'in'
+            cards.append(param)
+            
+        forTrigger = f'<!-- {datetime.datetime.now()} -->'  # for trigger event
+        template = environment.get_template("cardlist.jinja")
+        content = template.render(forTrigger=forTrigger, cards=cards)
+        return content
 
     def meta2html(self, meta:dict) -> str:
         # convert key name as infotext
@@ -552,44 +542,51 @@ class civitaimodels:
             'cfgScale': 'CFG scale',
             'clipSkip': 'Clip skip'
                 }
-        infotext = {renameKey.get(key, key): value for key, value in meta.items()}
-        html = ""
-        if 'Prompt' in infotext:
-            html += f'{escape(str(infotext["Prompt"]))}<br/>'
-            del infotext["Prompt"]
-        if 'Negative prompt' in infotext:
-            html += f'<var style="font-weight:bold;">{escape(str("Negative prompt"))}</var>: {escape(str(infotext["Negative prompt"]))}<br/><br/>'
-            del infotext["Negative prompt"]
-        for key, value in infotext.items():
-            html += f'<var style="font-weight:bold;">{escape(str(key))}</var>: {escape(str(value))}, '
-        return html.rstrip(', ')
+        infotext = {renameKey.get(key, key): value for key, value in meta.items()} if meta is not None else None
+        template = environment.get_template("infotext.jinja")
+        content = template.render({'infotext': infotext})
+        return content
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
-        '''Generate HTML of model info'''    
-        img_html = '<div class="sampleimgs">'
+        '''Generate HTML of model info'''
+        samples = ""
         for pic in modelInfo["modelVersions"][0]["images"]:
-            nsfw = ""
-            imgStyle ='style="vertical-align: top;width: 35%;height: 30em;object-fit: contain;"'
-            if pic['meta']:
-                infotext = self.meta2html(pic['meta'])
-                imgStyle = 'style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="civsfz_copyInnerText(this);"'
-            if pic['nsfw'] != "None" and not self.showNsfw:
-                nsfw = 'class="civsfz-nsfw"'
-            img_html +=  f'<div {nsfw} style="display:flex;margin-top: 1em">'
-            if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]}  {imgStyle}/>'
-            else:
-                img_html += f'<video loop autoplay muted poster={pic["url"]} {imgStyle}>'
-                img_html += f'<source  src={pic["url"]} type="video/webm"/>'
-                img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
-                img_html += f'<img src={pic["url"]} type="image/gif"/>'
-                img_html += f'</video>'
-            if pic['meta']:
-                img_html += f'<div style="width: 65%;padding-left: 1em;height: 30em;overflow-y: auto;overflow-wrap: anywhere;">'
-                img_html += infotext
-                img_html += '</div>'
-            img_html += '</div>'
-        img_html += '</div>'
+            nsfw = pic['nsfw'] != "None" and not self.showNsfw
+            infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
+            template = environment.get_template("sampleImage.jinja")
+            samples += template.render(
+                pic=pic,
+                nsfw=nsfw,
+                infotext=infotext
+                )
+
+        created = self.getCreatedDatetime().astimezone(
+            tz.tzlocal()).replace(microsecond=0).isoformat()
+        published = self.getPublishedDatetime().astimezone(
+            tz.tzlocal()).replace(microsecond=0).isoformat()
+        updated = self.getUpdatedDatetime().astimezone(
+            tz.tzlocal()).replace(microsecond=0).isoformat()
+        template = environment.get_template("modelbasicinfo.jinja")
+        basicInfo = template.render(
+            modelInfo=modelInfo, created=created, published=published, updated=updated)
+        
+        permissions = self.permissionsHtml(self.allows2permissions())
+        js = ('<script>''function civsfz_copyInnerText(node) {'
+            'if (node.nextSibling != null) {'
+              'return navigator.clipboard.writeText(node.nextElementSibling.innerText).then('
+			'function () {'
+				'alert("Copied infotext");'
+			'}).catch('
+			    'function (error) {'
+				'alert((error && error.message) || "Failed to copy infotext");'
+			'})} }'
+            '</script>')
+        template = environment.get_template("modelInfo.jinja")
+        content = template.render(
+            modelInfo=modelInfo, basicInfo=basicInfo, permissions=permissions,
+            samples=samples, js=js)
+            
+        img_html = samples            
         # function:copy to clipboard
         output_html = '<script>'\
             'function civsfz_copyInnerText(node) {'\
@@ -608,7 +605,7 @@ class civitaimodels:
 
         output_html += f'<div style="">'
         output_html += '<div style="float:right;width:35%;margin:-16px 0 1em 1em;">'\
-                        '<h2>Permissions</h2>'\
+                        '<h2    >Permissions</h2>'\
             f'{self.permissionsHtml(self.allows2permissions())}'\
             f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
         output_html += '</div>'
@@ -665,41 +662,13 @@ class civitaimodels:
 
         output_html += f'<div style="clear:both;"><h2>Images</h3>'\
                         f'<p>Clicking on the image sends infotext to txt2img. If local, copy to clipboard</p>'\
-                        f'{img_html}</div>'
-        return output_html
+                        f'{img_html}</div>'    
+        return content  # output_html
 
     def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
-        chrCheck = '✅'
-        chrCross = '❌'
-        html1 = '<div>'\
-                '<p>This model permits users to:</br>'\
-                f'{chrCheck if premissions["allowNoCredit"] else chrCross} : Use the model without crediting the creator<br/>'\
-                f'{chrCheck if premissions["canSellImages"] else chrCross} : Sell images they generate<br/>'\
-                f'{chrCheck if premissions["canRent"] else chrCross} : Run on services that generate images for money<br/>'\
-                f'{chrCheck if premissions["canRentCivit"] else chrCross} : Run on Civitai<br/>'\
-                f'{chrCheck if premissions["allowDerivatives"] else chrCross} : Share merges using this model<br/>'\
-                f'{chrCheck if premissions["canSell"] else chrCross} : Sell this model or merges using this model<br/>'\
-                f'{chrCheck if premissions["allowDifferentLicense"] else chrCross} : Have different permissions when sharing merges</p>'\
-                '</p></div>'
-        html2 = '<div>'\
-                '<p><span style=color:crimson>'
-        html2 += 'Creator credit required</br>' if not premissions["allowNoCredit"] else ''
-        html2 += 'No selling images</br>' if not premissions["canSellImages"] else ''
-        html2 += 'No Civitai generation</br>' if not premissions["canRentCivit"] else ''
-        html2 += 'No generation services</br>' if not premissions["canRent"] else ''
-        html2 += 'No selling models</br>' if not premissions["canSell"] else ''
-        html2 += 'No sharing merges</br>' if not premissions["allowDerivatives"] else ''
-        html2 += 'Same permissions required' if not premissions["allowDifferentLicense"] else ''
-        html2 += '</span></p></div>'
-
-        html = f'<p><strong>Check the source license yourself.</strong></p>'
-        if msgType == 1:
-            html += html1
-        elif msgType == 2:
-            html += html2
-        else:
-            html += html2 + html1
-        return html
+        template = environment.get_template("permissions.jinja")
+        content = template.render(premissions)
+        return content
 
     # REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None):

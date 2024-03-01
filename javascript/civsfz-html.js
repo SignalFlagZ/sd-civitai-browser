@@ -57,7 +57,7 @@ function civsfz_copyInnerText(node) {
 				//SD.Next
 				paste = gradioApp().querySelector('#txt2img_paste');
 			}
-			prompt.value = node.nextSibling.innerText;
+			prompt.value = node.nextElementSibling.innerText;
 			civsfz_trigger_event(prompt, 'input');
 			civsfz_trigger_event(paste, 'click');
 			//trigger_key_down(prompt, 'Escape');
@@ -75,9 +75,10 @@ function civsfz_overwriteProperties(propertiesText) {
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sdxl-background-color', p[3] + 'd9');
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-default-shadow-color', p[4] + 'f0');
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhave-shadow-color', p[5] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[6]);
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[7]);
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[8]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhad-shadow-color', p[6] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[7]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[8]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[9]);
 
 }
 

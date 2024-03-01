@@ -626,6 +626,7 @@ class components():
                     str(opts.civsfz_sdxl_background_color),
                     str(opts.civsfz_default_shadow_color),
                     str(opts.civsfz_alreadyhave_shadow_color),
+                    str(opts.civsfz_alreadyhad_shadow_color),
                     str(opts.civsfz_hover_zoom_magnification),
                     str(opts.civsfz_card_size_width),
                     str(opts.civsfz_card_size_height)
@@ -652,7 +653,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.13.2'
+    ver = 'v1.14.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

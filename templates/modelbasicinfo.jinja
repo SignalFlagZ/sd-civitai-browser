@@ -1,0 +1,49 @@
+{% set tdStyle1 = 'style="max-width:20em;min-width:7em;padding:0.2em;"' %}
+<div class="civsfz-modelBasicInfo" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
+	<table>
+		<tr>
+			<td {{ tdStyle1 }}>Civitai link</td>
+			<td {{ tdStyle1 }}><a href="https://civitai.com/models/{{ modelInfo['id'] }}" target="_blank">https://civitai.com/models/{{
+					modelInfo['id'] }}</a></td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Uploaded by</td>
+			<td {{ tdStyle1 }}>{{ modelInfo["creator"]["username"]|e }}</td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Created</td>
+			<td {{ tdStyle1 }}>{{ created }}</td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Published</td>
+			<td {{ tdStyle1 }}>{{ published }}</td>
+
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Updated</td>
+			<td {{ tdStyle1 }}>{{ updated }}</td>
+		</tr>
+	</table>
+	<table>
+		<tr>
+			<td {{ tdStyle1 }}>Version</td>
+			<td {{ tdStyle1 }}>{{ modelInfo["versionName"]|e }}</td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Type</td>
+			<td {{ tdStyle1 }}>{{ modelInfo["type"]|e }}</td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Base Model</td>
+			<td {{ tdStyle1 }}>{{ modelInfo["baseModel"]|e }}</td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Tags</td>
+			<td {{ tdStyle1 }}>{{ ", ".join(modelInfo["tags"])|e }}</td>
+		</tr>
+		<tr>
+			<td {{ tdStyle1 }}>Trained Tags</td>
+			<td {{ tdStyle1 }}>{{ ", ".join(modelInfo["trainedWords"])|e }}</td>
+		</tr>
+	</table>
+</div>

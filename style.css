@@ -3,6 +3,7 @@
 	--civsfz-figcaption-background-color: rgba(121, 138, 160, 0.85);
 	--civsfz-default-shadow-color: #798a9f;
 	--civsfz-alreadyhave-shadow-color:  #7fffd4;
+	--civsfz-alreadyhad-shadow-color: #caff7f;
 	--civsfz-hover-scale: 1.5;
 	--civsfz-card-width: 8;
 	--civsfz-card-height: 12;
@@ -40,11 +41,18 @@
 }
 
 .civsfz-modelcardalreadyhave {
-	box-shadow: 0 0 1px 3px var(--civsfz-alreadyhave-shadow-color);
+	box-shadow: 0 0 1px 4px var(--civsfz-alreadyhave-shadow-color);
 }
 .civsfz-modelcardalreadyhave:hover {
 	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
 }
+.civsfz-modelcardalreadyhad {
+	box-shadow: 0 0 1px 4px var(--civsfz-alreadyhad-shadow-color);
+}
+.civsfz-modelcardalreadyhad:hover {
+	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhad-shadow-color);
+}
+
 
 .civsfz-bgcolor-base {
 	background-color: var(--civsfz-figcaption-background-color);
@@ -201,6 +209,3 @@
 	min-width: 8em !important;
 }
 
-.civsfz-modelBasicInfo td {
-	min-width: 7em;
-}

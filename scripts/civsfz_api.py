@@ -197,15 +197,23 @@ class civitaimodels:
             print_ly('Select item first.')
         else:
             if self.modelIndex is not None:
+                canSellImagesPermissions = {
+                    'Image', 'Rent', 'RentCivit', 'Sell'}
+                canRentCivitPermissions = {'RentCivit', 'Rent', 'Sell'}
+                canRentPermissions = {'Rent', 'Sell'}
+                canSellPermissions = {'Sell'}
+
                 item = self.jsonData['items'][self.modelIndex]
+                allowCommercialUse = set(item['allowCommercialUse'])
                 allowNoCredit = item['allowNoCredit']
-                allowCommercialUse = item['allowCommercialUse']
                 allowDerivatives = item['allowDerivatives']
                 allowDifferentLicense = item['allowDifferentLicense']
-                canSellImages = allowCommercialUse == 'Image' or allowCommercialUse == 'Rent' or allowCommercialUse == 'RentCivit' or allowCommercialUse == 'Sell'
-                canRentCivit = allowCommercialUse == 'Rent' or allowCommercialUse == 'RentCivit' or allowCommercialUse == 'Sell'
-                canRent = allowCommercialUse == 'Rent' or allowCommercialUse == 'Sell'
-                canSell = allowCommercialUse == 'Sell'
+
+                canSellImages = len(allowCommercialUse & canSellImagesPermissions) > 0 
+                canRentCivit = len(allowCommercialUse & canRentCivitPermissions) > 0
+                canRent = len(allowCommercialUse & canRentPermissions) > 0
+                canSell = len(allowCommercialUse & canSellPermissions) > 0
+                
                 permissions['allowNoCredit'] = allowNoCredit
                 permissions['canSellImages'] = canSellImages
                 permissions['canRentCivit'] = canRentCivit

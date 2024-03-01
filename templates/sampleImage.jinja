@@ -1,0 +1,26 @@
+{# Sample image and infotext #}
+{# pic  nsfw  #}
+{%- set style='style="vertical-align: top;width: 35%;height: 30em;object-fit: contain;"' %}
+{%- if pic['meta'] %}
+	{%- set style='style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="civsfz_copyInnerText(this);"' %}
+{%- endif %}
+{%- if nsfw %}
+<div class="civsfz-nsfw" style="display:flex;margin-top: 1em">
+{%- else %}
+<div style="display:flex;margin-top: 1em">
+{%- endif %}
+	{%- if pic['type'] == 'image' %}
+		<img src={{ pic['url'] }} {{ style }} />
+	{%- else %}
+		<video loop autoplay muted poster={{ pic['url'] }} {{ style }}>
+			<source src={{ pic['url'] }} type="video/webm" />
+			<source src={{ pic['url'] }} type="video/mp4" />
+			<img src={{ pic['url'] }} type="image/gif" />
+		</video>
+	{%- endif %}
+	{%- if pic['meta']  %}
+		<div style="width: 65%;padding-left: 1em;height: 30em;overflow-y: auto;overflow-wrap: anywhere;">
+			{{- infotext -}}
+		</div>
+	{%- endif %}
+</div>

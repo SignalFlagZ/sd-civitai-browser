@@ -23,6 +23,11 @@ sortOptions = None
 basemodelOptions = None
 periodOptions = None
 searchTypes =["No", "Model name", "User name", "Tag", "Model ID"]
+
+templatesPath = Path.joinpath(
+    Path(__file__).parent, Path("../templates"))
+environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
@@ -553,40 +558,51 @@ class civitaimodels:
             'cfgScale': 'CFG scale',
             'clipSkip': 'Clip skip'
                 }
-        infotext = {renameKey.get(key, key): value for key, value in meta.items()}
-        templatesPath = Path.joinpath(
-            Path(__file__).parent, Path("../templates"))
-        environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+        infotext = {renameKey.get(key, key): value for key, value in meta.items()} if meta is not None else None
         template = environment.get_template("infotext.jinja")
         content = template.render({'infotext': infotext})
         return content
 
     def modelInfoHtml(self, modelInfo:dict) -> str:
-        '''Generate HTML of model info'''    
-        img_html = '<div class="sampleimgs">'
+        '''Generate HTML of model info'''
+        samples = ""
         for pic in modelInfo["modelVersions"][0]["images"]:
-            nsfw = ""
-            imgStyle ='style="vertical-align: top;width: 35%;height: 30em;object-fit: contain;"'
-            if pic['meta']:
-                infotext = self.meta2html(pic['meta'])
-                imgStyle = 'style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="civsfz_copyInnerText(this);"'
-            if pic['nsfw'] != "None" and not self.showNsfw:
-                nsfw = 'class="civsfz-nsfw"'
-            img_html +=  f'<div {nsfw} style="display:flex;margin-top: 1em">'
-            if pic['type'] == 'image':
-                img_html += f'<img src={pic["url"]}  {imgStyle}/>'
-            else:
-                img_html += f'<video loop autoplay muted poster={pic["url"]} {imgStyle}>'
-                img_html += f'<source  src={pic["url"]} type="video/webm"/>'
-                img_html += f'<source  src={pic["url"]} type="video/mp4"/>'
-                img_html += f'<img src={pic["url"]} type="image/gif"/>'
-                img_html += f'</video>'
-            if pic['meta']:
-                img_html += f'<div style="width: 65%;padding-left: 1em;height: 30em;overflow-y: auto;overflow-wrap: anywhere;">'
-                img_html += infotext
-                img_html += '</div>'
-            img_html += '</div>'
-        img_html += '</div>'
+            nsfw = pic['nsfw'] != "None" and not self.showNsfw
+            infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
+            template = environment.get_template("sampleImage.jinja")
+            samples += template.render(
+                pic=pic,
+                nsfw=nsfw,
+                infotext=infotext
+                )
+
+        created = self.getCreatedDatetime().astimezone(
+            tz.tzlocal()).replace(microsecond=0).isoformat()
+        published = self.getPublishedDatetime().astimezone(
+            tz.tzlocal()).replace(microsecond=0).isoformat()
+        updated = self.getUpdatedDatetime().astimezone(
+            tz.tzlocal()).replace(microsecond=0).isoformat()
+        template = environment.get_template("modelbasicinfo.jinja")
+        basicInfo = template.render(
+            modelInfo=modelInfo, created=created, published=published, updated=updated)
+        
+        permissions = self.permissionsHtml(self.allows2permissions())
+        js = ('<script>''function civsfz_copyInnerText(node) {'
+            'if (node.nextSibling != null) {'
+              'return navigator.clipboard.writeText(node.nextElementSibling.innerText).then('
+			'function () {'
+				'alert("Copied infotext");'
+			'}).catch('
+			    'function (error) {'
+				'alert((error && error.message) || "Failed to copy infotext");'
+			'})} }'
+            '</script>')
+        template = environment.get_template("modelInfo.jinja")
+        content = template.render(
+            modelInfo=modelInfo, basicInfo=basicInfo, permissions=permissions,
+            samples=samples, js=js)
+            
+        img_html = samples            
         # function:copy to clipboard
         output_html = '<script>'\
             'function civsfz_copyInnerText(node) {'\
@@ -605,7 +621,7 @@ class civitaimodels:
 
         output_html += f'<div style="">'
         output_html += '<div style="float:right;width:35%;margin:-16px 0 1em 1em;">'\
-                        '<h2>Permissions</h2>'\
+                        '<h2    >Permissions</h2>'\
             f'{self.permissionsHtml(self.allows2permissions())}'\
             f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
         output_html += '</div>'
@@ -662,13 +678,10 @@ class civitaimodels:
 
         output_html += f'<div style="clear:both;"><h2>Images</h3>'\
                         f'<p>Clicking on the image sends infotext to txt2img. If local, copy to clipboard</p>'\
-                        f'{img_html}</div>'
-        return output_html
+                        f'{img_html}</div>'    
+        return content  # output_html
 
     def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
-        templatesPath = Path.joinpath(
-            Path(__file__).parent, Path("../templates"))
-        environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
         template = environment.get_template("permissions.jinja")
         content = template.render(premissions)
         return content

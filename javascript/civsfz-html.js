@@ -57,7 +57,7 @@ function civsfz_copyInnerText(node) {
 				//SD.Next
 				paste = gradioApp().querySelector('#txt2img_paste');
 			}
-			prompt.value = node.nextSibling.innerText;
+			prompt.value = node.nextElementSibling.innerText;
 			civsfz_trigger_event(prompt, 'input');
 			civsfz_trigger_event(paste, 'click');
 			//trigger_key_down(prompt, 'Escape');

@@ -141,6 +141,15 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
+        key='civsfz_alreadyhad_shadow_color',
+        info=shared.OptionInfo(
+            '#caff7f',
+            label='Frame color for cards with updates',
+            component=gr.ColorPicker,
+            section=section,
+        )
+    )
+    shared.opts.add_option(
         key="civsfz_save_type_folders",
         info=shared.OptionInfo(
             "",

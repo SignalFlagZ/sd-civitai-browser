@@ -1,6 +1,8 @@
 {# meta to infotext #}
 {{ infotext['Prompt']|e }}<br/>
-<var style="font-weight:bold;">Negative prompt</var>: {{ infotext['Negative prompt']|e }}<br/>
+{%- if infotext['Negative prompt'] %}
+	<var style="font-weight:bold;">Negative prompt</var>: {{ infotext['Negative prompt']|e }}
+{%- endif %}
 <br/>
 {%- for key, value in infotext.items()%}
 	{%- if not key in ('Prompt','Negative prompt') %}

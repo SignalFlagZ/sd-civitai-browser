@@ -405,7 +405,7 @@ class civitaimodels:
         imagesData = None
         # Request images by model ID
         imagesData = self.requestImagesByVersionId(version["id"], len(version["images"]) + 15)
-        metas = {str(img["id"]): img["meta"] for img in imagesData["items"]}
+        metas = {str(img["id"]): img["meta"] if 'meta' in img else None for img in imagesData["items"]}
         for index, pic in enumerate(version["images"]):
             imageId = str(Path(urllib.parse.unquote(
                 urllib.parse.urlparse(pic["url"]).path.split("/")[-1])).stem
@@ -473,59 +473,47 @@ class civitaimodels:
     # Make model cards html
     def modelCardsHtml(self, models, jsID=0):
         '''Generate HTML of model cards.'''
-        HTML = f'<!-- {datetime.datetime.now()} -->' # for trigger event
-        HTML += '<div class="column civsfz-modellist">'
-        # print_ly(f"{models=}")
+        cards = []
         for model in models:
             index = model[1]
             item = self.jsonData['items'][model[1]]
-            # model_name = escape(item["name"].replace("'","\\'"),quote=True)
-            nsfw = ""
-            alreadyhave = ""
             base_model = ""
-            baseModelColor = ""
-            strEaBlock = ""
-            ID = item['id']
-            imgtag = f'<img src="./file=html/card-no-preview.png"/>'
+            param = {
+                'name':     item['name'],
+                'index':    index,
+                'jsId':     jsID,
+                'id':       item['id'],
+                'isNsfw':   False,
+                'type':     item['type'],
+                'have':     "",
+                'ea':       "",
+                'imgType':  ""
+                }
             if any(item['modelVersions']):
                 if len(item['modelVersions'][0]['images']) > 0:
-                    for img in item['modelVersions'][0]['images']:
-                        # print(f'{img["type"]}')
-                        if img['type'] == "image":
-                            if img['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civsfz-cardnsfw'
-                            imgtag = f'<img src={img["url"]}></img>'
-                            break
-                        elif img['type'] == 'video':
-                            if img['nsfw'] != "None" and not self.isShowNsfw():
-                                nsfw = 'civsfz-cardnsfw'
-                            imgtag = f'<video loop autoplay muted poster={img["url"]}>'
-                            imgtag += f'<source  src={img["url"]} type="video/webm"/>'
-                            imgtag += f'<source  src={img["url"]} type="video/mp4"/>'
-                            imgtag += f'<img src={img["url"]} type="image/gif"/>'
-                            imgtag += f'</video>'
-                            break
+                    img  = item['modelVersions'][0]['images'][0]
+                    param['imgType'] = img['type']
+                    param['imgsrc'] = img["url"]
+                    if img['nsfw'] != "None" and not self.isShowNsfw():
+                        param['isNsfw'] = True
                 base_model = item["modelVersions"][0]['baseModel']
-                for file in item['modelVersions'][0]['files']:
-                    file_name = file['name']
-                    folder = generate_model_save_path(self.getModelTypeByIndex(
-                        index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
-                    path_file = folder / Path(file_name)
-                    #print_lc(f"{path_file}")
-                    if path_file.exists():
-                        alreadyhave = "civsfz-modelcardalreadyhave"
+                param['baseModel'] = base_model
+                    
+                folder = generate_model_save_path(self.getModelTypeByIndex(
+                    index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
+                for i,ver in enumerate(item['modelVersions']):
+                    for file in ver['files']:
+                        file_name = file['name']
+                        path_file = folder / Path(file_name)
+                        if path_file.exists():
+                            if i == 0:
+                                param['have'] = 'new'
+                                break
+                            else:
+                                param['have'] = 'old'
+                                break
+                    if param['have'] != "":
                         break
-                if "SD 1" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SD1"
-                elif "SD 2" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SD2"
-                elif "SDXL" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SDXL"
-                elif "Pony" in base_model:
-                    baseModelColor = "civsfz-bgcolor-SDXL"
-                else:
-                    baseModelColor = "civsfz-bgcolor-base"
-
                 ea = item["modelVersions"][0]['earlyAccessTimeFrame']
                 if ea > 0:
                     strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
@@ -533,19 +521,15 @@ class civitaimodels:
                     dtNow = datetime.datetime.now(datetime.timezone.utc)
                     dtDiff = dtNow - dtPub
                     if ea <= int(dtDiff.days):
-                        strEaBlock = f'<div class="civsfz-early-access-out">EA</div>'
+                        param['ea'] = 'out'
                     else:
-                        strEaBlock = f'<div class="civsfz-early-access-in">EA</div>'
-
-            HTML = HTML + f'<figure class="civsfz-modelcard {nsfw} {alreadyhave}" onclick="civsfz_select_model(\'Index{jsID}:{index}:{ID}\')">'\
-                            + imgtag \
-                            + f'<figcaption>{item["name"]}</figcaption>' \
-                            + f'<div class="civsfz-modeltype">{item["type"]}</div>' \
-                            + f'<div class="civsfz-basemodel {baseModelColor}">{base_model}</div>' \
-                            + strEaBlock \
-                            + '</figure>'
-        HTML = HTML + '</div>'
-        return HTML
+                        param['ea'] = 'in'
+            cards.append(param)
+            
+        forTrigger = f'<!-- {datetime.datetime.now()} -->'  # for trigger event
+        template = environment.get_template("cardlist.jinja")
+        content = template.render(forTrigger=forTrigger, cards=cards)
+        return content
 
     def meta2html(self, meta:dict) -> str:
         # convert key name as infotext

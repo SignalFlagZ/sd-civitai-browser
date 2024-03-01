@@ -25,6 +25,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.13
+- Fix an issue where API responses changed and permissions could not be displayed correctly. #33
 - Fix an issue where the version could not be selected correctly with multiple versions with the same name.
 - Change info file format
 - Change info file extension to json

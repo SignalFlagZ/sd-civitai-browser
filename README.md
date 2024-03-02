@@ -26,6 +26,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.14
+- Fix to use model-versions API to get meta data
 - Add color frames to cards that can be updated
 - Use jinja template engine
 ### v1.13

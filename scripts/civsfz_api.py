@@ -18,6 +18,7 @@ print_n = lambda  x: print("CivBrowser: " + x )
 baseUrl = "https://civitai.com"
 modelsApi = "/api/v1/models"
 imagesApi = "/api/v1/images"
+versionsAPI = "/api/v1/model-versions"
 typeOptions = None
 sortOptions = None
 basemodelOptions = None
@@ -62,6 +63,10 @@ class civitaimodels:
         return self.baseUrl + modelsApi
     def getImagesApiUrl(self):
         return self.baseUrl + imagesApi
+    def getVersionsApiUrl(self, id=None):
+        url = self.baseUrl + versionsAPI
+        url += f'/{id}' if id is not None else ""
+        return url
     def getJsonData(self) -> dict:
         return self.jsonData
 
@@ -401,26 +406,31 @@ class civitaimodels:
         modelInfo["downloadUrl"] = (
             version["downloadUrl"] if "downloadUrl" in version else None
         )
-
-        imagesData = None
+        versionRes = self.requestVersionByVersionID(version["id"])
+        if versionRes is not None:
+            for i, img in enumerate(versionRes["images"]):
+                modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta']
+        #imagesData = None
         # Request images by model ID
-        imagesData = self.requestImagesByVersionId(version["id"], len(version["images"]) + 15)
-        metas = {str(img["id"]): img["meta"] if 'meta' in img else None for img in imagesData["items"]}
-        for index, pic in enumerate(version["images"]):
-            imageId = str(Path(urllib.parse.unquote(
-                urllib.parse.urlparse(pic["url"]).path.split("/")[-1])).stem
-            )
-            if imagesData is None:
-                modelInfo["modelVersions"][0]["images"][index]["meta"] = {
-                    "meta": "Missing meta from API response"
-                }
-            else:
-                if imageId in metas:
-                    modelInfo["modelVersions"][0]["images"][index]["meta"] = metas[imageId]
-                else:
-                    modelInfo["modelVersions"][0]["images"][index]["meta"] = {}
-                    print_lc(f"Image ID not included: {imageId}")
-        # print(f"{modelInfo=}")
+        #imagesData = self.requestImagesByVersionId(version["id"], len(version["images"]) + 15)
+        # Request model-versions by version ID        
+        #metas = {str(img["id"]): img["meta"]
+        #         if 'meta' in img else None for img in imagesData["images"]}
+        #for index, pic in enumerate(version["images"]):
+        #    imageId = str(Path(urllib.parse.unquote(
+        #        urllib.parse.urlparse(pic["url"]).path.split("/")[-1])).stem
+        #    )
+        #    if imagesData is None:
+        #        modelInfo["modelVersions"][0]["images"][index]["meta"] = {
+        #            "meta": "Missing meta from API response"
+        #        }
+        #    else:
+        #        if imageId in metas:
+        #            modelInfo["modelVersions"][0]["images"][index]["meta"] = metas[imageId]
+        #        else:
+        #            modelInfo["modelVersions"][0]["images"][index]["meta"] = {}
+        #            print_lc(f"Image ID not included: {imageId}")
+        #print(f"{modelInfo=}")
         modelInfo["html"] = self.modelInfoHtml(modelInfo)
         self.setModelVersionInfo(modelInfo)
         return modelInfo
@@ -735,7 +745,11 @@ class civitaimodels:
         if limit is not None:
             params |= {"limit": limit}
         return self.requestApi(self.getImagesApiUrl(), params)
-
+    def requestVersionByVersionID(self, versionID=None):
+        if versionID == None:
+            return None
+        url = self.getVersionsApiUrl(versionID)
+        return self.requestApi(url)
     def requestApiOptions(self, url=None, query=None):
         self.requestError = None
         if url is None:

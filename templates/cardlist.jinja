@@ -23,10 +23,10 @@
 		{%- if card['imgType'] == 'image' %}
 			<img src={{ card['imgsrc'] }}/>
 		{%- elif card['imgType'] == 'video' %}
-			<video loop autoplay muted poster={{ card['imgsrc'] }}>'
-				<source src={{ card['imgsrc'] }} type="video/webm" />'
-				<source src={{ card['imgsrc'] }} type="video/mp4" />'
-				<img src={{ card['imgsrc'] }} type="image/gif" />'
+			<video loop autoplay muted poster={{ card['imgsrc'] }}>
+				<source src={{ card['imgsrc'] }} type="video/webm" />
+				<source src={{ card['imgsrc'] }} type="video/mp4" />
+				<img src={{ card['imgsrc'] }} type="image/gif" />
 			</video>
 		{%- else %}
 			<img src="./file=html/card-no-preview.png" />

@@ -83,6 +83,8 @@ class civitaimodels:
     #    return self.contentType
     def getRequestError(self) -> requests.exceptions.RequestException:
         return self.requestError
+    def clearRequestError(self):
+        self.requestError = None
     def setSaveFolder(self, path):
         self.saveFolder = path
     def getSaveFolder(self):

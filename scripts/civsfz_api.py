@@ -23,7 +23,8 @@ typeOptions = None
 sortOptions = None
 basemodelOptions = None
 periodOptions = None
-searchTypes =["No", "Model name", "User name", "Tag", "Model ID"]
+searchTypes = ["No", "Model name", "User name",
+               "Tag", "Model ID", "Version ID"]
 
 templatesPath = Path.joinpath(
     Path(__file__).parent, Path("../templates"))
@@ -59,8 +60,10 @@ class civitaimodels:
         self.url = url
     def getBaseUrl(self) -> str:
         return self.baseUrl
-    def getModelsApiUrl(self):
-        return self.baseUrl + modelsApi
+    def getModelsApiUrl(self, id=None):
+        url = self.baseUrl + modelsApi
+        url += f'/{id}' if id is not None else ""
+        return url
     def getImagesApiUrl(self):
         return self.baseUrl + imagesApi
     def getVersionsApiUrl(self, id=None):
@@ -311,71 +314,6 @@ class civitaimodels:
         # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
         return dtPublishedAt
 
-    def makeModelInfo_old(self) -> dict:
-        modelInfo = {
-            'description':"",
-            'trainedWords':"",
-            'files':{},
-            'allow':{},
-        }
-        item = self.jsonData['items'][self.modelIndex]
-        version = item['modelVersions'][self.versionIndex]
-        # print_lc(f'{imagesData=}')
-        modelInfo['id'] = item['id']
-        modelInfo['model_name'] = item['name']
-        modelInfo['type'] = item['type']
-        modelInfo['nsfw'] = item['nsfw']
-        modelInfo['creator'] = item['creator']['username']
-        modelInfo['tags'] = item['tags']
-        modelInfo['description'] = item['description']
-        modelInfo['allow']['allowNoCredit'] = item['allowNoCredit']
-        modelInfo['allow']['allowCommercialUse'] = item['allowCommercialUse']
-        modelInfo['allow']['allowDerivatives'] = item['allowDerivatives']
-        modelInfo['allow']['allowDifferentLicense'] = item['allowDifferentLicense']
-        modelInfo['version_name'] = version['name']
-        modelInfo['modelId'] = version['modelId']
-        modelInfo['createdAt'] = version['createdAt']
-        modelInfo['updatedAt'] = version['updatedAt']
-        modelInfo['publishedAt'] = version['publishedAt']
-        modelInfo['trainedWords'] = ", ".join(version['trainedWords'])
-        modelInfo['baseModel'] = version['baseModel']
-        modelInfo['versionDescription'] = version['description']
-        modelInfo['files'] = version['files']
-        # print_lc(f'{modelInfo["files"]=}')
-        for index,file in enumerate(modelInfo['files']):
-            modelInfo['files'][index]['name'] = urllib.parse.unquote(file['name'], encoding='utf-8', errors='replace')
-
-        pics = []
-        imagesData = self.requestImagesByVersionId(version["id"], len(version['images']) + 10)
-        metas = {str(img["id"]):img["meta"] for img in imagesData["items"]}
-        # print_lc(f'{metas=}')
-        for index,pic in enumerate(version["images"]):
-            imageId = str(Path(urllib.parse.unquote(
-                urllib.parse.urlparse(pic["url"]).path.split("/")[-1]
-            )).stem)
-            # print_lc(f"{imageId=}")
-            if imagesData is None:
-                metas = { imageId: {
-                    "meta": "Missing meta info from API response.",
-                    "warning": "In v1.12.0, inofotext of a different image was displayed, so it was hidden."
-                    }
-                }
-            pics.append(
-                {
-                    "id": pic["id"] if "id" in pic else imageId,
-                    "nsfw": pic["nsfw"],
-                    "url": pic["url"],
-                    "meta": metas[imageId] if imageId in metas else {},
-                    "type": pic["type"],
-                }
-            )
-        modelInfo['images'] = pics
-        modelInfo['downloadUrl'] = version['downloadUrl'] if 'downloadUrl' in version else None
-        modelInfo['html'] = self.modelInfoHtml(modelInfo)
-        modelInfo['earlyAccessTimeFrame'] = version['earlyAccessTimeFrame']
-        self.setModelVersionInfo(modelInfo)
-        return modelInfo
-
     def makeModelInfo2(self, modelIndex=None, versionIndex=None) -> dict:
         """make selected version info"""
         modelIndex = self.modelIndex if modelIndex is None else modelIndex
@@ -395,7 +333,7 @@ class civitaimodels:
         modelInfo["modelVersions"][0]["files"] = version["files"]
         modelInfo["modelVersions"][0]["images"] = version["images"]
         # add version info
-        modelInfo['VersionId'] = version['id']
+        modelInfo['versionId'] = version['id']
         modelInfo['versionName'] = version['name']
         modelInfo['createdAt'] = version['createdAt']
         modelInfo['updatedAt'] = version['updatedAt']
@@ -410,28 +348,8 @@ class civitaimodels:
         if versionRes is not None:
             for i, img in enumerate(versionRes["images"]):
                 modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta']
-        #imagesData = None
-        # Request images by model ID
-        #imagesData = self.requestImagesByVersionId(version["id"], len(version["images"]) + 15)
-        # Request model-versions by version ID        
-        #metas = {str(img["id"]): img["meta"]
-        #         if 'meta' in img else None for img in imagesData["images"]}
-        #for index, pic in enumerate(version["images"]):
-        #    imageId = str(Path(urllib.parse.unquote(
-        #        urllib.parse.urlparse(pic["url"]).path.split("/")[-1])).stem
-        #    )
-        #    if imagesData is None:
-        #        modelInfo["modelVersions"][0]["images"][index]["meta"] = {
-        #            "meta": "Missing meta from API response"
-        #        }
-        #    else:
-        #        if imageId in metas:
-        #            modelInfo["modelVersions"][0]["images"][index]["meta"] = metas[imageId]
-        #        else:
-        #            modelInfo["modelVersions"][0]["images"][index]["meta"] = {}
-        #            print_lc(f"Image ID not included: {imageId}")
-        #print(f"{modelInfo=}")
-        modelInfo["html"] = self.modelInfoHtml(modelInfo)
+        html = self.modelInfoHtml(modelInfo)
+        modelInfo["html"] = html
         self.setModelVersionInfo(modelInfo)
         return modelInfo
 
@@ -581,6 +499,7 @@ class civitaimodels:
             modelInfo=modelInfo, created=created, published=published, updated=updated)
         
         permissions = self.permissionsHtml(self.allows2permissions())
+        # function:copy to clipboard
         js = ('<script>''function civsfz_copyInnerText(node) {'
             'if (node.nextSibling != null) {'
               'return navigator.clipboard.writeText(node.nextElementSibling.innerText).then('
@@ -596,84 +515,7 @@ class civitaimodels:
             modelInfo=modelInfo, basicInfo=basicInfo, permissions=permissions,
             samples=samples, js=js)
             
-        img_html = samples            
-        # function:copy to clipboard
-        output_html = '<script>'\
-            'function civsfz_copyInnerText(node) {'\
-            'if (node.nextSibling != null) {'\
-            'return navigator.clipboard.writeText(node.nextSibling.innerText).then('\
-			'function () {'\
-				'alert("Copied infotext");'\
-			'}).catch('\
-			    'function (error) {'\
-				'alert((error && error.message) || "Failed to copy infotext");'\
-			'})} }'\
-            '</script>'
-        if modelInfo['nsfw']:
-            output_html += '<h1>NSFW</b></h1>'
-        output_html += f'<h1>{escape(str(modelInfo["name"]))}</h1>'\
-
-        output_html += f'<div style="">'
-        output_html += '<div style="float:right;width:35%;margin:-16px 0 1em 1em;">'\
-                        '<h2    >Permissions</h2>'\
-            f'{self.permissionsHtml(self.allows2permissions())}'\
-            f'<p>{escape(str(modelInfo["allow"]))}</p></div>'
-        output_html += '</div>'
-        output_html += (
-            f'<div class="civsfz-modelInformation" style="overflow-wrap: anywhere;">'
-            f'<div class="civsfz-modelBasicInfo" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">'
-            f"<table>"
-            f"<tr><td>Civitai link</td>"
-            f'<td><a href="https://civitai.com/models/{escape(str(modelInfo["id"]))}" target="_blank">https://civitai.com/models/{str(modelInfo["id"])}</a></td>'
-            f"</tr>"
-            f"<tr><td>Uploaded by</td>"
-            f'<td>{escape(str(modelInfo["creator"]["username"]))}</td>'
-            f"</tr>"
-            f"<tr><td>Created</td>"
-            f"<td>{escape(self.getCreatedDatetime().astimezone(tz.tzlocal()).replace(microsecond=0).isoformat())}</td>"
-            f"</tr>"
-            f"<tr><td>Published</td>"
-            f"<td>{escape(self.getPublishedDatetime().astimezone(tz.tzlocal()).replace(microsecond=0).isoformat())}</td>"
-            f"</tr>"
-            f"<tr><td>Updated</td>"
-            f"<td>{escape(self.getUpdatedDatetime().astimezone(tz.tzlocal()).replace(microsecond=0).isoformat())}</td>"
-            f"</tr>"
-            f"</table>"
-        )
-        output_html += (
-            f"<table>"
-            f"<tr><td>Type</td>"
-            f'<td>{escape(str(modelInfo["type"]))}</td>'
-            f"</tr>"
-            f"<tr><td>Version</td>"
-            f'<td>{escape(str(modelInfo["versionName"]))}</td>'
-            f"</tr>"
-            f"<tr><td>Base Model</td>"
-            f'<td>{escape(str(modelInfo["baseModel"]))}</td>'
-            f"</tr>"
-            f"<tr><td>Tags</td>"
-            f'<td>{escape(", ".join(modelInfo["tags"]))}</td>'
-            f"</tr>"
-            f"<tr><td>Trained Tags</td>"
-            f'<td>{escape(", ".join(modelInfo["trainedWords"]))}</td>'
-            f"</tr>"
-            f"</table></div>"
-            f'<a href={modelInfo["downloadUrl"]}>'
-            "Download here</a></div>"
-        )
-
-        output_html += '<div><h2>Model description</h2>'\
-            f'<p>{modelInfo["description"]}</p></div>'
-
-        if modelInfo["versionDescription"]:
-            output_html += f'<div><h2>Version description</h2>'\
-            f'<p>{modelInfo["versionDescription"]}</p></div>'
-        output_html += '</div>'
-
-        output_html += f'<div style="clear:both;"><h2>Images</h3>'\
-                        f'<p>Clicking on the image sends infotext to txt2img. If local, copy to clipboard</p>'\
-                        f'{img_html}</div>'    
-        return content  # output_html
+        return content
 
     def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
         template = environment.get_template("permissions.jinja")
@@ -683,7 +525,11 @@ class civitaimodels:
     # REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None):
         if use_search_term == "Model ID" or use_search_term == "Version ID":
-            query = str.strip(search_term)
+            if not search_term.isdecimal():
+                query = ""
+                print_ly(f'"{search_term}" is not a numerical value')
+            else:
+                query = str.strip(search_term)
         else:
             query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards }
             if not period == "AllTime":

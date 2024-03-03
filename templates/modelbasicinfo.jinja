@@ -3,7 +3,7 @@
 	<table>
 		<tr>
 			<td {{ tdStyle1 }}>Civitai link</td>
-			<td {{ tdStyle1 }}><a href="https://civitai.com/models/{{ modelInfo['id'] }}" target="_blank">https://civitai.com/models/{{
+			<td {{ tdStyle1 }}><a href="https://civitai.com/models/{{ modelInfo['id'] }}?modelVersionId={{ modelInfo["versionId"] }}" target="_blank">https://civitai.com/models/{{
 					modelInfo['id'] }}</a></td>
 		</tr>
 		<tr>
@@ -27,7 +27,7 @@
 	<table>
 		<tr>
 			<td {{ tdStyle1 }}>Version</td>
-			<td {{ tdStyle1 }}>{{ modelInfo["versionName"]|e }}</td>
+			<td {{ tdStyle1 }}>{{ modelInfo["versionName"]|e }} (ID:{{ modelInfo["versionId"]|e }})</td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Type</td>
@@ -39,7 +39,7 @@
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Tags</td>
-			<td {{ tdStyle1 }}>{{ ", ".join(modelInfo["tags"])|e }}</td>
+			<td {{ tdStyle1 }}>{{ modelInfo['tags']|join(', ')|e }}</td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Trained Tags</td>

@@ -191,29 +191,29 @@ class components():
                 )
 
             def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
+                response = None
                 query = self.civitai.makeRequestQuery(
                     grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
+                if grRadioSearchType == "Version ID":
+                    if query != "":
+                        url = self.civitai.getVersionsApiUrl(query)
+                        response = self.civitai.requestApi(url=url)
+                        if self.civitai.getRequestError() is None:
+                            # Some key is not included in the response
+                            grRadioSearchType = "Model ID"
+                            query = str(response["modelId"])
                 if grRadioSearchType == "Model ID":
-                    url = f"{self.civitai.getModelsApiUrl()}/{query}"
-                    response = self.civitai.requestApi(url=url)
-                    response = {
-                        "items":[response],
-                        'metadata': {
-                            'currentPage': "1",
-                            'totalPages': "1",
-                            }
-                        } if self.civitai.getRequestError() is None else None
-                elif grRadioSearchType == "Version ID":
-                    url = f"{self.civitai.getModelsApiUrl()}-versions/{query}"
-                    response = self.civitai.requestApi(url=url)
-                    response = {
-                        "items":[response],
-                        'metadata': {
-                            'currentPage': "1",
-                            'totalPages': "1",
-                            }
-                    } if self.civitai.getRequestError() is None else None
-                else:
+                    if query != "":
+                        url = self.civitai.getModelsApiUrl(query)
+                        response = self.civitai.requestApi(url=url)
+                        response = {
+                            "items":[response],
+                            'metadata': {
+                                'currentPage': "1",
+                                'totalPages': "1",
+                                }
+                            } if self.civitai.getRequestError() is None else None
+                elif grRadioSearchType != "Version ID":
                     response = self.civitai.requestApi(
                         query=query) 
                 err = self.civitai.getRequestError()
@@ -653,7 +653,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.14.1'
+    ver = 'v1.14.2'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

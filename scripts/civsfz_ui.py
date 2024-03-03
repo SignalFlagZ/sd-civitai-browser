@@ -75,8 +75,6 @@ class components():
                     with gr.Column(scale=1,min_width=80):
                         grTxtPages = gr.Textbox(label='Pages',show_label=False)
                 with gr.Row():
-                    grMrkdwnErr = gr.Markdown(value=None, visible=False)
-                with gr.Row():
                     grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
                     grTxtPropaties = gr.Textbox(elem_id="civsfz_css-properties", label="CSS Properties", value="", visible=False, interactive=False, lines=1)
                 with gr.Row(elem_classes="civsfz-jump-page-control civsfz-sticky-element"):
@@ -192,8 +190,11 @@ class components():
 
             def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
                 response = None
+                self.civitai.clearRequestError()
                 query = self.civitai.makeRequestQuery(
                     grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
+                if query == "":
+                    gr.Warning(f'Enter only numbers')
                 if grRadioSearchType == "Version ID":
                     if query != "":
                         url = self.civitai.getVersionsApiUrl(query)
@@ -217,11 +218,8 @@ class components():
                     response = self.civitai.requestApi(
                         query=query) 
                 err = self.civitai.getRequestError()
-                if err is None:
-                    grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
-                else:
-                    grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
-
+                if err is not None:
+                    gr.Warning(str(err))
                 if response is None:
                     return gr.Dropdown.update(choices=[], value=None),\
                         gr.Radio.update(choices=[], value=None),\
@@ -230,8 +228,7 @@ class components():
                         gr.Button.update(interactive=False),\
                         gr.Button.update(interactive=False),\
                         gr.Slider.update(interactive=False),\
-                        gr.Textbox.update(value=None),\
-                        grMrkdwnErr
+                        gr.Textbox.update(value=None)
                 self.civitai.updateJsonData(response) #, grRadioContentType)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
@@ -249,8 +246,7 @@ class components():
                         gr.Button.update(interactive=hasNext),\
                         gr.Button.update(interactive=enableJump),\
                         gr.Slider.update(interactive=enableJump, value=int(self.civitai.getCurrentPage()),maximum=int(self.civitai.getTotalPages())),\
-                        gr.Textbox.update(value=grTxtPages),\
-                        grMrkdwnErr
+                        gr.Textbox.update(value=grTxtPages)
             grBtnGetListAPI.click(
                 fn=update_model_list,
                 inputs=[
@@ -270,8 +266,7 @@ class components():
                     grBtnNextPage,
                     grBtnGoPage,
                     grSldrPage,
-                    grTxtPages,
-                    grMrkdwnErr
+                    grTxtPages
                 ]
             )
 
@@ -426,12 +421,10 @@ class components():
                 url = self.civitai.nextPage() if isNext else self.civitai.prevPage()
                 response = self.civitai.requestApi(url)
                 err = self.civitai.getRequestError()
-                if err is None:
-                    grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
-                else:
-                    grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
+                if err is not None:
+                    gr.Warning(str(err))
                 if response is None:
-                    return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update(), grMrkdwnErr
+                    return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
                 self.civitai.updateJsonData(response)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
@@ -447,8 +440,7 @@ class components():
                         gr.Button.update(interactive=hasPrev),\
                         gr.Button.update(interactive=hasNext),\
                         gr.Slider.update(value=self.civitai.getCurrentPage()),\
-                        gr.Textbox.update(value=grTxtPages),\
-                        grMrkdwnErr
+                        gr.Textbox.update(value=grTxtPages)
 
             grBtnNextPage.click(
                 fn=update_next_page,
@@ -462,8 +454,7 @@ class components():
                     grBtnPrevPage,
                     grBtnNextPage,
                     grSldrPage,
-                    grTxtPages,
-                    grMrkdwnErr
+                    grTxtPages
                     #grTxtSaveFolder
                 ]
             )
@@ -481,8 +472,7 @@ class components():
                     grBtnPrevPage,
                     grBtnNextPage,
                     grSldrPage,
-                    grTxtPages,
-                    grMrkdwnErr
+                    grTxtPages
                     #grTxtSaveFolder
                 ]
                 )
@@ -496,12 +486,10 @@ class components():
                 # print(f'{newURL}')
                 response = self.civitai.requestApi(newURL)
                 err = self.civitai.getRequestError()
-                if err is None:
-                    grMrkdwnErr = gr.Markdown.update(value=None, visible=False)
-                else:
-                    grMrkdwnErr = gr.Markdown.update(value=f"**<span style='color:Gold;'>{str(err)}**", visible=True)
+                if err is not None:
+                    gr.Warning(str(err))
                 if response is None:
-                    return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update(),grMrkdwnErr
+                    return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
                 self.civitai.updateJsonData(response)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
@@ -517,8 +505,7 @@ class components():
                         gr.Button.update(interactive=hasPrev),\
                         gr.Button.update(interactive=hasNext),\
                         gr.Slider.update(value = self.civitai.getCurrentPage()),\
-                        gr.Textbox.update(value=grTxtPages),\
-                        grMrkdwnErr
+                        gr.Textbox.update(value=grTxtPages)
             grBtnGoPage.click(
                 fn=jump_to_page,
                 inputs=[
@@ -532,9 +519,7 @@ class components():
                     grBtnPrevPage,
                     grBtnNextPage,
                     grSldrPage,
-                    grTxtPages,
-                    grMrkdwnErr
-                    #grTxtSaveFolder
+                    grTxtPages
                 ])
 
             def updateVersionsByModelID(model_ID=None):

@@ -89,10 +89,12 @@
 	word-break: break-word;
 	background-color: var(--civsfz-figcaption-background-color);
 	/*transition: bottom .3s ease-out;*/
+	max-height: 60%;
 }
 
 .civsfz-modelcard:hover figcaption {
 	bottom: initial;
+	max-height: initial;
 }
 
 .civsfz-modelcard .civsfz-basemodel {

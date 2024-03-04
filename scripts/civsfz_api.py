@@ -632,7 +632,7 @@ class civitaimodels:
         data = self.requestApiOptions(url, query)
         try:
             types = data[0]['unionErrors'][0]['issues'][0]['options']
-        except KeyError:
+        except:
             typeOptions = [
                 "Checkpoint",
                 "TextualInversion",
@@ -668,7 +668,7 @@ class civitaimodels:
         data = self.requestApiOptions(url, query)
         try:
             basemodelOptions = data[0]['unionErrors'][0]['issues'][0]['options']
-        except KeyError:
+        except:
             basemodelOptions = [
                 "SD 1.4",
                 "SD 1.5",
@@ -698,7 +698,7 @@ class civitaimodels:
         data = self.requestApiOptions(url, query)
         try:
             sortOptions = data[0]['options']
-        except KeyError:
+        except:
             sortOptions = [
                 "Highest Rated",
                 "Most Downloaded",
@@ -715,7 +715,7 @@ class civitaimodels:
         data = self.requestApiOptions(url, query)
         try:
             periodOptions = data[0]['options']
-        except KeyError:
+        except:
             periodOptions = [
                 "Day",
                 "Week",

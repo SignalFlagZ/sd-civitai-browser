@@ -178,4 +178,14 @@ def on_ui_settings():
             section=section,
         ),
     )
+    shared.opts.add_option(
+        key='civsfz_length_of_search_history',
+        info=shared.OptionInfo(
+            5 ,
+            label='Length of search term history',
+            component=gr.Slider,
+            component_args={'minimum': 5, 'maximum': 15, 'step': 1},
+            section=section,
+        )
+    )
 script_callbacks.on_ui_settings(on_ui_settings)

@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 import platform
 import subprocess as sp
+from collections import deque
 from modules import shared, sd_models
 from colorama import Fore, Back, Style
 from requests.exceptions import ConnectionError
@@ -22,7 +23,6 @@ try:
 except ImportError:
     print("Recycle bin cannot be used.")
     send2trash_installed = False
-
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -545,3 +545,83 @@ def open_folder(f):
             sp.Popen(["xdg-open", path])
     else:
         print_lc(f'Not found "{path}"')
+
+class searchHistory():
+    def __init__(self, path=None):
+        self.path = Path.joinpath(
+                    Path(__file__).parent, Path("../search_history.json"))
+        if path != None:
+            if os.path.isfile(path):
+                self.path = path                
+        self.history = self.load()
+    def load(self) -> dict:
+        try:
+            with open(self.path, 'r') as f:
+                ret = json.load(f)
+        except:
+            ret = []
+        return deque(ret,maxlen=20)
+    def save(self):
+        try:
+            with open(self.path, 'w') as f:
+                json.dump(list(self.history), f)
+        except Exception as e:
+            #print_lc(e)
+            pass
+    def add(self, type, word):
+        if type == "No" or word == "" or word == None:
+            return
+        dict = { "type" : type,
+                "word": word }  
+        try:                  
+            self.history.remove(dict)
+        except:
+            pass
+        self.history.appendleft(dict)
+        while len(self.history) > opts.civsfz_length_of_search_history:
+            self.history.pop()
+        self.save()
+    def getAsChoices(self):
+        #ret = [(f'{w["type"]}:{w["word"]}', i) for i, w in enumerate(self.history)]
+        ret = [f'{w["word"]}:-:{w["type"]}' for w in self.history]
+        return ret
+    
+class searchHistory2():
+    '''Not in use'''
+    def __init__(self, path=None):
+        self.path = Path.joinpath(
+                    Path(__file__).parent, Path("../search_history.json"))
+        if path != None:
+            if os.path.isfile(path):
+                self.path = path                
+        self.history = self.load()
+    def load(self) -> dict:
+        try:
+            with open(self.path, 'r') as f:
+                ret = json.load(f)
+        except:
+            ret = []
+        return ret
+    def save(self):
+        try:
+            with open(self.path, 'w') as f:
+                json.dump(self.history, f)
+        except:
+            pass
+    def add(self, type, word):
+        if type == "No" or word == "" or word == None:
+            return
+        for i, item in enumerate(self.history):
+            if item:
+                if item['type'] == type and item['word'] == word:
+                    self.history.pop(i)
+        dict = { "type" : type,
+                "word": word }                    
+        self.history.insert(0, dict)
+        self.history = self.history[:opts.civsfz_length_of_search_history]
+        self.save()
+    def getAsChoices(self):
+        #ret = [(f'{w["type"]}:{w["word"]}', i) for i, w in enumerate(self.history)]
+        ret = [f'{w["word"]}:-:{w["type"]}' for w in self.history]
+        return ret
+            

@@ -15,11 +15,12 @@ import re
 import math
 import scripts as scripts
 from scripts.civsfz_api import civitaimodels
-from scripts.civsfz_filemanage import open_folder
+from scripts.civsfz_filemanage import open_folder, searchHistory
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_n = lambda  x: print("CivBrowser: " + x )
+sHistory = searchHistory()
 
 class components():
     newid = itertools.count()
@@ -62,8 +63,9 @@ class components():
                 with gr.Column(scale=1, max_width=100, min_width=80):
                     grChkboxShowNsfw = gr.Checkbox(label="NSFW content", value=False)
             with gr.Row():
-                grRadioSearchType = gr.Radio(label="Search", choices=self.civitai.getSearchTypes(),value="No")
-                grTxtSearchTerm = gr.Textbox(label="Search Term", interactive=True, lines=1)
+                grRadioSearchType = gr.Radio(scale=2, label="Search", choices=self.civitai.getSearchTypes(),value="No")
+                grDropdownSearchTerm = gr.Dropdown( scale=1,
+                    label="Search Term", choices=sHistory.getAsChoices(), type="value",  interactive=True, allow_custom_value=True)
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
                 with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-element"):
                     with gr.Column(scale=4):
@@ -187,14 +189,30 @@ class components():
                 outputs=[grTextProgress],
                 cancels=[download]
                 )
-
-            def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grTxtSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
+            
+            def selectHistory(grDropdownSearchTerm):
+                if grDropdownSearchTerm == None:
+                    return (gr.Dropdown.update(),
+                            gr.Radio.update())
+                m = re.match(r'(.+):-:(.+)$', grDropdownSearchTerm)
+                if len(m.groups()) < 2:
+                    return ( gr.Dropdown.update(),
+                        gr.Radio.update())
+                return (gr.Dropdown.update(value=m.group(1)),
+                        gr.Radio.update(value=m.group(2)))
+            grDropdownSearchTerm.select(
+                fn=selectHistory,
+                inputs=[grDropdownSearchTerm],
+                outputs=[grDropdownSearchTerm,
+                        grRadioSearchType]
+            )
+            def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grDropdownSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels):
                 response = None
                 self.civitai.clearRequestError()
                 query = self.civitai.makeRequestQuery(
-                    grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grTxtSearchTerm, grDrpdwnBasemodels)
+                    grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grDropdownSearchTerm, grDrpdwnBasemodels)
                 if query == "":
-                    gr.Warning(f'Enter only numbers')
+                    gr.Warning(f'Enter a number')
                 if grRadioSearchType == "Version ID":
                     if query != "":
                         url = self.civitai.getVersionsApiUrl(query)
@@ -228,7 +246,9 @@ class components():
                         gr.Button.update(interactive=False),\
                         gr.Button.update(interactive=False),\
                         gr.Slider.update(interactive=False),\
-                        gr.Textbox.update(value=None)
+                        gr.Textbox.update(value=None),\
+                        gr.Dropdown.update()
+                sHistory.add(grRadioSearchType, grDropdownSearchTerm)
                 self.civitai.updateJsonData(response) #, grRadioContentType)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
@@ -246,14 +266,16 @@ class components():
                         gr.Button.update(interactive=hasNext),\
                         gr.Button.update(interactive=enableJump),\
                         gr.Slider.update(interactive=enableJump, value=int(self.civitai.getCurrentPage()),maximum=int(self.civitai.getTotalPages())),\
-                        gr.Textbox.update(value=grTxtPages)
+                        gr.Textbox.update(value=grTxtPages),\
+                    gr.Dropdown.update(
+                        choices=sHistory.getAsChoices())
             grBtnGetListAPI.click(
                 fn=update_model_list,
                 inputs=[
                     grChkbxGrpContentType,
                     grDrpdwnSortType,
                     grRadioSearchType,
-                    grTxtSearchTerm,
+                    grDropdownSearchTerm,
                     grChkboxShowNsfw,
                     grDrpdwnPeriod,
                     grDrpdwnBasemodels
@@ -266,7 +288,8 @@ class components():
                     grBtnNextPage,
                     grBtnGoPage,
                     grSldrPage,
-                    grTxtPages
+                    grTxtPages,
+                    grDropdownSearchTerm
                 ]
             )
 
@@ -638,7 +661,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.14.2'
+    ver = 'v1.14.3'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

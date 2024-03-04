@@ -26,7 +26,10 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.14
-- Supports search by Version ID
+- Support search term history
+  - Term history length is changeable in Settings
+  - Term history is saved in `search_history.json` file
+- Support search by Version ID
 - Fix to use model-versions API to get meta data
 - Add color frames to cards that can be updated
 - Use jinja template engine

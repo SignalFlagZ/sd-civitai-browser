@@ -45,22 +45,35 @@ function civsfz_trigger_key_down(element, key){
 	element.dispatchEvent(e);
 }
 
-function civsfz_copyInnerText(node) {
+function civsfz_copyInnerText(node, send=true) {
 	if (node.nextSibling != null) {
 		//let ret = navigator.clipboard.writeText(node.nextSibling.innerText;
 		//alert("Copied infotext");
-		let response = confirm("Send to txt2img?");
-		if (response) {
-			let prompt = gradioApp().querySelector('#txt2img_prompt textarea');
-			let paste = gradioApp().querySelector('#paste');
-			if (paste == null) {
-				//SD.Next
-				paste = gradioApp().querySelector('#txt2img_paste');
+		if (send) {
+			let response = confirm("Send to txt2img?");
+			if (response) {
+				let prompt = gradioApp().querySelector('#txt2img_prompt textarea');
+				let paste = gradioApp().querySelector('#paste');
+				if (paste == null) {
+					//SD.Next
+					paste = gradioApp().querySelector('#txt2img_paste');
+				}
+				prompt.value = node.nextElementSibling.innerText;
+				civsfz_trigger_event(prompt, 'input');
+				civsfz_trigger_event(paste, 'click');
+				//trigger_key_down(prompt, 'Escape');
 			}
-			prompt.value = node.nextElementSibling.innerText;
-			civsfz_trigger_event(prompt, 'input');
-			civsfz_trigger_event(paste, 'click');
-			//trigger_key_down(prompt, 'Escape');
+		} else {
+			return navigator.clipboard.writeText(node.nextElementSibling.innerText)
+			.then(
+				function () {
+					alert("Copied " + node.nextElementSibling.innerText);
+				}
+			).catch (
+				function (error) {
+					alert((error && error.message) || "Failed to copy infotext");
+				}
+			)
 		}
 	}
 }

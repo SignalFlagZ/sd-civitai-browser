@@ -1,9 +1,10 @@
+{% set copy = '<span style="cursor: copy;" onclick="civsfz_copyInnerText(this,false);">📋</span>' %}
 {% set tdStyle1 = 'style="max-width:20em;min-width:7em;padding:0.2em;"' %}
 <div class="civsfz-modelBasicInfo" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
 	<table>
 		<tr>
 			<td {{ tdStyle1 }}>Model ID</td>
-			<td {{ tdStyle1 }}>{{ modelInfo["id"] }}</td>
+			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["id"] }}</span></td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Civitai link</td>
@@ -12,7 +13,7 @@
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Uploaded by</td>
-			<td {{ tdStyle1 }}>{{ modelInfo["creator"]["username"]|e }}</td>
+			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["creator"]["username"]|e }}</span></td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Created</td>
@@ -31,7 +32,7 @@
 	<table>
 		<tr>
 			<td {{ tdStyle1 }}>Version ID</td>
-			<td {{ tdStyle1 }}>{{ modelInfo["versionId"] }}</td>
+			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["versionId"] }}</span></td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Version</td>
@@ -47,11 +48,11 @@
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Tags</td>
-			<td {{ tdStyle1 }}>{{ modelInfo['tags']|join(', ')|e }}</td>
+			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo['tags']|join(', ')|e }}</span></td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Trained Tags</td>
-			<td {{ tdStyle1 }}>{{ ", ".join(modelInfo["trainedWords"])|e }}</td>
+			<td {{ tdStyle1 }}>{{ copy }}<span>{{ ", ".join(modelInfo["trainedWords"])|e }}</span></td>
 		</tr>
 	</table>
 </div>

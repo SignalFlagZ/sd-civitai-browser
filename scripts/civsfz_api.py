@@ -506,7 +506,7 @@ class civitaimodels:
             'if (node.nextSibling != null) {'
               'return navigator.clipboard.writeText(node.nextElementSibling.innerText).then('
 			'function () {'
-				'alert("Copied infotext");'
+				'alert("Copied");'
 			'}).catch('
 			    'function (error) {'
 				'alert((error && error.message) || "Failed to copy infotext");'

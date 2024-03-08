@@ -25,6 +25,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v1.15
+- Subfolders under the type folder can now be set in Settings \([How to set it up](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki/How-to-set-up-subfolders-for-model-storage-%5Bv1.15.0-and-above%5D)\) 
 ### v1.14
 - Support search term history
   - Term history length is changeable in Settings
@@ -53,7 +55,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
   - The background color changes during and outside the period
 - Show elapsed days on Early Access models
 - Add model creation date/time, publication date/time, update date/time in HTML
-- Add save folder setting \([How to set it up](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki#how-to-set-save-folders-by-type-v1100-and-above)\)
+- Add save folder setting \([How to set it up](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki/How-to-set-save-folders-by-type-%5Bv1.10.0-and-above%5D)\)
   - Specify path for each model type in JSON string
 ### v1.9
 - Search for multiple model types at the same time

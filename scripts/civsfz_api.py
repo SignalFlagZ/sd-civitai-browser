@@ -7,7 +7,7 @@ import urllib.parse
 from pathlib import Path
 import requests
 from colorama import Fore, Back, Style
-from scripts.civsfz_filemanage import generate_model_save_path
+from scripts.civsfz_filemanage import generate_model_save_path2
 from modules.shared import opts
 from jinja2 import Environment, FileSystemLoader
 
@@ -204,6 +204,13 @@ class civitaimodels:
     def getModelTypeByIndex(self, index:int) -> str:
         item = self.jsonData['items'][index]
         return item['type'] 
+    def getUserName(self):
+        item = self.jsonData['items'][self.modelIndex]
+        return item['creator']['username']
+    def getModelID(self):
+        item = self.jsonData['items'][self.modelIndex]
+        return item['id']
+
     def allows2permissions(self) -> dict:
         '''Convert allows to permissions. Select model first.
             [->Reference](https://github.com/civitai/civitai/blob/main/src/components/PermissionIndicator/PermissionIndicator.tsx#L15)'''
@@ -315,6 +322,10 @@ class civitaimodels:
         dtPublishedAt = datetime.datetime.fromisoformat(strPublishedAt)
         # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
         return dtPublishedAt
+    def getVersionID(self):
+        item = self.jsonData['items'][self.modelIndex]
+        version_dict = item['modelVersions'][self.versionIndex]
+        return version_dict['id']
 
     def makeModelInfo2(self, modelIndex=None, versionIndex=None) -> dict:
         """make selected version info"""
@@ -434,8 +445,15 @@ class civitaimodels:
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
                     
-                folder = generate_model_save_path(self.getModelTypeByIndex(
-                    index), item["name"], base_model, self.treatAsNsfw(modelIndex=index))  # item['nsfw'])
+                folder = generate_model_save_path2(
+                    self.getModelTypeByIndex(index),
+                    item["name"],
+                    base_model,
+                    self.treatAsNsfw(modelIndex=index),
+                    item["creator"]["username"],
+                    item['id'],
+                    item['modelVersions'][0]['id']
+                    )
                 for i,ver in enumerate(item['modelVersions']):
                     for file in ver['files']:
                         file_name = file['name']

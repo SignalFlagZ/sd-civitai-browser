@@ -27,8 +27,8 @@ class components():
 
     def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
-        from scripts.civsfz_filemanage import generate_model_save_path, isExistFile, \
-                save_text_file, saveImageFiles,download_file2
+        from scripts.civsfz_filemanage import generate_model_save_path2, isExistFile, \
+            save_text_file, saveImageFiles, download_file2
         # self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = civitaimodels()
@@ -258,7 +258,7 @@ class components():
                 # model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
                 # HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 models = self.civitai.getModels(grChkboxShowNsfw)
-                HTML = self.civitai.modelCardsHtml(models, self.id)
+                HTML = self.civitai.modelCardsHtml(models, jsID=self.id)
                 return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -315,10 +315,13 @@ class components():
 
             def  update_model_info(model_version=None):
                 if model_version is not None and self.civitai.selectVersionByIndex(model_version) is not None:
-                    path = generate_model_save_path(self.civitai.getSelectedModelType(),
+                    path = generate_model_save_path2(self.civitai.getSelectedModelType(),
                                                 self.civitai.getSelectedModelName(),
                                                 self.civitai.getSelectedVersionBaseModel(),
-                                                self.civitai.treatAsNsfw() #isNsfwModel()
+                                                self.civitai.treatAsNsfw(), #isNsfwModel()
+                                                self.civitai.getUserName(),
+                                                self.civitai.getModelID(),
+                                                self.civitai.getVersionID()
                                             )
                     dict = self.civitai.makeModelInfo2()
                     if dict['modelVersions'][0]["files"] == []:
@@ -521,7 +524,7 @@ class components():
                 # model_names = self.civitai.getModelNames() if (grChkboxShowNsfw) else self.civitai.getModelNamesSfw()
                 # HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 models = self.civitai.getModels(grChkboxShowNsfw)
-                HTML = self.civitai.modelCardsHtml(models, self.id)
+                HTML = self.civitai.modelCardsHtml(models, jsID=self.id)
                 return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
@@ -661,7 +664,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.14.4'
+    ver = 'v1.15.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

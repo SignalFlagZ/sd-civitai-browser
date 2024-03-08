@@ -136,14 +136,65 @@ def basemodel_path(baseModel: str) -> Path:
         basemodelPath = '_' + baseModel.replace(' ', '_').replace('.', '_')
     return Path(basemodelPath)
 
-def generate_model_save_path(content_type, model_name:str = "",base_model:str="", nsfw:bool=False) -> Path:
-    typePath = type_path(content_type)
-    basemodelPath = basemodel_path(base_model)
+def basemodel_path_all(baseModel: str) -> Path:
+    basemodelPath = baseModel.replace(' ', '_').replace('.', '_')
+    return Path(basemodelPath)
+
+def generate_model_save_path(type, modelName:str = "",baseModel:str="", nsfw:bool=False) -> Path:
+    typePath = type_path(type)
+    basemodelPath = basemodel_path(baseModel)
     modelPath = typePath / basemodelPath
     if nsfw:
         modelPath = typePath / basemodelPath / Path('.nsfw')
-    filename = escaped_filename(model_name)
+    filename = escaped_filename(modelName)
     modelPath = modelPath / Path(filename)
+    return modelPath
+
+
+def generate_model_save_path2(type, modelName: str = "", baseModel: str = "", nsfw: bool = False, username=None, mID=None, vID=None) -> Path:
+    # TYPE, MODELNAME, BASEMODEL, NSFW, UPNAME, MODEL_ID, VERSION_ID
+    subfolders = {
+        # "TYPE": type_path(type).as_posix(),
+        "BASEMODELbkCmpt": basemodel_path(baseModel).as_posix(),
+        "BASEMODEL": basemodel_path_all(baseModel).as_posix(),
+        "NSFW": "nsfw" if nsfw else None,
+        "USERNAME": escaped_filename(username) if username is not None else None,
+        "MODELNAME": escaped_filename(modelName),
+        "MODELID": str(mID) if mID is not None else None,
+        "VERSIONID": str(vID) if vID is not None else None,
+    }
+    if not str.strip(opts.civsfz_save_subfolder):
+        subTree = "{{BASEMODELbkCmpt}}/.{{NSFW}}/{{MODELNAME}}"
+    else:
+        subTree = str.strip(opts.civsfz_save_subfolder)
+    subTreeList = subTree.split("/")
+    newTreeList = []
+    for i, sub in enumerate(subTreeList):
+        if sub:
+            subKeys = re.findall("(\{\{(.+?)\}\})", sub)
+            newSub = ""
+            replaceSub = sub
+            for subKey in subKeys:
+                if subKey[1] is not None:
+                    if subKey[1] in subfolders:
+                        folder = subfolders[subKey[1]]
+                        if folder is not None:
+                            replaceSub = re.sub(
+                                "\{\{" + subKey[1] + "\}\}", folder, replaceSub)
+                        else:
+                            replaceSub = re.sub(
+                                "\{\{" + subKey[1] + "\}\}", "", replaceSub)
+                    else:
+                        print_ly(f'"{subKey[1]}" is not defined')
+            newSub += replaceSub if replaceSub is not None else ""
+
+            if newSub != "":
+                newTreeList.append(newSub)
+        else:
+            if i != 0:
+                print_lc(f"Empty subfolder:{i}")
+    modelPath = type_path(type).joinpath(
+        "/".join(newTreeList))
     return modelPath
 
 def save_text_file(folder, filename, trained_words):

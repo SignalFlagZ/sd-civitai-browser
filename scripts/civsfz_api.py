@@ -349,12 +349,12 @@ class civitaimodels:
         versionRes = self.requestVersionByVersionID(version["id"])
         if versionRes is not None:
             for i, img in enumerate(versionRes["images"]):
-                if 'meta' not in modelInfo["modelVersions"][0]["images"][i]:
-                    modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta'] if 'meta' in img else ""
+                # if 'meta' not in modelInfo["modelVersions"][0]["images"][i]:
+                    modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta'] if 'meta' in img else {}
         else:
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'meta' not in img:
-                    img["meta"] = { "prompt": "Model version API request error"}
+                    img["meta"] = { "ERROR": "Model version API request error"}
         html = self.modelInfoHtml(modelInfo)
         modelInfo["html"] = html
         self.setModelVersionInfo(modelInfo)

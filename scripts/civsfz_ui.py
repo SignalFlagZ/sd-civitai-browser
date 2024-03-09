@@ -321,7 +321,8 @@ class components():
                                                 self.civitai.treatAsNsfw(), #isNsfwModel()
                                                 self.civitai.getUserName(),
                                                 self.civitai.getModelID(),
-                                                self.civitai.getVersionID()
+                                                self.civitai.getVersionID(),
+                                                self.civitai.getSelectedVersionName()
                                             )
                     dict = self.civitai.makeModelInfo2()
                     if dict['modelVersions'][0]["files"] == []:
@@ -664,7 +665,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.15.0'
+    ver = 'v1.15.1'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

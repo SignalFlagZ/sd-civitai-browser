@@ -151,16 +151,17 @@ def generate_model_save_path(type, modelName:str = "",baseModel:str="", nsfw:boo
     return modelPath
 
 
-def generate_model_save_path2(type, modelName: str = "", baseModel: str = "", nsfw: bool = False, username=None, mID=None, vID=None) -> Path:
+def generate_model_save_path2(type, modelName: str = "", baseModel: str = "", nsfw: bool = False, userName=None, mID=None, vID=None, versionName=None) -> Path:
     # TYPE, MODELNAME, BASEMODEL, NSFW, UPNAME, MODEL_ID, VERSION_ID
     subfolders = {
         # "TYPE": type_path(type).as_posix(),
         "BASEMODELbkCmpt": basemodel_path(baseModel).as_posix(),
         "BASEMODEL": basemodel_path_all(baseModel).as_posix(),
         "NSFW": "nsfw" if nsfw else None,
-        "USERNAME": escaped_filename(username) if username is not None else None,
+        "USERNAME": escaped_filename(userName) if userName is not None else None,
         "MODELNAME": escaped_filename(modelName),
         "MODELID": str(mID) if mID is not None else None,
+        "VERSIONNAME": escaped_filename(versionName),
         "VERSIONID": str(vID) if vID is not None else None,
     }
     if not str.strip(opts.civsfz_save_subfolder):
@@ -186,6 +187,7 @@ def generate_model_save_path2(type, modelName: str = "", baseModel: str = "", ns
                                 "\{\{" + subKey[1] + "\}\}", "", replaceSub)
                     else:
                         print_ly(f'"{subKey[1]}" is not defined')
+                        replaceSub = "ERROR"
             newSub += replaceSub if replaceSub is not None else ""
 
             if newSub != "":

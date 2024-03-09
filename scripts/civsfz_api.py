@@ -452,7 +452,8 @@ class civitaimodels:
                     self.treatAsNsfw(modelIndex=index),
                     item["creator"]["username"],
                     item['id'],
-                    item['modelVersions'][0]['id']
+                    item['modelVersions'][0]['id'],
+                    item['modelVersions'][0]['name']
                     )
                 for i,ver in enumerate(item['modelVersions']):
                     for file in ver['files']:

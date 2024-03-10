@@ -182,7 +182,7 @@ def on_ui_settings():
         key="civsfz_save_subfolder",
         info=shared.OptionInfo(
             "",
-            label='Subfolders under type folders. Model information can be referenced by the key name enclosed in double curly brachets "{{}}". Available key names are "BASEMODELbkCmpt", "BASEMODEL", "NSFW", "USERNAME", "MODELNAME", "MODELID" and "VERSIONID". Folder separator is "/".',
+            label='Subfolders under type folders. Model information can be referenced by the key name enclosed in double curly brachets "{{}}". Available key names are "BASEMODELbkCmpt", "BASEMODEL", "NSFW", "USERNAME", "MODELNAME", "MODELID", "VERSIONNAME" and "VERSIONID". Folder separator is "/".',
             component=gr.Textbox,
             component_args={
                 "lines": 1,

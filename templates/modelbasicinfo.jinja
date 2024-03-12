@@ -48,7 +48,20 @@
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Tags</td>
-			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo['tags']|join(', ')|e }}</span></td>
+			<td {{ tdStyle1 }}>
+				{%- for tag in modelInfo['tags'] %}
+					<span style="display:inline-block;">
+						{{ copy -}}
+						<span>{{ tag|e }}</span>
+					</span>
+					{%- if not loop.last %}
+					,
+					{%- endif %}
+				{%- endfor %}
+			</td>
+<span></span>
+</span>
+</td>
 		</tr>
 		<tr>
 			<td {{ tdStyle1 }}>Trained Tags</td>

@@ -52,10 +52,12 @@
 				{%- for tag in modelInfo['tags'] %}
 					<span style="display:inline-block;">
 						{{ copy -}}
-						<span>{{ tag|e }}</span>
+						<span>{{ tag|e -}}
 					</span>
-					{%- if not loop.last -%}
-					,
+					{%- if not loop.last %}
+					,</span>
+					{%- else %}
+						</span>
 					{%- endif %}
 				{%- endfor %}
 			</td>

@@ -288,8 +288,16 @@ class civitaimodels:
         # print(f"{self.jsonData['items'][self.modelIndex]['modelVersions']}")
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['baseModel']
     def getSelectedVersionEarlyAccessTimeFrame(self):
+        '''
+        earlyAccessTimeFrame is missing from the API response
+        '''
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessTimeFrame']
-    def setModelVersionInfo(self, modelInfo:str):
+    def getSelectedVersionEarlyAccessDeadline(self):
+        if 'earlyAccessDeadline' in self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]:
+            return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessDeadline']
+        else:
+            return ""
+    def setModelVersionInfo(self, modelInfo: str):
         self.modelVersionInfo = modelInfo
     def getModelVersionInfo(self) -> str:
         return self.modelVersionInfo
@@ -322,6 +330,17 @@ class civitaimodels:
         dtPublishedAt = datetime.datetime.fromisoformat(strPublishedAt)
         # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
         return dtPublishedAt
+    def getEarlyAccessDeadlineDatetime(self) -> datetime.datetime:
+        item = self.jsonData['items'][self.modelIndex]
+        version_dict = item['modelVersions'][self.versionIndex]
+        if 'earlyAccessDeadline' in version_dict:
+            strEarlyAccessDeadline = version_dict['earlyAccessDeadline'].replace(
+                'Z', '+00:00')  # < Python 3.11
+            dtEarlyAccessDeadline = datetime.datetime.fromisoformat(strEarlyAccessDeadline)
+        else:
+            dtEarlyAccessDeadline=""
+            # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
+        return dtEarlyAccessDeadline
     def getVersionID(self):
         item = self.jsonData['items'][self.modelIndex]
         version_dict = item['modelVersions'][self.versionIndex]
@@ -468,13 +487,15 @@ class civitaimodels:
                                 break
                     if param['have'] != "":
                         break
-                ea = item["modelVersions"][0]['earlyAccessTimeFrame']
-                if ea > 0:
-                    strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
-                    dtPub = datetime.datetime.fromisoformat(strPub)
+                ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
+                if ea:
+                    #strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
+                    #dtPub = datetime.datetime.fromisoformat(strPub)
+                    strEA = item["modelVersions"][0]['earlyAccessDeadline'].replace('Z', '+00:00')  # < Python 3.11
+                    dtEA = datetime.datetime.fromisoformat(strEA)
                     dtNow = datetime.datetime.now(datetime.timezone.utc)
-                    dtDiff = dtNow - dtPub
-                    if ea <= int(dtDiff.days):
+                    #dtDiff = dtNow - dtPub
+                    if dtNow > dtEA:
                         param['ea'] = 'out'
                     else:
                         param['ea'] = 'in'

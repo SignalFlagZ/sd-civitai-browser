@@ -25,6 +25,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v1.16
+- Support for removing `earlyAccessTimeFrame` from Civitai API response and replacing it with `earlyAccessDeadline`.
 ### v1.15
 - Subfolders under the type folder can now be set in Settings \([How to set it up](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki/How-to-set-up-subfolders-for-model-storage-%5Bv1.15.0-and-above%5D)\) 
 ### v1.14

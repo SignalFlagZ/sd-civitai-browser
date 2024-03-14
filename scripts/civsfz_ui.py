@@ -341,7 +341,7 @@ class components():
                         gr.Textbox.update(value=dict["baseModel"]),
                         gr.Textbox.update(value=path),
                         gr.Textbox.update(
-                            value=self.civitai.getSelectedVersionEarlyAccessTimeFrame()
+                            value=self.civitai.getSelectedVersionEarlyAccessDeadline()
                         ),
                     )
                 else:
@@ -396,7 +396,8 @@ class components():
                 if grTxtEarlyAccess != "":
                     dtPub = self.civitai.getPublishedDatetime()
                     dtNow = datetime.now(timezone.utc)
-                    dtEndat = dtPub + timedelta(days=int(grTxtEarlyAccess))
+                    # dtEndat = dtPub + timedelta(days=int(grTxtEarlyAccess))
+                    dtEndat = self.civitai.getEarlyAccessDeadlineDatetime()
                     tdDiff = dtNow - dtEndat
                     # print_lc(f'{tdDiff=}')
                     if tdDiff / timedelta(days=1) >= 0:
@@ -665,7 +666,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.15.1'
+    ver = 'v1.16.0'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

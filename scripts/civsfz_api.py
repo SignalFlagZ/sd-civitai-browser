@@ -495,9 +495,7 @@ class civitaimodels:
                     dtEA = datetime.datetime.fromisoformat(strEA)
                     dtNow = datetime.datetime.now(datetime.timezone.utc)
                     #dtDiff = dtNow - dtPub
-                    if dtNow > dtEA:
-                        param['ea'] = 'out'
-                    else:
+                    if dtNow < dtEA:
                         param['ea'] = 'in'
             cards.append(param)
             

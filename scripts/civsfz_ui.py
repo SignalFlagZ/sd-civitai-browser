@@ -408,7 +408,7 @@ class components():
                         msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(hours=1)))} hours left"
                     else:
                         msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(days=1)))} days left"
-                return gr.Textbox.update(value="" if grTxtEarlyAccess == "0" else f"{msg} ")
+                return gr.Textbox.update(value="" if grTxtEarlyAccess == "" else f"{msg} ")
 
             grDrpdwnFilenames.change(
                 fn=updateDlUrl,

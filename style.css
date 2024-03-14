@@ -11,8 +11,7 @@
 	--civsfz-sd1-background-color: #87ba39d9;
 	--civsfz-sd2-background-color: #54c696d9;
 	--civsfz-sdxl-background-color: #d54b44d9;
-	--civsfz-early-access-out-background-color: rgba(39, 52, 201, 0.8);
-	--civsfz-early-access-in-background-color: rgba(159, 54, 16, 0.8);
+	--civsfz-early-access-in-background-color: rgba(39, 52, 201, 0.8);
 }
 
 .civsfz-modellist {

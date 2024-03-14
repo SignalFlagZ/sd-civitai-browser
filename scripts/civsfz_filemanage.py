@@ -428,7 +428,7 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0'
             }
-        if int(early_access) > 0:
+        if early_access:
             print_lc("Early Access model")
             if len(api_key) == 32:
                 headers.update({"Authorization": f"Bearer {api_key}"})
@@ -491,7 +491,7 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
                         # Break out of the loop if the download is successful
                         break
                     else:
-                        if int(early_access) > 0:
+                        if early_access:
                             print_ly(
                                 "Download canceled. Early Access!")
                             yield "Early Access!"

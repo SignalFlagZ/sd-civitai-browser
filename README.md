@@ -28,8 +28,9 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ### v1.17α
 - Temporarily avoid the error because the pagination of Civitai API has been changed
   - Pagination doesn't work
-  - ID search is not possible
+  - ~~ID search is not possible~~
   - Creation and update times are gone
+  - Support for changed time notation for publishedAt
 ### v1.16
 - Support for removing `earlyAccessTimeFrame` from Civitai API response and replacing it with `earlyAccessDeadline`.
 ### v1.15

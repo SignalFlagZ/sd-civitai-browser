@@ -325,8 +325,12 @@ class civitaimodels:
     def getPublishedDatetime(self) -> datetime.datetime:
         item = self.jsonData['items'][self.modelIndex]
         version_dict = item['modelVersions'][self.versionIndex]
-        strPublishedAt = version_dict['publishedAt'].replace(
-            'Z', '+00:00')  # < Python 3.11
+        if version_dict['publishedAt'][-1] == "Z":
+            strPublishedAt = version_dict['publishedAt'].replace(
+                'Z', '+00:00')  # < Python 3.11
+        else:
+            strPublishedAt = version_dict['publishedAt'][:19] + '+00:00'
+        #print_lc(f'{version_dict["publishedAt"]=}  {strPublishedAt=}')
         dtPublishedAt = datetime.datetime.fromisoformat(strPublishedAt)
         # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
         return dtPublishedAt
@@ -370,9 +374,9 @@ class civitaimodels:
         #modelInfo['createdAt'] = version['createdAt']
         #modelInfo['updatedAt'] = version['updatedAt']
         modelInfo['publishedAt'] = version['publishedAt']
-        modelInfo['trainedWords'] = version['trainedWords']
+        modelInfo['trainedWords'] = version['trainedWords'] if 'trainedWords' in version else ""
         modelInfo['baseModel'] = version['baseModel']
-        modelInfo['versionDescription'] = version['description']
+        modelInfo['versionDescription'] = version['description'] if 'description' in version else None
         modelInfo["downloadUrl"] = (
             version["downloadUrl"] if "downloadUrl" in version else None
         )

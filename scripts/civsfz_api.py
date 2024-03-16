@@ -711,7 +711,7 @@ class civitaimodels:
         query = { 'types': ""}
         data = self.requestApiOptions(url, query)
         try:
-            types = data[0]['unionErrors'][0]['issues'][0]['options']
+            types = data['error']['issues'][0]['unionErrors'][0]['issues'][0]['options']
         except:
             print_ly(f'ERROR: Get types')
             typeOptions = [
@@ -748,8 +748,9 @@ class civitaimodels:
         query = {'baseModels': ""}
         data = self.requestApiOptions(url, query)
         try:
-            basemodelOptions = data[0]['unionErrors'][0]['issues'][0]['options']
+            basemodelOptions = data['error']['issues'][0]['unionErrors'][0]['issues'][0]['options']
         except:
+            print_ly(f'ERROR: Get base models')
             basemodelOptions = [
                 "SD 1.4",
                 "SD 1.5",
@@ -778,8 +779,9 @@ class civitaimodels:
         query = {'sort': ""}
         data = self.requestApiOptions(url, query)
         try:
-            sortOptions = data[0]['options']
+            sortOptions = data['error']['issues'][0]['options']
         except:
+            print_ly(f'ERROR: Get sorts')
             sortOptions = [
                 "Highest Rated",
                 "Most Downloaded",
@@ -795,8 +797,9 @@ class civitaimodels:
         query = {'period': ""}
         data = self.requestApiOptions(url, query)
         try:
-            periodOptions = data[0]['options']
+            periodOptions = data['error']['issues'][0]['options']
         except:
+            print_ly(f'ERROR: Get periods')
             periodOptions = [
                 "Day",
                 "Week",

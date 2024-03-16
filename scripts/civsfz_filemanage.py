@@ -541,7 +541,7 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
         sha256 = calculate_sha256(file_name).upper()
         #print_lc(f'Model file hash : {hash}')
         if hash != "":
-            if sha256 == hash.upper():
+            if sha256[:len(hash)] == hash.upper():
                 print_n(f"Save: {file_name_display}")
                 yield 'Downloaded'
                 exitGenerator=True

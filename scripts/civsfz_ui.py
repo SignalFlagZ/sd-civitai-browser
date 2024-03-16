@@ -229,7 +229,7 @@ class components():
                             "items":[response],
                             'metadata': {
                                 'currentPage': "1",
-                                'totalPages': "1",
+                                'pageSize': "1",
                                 }
                             } if self.civitai.getRequestError() is None else None
                 elif grRadioSearchType != "Version ID":
@@ -666,7 +666,7 @@ class components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.16.1'
+    ver = 'v1.17α'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

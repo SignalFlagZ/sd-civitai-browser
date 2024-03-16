@@ -352,7 +352,7 @@ class civitaimodels:
         versionIndex = self.versionIndex if versionIndex is None else versionIndex
         item = self.jsonData["items"][modelIndex]
         version = item["modelVersions"][versionIndex]
-        modelInfo = {"infoVersion": "2.0"}
+        modelInfo = {"infoVersion": "2.1"}
         for key, value in item.items():
             if key not in ("modelVersions"):
                 modelInfo[key] = value
@@ -367,8 +367,8 @@ class civitaimodels:
         # add version info
         modelInfo['versionId'] = version['id']
         modelInfo['versionName'] = version['name']
-        modelInfo['createdAt'] = version['createdAt']
-        modelInfo['updatedAt'] = version['updatedAt']
+        #modelInfo['createdAt'] = version['createdAt']
+        #modelInfo['updatedAt'] = version['updatedAt']
         modelInfo['publishedAt'] = version['publishedAt']
         modelInfo['trainedWords'] = version['trainedWords']
         modelInfo['baseModel'] = version['baseModel']
@@ -424,9 +424,12 @@ class civitaimodels:
 
     # Pages
     def getCurrentPage(self) -> str:
-        return f"{self.jsonData['metadata']['currentPage']}"
+        #return f"{self.jsonData['metadata']['currentPage']}"
+        return "1"
     def getTotalPages(self) -> str:
-        return f"{self.jsonData['metadata']['totalPages']}"
+        #return f"{self.jsonData['metadata']['totalPages']}"
+        #return f"{self.jsonData['metadata']['pageSize']}"
+        return "1"
     def getPages(self) -> str:
         return f"{self.getCurrentPage()}/{self.getTotalPages()}"
     def nextPage(self) -> str:
@@ -533,15 +536,15 @@ class civitaimodels:
                 infotext=infotext
                 )
 
-        created = self.getCreatedDatetime().astimezone(
-            tz.tzlocal()).replace(microsecond=0).isoformat()
+        #created = self.getCreatedDatetime().astimezone(
+        #    tz.tzlocal()).replace(microsecond=0).isoformat()
         published = self.getPublishedDatetime().astimezone(
             tz.tzlocal()).replace(microsecond=0).isoformat()
-        updated = self.getUpdatedDatetime().astimezone(
-            tz.tzlocal()).replace(microsecond=0).isoformat()
+        #updated = self.getUpdatedDatetime().astimezone(
+        #    tz.tzlocal()).replace(microsecond=0).isoformat()
         template = environment.get_template("modelbasicinfo.jinja")
         basicInfo = template.render(
-            modelInfo=modelInfo, created=created, published=published, updated=updated)
+            modelInfo=modelInfo, published=published)
         
         permissions = self.permissionsHtml(self.allows2permissions())
         # function:copy to clipboard
@@ -576,7 +579,7 @@ class civitaimodels:
             else:
                 query = str.strip(search_term)
         else:
-            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards }
+            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards, 'page': 1 }
             if not period == "AllTime":
                 query |= {'period': period}   
             if use_search_term != "No" and search_term:
@@ -620,12 +623,43 @@ class civitaimodels:
             data = self.jsonData # No update data
             self.requestError = e
         else:
+            print_lc(f'{response.url=}')
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
+            data = self.patchResponse(data)
         # Check the status code of the response
         # if response.status_code != 200:
         #  print("Request failed with status code: {}".format(response.status_code))
         #  exit()
+        return data
+    
+    def patchResponse(self, data:dict) -> dict:
+        # make compatibility
+        if 'metadata' in data:
+            print_lc(f"{data['metadata']=}")
+            parse = urllib.parse.urlparse(data['metadata']['nextPage'])
+            strQuery = parse.query
+            dictQuery = urllib.parse.parse_qs(strQuery)
+            dictQuery.pop('cursor', None)        
+            #addQuery = { 'page': data['metadata']['currentPage']}
+            #query = dictQuery | addQuery
+            #currentURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+            #data['metadata']['currentPageUrl'] = urllib.parse.urlunparse(currentURL)
+            #if data['metadata']['currentPage'] == data['metadata']['pageSize']:
+            #    data['metadata']['nextPage'] = None
+            #if data['metadata']['currentPage'] < data['metadata']['pageSize']:
+            #    addQuery ={ 'page': data['metadata']['currentPage'] + 1 }
+            #    query = dictQuery | addQuery
+            #    query.pop('cursor', None)
+            #    nextPage = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+            #    data['metadata']['nextPage'] = urllib.parse.urlunparse(nextPage)
+            ##if data['metadata']['currentPage'] > 1:
+            #    addQuery ={ 'page': data['metadata']['currentPage'] - 1 }
+            #    query = dictQuery | addQuery
+            #    query.pop('cursor', None)
+            #    prevURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+            #    data['metadata']['prevPage'] = prevURL
+
         return data
 
     def requestImagesByVersionId(self, versionId=None, limit=None):
@@ -679,6 +713,7 @@ class civitaimodels:
         try:
             types = data[0]['unionErrors'][0]['issues'][0]['options']
         except:
+            print_ly(f'ERROR: Get types')
             typeOptions = [
                 "Checkpoint",
                 "TextualInversion",

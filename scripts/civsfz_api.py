@@ -6,6 +6,7 @@ import json
 import urllib.parse
 from pathlib import Path
 import requests
+import requests_cache
 from colorama import Fore, Back, Style
 from scripts.civsfz_filemanage import generate_model_save_path2
 from modules.shared import opts
@@ -691,6 +692,8 @@ class civitaimodels:
 
         # Make a GET request to the API
         try:
+            templatesPath = Path.joinpath(Path(__file__).parent, "../api_cache")
+            requests_cache.install_cache(cache_name=templatesPath.resolve(), expire_after=5 * 60)
             with requests.Session() as request:
                 response = request.get( url, params=query, timeout=(10,15))
                 response.raise_for_status()

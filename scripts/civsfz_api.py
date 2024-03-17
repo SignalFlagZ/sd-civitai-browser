@@ -30,6 +30,8 @@ searchTypes = ["No", "Model name", "User name",
 templatesPath = Path.joinpath(
     Path(__file__).parent, Path("../templates"))
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+templatesPath = Path.joinpath(Path(__file__).parent, "../api_cache")
+requests_cache.install_cache(cache_name=templatesPath.resolve(), expire_after=5 * 60)
 
 class modelListPagination:
     def __init__(self, response:dict ) -> None:
@@ -692,8 +694,6 @@ class civitaimodels:
 
         # Make a GET request to the API
         try:
-            templatesPath = Path.joinpath(Path(__file__).parent, "../api_cache")
-            requests_cache.install_cache(cache_name=templatesPath.resolve(), expire_after=5 * 60)
             with requests.Session() as request:
                 response = request.get( url, params=query, timeout=(10,15))
                 #print_lc(f'{response.from_cache=}')

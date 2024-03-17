@@ -463,7 +463,9 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
                     #session.headers['Connection'] = 'close'
                     #session.headers['Connection'] = 'keep-alive'
                     #session.headers.update(headers)
+                    headers.update({'Cache-Control': 'no-cache'})
                     response = session.get(url, headers=headers, stream=True, timeout=(10, 10))  # Get the total size of the file
+                    #print_lc(f'{response.from_cache=}')
                     response.raise_for_status()
                     #print_lc(f"{response.headers=}")
                     if 'Content-Length' in response.headers:

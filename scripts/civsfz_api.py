@@ -30,8 +30,66 @@ templatesPath = Path.joinpath(
     Path(__file__).parent, Path("../templates"))
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
 
+class modelListPagination:
+    def __init__(self, response:dict ) -> None:
+        self.pages=[]
+        self.pageSize = response['metadata']['pageSize'] if 'pageSize' in response['metadata'] else None
+        self.currentPage = 1
+        page = { 'url': response['requestUrl'],
+                 'nextUrl': response['metadata']['nextPage'],
+                 'prevUrl': None
+                }
+        self.pages.append(page)
+    
+    def getNextUrl(self) -> str:
+        return self.pages[self.currentPage-1]['nextUrl']
+    def getPrevUrl(self) -> str:
+        return self.pages[self.currentPage-1]['prevUrl']
+    def getJumpUrl(self, page) -> str:
+        if page <= len(self.pages):
+            return self.pages[page-1]['url']
+        else:
+            return None
+    
+    def nextPage(self, response:dict) -> None:
+        prevUrl = self.pages[self.currentPage-1]['url']
+        page = { 'url': response['requestUrl'],
+                 'nextUrl': response['metadata']['nextPage'],
+                 'prevUrl': prevUrl
+                }
+        if self.currentPage + 1 == self.pageSize:
+            page['nextUrl'] = None
+        if self.currentPage < len(self.pages):
+            self.pages[self.currentPage] = page
+        else:
+            self.pages.append(page)
+        self.currentPage += 1
+        return
+
+    def prevPage(self, response: dict) -> None:
+        page = {'url': response['requestUrl'],
+                'nextUrl': response['metadata']['nextPage'],
+                'prevUrl': None
+                }
+        if self.currentPage  > 1:
+            page['prevUrl'] = self.pages[self.currentPage-2]['url']
+        self.pages[self.currentPage-1] = page
+        self.currentPage -= 1
+        return
+    def pageJump(self, response, pageNum):
+        page = {'url': response['requestUrl'],
+                'nextUrl': response['metadata']['nextPage'],
+                'prevUrl': None
+                }
+        if pageNum > 1:
+            page['prevUrl'] = self.pages[pageNum-1]['url']
+        self.pages[pageNum-1] = page
+        self.currentPage = pageNum
+        return
+
 class civitaimodels:
     '''civitaimodels: Handle the response of civitai models api v1.'''
+    
     def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
         global typeOptions
         self.jsonData = json_data
@@ -45,6 +103,7 @@ class civitaimodels:
         self.saveFolder = None
         if typeOptions is None:
             self.getOptions()
+        self.cardPagination = None
 
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
@@ -427,19 +486,33 @@ class civitaimodels:
         return sha256
 
     # Pages
+    def addFirstPage(self, response:dict) -> None:
+        self.cardPagination = modelListPagination(response)
+    def addNextPage(self, response:dict) -> None:
+        self.cardPagination.nextPage(response)
+    def backPage(self, response:dict) -> None:
+        self.cardPagination.prevPage(response)
+    def getJumpUrl(self, page) -> str:
+        return self.cardPagination.getJumpUrl(page)
+    def pageJump(self, response:dict, page) -> None:
+        self.cardPagination.pageJump(response, page)
+    
+    
     def getCurrentPage(self) -> str:
         #return f"{self.jsonData['metadata']['currentPage']}"
-        return "1"
+        return self.cardPagination.currentPage
     def getTotalPages(self) -> str:
         #return f"{self.jsonData['metadata']['totalPages']}"
         #return f"{self.jsonData['metadata']['pageSize']}"
-        return "1"
+        return self.cardPagination.pageSize
     def getPages(self) -> str:
         return f"{self.getCurrentPage()}/{self.getTotalPages()}"
     def nextPage(self) -> str:
-        return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
+        #return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
+        return self.cardPagination.getNextUrl()
     def prevPage(self) -> str:
-        return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
+        #return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
+        return self.cardPagination.getPrevUrl()
 
     # HTML
     # Make model cards html
@@ -630,6 +703,7 @@ class civitaimodels:
             print_lc(f'{response.url=}')
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
+            data['requestUrl'] = response.url
             data = self.patchResponse(data)
         # Check the status code of the response
         # if response.status_code != 200:
@@ -813,3 +887,8 @@ class civitaimodels:
             ]
         else:
             print_lc(f'Set periods')
+
+
+
+        
+    

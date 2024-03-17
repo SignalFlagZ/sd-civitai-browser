@@ -250,6 +250,7 @@ class components():
                         gr.Dropdown.update()
                 sHistory.add(grRadioSearchType, grDropdownSearchTerm)
                 self.civitai.updateJsonData(response) #, grRadioContentType)
+                self.civitai.addFirstPage(response)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
@@ -454,6 +455,8 @@ class components():
                 if response is None:
                     return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
                 self.civitai.updateJsonData(response)
+                self.civitai.addNextPage(
+                    response) if isNext else self.civitai.backPage(response)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
@@ -506,11 +509,14 @@ class components():
                 )
 
             def jump_to_page(grChkboxShowNsfw, grSldrPage):
-                url = self.civitai.nextPage()
-                if url is None:
-                    url = self.civitai.prevPage()
-                addQuery =  {'page': grSldrPage }
-                newURL = self.civitai.updateQuery(url, addQuery)
+                #url = self.civitai.nextPage()
+                #if url is None:
+                #    url = self.civitai.prevPage()
+                #addQuery =  {'page': grSldrPage }
+                #newURL = self.civitai.updateQuery(url, addQuery)
+                newURL = self.civitai.getJumpUrl(grSldrPage)
+                if newURL is None:
+                    return None, None,  gr.HTML.update(), None, None, gr.Slider.update(), gr.Textbox.update()
                 # print(f'{newURL}')
                 response = self.civitai.requestApi(newURL)
                 err = self.civitai.getRequestError()
@@ -519,6 +525,7 @@ class components():
                 if response is None:
                     return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
                 self.civitai.updateJsonData(response)
+                self.civitai.pageJump(response,grSldrPage)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None

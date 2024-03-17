@@ -36,7 +36,7 @@ class modelListPagination:
         self.pageSize = response['metadata']['pageSize'] if 'pageSize' in response['metadata'] else None
         self.currentPage = 1
         page = { 'url': response['requestUrl'],
-                 'nextUrl': response['metadata']['nextPage'],
+                 'nextUrl': response['metadata']['nextPage'] if 'nextPage' in response['metadata'] else None,
                  'prevUrl': None
                 }
         self.pages.append(page)
@@ -54,11 +54,11 @@ class modelListPagination:
     def nextPage(self, response:dict) -> None:
         prevUrl = self.pages[self.currentPage-1]['url']
         page = { 'url': response['requestUrl'],
-                 'nextUrl': response['metadata']['nextPage'],
+                 'nextUrl': response['metadata']['nextPage'] if 'nextPage' in response['metadata'] else None,
                  'prevUrl': prevUrl
                 }
-        if self.currentPage + 1 == self.pageSize:
-            page['nextUrl'] = None
+        #if self.currentPage + 1 == self.pageSize:
+        #    page['nextUrl'] = None
         if self.currentPage < len(self.pages):
             self.pages[self.currentPage] = page
         else:
@@ -68,7 +68,7 @@ class modelListPagination:
 
     def prevPage(self, response: dict) -> None:
         page = {'url': response['requestUrl'],
-                'nextUrl': response['metadata']['nextPage'],
+                'nextUrl': response['metadata']['nextPage'] if 'nextPage' in response['metadata'] else None,
                 'prevUrl': None
                 }
         if self.currentPage  > 1:
@@ -78,7 +78,7 @@ class modelListPagination:
         return
     def pageJump(self, response, pageNum):
         page = {'url': response['requestUrl'],
-                'nextUrl': response['metadata']['nextPage'],
+                'nextUrl': response['metadata']['nextPage'] if 'nextPage' in response['metadata'] else None,
                 'prevUrl': None
                 }
         if pageNum > 1:
@@ -713,12 +713,12 @@ class civitaimodels:
     
     def patchResponse(self, data:dict) -> dict:
         # make compatibility
-        if 'metadata' in data:
-            print_lc(f"{data['metadata']=}")
-            parse = urllib.parse.urlparse(data['metadata']['nextPage'])
-            strQuery = parse.query
-            dictQuery = urllib.parse.parse_qs(strQuery)
-            dictQuery.pop('cursor', None)        
+        #if 'metadata' in data:
+            #print_lc(f"{data['metadata']=}")
+            #parse = urllib.parse.urlparse(data['metadata']['nextPage'])
+            #strQuery = parse.query
+            #dictQuery = urllib.parse.parse_qs(strQuery)
+            #dictQuery.pop('cursor', None)        
             #addQuery = { 'page': data['metadata']['currentPage']}
             #query = dictQuery | addQuery
             #currentURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))

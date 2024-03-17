@@ -226,6 +226,7 @@ class components():
                         url = self.civitai.getModelsApiUrl(query)
                         response = self.civitai.requestApi(url=url)
                         response = {
+                            'requestUrl': response['requestUrl'],
                             "items":[response],
                             'metadata': {
                                 'currentPage': "1",

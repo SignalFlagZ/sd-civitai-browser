@@ -696,6 +696,7 @@ class civitaimodels:
             requests_cache.install_cache(cache_name=templatesPath.resolve(), expire_after=5 * 60)
             with requests.Session() as request:
                 response = request.get( url, params=query, timeout=(10,15))
+                #print_lc(f'{response.from_cache=}')
                 response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
@@ -705,7 +706,7 @@ class civitaimodels:
             data = self.jsonData # No update data
             self.requestError = e
         else:
-            print_lc(f'{response.url=}')
+            #print_lc(f'{response.url=}')
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
             data['requestUrl'] = response.url

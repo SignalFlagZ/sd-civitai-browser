@@ -471,7 +471,7 @@ class components():
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
                         gr.Button.update(interactive=hasNext),\
-                        gr.Slider.update(value=self.civitai.getCurrentPage()),\
+                        gr.Slider.update(value=self.civitai.getCurrentPage(), maximum=self.civitai.getTotalPages()),\
                         gr.Textbox.update(value=grTxtPages)
 
             grBtnNextPage.click(

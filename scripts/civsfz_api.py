@@ -33,7 +33,7 @@ environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
 class modelListPagination:
     def __init__(self, response:dict ) -> None:
         self.pages=[]
-        self.pageSize = response['metadata']['pageSize'] if 'pageSize' in response['metadata'] else None
+        self.pageSize = 1 #response['metadata']['pageSize'] if 'pageSize' in response['metadata'] else None
         self.currentPage = 1
         page = { 'url': response['requestUrl'],
                  'nextUrl': response['metadata']['nextPage'] if 'nextPage' in response['metadata'] else None,
@@ -63,6 +63,8 @@ class modelListPagination:
             self.pages[self.currentPage] = page
         else:
             self.pages.append(page)
+            if len(self.pages) > self.pageSize:
+                self.pageSize = len(self.pages)
         self.currentPage += 1
         return
 

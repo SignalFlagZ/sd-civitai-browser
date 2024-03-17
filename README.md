@@ -27,7 +27,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ## Versions
 ### v1.17α
 - Jumping to previously viewed pages works
-  - Jumping to a page that has never been viewed does not work and an error occurs
+  - ~~Jumping to a page that has never been viewed does not work and an error occurs~~
+  - Limit jump range
 - PREV button works
 - NEXT button works
 - Temporarily avoid the error because the pagination of Civitai API has been changed

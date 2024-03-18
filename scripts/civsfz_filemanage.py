@@ -32,6 +32,9 @@ isDownloading = False
 ckpt_dir = shared.cmd_opts.ckpt_dir or sd_models.model_path
 pre_opt_folder = None
 
+def extensionFolder() -> Path:
+    return Path(__file__).parent
+
 def escaped_filename(model_name):
     MAX_LENGTH = 254
     escapechars = str.maketrans({   " ": r"_",
@@ -463,9 +466,8 @@ def download_file2(folder, filename,  url, hash, api_key, early_access):
                     #session.headers['Connection'] = 'close'
                     #session.headers['Connection'] = 'keep-alive'
                     #session.headers.update(headers)
-                    headers.update({'Cache-Control': 'no-cache'})
+                    #headers.update({'Cache-Control': 'no-cache'})
                     response = session.get(url, headers=headers, stream=True, timeout=(10, 10))  # Get the total size of the file
-                    #print_lc(f'{response.from_cache=}')
                     response.raise_for_status()
                     #print_lc(f"{response.headers=}")
                     if 'Content-Length' in response.headers:
@@ -645,7 +647,7 @@ class searchHistory2():
     '''Not in use'''
     def __init__(self, path=None):
         self.path = Path.joinpath(
-                    Path(__file__).parent, Path("../search_history.json"))
+            extensionFolder(), Path("../search_history.json"))
         if path != None:
             if os.path.isfile(path):
                 self.path = path                

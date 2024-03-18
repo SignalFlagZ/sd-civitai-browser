@@ -26,6 +26,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.17α
+- Use requests_cache for API request
 - Jumping to previously viewed pages works
   - ~~Jumping to a page that has never been viewed does not work and an error occurs~~
   - Limit jump range

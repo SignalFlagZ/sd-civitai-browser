@@ -6,9 +6,9 @@ import json
 import urllib.parse
 from pathlib import Path
 import requests
-import requests_cache
+from requests_cache import CachedSession
 from colorama import Fore, Back, Style
-from scripts.civsfz_filemanage import generate_model_save_path2
+from scripts.civsfz_filemanage import generate_model_save_path2, extensionFolder
 from modules.shared import opts
 from jinja2 import Environment, FileSystemLoader
 
@@ -28,10 +28,8 @@ searchTypes = ["No", "Model name", "User name",
                "Tag", "Model ID", "Version ID"]
 
 templatesPath = Path.joinpath(
-    Path(__file__).parent, Path("../templates"))
+    extensionFolder(), Path("../templates"))
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
-templatesPath = Path.joinpath(Path(__file__).parent, "../api_cache")
-requests_cache.install_cache(cache_name=templatesPath.resolve(), expire_after=5 * 60)
 
 class modelListPagination:
     def __init__(self, response:dict ) -> None:
@@ -554,7 +552,7 @@ class civitaimodels:
                     item["name"],
                     base_model,
                     self.treatAsNsfw(modelIndex=index),
-                    item["creator"]["username"],
+                    item["creator"]["username"] if 'creator' in item else "",
                     item['id'],
                     item['modelVersions'][0]['id'],
                     item['modelVersions'][0]['name']
@@ -693,9 +691,10 @@ class civitaimodels:
         # print_lc(f'{query=}')
 
         # Make a GET request to the API
+        cachePath = Path.joinpath(extensionFolder(), "../api_cache")
         try:
-            with requests.Session() as request:
-                response = request.get( url, params=query, timeout=(10,15))
+            with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
+                response = session.get(url, params=query, timeout=(10, 15))
                 #print_lc(f'{response.from_cache=}')
                 response.raise_for_status()
         except requests.exceptions.RequestException as e:

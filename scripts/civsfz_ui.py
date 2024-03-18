@@ -330,11 +330,17 @@ class components():
                     if dict['modelVersions'][0]["files"] == []:
                         drpdwn =  gr.Dropdown.update(choices=[], value="")
                     else:
+                        filename = dict["modelVersions"][0]["files"][0]["name"]
+                        for f in dict["modelVersions"][0]["files"]:
+                            if 'primary' in f:
+                                if f['primary']:
+                                    filename = f["name"]
+                                    break
                         drpdwn = gr.Dropdown.update(
                             choices=[
                                 f["name"] for f in dict["modelVersions"][0]["files"]
                             ],
-                            value=dict["modelVersions"][0]["files"][0]["name"],
+                            value=filename,
                         )
                     return (
                         gr.HTML.update(value=dict["html"]),

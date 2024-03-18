@@ -692,6 +692,7 @@ class civitaimodels:
 
         # Make a GET request to the API
         cachePath = Path.joinpath(extensionFolder(), "../api_cache")
+        #headers = {'Cache-Control': 'no-cache'} if cache else {}
         try:
             with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
                 response = session.get(url, params=query, timeout=(10, 15))

@@ -228,12 +228,11 @@ def isExistFile(folder, file):
         isExist = os.path.exists(path)
     return isExist
 
+
 def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     makedirs(folder)
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', html)
-    basename = os.path.splitext(versionName)[0] # remove extension
-    opener = urllib.request.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    basename = os.path.splitext(versionName)[0]  # remove extension
     preview_url = versionInfo["modelVersions"][0]["images"][0]["url"]
     preview_url = urllib.parse.quote(preview_url,  safe=':/=')
     if 'images' in versionInfo:
@@ -242,50 +241,51 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
                 preview_url = img['url']
                 preview_url = urllib.parse.quote(preview_url,  safe=':/=')
                 break
-
-    urllib.request.install_opener(opener)
-    HTML = html
-    for i, img_url in enumerate(img_urls):
-        isVideo = False
-        for img in versionInfo["modelVersions"][0]["images"]:
-            if img['url'] == img_url:
-                if img['type'] == 'video':
-                    isVideo = True
-        # print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
-        if isVideo:
-            if content_type == "TextualInversion":
-                filename = f'{basename}_{i}.preview.webm'
-                filenamethumb = f'{basename}.preview.webm'
+    with requests.Session() as session:
+        HTML = html
+        for i, img_url in enumerate(img_urls):
+            isVideo = False
+            for img in versionInfo["modelVersions"][0]["images"]:
+                if img['url'] == img_url:
+                    if img['type'] == 'video':
+                        isVideo = True
+            # print(Fore.LIGHTYELLOW_EX + f'URL: {img_url}'+ Style.RESET_ALL)
+            if isVideo:
+                if content_type == "TextualInversion":
+                    filename = f'{basename}_{i}.preview.webm'
+                    filenamethumb = f'{basename}.preview.webm'
+                else:
+                    filename = f'{basename}_{i}.webm'
+                    filenamethumb = f'{basename}.webm'
             else:
-                filename = f'{basename}_{i}.webm'
-                filenamethumb = f'{basename}.webm'
-        else:
-            if content_type == "TextualInversion":
-                filename = f'{basename}_{i}.preview.png'
-                filenamethumb = f'{basename}.preview.png'
-            else:
-                filename = f'{basename}_{i}.png'
-                filenamethumb = f'{basename}.png'
+                if content_type == "TextualInversion":
+                    filename = f'{basename}_{i}.preview.png'
+                    filenamethumb = f'{basename}.preview.png'
+                else:
+                    filename = f'{basename}_{i}.png'
+                    filenamethumb = f'{basename}.png'
 
-        HTML = HTML.replace(img_url,f'"{filename}"')
-        url_parse = urllib.parse.urlparse(img_url)
-        if url_parse.scheme:
-            img_url = urllib.parse.quote(img_url,  safe=':/=')   #img_url.replace("https", "http").replace("=","%3D")
-            try:
-                with urllib.request.urlopen(img_url) as url:
+            HTML = HTML.replace(img_url, f'"{filename}"')
+            url_parse = urllib.parse.urlparse(img_url)
+            if url_parse.scheme:
+                # img_url.replace("https", "http").replace("=","%3D")
+                img_url = urllib.parse.quote(img_url,  safe=':/=')
+                try:
+                    response =  session.get(img_url, timeout=5)
                     with open(os.path.join(folder, filename), 'wb') as f:
-                        f.write(url.read())
+                        f.write(response.content)
                         if img_url == preview_url:
-                            shutil.copy2(os.path.join(folder, filename),os.path.join(folder, filenamethumb))
+                            shutil.copy2(os.path.join(folder, filename),
+                                        os.path.join(folder, filenamethumb))
                         print_n(f"Save {filename}")
-                # with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
-            except urllib.error.URLError as e:
-                print_ly(f'Error: {e.reason}')
-                print_ly(f'URL: {img_url}')
-                # return "Err: Save infos"
-            except urllib.error.HTTPError as err:
-                print_ly(f'Error: {e.reason}')
-                print_ly(f'URL: {img_url}')
+                    # with urllib.request.urlretrieve(img_url, os.path.join(model_folder, filename)) as dl:
+                except requests.exceptions.Timeout as e:
+                    print_ly(f'Error: {e.reason}')
+                    print_ly(f'URL: {img_url}')
+                    # return "Err: Save infos"
+                except requests.exceptions.RequestException as e:
+                    print_ly(f'Error: {e.reason}')
+                    print_ly(f'URL: {img_url}')
     filepath = os.path.join(folder, f'{basename}.html')
     with open(filepath, 'wb') as f:
         f.write(HTML.encode('utf8'))

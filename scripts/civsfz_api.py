@@ -6,7 +6,7 @@ import json
 import urllib.parse
 from pathlib import Path
 import requests
-from requests_cache import CachedSession
+#from requests_cache import CachedSession
 from colorama import Fore, Back, Style
 from scripts.civsfz_filemanage import generate_model_save_path2, extensionFolder
 from modules.shared import opts
@@ -31,7 +31,29 @@ templatesPath = Path.joinpath(
     extensionFolder(), Path("../templates"))
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
 
-class modelListPagination:
+class sessionConnection:
+    _instance =None
+    session = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(sessionConnection, cls).__new__(cls)
+            cls.session = cls.sessionObj()
+            return cls._instance
+        else:
+            return cls._instance
+    def sessionObj():
+        s = requests.Session()
+        return s
+    
+    def __init__(self):
+        return
+    def __call__(self):
+        return self.session
+    def newSession(self):
+        self.session = self.sessionObj()
+
+class modelCardsPagination:
     def __init__(self, response:dict ) -> None:
         self.pages=[]
         self.pageSize = 1 #response['metadata']['pageSize'] if 'pageSize' in response['metadata'] else None
@@ -490,7 +512,7 @@ class civitaimodels:
 
     # Pages
     def addFirstPage(self, response:dict) -> None:
-        self.cardPagination = modelListPagination(response)
+        self.cardPagination = modelCardsPagination(response)
     def addNextPage(self, response:dict) -> None:
         self.cardPagination.nextPage(response)
     def backPage(self, response:dict) -> None:
@@ -691,12 +713,13 @@ class civitaimodels:
         # print_lc(f'{query=}')
 
         # Make a GET request to the API
-        cachePath = Path.joinpath(extensionFolder(), "../api_cache")
+        #cachePath = Path.joinpath(extensionFolder(), "../api_cache")
         #headers = {'Cache-Control': 'no-cache'} if cache else {}
         try:
-            with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
-                response = session.get(url, params=query, timeout=(10, 15))
-                #print_lc(f'{response.from_cache=}')
+            #with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
+                session = sessionConnection()
+                response = session.session.get(url, params=query, timeout=(10, 15))
+                #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
                 response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
@@ -773,9 +796,10 @@ class civitaimodels:
 
         # Make a GET request to the API
         try:
-            with requests.Session() as request:
-                response = request.get(url, params=query, timeout=(10, 15))
-                response.raise_for_status()
+            #with requests.Session() as request:
+            session = sessionConnection()
+            response = session.session.get(url, params=query, timeout=(10, 15))
+            response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(f"{response=}")
             response.encoding = "utf-8"

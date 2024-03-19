@@ -251,7 +251,8 @@ class components():
                         gr.Dropdown.update()
                 sHistory.add(grRadioSearchType, grDropdownSearchTerm)
                 self.civitai.updateJsonData(response) #, grRadioContentType)
-                self.civitai.addFirstPage(response)
+                if err is None:
+                    self.civitai.addFirstPage(response)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
@@ -462,8 +463,9 @@ class components():
                 if response is None:
                     return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
                 self.civitai.updateJsonData(response)
-                self.civitai.addNextPage(
-                    response) if isNext else self.civitai.backPage(response)
+                if err is None:
+                    self.civitai.addNextPage(
+                        response) if isNext else self.civitai.backPage(response)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
@@ -532,7 +534,8 @@ class components():
                 if response is None:
                     return None, None,  gr.HTML.update(),None,None,gr.Slider.update(),gr.Textbox.update()
                 self.civitai.updateJsonData(response)
-                self.civitai.pageJump(response,grSldrPage)
+                if err is None:
+                    self.civitai.pageJump(response,grSldrPage)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None

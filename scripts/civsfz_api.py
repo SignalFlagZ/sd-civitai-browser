@@ -40,7 +40,10 @@ class sessionConnection:
     def __call__(self):
         return self.session
     def newSession(self):
-        self.session = self.sessionObj()
+        self.session = requests.Session()
+    def reConnect(self):
+        self.session.close()
+        self.newSession()
 
 class modelCardsPagination:
     def __init__(self, response:dict ) -> None:
@@ -865,6 +868,7 @@ class civitaimodels(apiInformation):
             # print(Style.RESET_ALL)
             print_ly(f"Request error: {e}")
             # print(f"{response=}")
+            session.reConnect()
             data = self.jsonData # No update data
             self.requestError = e
         else:

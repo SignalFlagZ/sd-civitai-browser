@@ -96,7 +96,7 @@ class modelCardsPagination:
                 'prevUrl': None
                 }
         if pageNum > 1:
-            page['prevUrl'] = self.pages[pageNum-1]['url']
+            page['prevUrl'] = self.pages[pageNum-1]['prevUrl']
         self.pages[pageNum-1] = page
         self.currentPage = pageNum
         return

@@ -603,28 +603,36 @@ def open_folder(f):
     else:
         print_lc(f'Not found "{path}"')
 
-class searchHistory():
+class History():
     def __init__(self, path=None):
         self.path = Path.joinpath(
-                    Path(__file__).parent, Path("../search_history.json"))
+            extensionFolder(), Path("../history.json"))
         if path != None:
             if os.path.isfile(path):
                 self.path = path                
         self.history = self.load()
     def load(self) -> dict:
         try:
-            with open(self.path, 'r') as f:
+            with open(self.path, 'r', encoding="utf-8") as f:
                 ret = json.load(f)
         except:
             ret = []
         return deque(ret,maxlen=20)
     def save(self):
         try:
-            with open(self.path, 'w') as f:
-                json.dump(list(self.history), f)
+            with open(self.path, 'w', encoding="utf-8") as f:
+                json.dump(list(self.history), f, indent=4, ensure_ascii=False)
         except Exception as e:
             #print_lc(e)
             pass
+    def len(self) -> int:
+        return len(self.history) if self.history is not None else None
+
+class SearchHistory(History):
+    def __init__(self):
+        super().__init__(Path.joinpath(
+            extensionFolder(), Path("../search_history.json")))
+
     def add(self, type, word):
         if type == "No" or word == "" or word == None:
             return
@@ -635,50 +643,25 @@ class searchHistory():
         except:
             pass
         self.history.appendleft(dict)
-        while len(self.history) > opts.civsfz_length_of_search_history:
+        while self.len() > opts.civsfz_length_of_search_history:
             self.history.pop()
         self.save()
     def getAsChoices(self):
         #ret = [(f'{w["type"]}:{w["word"]}', i) for i, w in enumerate(self.history)]
         ret = [f'{w["word"]}:-:{w["type"]}' for w in self.history]
         return ret
-    
-class searchHistory2():
-    '''Not in use'''
-    def __init__(self, path=None):
-        self.path = Path.joinpath(
-            extensionFolder(), Path("../search_history.json"))
-        if path != None:
-            if os.path.isfile(path):
-                self.path = path                
-        self.history = self.load()
-    def load(self) -> dict:
-        try:
-            with open(self.path, 'r') as f:
-                ret = json.load(f)
-        except:
-            ret = []
-        return ret
-    def save(self):
-        try:
-            with open(self.path, 'w') as f:
-                json.dump(self.history, f)
-        except:
-            pass
-    def add(self, type, word):
-        if type == "No" or word == "" or word == None:
-            return
-        for i, item in enumerate(self.history):
-            if item:
-                if item['type'] == type and item['word'] == word:
-                    self.history.pop(i)
-        dict = { "type" : type,
-                "word": word }                    
-        self.history.insert(0, dict)
-        self.history = self.history[:opts.civsfz_length_of_search_history]
+
+class PaginationHistory(History):
+    def __init__(self):
+        super().__init__(Path.joinpath(
+            extensionFolder(), Path("../pagination_history.json")))
+
+    def add(self, pages:dict):
+        self.history.appendleft(pages)
+        while self.len() > 5:
+            self.history.pop()
+        print('SAVE')
         self.save()
     def getAsChoices(self):
-        #ret = [(f'{w["type"]}:{w["word"]}', i) for i, w in enumerate(self.history)]
-        ret = [f'{w["word"]}:-:{w["type"]}' for w in self.history]
+        ret = [f'{w["types"]}-{w["searchTerm"]}' for w in self.history]
         return ret
-            

@@ -20,19 +20,20 @@ templatesPath = Path.joinpath(
     extensionFolder(), Path("../templates"))
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
 
-class sessionConnection:
+class SessionConnection:
     _instance =None
     session = None
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(sessionConnection, cls).__new__(cls)
+            cls._instance = super(SessionConnection, cls).__new__(cls)
             cls.session = cls.sessionObj()
             return cls._instance
         else:
             return cls._instance
     def sessionObj():
         s = requests.Session()
+        s.headers.update({'User-Agent': r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0'})
         return s
     
     def __init__(self):
@@ -45,8 +46,15 @@ class sessionConnection:
         self.session.close()
         self.newSession()
 
-class modelCardsPagination:
-    def __init__(self, response:dict ) -> None:
+class ModelCardsPagination:
+    def __init__(self, response:dict, types:list=None, sort:str=None, searchType:str=None, searchTerm:str=None, nsfw:bool=None, period:str=None, basemodels:list=None) -> None:
+        self.types  = types
+        self.sort = sort
+        self.searchType = searchType
+        self.searchTerm = searchTerm
+        self.nsfw = nsfw
+        self.period = period
+        self.baseModels = basemodels
         self.pages=[]
         self.pageSize = 1 #response['metadata']['pageSize'] if 'pageSize' in response['metadata'] else None
         self.currentPage = 1
@@ -65,6 +73,23 @@ class modelCardsPagination:
             return self.pages[page-1]['url']
         else:
             return None
+    def getPagination(self):
+        ret = { "types": self.types,
+                "sort": self.sort,
+                "searchType": self.searchType,
+                "searchTerm": self.searchTerm,
+                "nsfw": self.nsfw,
+                "period": self.period,
+                "basemodels": self.baseModels,
+                "pageSize": len(self.pages),
+                "currentPage": self.currentPage,
+                "pages": self.pages
+               }
+        return ret
+    def setPagination(self, pagination:dict):
+        self.pages = pagination['pages']
+        self.currentPage = pagination['currentPage']
+        self.pageSize = pagination['pageSize']
     
     def nextPage(self, response:dict) -> None:
         prevUrl = self.pages[self.currentPage-1]['url']
@@ -104,11 +129,11 @@ class modelCardsPagination:
         self.currentPage = pageNum
         return
 
-class apiInformation():
+class APIInformation():
     baseUrl = "https://civitai.com"
-    modelsApi = "/api/v1/models"
-    imagesApi = "/api/v1/images"
-    versionsAPI = "/api/v1/model-versions"
+    modelsApi = f"{baseUrl}/api/v1/models"
+    imagesApi = f"{baseUrl}/api/v1/images"
+    versionsAPI = f"{baseUrl}/api/v1/model-versions"
     typeOptions: list = None
     sortOptions: list = None
     basemodelOptions: list = None
@@ -122,13 +147,13 @@ class apiInformation():
     def getBaseUrl(self) -> str:
         return self.baseUrl
     def getModelsApiUrl(self, id=None):
-        url = self.baseUrl + self.modelsApi
+        url = self.modelsApi
         url += f'/{id}' if id is not None else ""
         return url
     def getImagesApiUrl(self):
-        return self.baseUrl + self.imagesApi
+        return self.imagesApi
     def getVersionsApiUrl(self, id=None):
-        url = self.baseUrl + self.versionsAPI
+        url = self.versionsAPI
         url += f'/{id}' if id is not None else ""
         return url
     def getTypeOptions(self) -> list:
@@ -157,7 +182,7 @@ class apiInformation():
         # Make a GET request to the API
         try:
             #with requests.Session() as request:
-            session = sessionConnection()
+            session = SessionConnection()
             response = session.session.get(url, params=query, timeout=(10, 15))
             #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
@@ -283,8 +308,8 @@ class apiInformation():
             #print_lc(f'Set periods')
             pass
         
-class civitaimodels(apiInformation):
-    '''civitaimodels: Handle the response of civitai models api v1.'''
+class CivitaiModels(APIInformation):
+    '''CivitaiModels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
         super().__init__()
         self.jsonData = json_data
@@ -653,8 +678,10 @@ class civitaimodels(apiInformation):
         return sha256
 
     # Pages
-    def addFirstPage(self, response:dict) -> None:
-        self.cardPagination = modelCardsPagination(response)
+    def addFirstPage(self, response:dict, types:list=None, sort:str=None, searchType:str=None,
+                     searchTerm:str=None, nsfw:bool=None, period:str=None, basemodels:list=None) -> None:
+        self.cardPagination = ModelCardsPagination(response, types, sort, searchType, searchTerm, nsfw, period, basemodels)
+        #print_lc(f'{self.cardPagination.getPagination()=}')
     def addNextPage(self, response:dict) -> None:
         self.cardPagination.nextPage(response)
     def backPage(self, response:dict) -> None:
@@ -663,11 +690,13 @@ class civitaimodels(apiInformation):
         return self.cardPagination.getJumpUrl(page)
     def pageJump(self, response:dict, page) -> None:
         self.cardPagination.pageJump(response, page)
+    def getPagination(self):
+        return self.cardPagination.getPagination()
     
     
     def getCurrentPage(self) -> str:
         #return f"{self.jsonData['metadata']['currentPage']}"
-        return self.cardPagination.currentPage
+        return self.cardPagination.currentPage if self.cardPagination is not None else 0
     def getTotalPages(self) -> str:
         #return f"{self.jsonData['metadata']['totalPages']}"
         #return f"{self.jsonData['metadata']['pageSize']}"
@@ -859,9 +888,9 @@ class civitaimodels(apiInformation):
         #headers = {'Cache-Control': 'no-cache'} if cache else {}
         try:
             #with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
-                session = sessionConnection()
+                session = SessionConnection()
                 response = session.session.get(url, params=query, timeout=(10, 15))
-                #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
+                #print_lc(f'{response.headers=}')
                 response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(Fore.LIGHTYELLOW_EX + "Request error: " , e)

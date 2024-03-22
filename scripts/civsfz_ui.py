@@ -14,15 +14,14 @@ except ImportError:
 import re
 import math
 import scripts as scripts
-from scripts.civsfz_api import civitaimodels
-from scripts.civsfz_filemanage import open_folder, searchHistory
+from scripts.civsfz_api import CivitaiModels
+from scripts.civsfz_filemanage import open_folder, SearchHistory
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_n = lambda  x: print("CivBrowser: " + x )
-sHistory = searchHistory()
-
-class components():
+sHistory = SearchHistory()
+class Components():
     newid = itertools.count()
 
     def __init__(self, tab=None):
@@ -31,8 +30,8 @@ class components():
             save_text_file, saveImageFiles, download_file2
         # self.tab = tab
         # Set the URL for the API endpoint
-        self.civitai = civitaimodels()
-        self.id = next(components.newid)
+        self.civitai = CivitaiModels()
+        self.id = next(Components.newid)
         contentTypes = self.civitai.getTypeOptions()
         self.APIKey = ""
         if cmd_opts.civsfz_api_key:
@@ -252,7 +251,8 @@ class components():
                 sHistory.add(grRadioSearchType, grDropdownSearchTerm)
                 self.civitai.updateJsonData(response) #, grRadioContentType)
                 if err is None:
-                    self.civitai.addFirstPage(response)
+                    self.civitai.addFirstPage(response, grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType,
+                                              grDropdownSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels)
                 self.civitai.setShowNsfw(grChkboxShowNsfw)
                 grTxtPages = self.civitai.getPages()
                 hasPrev = not self.civitai.prevPage() is None
@@ -691,7 +691,7 @@ def on_ui_tabs():
         with gr.Tabs(elem_id='civsfz_tab-element'):
             for i,name in enumerate(tabNames):
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
-                    components() #(tab)
+                    Components() #(tab)
         gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
     return [(civitai_interface, "CivBrowser", "civsfz_interface")]
 

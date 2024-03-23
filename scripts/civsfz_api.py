@@ -20,19 +20,22 @@ templatesPath = Path.joinpath(
     extensionFolder(), Path("../templates"))
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
 
-class SessionConnection:
-    session = requests.Session()
+class Browser:
+    session = None
     
     def __init__(self):
-        SessionConnection.session.headers.update(
+        if Browser.session is None:
+            Browser.session = requests.Session()
+        Browser.session.headers.update(
             {'User-Agent': r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0'})
-
-    def __call__(self):
-        return SessionConnection.session
+    def __enter__(self):
+        return Browser.session
+    def __exit__(self):
+        Browser.session.close()
     def newSession(self):
-        SessionConnection.session = requests.Session()
+        Browser.session = requests.Session()
     def reConnect(self):
-        SessionConnection.session.close()
+        Browser.session.close()
         self.newSession()
 
 class ModelCardsPagination:
@@ -161,7 +164,6 @@ class APIInformation():
         return APIInformation.searchTypes
     
     def requestApiOptions(self, url=None, query=None):
-        self.requestError = None
         if url is None:
             url = self.getModelsApiUrl()
         if query is not None:
@@ -172,8 +174,8 @@ class APIInformation():
         # Make a GET request to the API
         try:
             #with requests.Session() as request:
-            session = SessionConnection()
-            response = session.session.get(url, params=query, timeout=(10, 15))
+            browse = Browser()
+            response = browse.session.get(url, params=query, timeout=(10, 15))
             #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
@@ -878,16 +880,17 @@ class CivitaiModels(APIInformation):
         #headers = {'Cache-Control': 'no-cache'} if cache else {}
         try:
             #with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
-                session = SessionConnection()
-                response = session.session.get(url, params=query, timeout=(10, 15))
-                #print_lc(f'{response.headers=}')
-                response.raise_for_status()
+            browse = Browser()
+            response = browse.session.get(url, params=query, timeout=(10, 15))
+            #print_lc(f'{response.headers=}')
+            #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
+            response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
             # print(Style.RESET_ALL)
             print_ly(f"Request error: {e}")
             # print(f"{response=}")
-            session.reConnect()
+            browse.reConnect()
             data = self.jsonData # No update data
             self.requestError = e
         else:

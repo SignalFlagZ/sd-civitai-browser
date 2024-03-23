@@ -21,29 +21,18 @@ templatesPath = Path.joinpath(
 environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
 
 class SessionConnection:
-    _instance =None
-    session = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(SessionConnection, cls).__new__(cls)
-            cls.session = cls.sessionObj()
-            return cls._instance
-        else:
-            return cls._instance
-    def sessionObj():
-        s = requests.Session()
-        s.headers.update({'User-Agent': r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0'})
-        return s
+    session = requests.Session()
     
     def __init__(self):
-        return
+        SessionConnection.session.headers.update(
+            {'User-Agent': r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0'})
+
     def __call__(self):
-        return self.session
+        return SessionConnection.session
     def newSession(self):
-        self.session = requests.Session()
+        SessionConnection.session = requests.Session()
     def reConnect(self):
-        self.session.close()
+        SessionConnection.session.close()
         self.newSession()
 
 class ModelCardsPagination:
@@ -141,34 +130,35 @@ class APIInformation():
     searchTypes: list = ["No", "Model name", "User name",
                                 "Tag", "Model ID", "Version ID"]
     def __init__(self) -> None:
-        self.getOptions()
+        if APIInformation.typeOptions is None:
+            self.getOptions()
     def setBaseUrl(self,url:str):
-        self.baseUrl = url
+        APIInformation.baseUrl = url
     def getBaseUrl(self) -> str:
-        return self.baseUrl
+        return APIInformation.baseUrl
     def getModelsApiUrl(self, id=None):
-        url = self.modelsApi
+        url = APIInformation.modelsApi
         url += f'/{id}' if id is not None else ""
         return url
     def getImagesApiUrl(self):
-        return self.imagesApi
+        return APIInformation.imagesApi
     def getVersionsApiUrl(self, id=None):
-        url = self.versionsAPI
+        url = APIInformation.versionsAPI
         url += f'/{id}' if id is not None else ""
         return url
     def getTypeOptions(self) -> list:
         # global typeOptions, sortOptions, basemodelOptions
-        return self.typeOptions
+        return APIInformation.typeOptions
     def getSortOptions(self) -> list:
         # global typeOptions, sortOptions, basemodelOptions
-        return self.sortOptions
+        return APIInformation.sortOptions
     def getBasemodelOptions(self) -> list:
         # global typeOptions, sortOptions, basemodelOptions
-        return self.basemodelOptions
+        return APIInformation.basemodelOptions
     def getPeriodOptions(self) -> list:
-        return self.periodOptions
+        return APIInformation.periodOptions
     def getSearchTypes(self) -> list:
-        return self.searchTypes
+        return APIInformation.searchTypes
     
     def requestApiOptions(self, url=None, query=None):
         self.requestError = None
@@ -207,7 +197,7 @@ class APIInformation():
             types = data['error']['issues'][0]['unionErrors'][0]['issues'][0]['options']
         except:
             print_ly(f'ERROR: Get types')
-            self.typeOptions =  [
+            APIInformation.typeOptions = [
                                     "Checkpoint",
                                     "TextualInversion",
                                     "Hypernetwork",
@@ -236,16 +226,16 @@ class APIInformation():
             priorityTypes[i]: priorityTypes[i] for i in range(0, len(priorityTypes))}
         dict_types = dictPriority | {types[i]: types[i]
                                         for i in range(0, len(types))}
-        self.typeOptions = [dictPriority.get(
+        APIInformation.typeOptions = [dictPriority.get(
             key, key) for key, value in dict_types.items()]
 
         query = {'baseModels': ""}
         data = self.requestApiOptions(url, query)
         try:
-            self.basemodelOptions = data['error']['issues'][0]['unionErrors'][0]['issues'][0]['options']
+            APIInformation.basemodelOptions = data['error']['issues'][0]['unionErrors'][0]['issues'][0]['options']
         except:
             print_ly(f'ERROR: Get base models')
-            self.basemodelOptions =  [
+            APIInformation.basemodelOptions = [
                                     "SD 1.4",
                                     "SD 1.5",
                                     "SD 1.5 LCM",
@@ -274,10 +264,10 @@ class APIInformation():
         query = {'sort': ""}
         data = self.requestApiOptions(url, query)
         try:
-            self.sortOptions = data['error']['issues'][0]['options']
+            APIInformation.sortOptions = data['error']['issues'][0]['options']
         except:
             print_ly(f'ERROR: Get sorts')
-            self.sortOptions =  [
+            APIInformation.sortOptions = [
                     "Highest Rated",
                     "Most Downloaded",
                     "Most Liked",
@@ -294,10 +284,10 @@ class APIInformation():
         query = {'period': ""}
         data = self.requestApiOptions(url, query)
         try:
-            self.periodOptions = data['error']['issues'][0]['options']
+            APIInformation.periodOptions = data['error']['issues'][0]['options']
         except:
             print_ly(f'ERROR: Get periods')
-            self.periodOptions = [
+            APIInformation.periodOptions = [
                     "Day",
                     "Week",
                     "Month",
@@ -315,7 +305,7 @@ class CivitaiModels(APIInformation):
         self.jsonData = json_data
         # self.contentType = content_type
         self.showNsfw = False
-        self.baseUrl = self.baseUrl if url is None else url
+        self.baseUrl = APIInformation.baseUrl if url is None else url
         self.modelIndex = None
         self.versionIndex = None
         self.modelVersionInfo = None

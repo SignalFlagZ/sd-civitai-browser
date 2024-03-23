@@ -608,8 +608,7 @@ class History():
         self.path = Path.joinpath(
             extensionFolder(), Path("../history.json"))
         if path != None:
-            if os.path.isfile(path):
-                self.path = path                
+            self.path = path                
         self.history = self.load()
     def load(self) -> dict:
         try:

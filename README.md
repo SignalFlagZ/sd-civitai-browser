@@ -25,6 +25,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v1.17
+- Supports API changes
 ### v1.17α
 - Get cards using Session
 - Stop using requests_cache

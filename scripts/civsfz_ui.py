@@ -27,7 +27,7 @@ class Components():
     def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
         from scripts.civsfz_filemanage import generate_model_save_path2, isExistFile, \
-            save_text_file, saveImageFiles, download_file2
+            save_text_file, saveImageFiles, download_file
         # self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = CivitaiModels()
@@ -167,7 +167,7 @@ class Components():
                 outputs=[grTextProgress]
                 )
             download = grBtnDownloadModel.click(
-                fn=download_file2,
+                fn=download_file,
                 inputs=[
                     grTxtSaveFolder,
                     grDrpdwnFilenames,

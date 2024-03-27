@@ -628,10 +628,13 @@ class CivitaiModels(APIInformation):
             for i, img in enumerate(versionRes["images"]):
                 # if 'meta' not in modelInfo["modelVersions"][0]["images"][i]:
                     modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta'] if 'meta' in img else {}
+            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
+                if 'meta' not in img:
+                    img["meta"] = { "ERROR": "Model Version API has no information"}
         else:
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'meta' not in img:
-                    img["meta"] = { "ERROR": "Model version API request error"}
+                    img["meta"] = { "ERROR": "Model Version API request error"}
         html = self.modelInfoHtml(modelInfo)
         modelInfo["html"] = html
         self.setModelVersionInfo(modelInfo)
@@ -727,7 +730,7 @@ class CivitaiModels(APIInformation):
                     img  = item['modelVersions'][0]['images'][0]
                     param['imgType'] = img['type']
                     param['imgsrc'] = img["url"]
-                    if img['nsfw'] != "None" and not self.isShowNsfw():
+                    if img['nsfwLevel'] != 1 and not self.isShowNsfw():
                         param['isNsfw'] = True
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
@@ -792,7 +795,7 @@ class CivitaiModels(APIInformation):
         '''Generate HTML of model info'''
         samples = ""
         for pic in modelInfo["modelVersions"][0]["images"]:
-            nsfw = pic['nsfw'] != "None" and not self.showNsfw
+            nsfw = pic['nsfwLevel'] != 1 and not self.showNsfw
             infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
             template = environment.get_template("sampleImage.jinja")
             samples += template.render(
@@ -882,7 +885,7 @@ class CivitaiModels(APIInformation):
             #with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
             browse = Browser()
             response = browse.session.get(url, params=query, timeout=(10, 15))
-            #print_lc(f'{response.headers=}')
+            #print_lc(f'{response.url=}')
             #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
@@ -899,10 +902,6 @@ class CivitaiModels(APIInformation):
             data = json.loads(response.text)
             data['requestUrl'] = response.url
             data = self.patchResponse(data)
-        # Check the status code of the response
-        # if response.status_code != 200:
-        #  print("Request failed with status code: {}".format(response.status_code))
-        #  exit()
         return data
     
     def patchResponse(self, data:dict) -> dict:

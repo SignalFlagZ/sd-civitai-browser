@@ -126,12 +126,18 @@ class APIInformation():
     modelsApi = f"{baseUrl}/api/v1/models"
     imagesApi = f"{baseUrl}/api/v1/images"
     versionsAPI = f"{baseUrl}/api/v1/model-versions"
-    typeOptions: list = None
-    sortOptions: list = None
-    basemodelOptions: list = None
-    periodOptions: list = None
-    searchTypes: list = ["No", "Model name", "User name",
+    typeOptions:list = None
+    sortOptions:list = None
+    basemodelOptions:list = None
+    periodOptions:list = None
+    searchTypes = ["No", "Model name", "User name",
                                 "Tag", "Model ID", "Version ID"]
+    nsfwLevel = {"PG": 1,
+                 "PG-13": 2,
+                 "R": 4,
+                 "X": 8,
+                 "XXX": 16
+                 } 
     def __init__(self) -> None:
         if APIInformation.typeOptions is None:
             self.getOptions()
@@ -730,7 +736,7 @@ class CivitaiModels(APIInformation):
                     img  = item['modelVersions'][0]['images'][0]
                     param['imgType'] = img['type']
                     param['imgsrc'] = img["url"]
-                    if img['nsfwLevel'] != 1 and not self.isShowNsfw():
+                    if img['nsfwLevel'] > 1 and not self.isShowNsfw():
                         param['isNsfw'] = True
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
@@ -795,7 +801,7 @@ class CivitaiModels(APIInformation):
         '''Generate HTML of model info'''
         samples = ""
         for pic in modelInfo["modelVersions"][0]["images"]:
-            nsfw = pic['nsfwLevel'] != 1 and not self.showNsfw
+            nsfw = pic['nsfwLevel'] > 1 and not self.showNsfw
             infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
             template = environment.get_template("sampleImage.jinja")
             samples += template.render(

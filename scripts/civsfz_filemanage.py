@@ -230,6 +230,7 @@ def isExistFile(folder, file):
 
 
 def saveImageFiles(folder, versionName, html, content_type, versionInfo):
+    html = versionInfo['html0']
     makedirs(folder)
     img_urls = re.findall(r'src=[\'"]?([^\'" >]+)', html)
     basename = os.path.splitext(versionName)[0]  # remove extension

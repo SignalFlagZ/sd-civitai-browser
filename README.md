@@ -26,8 +26,9 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.18
+- Suppots Browsing Level (Experimental)
 - Temporarily avoid errors due to rating level changes
-  - Rating filters will be implemented in the future
+  - ~~Rating filters will be implemented in the future~~
 ### v1.17
 - Supports API changes
 ### v1.17α

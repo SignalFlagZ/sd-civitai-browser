@@ -28,6 +28,7 @@ class Browser:
             Browser.session = requests.Session()
         Browser.session.headers.update(
             {'User-Agent': r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0'})
+        #self.setAPIKey("")
     def __enter__(self):
         return Browser.session
     def __exit__(self):
@@ -37,6 +38,12 @@ class Browser:
     def reConnect(self):
         Browser.session.close()
         self.newSession()
+    def setAPIKey(self, api_key):
+        if len(api_key) == 32:
+            Browser.session.headers.update(
+                {"Authorization": f"Bearer {api_key}"})
+            print_lc("Apply API key")
+
 
 class ModelCardsPagination:
     def __init__(self, response:dict, types:list=None, sort:str=None, searchType:str=None, searchTerm:str=None, nsfw:bool=None, period:str=None, basemodels:list=None) -> None:
@@ -136,7 +143,8 @@ class APIInformation():
                  "PG-13": 2,
                  "R": 4,
                  "X": 8,
-                 "XXX": 16
+                 "XXX": 16,
+                 #"Blocked":  32
                  } 
     def __init__(self) -> None:
         if APIInformation.typeOptions is None:
@@ -180,8 +188,8 @@ class APIInformation():
         # Make a GET request to the API
         try:
             #with requests.Session() as request:
-            browse = Browser()
-            response = browse.session.get(url, params=query, timeout=(10, 15))
+            browser = Browser()
+            response = browser.session.get(url, params=query, timeout=(10, 15))
             #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
@@ -350,17 +358,23 @@ class CivitaiModels(APIInformation):
         self.saveFolder = path
     def getSaveFolder(self):
         return self.saveFolder
-
+    def matchLevel(self, modelLevel:int, browsingLevel:int) -> bool:
+        if browsingLevel == 0: # Show all if Browsing Level is unchecked
+            return True
+        return modelLevel & browsingLevel > 0
 
     # Models
     def getModels(self, showNsfw = False) -> list:
         '''Return: [(str: Model name, str: index)]'''
         model_list = [] 
         for index, item in enumerate(self.jsonData['items']):
-            if showNsfw :
-                model_list.append((item['name'], index))
-            elif not self.treatAsNsfw(modelIndex=index):  #item['nsfw']:
-                model_list.append((item['name'], index))
+            #print_lc(
+            #    f"{item['nsfwLevel']}-{item['nsfwLevel'] & sum(opts.civsfz_browsing_level)}-{opts.civsfz_browsing_level}")
+            #if (item['nsfwLevel'] & 2*sum(opts.civsfz_browsing_level)-1) > 0:
+                if showNsfw:
+                    model_list.append((item['name'], index))
+                elif not self.treatAsNsfw(modelIndex=index):  #item['nsfw']:
+                    model_list.append((item['name'], index))
         return model_list
 
     # def getModelNames(self) -> dict: #include nsfw models
@@ -423,13 +437,13 @@ class CivitaiModels(APIInformation):
         ret = self.jsonData['items'][modelIndex]['nsfw']
         if opts.civsfz_treat_x_as_nsfw:
             try:
-                picNsfw = self.jsonData['items'][modelIndex]['modelVersions'][versionIndex]['images'][0]['nsfw']
+                picNsfw = self.jsonData['items'][modelIndex]['modelVersions'][versionIndex]['images'][0]['nsfwLevel']
             except Exception as e:
                 # print_ly(f'{e}')
                 pass
             else:
                 # print_lc(f'{picNsfw}')
-                if picNsfw == 'X':
+                if picNsfw > 1:
                     ret = True
         return ret
     def getIndexByModelName(self, name:str) -> int:
@@ -599,7 +613,7 @@ class CivitaiModels(APIInformation):
         version_dict = item['modelVersions'][self.versionIndex]
         return version_dict['id']
 
-    def makeModelInfo2(self, modelIndex=None, versionIndex=None) -> dict:
+    def makeModelInfo2(self, modelIndex=None, versionIndex=None, nsfwLevel=0) -> dict:
         """make selected version info"""
         modelIndex = self.modelIndex if modelIndex is None else modelIndex
         versionIndex = self.versionIndex if versionIndex is None else versionIndex
@@ -631,6 +645,7 @@ class CivitaiModels(APIInformation):
         )
         versionRes = self.requestVersionByVersionID(version["id"])
         if versionRes is not None:
+            #print_lc(f'{len(modelInfo["modelVersions"][0]["images"])}-{len(versionRes["images"])}')
             for i, img in enumerate(versionRes["images"]):
                 # if 'meta' not in modelInfo["modelVersions"][0]["images"][i]:
                     modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta'] if 'meta' in img else {}
@@ -641,8 +656,9 @@ class CivitaiModels(APIInformation):
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'meta' not in img:
                     img["meta"] = { "ERROR": "Model Version API request error"}
-        html = self.modelInfoHtml(modelInfo)
+        html = self.modelInfoHtml(modelInfo, nsfwLevel)
         modelInfo["html"] = html
+        modelInfo["html0"] = self.modelInfoHtml(modelInfo, 0)
         self.setModelVersionInfo(modelInfo)
         return modelInfo
 
@@ -713,7 +729,7 @@ class CivitaiModels(APIInformation):
 
     # HTML
     # Make model cards html
-    def modelCardsHtml(self, models, jsID=0):
+    def modelCardsHtml(self, models, jsID=0, nsfwLevel=0):
         '''Generate HTML of model cards.'''
         cards = []
         for model in models:
@@ -726,18 +742,26 @@ class CivitaiModels(APIInformation):
                 'jsId':     jsID,
                 'id':       item['id'],
                 'isNsfw':   False,
+                'nsfwLevel': item['nsfwLevel'],
+                'matchLevel': True,
                 'type':     item['type'],
                 'have':     "",
                 'ea':       "",
                 'imgType':  ""
                 }
+            if nsfwLevel >0 : # Show all if Browsing Level is unchecked
+                param['matchLevel'] = item['nsfwLevel'] & nsfwLevel > 0
             if any(item['modelVersions']):
-                if len(item['modelVersions'][0]['images']) > 0:
-                    img  = item['modelVersions'][0]['images'][0]
-                    param['imgType'] = img['type']
-                    param['imgsrc'] = img["url"]
-                    if img['nsfwLevel'] > 1 and not self.isShowNsfw():
-                        param['isNsfw'] = True
+                #if len(item['modelVersions'][0]['images']) > 0:
+                
+                for i, img in enumerate(item['modelVersions'][0]['images']):
+                    if self.matchLevel(img['nsfwLevel'],  nsfwLevel):
+                        #img  = item['modelVersions'][0]['images'][0]
+                        param['imgType'] = img['type']
+                        param['imgsrc'] = img["url"]
+                        if img['nsfwLevel'] > 1 and not self.isShowNsfw():
+                            param['isNsfw'] = True
+                        break
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
                     
@@ -797,18 +821,19 @@ class CivitaiModels(APIInformation):
         content = template.render({'infotext': infotext})
         return content
 
-    def modelInfoHtml(self, modelInfo:dict) -> str:
+    def modelInfoHtml(self, modelInfo:dict, nsfwLevel:int=0) -> str:
         '''Generate HTML of model info'''
         samples = ""
         for pic in modelInfo["modelVersions"][0]["images"]:
-            nsfw = pic['nsfwLevel'] > 1 and not self.showNsfw
-            infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
-            template = environment.get_template("sampleImage.jinja")
-            samples += template.render(
-                pic=pic,
-                nsfw=nsfw,
-                infotext=infotext
-                )
+            if self.matchLevel(pic['nsfwLevel'], nsfwLevel):
+                nsfw = pic['nsfwLevel'] > 1 and not self.showNsfw
+                infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
+                template = environment.get_template("sampleImage.jinja")
+                samples += template.render(
+                    pic=pic,
+                    nsfw=nsfw,
+                    infotext=infotext
+                    )
 
         #created = self.getCreatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
@@ -853,7 +878,7 @@ class CivitaiModels(APIInformation):
             else:
                 query = str.strip(search_term)
         else:
-            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards, 'page': 1 }
+            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards, 'page': 1}
             if not period == "AllTime":
                 query |= {'period': period}   
             if use_search_term != "No" and search_term:

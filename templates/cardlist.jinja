@@ -1,7 +1,7 @@
 
 {{ forTrigger }}
 <div class="column civsfz-modellist">
-{%- for card in cards %}
+{%- for card in cards if card.matchLevel %}
 	{%- set nsfw = 'civsfz-cardnsfw' if card['isNsfw'] else '' %}
 	{%- if card['have'] == 'new' %}
 		{%- set alreadyhave = 'civsfz-modelcardalreadyhave' %}

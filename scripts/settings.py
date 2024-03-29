@@ -2,6 +2,8 @@ import gradio as gr
 from modules import script_callbacks
 from modules import shared
 
+from scripts.civsfz_api import APIInformation
+
 def on_ui_settings():
     section = 'Civsfz_Browser', 'CivBrowser'
     shared.opts.add_option(
@@ -17,6 +19,18 @@ def on_ui_settings():
             component_args={},
             section=section,
         )   # .needs_reload_ui()
+    )
+    shared.opts.add_option(
+        key='civsfz_browsing_level',
+        info=shared.OptionInfo(
+            [1],
+            label='Browsing level',
+            component=gr.CheckboxGroup,
+            component_args={'choices': list(APIInformation.nsfwLevel.items()),
+
+                            },
+            section=section,
+        ),
     )
     shared.opts.add_option(
         key='civsfz_number_of_tabs',
@@ -199,6 +213,6 @@ def on_ui_settings():
             component=gr.Slider,
             component_args={'minimum': 5, 'maximum': 15, 'step': 1},
             section=section,
-        )
+        ),
     )
 script_callbacks.on_ui_settings(on_ui_settings)

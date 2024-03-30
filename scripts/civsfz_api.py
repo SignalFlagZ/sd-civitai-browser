@@ -176,6 +176,13 @@ class APIInformation():
         return APIInformation.periodOptions
     def getSearchTypes(self) -> list:
         return APIInformation.searchTypes
+    def strNsfwLevel(self, nsfwLevel:int) -> str:
+        keys = []
+        for k, v in APIInformation.nsfwLevel.items():
+            if nsfwLevel & v > 0:
+                keys.append(k)
+        return ", ".join(keys)
+            
     
     def requestApiOptions(self, url=None, query=None):
         if url is None:
@@ -619,7 +626,7 @@ class CivitaiModels(APIInformation):
         versionIndex = self.versionIndex if versionIndex is None else versionIndex
         item = self.jsonData["items"][modelIndex]
         version = item["modelVersions"][versionIndex]
-        modelInfo = {"infoVersion": "2.1"}
+        modelInfo = {"infoVersion": "2.2"}
         for key, value in item.items():
             if key not in ("modelVersions"):
                 modelInfo[key] = value
@@ -743,14 +750,12 @@ class CivitaiModels(APIInformation):
                 'id':       item['id'],
                 'isNsfw':   False,
                 'nsfwLevel': item['nsfwLevel'],
-                'matchLevel': True,
+                'matchLevel': self.matchLevel(item['nsfwLevel'], nsfwLevel),
                 'type':     item['type'],
                 'have':     "",
                 'ea':       "",
                 'imgType':  ""
                 }
-            if nsfwLevel >0 : # Show all if Browsing Level is unchecked
-                param['matchLevel'] = item['nsfwLevel'] & nsfwLevel > 0
             if any(item['modelVersions']):
                 #if len(item['modelVersions'][0]['images']) > 0:
                 
@@ -843,7 +848,12 @@ class CivitaiModels(APIInformation):
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
         template = environment.get_template("modelbasicinfo.jinja")
         basicInfo = template.render(
-            modelInfo=modelInfo, published=published)
+            modelInfo=modelInfo,
+            published=published,
+            strNsfw=self.strNsfwLevel(modelInfo['nsfwLevel']),
+            strVNsfw=self.strNsfwLevel(
+                modelInfo["modelVersions"][0]['nsfwLevel'])
+            )
         
         permissions = self.permissionsHtml(self.allows2permissions())
         # function:copy to clipboard

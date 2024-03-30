@@ -2,44 +2,57 @@
 {% set tdStyle1 = 'style="max-width:20em;min-width:7em;padding:0.2em;"' %}
 <div class="civsfz-modelBasicInfo" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
 	<table>
+		<caption style="text-align: left">Model attributes</caption>
 		<tr>
-			<td {{ tdStyle1 }}>Model ID</td>
+			<th {{ tdStyle1 }}>ID</th>
 			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["id"] }}</span></td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Civitai link</td>
+			<th {{ tdStyle1 }}>Civitai link</th>
 			<td {{ tdStyle1 }}><a href="https://civitai.com/models/{{ modelInfo['id'] }}?modelVersionId={{ modelInfo["versionId"] }}" target="_blank">https://civitai.com/models/{{
 					modelInfo['id'] }}</a></td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Uploaded by</td>
+			<th {{ tdStyle1 }}>NSFW level</th>
+			<td {{ tdStyle1 }}>{{ strNsfw }}</td>
+		
+		</tr>
+		<tr>
+			<th {{ tdStyle1 }}>Uploaded by</th>
 			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["creator"]["username"]|e }}</span></td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Published</td>
+			<th {{ tdStyle1 }}>Published</th>
 			<td {{ tdStyle1 }}>{{ published }}</td>
 
 		</tr>
 	</table>
+
 	<table>
+		<caption style="text-align: left">Version attributes</caption>
 		<tr>
-			<td {{ tdStyle1 }}>Version ID</td>
+			<th {{ tdStyle1 }}>ID</th>
 			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["versionId"] }}</span></td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Version</td>
+			<th {{ tdStyle1 }}>Name</th>
 			<td {{ tdStyle1 }}>{{ modelInfo["versionName"]|e }}</td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Type</td>
+			<th {{ tdStyle1 }}>NSFW level</th>
+			<td {{ tdStyle1 }}>{{ strVNsfw }}</td>
+		
+		</tr>
+		<tr>
+			<th {{ tdStyle1 }}>Type</th>
 			<td {{ tdStyle1 }}>{{ modelInfo["type"]|e }}</td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Base Model</td>
+			<th {{ tdStyle1 }}>Base Model</th>
 			<td {{ tdStyle1 }}>{{ modelInfo["baseModel"]|e }}</td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Tags</td>
+			<th {{ tdStyle1 }}>Tags</th>
 			<td {{ tdStyle1 }}>
 				{%- for tag in modelInfo['tags'] %}
 					<span style="display:inline-block;">
@@ -53,12 +66,9 @@
 					{%- endif %}
 				{%- endfor %}
 			</td>
-<span></span>
-</span>
-</td>
 		</tr>
 		<tr>
-			<td {{ tdStyle1 }}>Trained Tags</td>
+			<th {{ tdStyle1 }}>Trained Tags</th>
 			<td {{ tdStyle1 }}>{{ copy }}<span>{{ ", ".join(modelInfo["trainedWords"])|e }}</span></td>
 		</tr>
 	</table>

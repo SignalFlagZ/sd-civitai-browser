@@ -199,6 +199,9 @@ class Components():
                     return (gr.Dropdown.update(),
                             gr.Radio.update())
                 m = re.match(r'(.+):-:(.+)$', grDropdownSearchTerm)
+                if m is None:
+                    return (gr.Dropdown.update(),
+                            gr.Radio.update())
                 if len(m.groups()) < 2:
                     return ( gr.Dropdown.update(),
                         gr.Radio.update())
@@ -694,7 +697,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.18.1'
+    ver = 'v1.18.2'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

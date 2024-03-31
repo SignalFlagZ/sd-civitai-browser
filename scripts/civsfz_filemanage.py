@@ -1,4 +1,5 @@
 import os
+import gradio as gr
 import time
 import threading
 import requests
@@ -446,6 +447,7 @@ def download_file(folder, filename,  url, hash, api_key, early_access):
         if hash != "":
             if sha256[:len(hash)] == hash.upper():
                 print_n(f"Save: {file_name_display}")
+                gr.Info(f"Success: {file_name_display}")
                 yield 'Downloaded'
                 exitGenerator=True
                 return
@@ -453,13 +455,15 @@ def download_file(folder, filename,  url, hash, api_key, early_access):
                 print_ly(f"Error: File download failed. {file_name_display}")
                 print_lc(f'Model file hash : {hash}')
                 print_lc(f'Downloaded hash : {sha256}')
-                exitGenerator=True
+                gr.Warning(f"Hash mismatch: {file_name_display}")
+                exitGenerator = True
                 removeFile(file_name)
                 yield 'Failed.'
                 return
         else:
                 print_n(f"Save: {file_name_display}")
                 print_ly("No hash value provided. Unable to confirm file.")
+                gr.Info(f"No hash: {file_name_display}")
                 yield 'Downloaded. No hash.'
                 exitGenerator=True
                 return

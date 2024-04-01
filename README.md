@@ -26,6 +26,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.18
+- Use Images API to get meta data
 - Fix some settings could not be sent to txt2img
 - Improved search term handling
 - Suppots Browsing Level (Experimental)

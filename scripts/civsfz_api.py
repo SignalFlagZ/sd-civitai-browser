@@ -620,6 +620,39 @@ class CivitaiModels(APIInformation):
         version_dict = item['modelVersions'][self.versionIndex]
         return version_dict['id']
 
+    def addMetaVID(self, vID, modelInfo: dict) -> dict:
+        versionRes = self.requestVersionByVersionID(vID)
+        if versionRes is not None:
+            # print_lc(f'{len(modelInfo["modelVersions"][0]["images"])}-{len(versionRes["images"])}')
+            for i, img in enumerate(versionRes["images"]):
+                # if 'meta' not in modelInfo["modelVersions"][0]["images"][i]:
+                modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta'] if 'meta' in img else {
+                }
+            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
+                if 'meta' not in img:
+                    img["meta"] = {
+                        "ERROR": "Model Version API has no information"}
+        else:
+            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
+                if 'meta' not in img:
+                    img["meta"] = {"ERROR": "Model Version API request error"}
+        return modelInfo
+    
+    def addMetaIID(self, vID:dict, modelInfo:dict) -> dict:
+        imagesRes = self.requestImagesByVersionId(vID)
+        if imagesRes is not None:
+            IDs = { item['id']: item['meta'] for item in imagesRes['items'] }
+            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
+                if img['id'] in IDs.keys():
+                    img['meta']=IDs[img['id']]
+                else:
+                    img['meta']={"ERROR": "Images API has no information"}
+        else:
+            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
+                if 'meta' not in img:
+                    img["meta"] = {"ERROR": "Images API request error"}
+        return modelInfo
+    
     def makeModelInfo2(self, modelIndex=None, versionIndex=None, nsfwLevel=0) -> dict:
         """make selected version info"""
         modelIndex = self.modelIndex if modelIndex is None else modelIndex
@@ -650,19 +683,8 @@ class CivitaiModels(APIInformation):
         modelInfo["downloadUrl"] = (
             version["downloadUrl"] if "downloadUrl" in version else None
         )
-        versionRes = self.requestVersionByVersionID(version["id"])
-        if versionRes is not None:
-            #print_lc(f'{len(modelInfo["modelVersions"][0]["images"])}-{len(versionRes["images"])}')
-            for i, img in enumerate(versionRes["images"]):
-                # if 'meta' not in modelInfo["modelVersions"][0]["images"][i]:
-                    modelInfo["modelVersions"][0]["images"][i]["meta"] = img['meta'] if 'meta' in img else {}
-            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
-                if 'meta' not in img:
-                    img["meta"] = { "ERROR": "Model Version API has no information"}
-        else:
-            for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
-                if 'meta' not in img:
-                    img["meta"] = { "ERROR": "Model Version API request error"}
+        #self.addMetaVID(version["id"], modelInfo)
+        self.addMetaIID(version["id"], modelInfo)
         html = self.modelInfoHtml(modelInfo, nsfwLevel)
         modelInfo["html"] = html
         modelInfo["html0"] = self.modelInfoHtml(modelInfo, 0)
@@ -978,7 +1000,8 @@ class CivitaiModels(APIInformation):
         if versionId == None:
             return None
         params = {"modelVersionId": versionId,
-                  "sort": "Oldest"}
+                  "sort": "Oldest",
+                  'nsfw': 'X'}
         if limit is not None:
             params |= {"limit": limit}
         return self.requestApi(self.getImagesApiUrl(), params)

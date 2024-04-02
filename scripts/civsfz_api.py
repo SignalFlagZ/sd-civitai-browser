@@ -780,9 +780,14 @@ class CivitaiModels(APIInformation):
                 }
             if any(item['modelVersions']):
                 #if len(item['modelVersions'][0]['images']) > 0:
-                
+                #default image
                 for i, img in enumerate(item['modelVersions'][0]['images']):
-                    if self.matchLevel(img['nsfwLevel'],  nsfwLevel):
+                    if i == 0: # 0 as default
+                        param['imgType'] = img['type']
+                        param['imgsrc'] = img["url"]
+                        if img['nsfwLevel'] > 1 and not self.isShowNsfw():
+                            param['isNsfw'] = True
+                    if self.matchLevel(img['nsfwLevel'],  nsfwLevel): 
                         #img  = item['modelVersions'][0]['images'][0]
                         param['imgType'] = img['type']
                         param['imgsrc'] = img["url"]

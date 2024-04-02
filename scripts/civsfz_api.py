@@ -910,7 +910,7 @@ class CivitaiModels(APIInformation):
             else:
                 query = str.strip(search_term)
         else:
-            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards, 'page': 1}
+            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards, 'page': 1, 'nsfw': True}
             if not period == "AllTime":
                 query |= {'period': period}   
             if use_search_term != "No" and search_term:
@@ -938,8 +938,11 @@ class CivitaiModels(APIInformation):
         if url is None:
             url = self.getModelsApiUrl()
         if query is not None:
+            #Replace Bool with a lowercase string True->true, False->false
+            query = { k: str(v).lower() if isinstance(v, bool) else v
+                     for k, v in query.items()}
+            #print_lc(f'{query=}')
             query = urllib.parse.urlencode(query, doseq=True, quote_via=urllib.parse.quote)
-        # print_lc(f'{query=}')
 
         # Make a GET request to the API
         #cachePath = Path.joinpath(extensionFolder(), "../api_cache")

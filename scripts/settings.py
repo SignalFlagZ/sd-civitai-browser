@@ -206,6 +206,16 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
+        key='civsfz_length_of_conditions_history',
+        info=shared.OptionInfo(
+            5 ,
+            label='Length of conditions history',
+            component=gr.Slider,
+            component_args={'minimum': 5, 'maximum': 10, 'step': 1},
+            section=section,
+        ),
+    )
+    shared.opts.add_option(
         key='civsfz_length_of_search_history',
         info=shared.OptionInfo(
             5 ,

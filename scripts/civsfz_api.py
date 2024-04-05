@@ -907,7 +907,7 @@ class CivitaiModels(APIInformation):
         return content
 
     # REST API
-    def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None):
+    def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None, grChkboxShowNsfw=False):
         if use_search_term == "Model ID" or use_search_term == "Version ID":
             if not search_term.isdecimal():
                 query = ""
@@ -915,7 +915,8 @@ class CivitaiModels(APIInformation):
             else:
                 query = str.strip(search_term)
         else:
-            query = {'types': content_type, 'sort': sort_type, 'limit': opts.civsfz_number_of_cards, 'page': 1, 'nsfw': True}
+            query = {'types': content_type, 'sort': sort_type,
+                     'limit': opts.civsfz_number_of_cards, 'page': 1, 'nsfw': grChkboxShowNsfw}
             if not period == "AllTime":
                 query |= {'period': period}   
             if use_search_term != "No" and search_term:
@@ -943,7 +944,7 @@ class CivitaiModels(APIInformation):
         if url is None:
             url = self.getModelsApiUrl()
         if query is not None:
-            #Replace Bool with a lowercase string True->true, False->false
+            #Replace Boolean with a lowercase string True->true, False->false
             query = { k: str(v).lower() if isinstance(v, bool) else v
                      for k, v in query.items()}
             #print_lc(f'{query=}')

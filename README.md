@@ -26,6 +26,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.18
+- Add history function for search conditions
+  - Store and recall sorting, period, base model and sensitive conditions.
 - Fix some models not be displayed
 - Use Images API to get meta data
 - Fix some settings could not be sent to txt2img

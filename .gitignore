@@ -2,3 +2,4 @@ __pycache__/
 .vscode/
 search_history.json
 api_cache.sqlite
+conditions_history.json

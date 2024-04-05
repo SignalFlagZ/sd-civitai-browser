@@ -508,62 +508,81 @@ def open_folder(f):
 
 class History():
     def __init__(self, path=None):
-        self.path = Path.joinpath(
+        self._path = Path.joinpath(
             extensionFolder(), Path("../history.json"))
         if path != None:
-            self.path = path                
-        self.history = self.load()
+            self._path = path
+        self._history: deque = self.load()
     def load(self) -> dict:
         try:
-            with open(self.path, 'r', encoding="utf-8") as f:
+            with open(self._path, 'r', encoding="utf-8") as f:
                 ret = json.load(f)
         except:
             ret = []
         return deque(ret,maxlen=20)
     def save(self):
         try:
-            with open(self.path, 'w', encoding="utf-8") as f:
-                json.dump(list(self.history), f, indent=4, ensure_ascii=False)
+            with open(self._path, 'w', encoding="utf-8") as f:
+                json.dump(list(self._history), f, indent=4, ensure_ascii=False)
         except Exception as e:
             #print_lc(e)
             pass
     def len(self) -> int:
-        return len(self.history) if self.history is not None else None
+        return len(self._history) if self._history is not None else None
+    def getAsChoices(self):
+        ret = [
+            json.dumps(h, ensure_ascii=False) for h in self._history]
+        return ret
 
 class SearchHistory(History):
     def __init__(self):
         super().__init__(Path.joinpath(
             extensionFolder(), Path("../search_history.json")))
-
+        self._delimiter = "_._"
     def add(self, type, word):
         if type == "No" or word == "" or word == None:
             return
         dict = { "type" : type,
                 "word": word }  
         try:                  
-            self.history.remove(dict)
+            self._history.remove(dict)
         except:
             pass
-        self.history.appendleft(dict)
+        self._history.appendleft(dict)
         while self.len() > opts.civsfz_length_of_search_history:
-            self.history.pop()
+            self._history.pop()
         self.save()
     def getAsChoices(self):
-        #ret = [(f'{w["type"]}:{w["word"]}', i) for i, w in enumerate(self.history)]
-        ret = [f'{w["word"]}:-:{w["type"]}' for w in self.history]
+        ret = [f'{w["word"]}{self._delimiter}{w["type"]}' for w in self._history]
         return ret
+    def getDelimiter(self) -> str:
+        return self._delimiter
 
-class PaginationHistory(History):
+class ConditionsHistory(History):
     def __init__(self):
         super().__init__(Path.joinpath(
-            extensionFolder(), Path("../pagination_history.json")))
-
-    def add(self, pages:dict):
-        self.history.appendleft(pages)
-        while self.len() > 5:
-            self.history.pop()
-        print('SAVE')
+            extensionFolder(), Path("../conditions_history.json")))
+        self._delimiter = "_._"
+    def add(self, sort, period, baseModels, nsfw ):
+        dict = {
+            "sort": sort,
+            "period": period,
+            "baseModels": baseModels,
+            "nsfw": nsfw
+        }
+        try:                  
+            self._history.remove(dict)
+        except:
+            pass
+        self._history.appendleft(dict)
+        while self.len() > opts.civsfz_length_of_conditions_history:
+            self._history.pop()
         self.save()
     def getAsChoices(self):
-        ret = [f'{w["types"]}-{w["searchTerm"]}' for w in self.history]
+        ret = [self._delimiter.join(
+                [ str(v) if k != 'baseModels' else json.dumps(v, ensure_ascii=False) for k, v in h.items()]
+                ) for h in self._history]
         return ret
+    def getDelimiter(self) -> str:
+        return self._delimiter
+    

@@ -632,11 +632,12 @@ class CivitaiModels(APIInformation):
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'meta' not in img:
                     img["meta"] = {
-                        "ERROR": "Model Version API has no information"}
+                        "WARNING": "Model Version API has no information"}
         else:
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'meta' not in img:
-                    img["meta"] = {"ERROR": "Model Version API request error"}
+                    img["meta"] = {
+                        "WARNING": "Model Version API request error"}
         return modelInfo
     
     def addMetaIID(self, vID:dict, modelInfo:dict) -> dict:
@@ -644,10 +645,15 @@ class CivitaiModels(APIInformation):
         if imagesRes is not None:
             IDs = { item['id']: item['meta'] for item in imagesRes['items'] }
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
-                if img['id'] in IDs.keys():
-                    img['meta']=IDs[img['id']]
+                if 'id' in img:
+                    if img['id'] in IDs.keys():
+                        img['meta']=IDs[img['id']]
+                    else:
+                        img['meta'] = {
+                            "WARNING": "Images API has no information"}
                 else:
-                    img['meta']={"ERROR": "Images API has no information"}
+                    img['meta'] = {
+                        "WARNING": "Version ID API response does not include Image ID. Therefore the Infotext cannot be determined. Try searching by model name."}
         else:
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'meta' not in img:

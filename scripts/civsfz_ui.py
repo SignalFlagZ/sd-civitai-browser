@@ -256,15 +256,16 @@ class Components():
                     grChkbxGrpContentType, grDrpdwnSortType, grDrpdwnPeriod, grRadioSearchType, grDropdownSearchTerm, grDrpdwnBasemodels, grChkboxShowNsfw)
                 if query == "":
                     gr.Warning(f'Enter a number')
+                vIdAsmId = False # 
                 if grRadioSearchType == "Version ID":
                     if query != "":
                         url = self.civitai.getVersionsApiUrl(query)
                         response = self.civitai.requestApi(url=url)
                         if self.civitai.getRequestError() is None:
                             # Some key is not included in the response
-                            grRadioSearchType = "Model ID"
+                            vIdAsmId = True
                             query = str(response["modelId"])
-                if grRadioSearchType == "Model ID":
+                if grRadioSearchType == "Model ID" or vIdAsmId:
                     if query != "":
                         url = self.civitai.getModelsApiUrl(query)
                         response = self.civitai.requestApi(url=url)

@@ -243,7 +243,8 @@ class APIInformation():
             "Checkpoint",
             "TextualInversion",
             "LORA",
-            "LoCon"
+            "LoCon",
+            "DoRA"
         ]
         dictPriority = {
             priorityTypes[i]: priorityTypes[i] for i in range(0, len(priorityTypes))}

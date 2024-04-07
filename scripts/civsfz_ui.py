@@ -740,7 +740,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.18.6'
+    ver = 'v1.18.7'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

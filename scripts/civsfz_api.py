@@ -491,9 +491,9 @@ class CivitaiModels(APIInformation):
         else:
             if self.modelIndex is not None:
                 canSellImagesPermissions = {
-                    'Image', 'Rent', 'RentCivit', 'Sell'}
-                canRentCivitPermissions = {'RentCivit', 'Rent', 'Sell'}
-                canRentPermissions = {'Rent', 'Sell'}
+                    'Image'}
+                canRentCivitPermissions = {'RentCivit'}
+                canRentPermissions = {'Rent'}
                 canSellPermissions = {'Sell'}
 
                 item = self.jsonData['items'][self.modelIndex]

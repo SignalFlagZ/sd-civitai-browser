@@ -100,8 +100,8 @@ def type_path(type: str) -> Path:
             base = os.path.join(models_path, "LyCORIS")
         folder = base
     elif type == "DoRA":
-        base = models_path
-        folder = os.path.join(models_path, "DoRA")
+        base = cmd_opts.lora_dir  # "models/Lora"
+        folder = os.path.join(base, "_DoRA")
     elif type == "VAE":
         if cmd_opts.vae_dir:
             base = cmd_opts.vae_dir  # "models/VAE"

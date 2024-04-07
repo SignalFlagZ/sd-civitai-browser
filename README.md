@@ -26,6 +26,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.18
+- Fix permmissions
 - Add DoRA folder
 - Add history function for search conditions
   - Store and recall sorting, period, base model and sensitive conditions.
@@ -37,7 +38,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Temporarily avoid errors due to rating level changes
   - ~~Rating filters will be implemented in the future~~
 ### v1.17
-- Fix permmissions
 - Supports API changes
 ### v1.17α
 - Get cards using Session

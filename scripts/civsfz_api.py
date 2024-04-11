@@ -220,13 +220,14 @@ class APIInformation():
             types = data['error']['issues'][0]['unionErrors'][0]['issues'][0]['options']
         except:
             print_ly(f'ERROR: Get types')
-            APIInformation.typeOptions = [
+            types = [
                                     "Checkpoint",
                                     "TextualInversion",
                                     "Hypernetwork",
                                     "AestheticGradient",
                                     "LORA",
                                     "LoCon",
+                                    "DoRA",
                                     "Controlnet",
                                     "Upscaler",
                                     "MotionModule",

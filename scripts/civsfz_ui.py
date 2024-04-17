@@ -265,6 +265,14 @@ class Components():
                             # Some key is not included in the response
                             vIdAsmId = True
                             query = str(response["modelId"])
+                if grRadioSearchType == "Hash":
+                    if query != "":
+                        url = self.civitai.getVersionsByHashUrl(query)
+                        response = self.civitai.requestApi(url=url)
+                        if self.civitai.getRequestError() is None:
+                            # Some key is not included in the response
+                            vIdAsmId = True
+                            query = str(response["modelId"])
                 if grRadioSearchType == "Model ID" or vIdAsmId:
                     if query != "":
                         url = self.civitai.getModelsApiUrl(query)
@@ -277,7 +285,7 @@ class Components():
                                 'pageSize': "1",
                                 }
                             } if self.civitai.getRequestError() is None else None
-                elif grRadioSearchType != "Version ID":
+                elif grRadioSearchType not in ("Version ID", "Hash"):
                     response = self.civitai.requestApi(
                         query=query) 
                 err = self.civitai.getRequestError()
@@ -740,7 +748,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.18.8'
+    ver = 'v1.18.9'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

@@ -26,6 +26,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.18
+- Support hash value search
 - DoRA models are saved in `models\Lora\_DoRA` (default)
 - Fix permmissions
 - Add DoRA folder

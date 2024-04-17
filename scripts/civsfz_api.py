@@ -133,12 +133,13 @@ class APIInformation():
     modelsApi = f"{baseUrl}/api/v1/models"
     imagesApi = f"{baseUrl}/api/v1/images"
     versionsAPI = f"{baseUrl}/api/v1/model-versions"
+    byHashAPI = f"{baseUrl}/api/v1/model-versions/by-hash"
     typeOptions:list = None
     sortOptions:list = None
     basemodelOptions:list = None
     periodOptions:list = None
     searchTypes = ["No", "Model name", "User name",
-                                "Tag", "Model ID", "Version ID"]
+                                "Tag", "Model ID", "Version ID", "Hash"]
     nsfwLevel = {"PG": 1,
                  "PG-13": 2,
                  "R": 4,
@@ -162,6 +163,10 @@ class APIInformation():
     def getVersionsApiUrl(self, id=None):
         url = APIInformation.versionsAPI
         url += f'/{id}' if id is not None else ""
+        return url
+    def getVersionsByHashUrl(self, hash=None):
+        url = APIInformation.byHashAPI
+        url += f'/{hash}' if id is not None else ""
         return url
     def getTypeOptions(self) -> list:
         # global typeOptions, sortOptions, basemodelOptions
@@ -922,6 +927,17 @@ class CivitaiModels(APIInformation):
                 print_ly(f'"{search_term}" is not a numerical value')
             else:
                 query = str.strip(search_term)
+        elif use_search_term == "Hash":
+            try:
+                int("0x" + search_term, 16)
+                isHex = True
+            except ValueError:
+                isHex = False
+            if isHex:
+                query = str.strip(search_term)
+            else:
+                query = ""
+                print_ly(f'"{search_term}" is not a hexadecimal value')
         else:
             query = {'types': content_type, 'sort': sort_type,
                      'limit': opts.civsfz_number_of_cards, 'page': 1, 'nsfw': grChkboxShowNsfw}

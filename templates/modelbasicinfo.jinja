@@ -19,7 +19,11 @@
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Uploaded by</th>
-			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["creator"]["username"]|e }}</span></td>
+			{%- if 'creator' in modelInfo -%}
+				<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["creator"]["username"]|e }}</span></td>
+			{%- else -%}
+				<td {{ tdStyle1 }}><span>No creator information</span></td>
+			{%- endif -%}
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Published</th>

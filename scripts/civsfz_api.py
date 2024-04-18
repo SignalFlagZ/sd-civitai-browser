@@ -483,7 +483,7 @@ class CivitaiModels(APIInformation):
         return item['type'] 
     def getUserName(self):
         item = self.jsonData['items'][self.modelIndex]
-        return item['creator']['username']
+        return item['creator']['username'] if 'creator' in item else ""
     def getModelID(self):
         item = self.jsonData['items'][self.modelIndex]
         return item['id']
@@ -672,7 +672,10 @@ class CivitaiModels(APIInformation):
         versionIndex = self.versionIndex if versionIndex is None else versionIndex
         item = self.jsonData["items"][modelIndex]
         version = item["modelVersions"][versionIndex]
-        modelInfo = {"infoVersion": "2.2"}
+        modelInfo = {"infoVersion": "2.2",
+                     # Some models do not have 'creator'
+                     #"creator": {"username": ""}
+                    }
         for key, value in item.items():
             if key not in ("modelVersions"):
                 modelInfo[key] = value

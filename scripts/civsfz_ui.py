@@ -17,6 +17,7 @@ except ImportError:
 import scripts as scripts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import open_folder, SearchHistory, ConditionsHistory
+from scripts.civsfz_downloader import Downloader
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -26,10 +27,11 @@ class Components():
     newid = itertools.count()
     sHistory = SearchHistory()
     cHistory = ConditionsHistory()
+    downloader = Downloader()
     def __init__(self, tab=None):
         '''id: Event ID for javascrypt'''
         from scripts.civsfz_filemanage import generate_model_save_path2, isExistFile, \
-            save_text_file, saveImageFiles, download_file
+            save_text_file, saveImageFiles
         self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = CivitaiModels()
@@ -178,7 +180,7 @@ class Components():
                 outputs=[grTextProgress]
                 )
             download = grBtnDownloadModel.click(
-                fn=download_file,
+                fn=Components.downloader.add,
                 inputs=[
                     grTxtSaveFolder,
                     grDrpdwnFilenames,
@@ -187,17 +189,20 @@ class Components():
                     grTxtApiKey,
                     grTxtEarlyAccess
                     ],
-                outputs=[grTextProgress,
-                        ]
+                outputs=[grTextProgress]
                 )
 
-            def cancel_download():
+            def cancel_download(grTxtSaveFolder, grDrpdwnFilenames):
+                Components.downloader.cancel(
+                    grTxtSaveFolder, grDrpdwnFilenames)
                 return gr.Textbox.update(value="Canceled")
             grBtnCancel.click(
                 fn=cancel_download,
-                inputs=None,
+                inputs=[
+                    grTxtSaveFolder,
+                    grDrpdwnFilenames,
+                ],
                 outputs=[grTextProgress],
-                cancels=[download]
                 )
             
             def selectSHistory(grDropdownSearchTerm):
@@ -748,7 +753,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.18.10'
+    ver = 'v1.19.0β'
     tabNames = []
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')

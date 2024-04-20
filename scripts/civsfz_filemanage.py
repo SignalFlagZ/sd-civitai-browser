@@ -1,7 +1,6 @@
 import os
 import gradio as gr
 import time
-import threading
 import requests
 import urllib.parse
 import shutil
@@ -302,19 +301,114 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
         print_n(f"Save {basename}.civitai.json")
     return "Save infos"
 
-# def download_file_thread(url, file_name, content_type, model_name,base_model, nsfw:bool=False):
-def download_file_thread(folder, filename,  url):
-    global isDownloading
-    if isDownloading:
-        isDownloading = False
-        return
-    isDownloading = True
+
+
+def download(session, folder, filename,  url, hash, api_key, early_access):
     makedirs(folder)
-    filepath = os.path.join(folder, filename)
-    thread = threading.Thread(target=download_file, args=(url, filepath))
-    # Start the thread
-    thread.start()
-    #download_file(url,filepath)
+    file_name = os.path.join(folder, filename)
+    # Maximum number of retries
+    max_retries = 3
+    # Delay between retries (in seconds)
+    retry_delay = 3
+
+    downloaded_size = 0
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0'
+        }
+    mode = "wb"  # Open file mode
+    if os.path.exists(file_name):
+        print_lc("Overwrite")
+
+    # Split filename from included path
+    tokens = re.split(re.escape('\\'), file_name)
+    file_name_display = tokens[-1]
+    exitGenerator = False
+    while not exitGenerator:
+    # Send a GET request to the URL and save the response to the local file
+        try:
+            with session.get(url, headers=headers, stream=True, timeout=(10, 10)) as response:  # Get the total size of the file
+                response.raise_for_status()
+                #print_lc(f"{response.headers=}")
+                if 'Content-Length' in response.headers:
+                    total_size = int(response.headers.get("Content-Length", 0))
+                    # Update the total size of the progress bar if the `Content-Length` header is present
+                    if total_size == 0:
+                        total_size = downloaded_size
+                    with tqdm(total=1000000000, unit="B", unit_scale=True, desc=f"Downloading {file_name_display}", initial=downloaded_size, leave=True) as progressConsole:
+                        prg = 0 #downloaded_size
+                        progressConsole.total = total_size
+                        with open(file_name, mode) as file:
+                            for chunk in response.iter_content(chunk_size=1*1024*1024):
+                                if chunk:  # filter out keep-alive new chunks
+                                    file.write(chunk)
+                                    progressConsole.update(len(chunk))
+                                    prg += len(chunk)
+                    downloaded_size = os.path.getsize(file_name)
+                    # Break out of the loop if the download is successful
+                    break
+                else:
+                    if early_access:
+                        print_ly(
+                            "Download canceled. Early Access!")
+                        yield "Early Access!"
+                        exitGenerator=True
+                        return
+                    else:
+                        print_lc("May need API key")
+                        if len(api_key) == 32:
+                            headers.update({"Authorization": f"Bearer {api_key}"})
+                            print_lc("Apply API key")
+                        else:
+                            exitGenerator=True
+                            return
+
+        except requests.exceptions.Timeout as e:
+            print_ly(f"{e}")
+            exitGenerator = True
+        except ConnectionError as e:
+            print_ly(f"{e}")
+            exitGenerator = True
+        except requests.exceptions.RequestException as e:
+            print_ly(f"{e}")
+            exitGenerator=True
+        except Exception as e:
+            print_ly(f"{e}")
+            exitGenerator=True
+        # Decrement the number of retries
+        max_retries -= 1
+        # If there are no more retries, raise the exception
+        if max_retries == 0:
+            exitGenerator = True
+            return
+        # Wait for the specified delay before retrying
+        print_lc(f"Retry wait {retry_delay}s")
+        time.sleep(retry_delay)
+
+    downloaded_size = os.path.getsize(file_name)
+    # Check if the download was successful
+    sha256 = calculate_sha256(file_name).upper()
+    #print_lc(f'Model file hash : {hash}')
+    if hash != "":
+        if sha256[:len(hash)] == hash.upper():
+            print_n(f"Save: {file_name_display}")
+            gr.Info(f"Success: {file_name_display}")
+            exitGenerator=True
+            return
+        else:
+            print_ly(f"Error: File download failed. {file_name_display}")
+            print_lc(f'Model file hash : {hash}')
+            print_lc(f'Downloaded hash : {sha256}')
+            gr.Warning(f"Hash mismatch: {file_name_display}")
+            exitGenerator = True
+            removeFile(file_name)
+            return
+    else:
+            print_n(f"Save: {file_name_display}")
+            print_ly("No hash value provided. Unable to confirm file.")
+            gr.Info(f"No hash: {file_name_display}")
+            exitGenerator=True
+            return
+
 
 def download_file(folder, filename,  url, hash, api_key, early_access):
     makedirs(folder)

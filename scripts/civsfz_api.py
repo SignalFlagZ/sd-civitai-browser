@@ -602,6 +602,8 @@ class CivitaiModels(APIInformation):
     def getPublishedDatetime(self) -> datetime.datetime:
         item = self.jsonData['items'][self.modelIndex]
         version_dict = item['modelVersions'][self.versionIndex]
+        if version_dict['publishedAt'] is None:
+            return None
         if version_dict['publishedAt'][-1] == "Z":
             strPublishedAt = version_dict['publishedAt'].replace(
                 'Z', '+00:00')  # < Python 3.11
@@ -885,8 +887,11 @@ class CivitaiModels(APIInformation):
 
         #created = self.getCreatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
-        published = self.getPublishedDatetime().astimezone(
-            tz.tzlocal()).replace(microsecond=0).isoformat()
+        if self.getPublishedDatetime() is not None:
+            published = self.getPublishedDatetime().astimezone(
+                tz.tzlocal()).replace(microsecond=0).isoformat()
+        else:
+            published = ""
         #updated = self.getUpdatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
         template = environment.get_template("modelbasicinfo.jinja")

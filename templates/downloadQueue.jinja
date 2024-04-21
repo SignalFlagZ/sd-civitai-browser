@@ -1,18 +1,19 @@
-{% set tdStyle1 = 'style="padding:0.4em;color: #d00a23"' %}
-{% set tdStyle2 = 'style="padding:0.4em;"' %}
+{% set tdStyle1 = 'style="padding:0.4em;"' %}
+
 <div class="civsfz-download-list" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
 	<table>
 		{# <caption style="text-align: left">Download list</caption> #}
 		{%- for item in threadQ %}
+			{% set tdStyle2 = 'style="padding:0.4em;background-image: linear-gradient(90deg, DarkGreen 0%, ForestGreen {:.0%}, MidnightBlue {:.0%}, MediumBlue 100%);"'.format(item['progress'],item['progress']) %}
 			<tr>
-				<th {{ tdStyle2 }}>Downloading</th>
-				<td {{ tdStyle1 }}>{{item['filename']}}</td>
+				<th {{ tdStyle1 }}>Downloading</th>
+				<td {{ tdStyle2 }}>{{item['filename']}}</td>
 			</tr>
 		{%- endfor %}
 		{%- for item in waitQ %}
 			<tr>
-				<th {{ tdStyle2 }}>Waiting</th>
-				<td {{ tdStyle2 }}>{{item['filename']}}</td>
+				<th {{ tdStyle1 }}>Waiting</th>
+				<td {{ tdStyle1 }}>{{item['filename']}}</td>
 			</tr>
 		{%- endfor %}
 	</table>

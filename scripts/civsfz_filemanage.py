@@ -567,8 +567,12 @@ def download_file(folder, filename,  url, hash, api_key, early_access):
 
 def removeFile(file):
     if send2trash_installed:
-        send2trash(file.replace('/','\\'))
-        print_lc('Move file to trash')
+        try:
+            send2trash(file.replace('/','\\'))
+        except Exception as e:
+            print_ly('Error: Fail to move file to trash')
+        else:
+            print_lc('Move file to trash')
     else:
         print_lc('File is not deleted. send2trash module is missing.')
     return

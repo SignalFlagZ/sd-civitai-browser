@@ -1,0 +1,19 @@
+{% set tdStyle1 = 'style="padding:0.4em;color: #d00a23"' %}
+{% set tdStyle2 = 'style="padding:0.4em;"' %}
+<div class="civsfz-download-list" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
+	<table>
+		{# <caption style="text-align: left">Download list</caption> #}
+		{%- for item in threadQ %}
+			<tr>
+				<th {{ tdStyle2 }}>Downloading</th>
+				<td {{ tdStyle1 }}>{{item['filename']}}</td>
+			</tr>
+		{%- endfor %}
+		{%- for item in waitQ %}
+			<tr>
+				<th {{ tdStyle2 }}>Waiting</th>
+				<td {{ tdStyle2 }}>{{item['filename']}}</td>
+			</tr>
+		{%- endfor %}
+	</table>
+</div>

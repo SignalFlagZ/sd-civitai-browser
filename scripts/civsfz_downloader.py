@@ -1,16 +1,18 @@
 
 import os
+import random
 import re
 import requests
 from colorama import Fore, Back, Style
 from collections import deque
+from jinja2 import Environment, FileSystemLoader
+from pathlib import Path
 from queue import Queue
 from threading import Thread, local
 from time import sleep
 from tqdm import tqdm
 from modules.hashes import calculate_sha256
-from scripts.civsfz_filemanage import makedirs, removeFile
-
+from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder
 
 def print_ly(x): return print(Fore.LIGHTYELLOW_EX +
                               "CivBrowser: " + x + Style.RESET_ALL)
@@ -20,6 +22,7 @@ def print_n(x): return print("CivBrowser: " + x)
 
 class Downloader:
     _dlQ = deque()  # Download
+    _threadQ = deque() # Downloading
     _ctrlQ = deque()  # control
     #_msgQ = deque()  # msg from worker
     _thread_local = local()
@@ -55,7 +58,7 @@ class Downloader:
             worker.start()
         return f"Queue {len(Downloader._dlQ)}: Threads {Downloader._threadNum}"
 
-    def cancel(self, folder, filename):
+    def sendCancel(self, folder, filename):
         '''
             Cancel downloading by file path
         '''
@@ -65,13 +68,22 @@ class Downloader:
                 delete = dl
                 break
         if delete is None:
-            Downloader._ctrlQ.append({"cancel": True,
+            Downloader._ctrlQ.append({"control": "cancel",
                                   "file": os.path.join(folder, filename)})
         else:
             Downloader._dlQ.remove(dl)
             print_lc(f"Canceled:{filename}")
             return f"Canceled:{filename}"
 
+    def status(self):
+        templatesPath = Path.joinpath(
+            extensionFolder(), Path("../templates"))
+        environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+        template = environment.get_template("downloadQueue.jinja")
+        content = template.render(
+            threadQ=Downloader._threadQ, waitQ=Downloader._dlQ)
+        return content
+    
     def download(self) -> None:
         session = self.get_session()
         while not self.isExit():
@@ -79,6 +91,7 @@ class Downloader:
                 sleep(0.1)
             else:
                 q = Downloader._dlQ.popleft()
+                Downloader._threadQ.append(q)
                 url = q["url"]
                 folder = q["folder"]
                 filename = q["filename"]
@@ -128,18 +141,16 @@ class Downloader:
                                                 file.write(chunk)
                                                 progressConsole.update(len(chunk))
                                                 prg += len(chunk)
+                                            # cancel
                                             if len(Downloader._ctrlQ) > 0:
-                                                ctrl = Downloader._ctrlQ.popleft()
-                                                if ctrl['file'] == file_name:
-                                                    # cancel
+                                                ctrl = Downloader._ctrlQ[0]
+                                                if ctrl['control'] == "cancel" and ctrl['file'] == file_name:
+                                                    Downloader._ctrlQ.popleft()
                                                     exitGenerator = True
                                                     cancel = True
                                                     print_lc(
                                                         f"Canceled:{file_name_display}:")
                                                     break
-                                                else:
-                                                    Downloader._ctrlQ.append(
-                                                        ctrl)
                                 downloaded_size = os.path.getsize(file_name)
                                 # Break out of the loop if the download is successful
                                 break
@@ -207,5 +218,6 @@ class Downloader:
                         print_ly("No hash value provided. Unable to confirm file.")
                         #gr.Info(f"No hash: {file_name_display}")
                 #Downloader._dlQ.task_done()
+                Downloader._threadQ.remove(q)
         Downloader._threadNum -= 1
 

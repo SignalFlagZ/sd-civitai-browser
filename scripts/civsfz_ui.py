@@ -50,6 +50,9 @@ class Components():
             return self.APIKey
         def browsingLevelChoices():
             return list(self.civitai.nsfwLevel.items())
+        def dlQHtml():
+            html = Components.downloader.status()
+            return html
 
         with gr.Column() as self.components:
             with gr.Row():
@@ -131,6 +134,8 @@ class Components():
                         grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
             with gr.Row():
                 with gr.Column():
+                    grHtmlDlQueue = gr.HTML(
+                        elem_id=f'civsfz_download_queue{self.id}', value=dlQHtml, every=1)
                     grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
                     with gr.Row(elem_classes='civsfz-back-to-top'):
                         grHtmlBackToTop = gr.HTML(
@@ -193,7 +198,7 @@ class Components():
                 )
 
             def cancel_download(grTxtSaveFolder, grDrpdwnFilenames):
-                Components.downloader.cancel(
+                Components.downloader.sendCancel(
                     grTxtSaveFolder, grDrpdwnFilenames)
                 return gr.Textbox.update(value="Canceled")
             grBtnCancel.click(
@@ -205,6 +210,7 @@ class Components():
                 outputs=[grTextProgress],
                 )
             
+
             def selectSHistory(grDropdownSearchTerm):
                 if grDropdownSearchTerm == None:
                     return (gr.Dropdown.update(),

@@ -86,7 +86,7 @@ class Downloader:
     
     def download(self) -> None:
         session = self.get_session()
-        while not self.isExit():
+        while len(Downloader._dlQ) > 0:
             if len(Downloader._dlQ) == 0:
                 sleep(0.1)
             else:
@@ -198,25 +198,26 @@ class Downloader:
                     #gr.Warning(f"Canceled: {file_name_display}")
                     removeFile(file_name)
                 else:
-                    downloaded_size = os.path.getsize(file_name)
-                    # Check if the download was successful
-                    sha256 = calculate_sha256(file_name).upper()
-                    # print_lc(f'Model file hash : {hash}')
-                    if hash != "":
-                        if sha256[:len(hash)] == hash.upper():
-                            print_n(f"Save: {file_name_display}")
-                            #gr.Info(f"Success: {file_name_display}")
+                    if os.path.exists(file_name):
+                        #downloaded_size = os.path.getsize(file_name)
+                        # Check if the download was successful
+                        sha256 = calculate_sha256(file_name).upper()
+                        # print_lc(f'Model file hash : {hash}')
+                        if hash != "":
+                            if sha256[:len(hash)] == hash.upper():
+                                print_n(f"Save: {file_name_display}")
+                                #gr.Info(f"Success: {file_name_display}")
+                            else:
+                                print_ly(
+                                    f"Error: File download failed. {file_name_display}")
+                                print_lc(f'Model file hash : {hash}')
+                                print_lc(f'Downloaded hash : {sha256}')
+                                #gr.Warning(f"Hash mismatch: {file_name_display}")
+                                removeFile(file_name)
                         else:
-                            print_ly(
-                                f"Error: File download failed. {file_name_display}")
-                            print_lc(f'Model file hash : {hash}')
-                            print_lc(f'Downloaded hash : {sha256}')
-                            #gr.Warning(f"Hash mismatch: {file_name_display}")
-                            removeFile(file_name)
-                    else:
-                        print_n(f"Save: {file_name_display}")
-                        print_ly("No hash value provided. Unable to confirm file.")
-                        #gr.Info(f"No hash: {file_name_display}")
+                            print_n(f"Save: {file_name_display}")
+                            print_ly("No hash value provided. Unable to confirm file.")
+                            #gr.Info(f"No hash: {file_name_display}")
                 #Downloader._dlQ.task_done()
                 Downloader._threadQ.remove(q)
         Downloader._threadNum -= 1

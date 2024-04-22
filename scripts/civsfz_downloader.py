@@ -131,8 +131,8 @@ class Downloader:
             tokens = re.split(re.escape('\\'), file_name)
             file_name_display = tokens[-1]
             cancel = False
-            exitGenerator = False                
-            while not exitGenerator:
+            exitDownloading = False                
+            while not exitDownloading:
                 # Send a GET request to the URL and save the response to the local file
                 try:
                     # Get the total size of the file
@@ -163,7 +163,7 @@ class Downloader:
                                             ctrl = Downloader._ctrlQ[0]
                                             if ctrl['control'] == "cancel" and ctrl['file'] == file_name:
                                                 Downloader._ctrlQ.popleft()
-                                                exitGenerator = True
+                                                exitDownloading = True
                                                 cancel = True
                                                 result = "Canceled"
                                                 print_lc(
@@ -176,7 +176,7 @@ class Downloader:
                             if early_access:
                                 print_ly(
                                     f"{file_name_display}:Download canceled. Early Access!")
-                                exitGenerator = True
+                                exitDownloading = True
                                 result = "Early Access"
                                 break
                             else:
@@ -187,40 +187,40 @@ class Downloader:
                                     print_lc(
                                         f"{file_name_display}:Apply API key")
                                 else:
-                                    exitGenerator = True
+                                    exitDownloading = True
                                     result = "Unexpected response"
                                     break
 
                 except requests.exceptions.Timeout as e:
                     print_ly(f"{file_name_display}:{e}")
                     result = "Timeout"
-                    exitGenerator = True
                 except ConnectionError as e:
                     print_ly(f"{file_name_display}:{e}")
                     result = "Connection Error"
-                    exitGenerator = True
                 except requests.exceptions.RequestException as e:
                     print_ly(f"{file_name_display}:{e}")
                     result = "Request exception"
-                    exitGenerator = True
                 except Exception as e:
                     print_ly(f"{file_name_display}:{e}")
                     result = "Exception"
-                    exitGenerator = True
+                    exitDownloading = True
                 # Decrement the number of retries
                 max_retries -= 1
                 # If there are no more retries, raise the exception
                 if max_retries == 0:
-                    exitGenerator = True
+                    exitDownloading = True
+                    result += "(Max retry failure)"
                     break
                 # Wait for the specified delay before retrying
                 print_lc(f"{file_name_display}:Retry wait {retry_delay}s")
                 sleep(retry_delay)
 
-            if cancel:
-                print_lc(f'Canceled : {file_name_display}')
-                #gr.Warning(f"Canceled: {file_name_display}")
-                removeFile(file_name)
+            if exitDownloading:
+                if cancel:
+                    print_lc(f'Canceled : {file_name_display}')
+                    #gr.Warning(f"Canceled: {file_name_display}")
+                if os.path.exists(file_name):
+                    removeFile(file_name)                
             else:
                 if os.path.exists(file_name):
                     #downloaded_size = os.path.getsize(file_name)

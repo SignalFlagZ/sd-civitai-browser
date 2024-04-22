@@ -1,30 +1,37 @@
-{% set tdStyle1 = 'style="padding:0.4em;"' %}
+{% set copy = '<span title="Copy to clipboard" style="cursor: copy;"
+	onclick="civsfz_copyInnerText(this,false);">📋</span>' %}
+{% set tdStyle1 = 'style="width: 1%;padding:0.4em;"' %}
+{% set tdStyle5 = 'style="padding:0.4em;
+					max-width: 0; overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"' %}
 
 <div class="civsfz-download-list" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
-	<table>
+	<table style="width: 100%;table-layout:auto;">
 		{# <caption style="text-align: left">Download list</caption> #}
 		{%- for item in resultQ %}
-			{% set tdStyle3 = 'style="padding:0.4em;background-color: ForestGreen"'
+			{% set tdStyle3 = 'style="width: 1%;padding:0.4em;background-color: ForestGreen"'
 					if item['result'] == "Succeeded"
 					else 'style="padding:0.4em;background-color: GoldenRod"' %}
-			{% set tdStyle4 = 'style="padding:0.4em;background-image: linear-gradient(90deg, Gray 0%, DimGray {:.0%},
+			{% set tdStyle4 = 'style="width: 1%;padding:0.4em;background-image: linear-gradient(90deg, Gray 0%, DimGray {:.0%},
 			SlateGray {:.0%}, LightSlateGray 100%);"'.format(item['expiration'],item['expiration']) %}
 			<tr>
 				<th {{ tdStyle3 }}>{{ item['result'] }}</th>
 				<td {{ tdStyle4 }}>{{ item['filename'] }}</td>
+				<td {{ tdStyle5 }}>{{ copy }}<span>{{ item['folder']|e }}</span></td>
 			</tr>
 		{%- endfor %}
 		{%- for item in threadQ %}
-			{% set tdStyle2 = 'style="padding:0.4em;background-image: linear-gradient(90deg, DarkGreen 0%, ForestGreen {:.0%}, MidnightBlue {:.0%}, MediumBlue 100%);"'.format(item['progress'],item['progress']) %}
+			{% set tdStyle2 = 'style="width: 1%;padding:0.4em;background-image: linear-gradient(90deg, DarkGreen 0%, ForestGreen {:.0%}, MidnightBlue {:.0%}, MediumBlue 100%);"'.format(item['progress'],item['progress']) %}
 			<tr>
 				<th {{ tdStyle1 }}>Downloading</th>
 				<td {{ tdStyle2 }}>{{ item['filename'] }}</td>
+				<td {{ tdStyle5 }}>{{ copy }}<span>{{ item['folder']|e }}</span></td>
 			</tr>
 		{%- endfor %}
 		{%- for item in waitQ %}
 			<tr>
 				<th {{ tdStyle1 }}>Waiting</th>
 				<td {{ tdStyle1 }}>{{ item['filename'] }}</td>
+				<td {{ tdStyle5 }}>{{ copy }}<span>{{ item['folder']|e }}</span></td>
 			</tr>
 		{%- endfor %}
 	</table>

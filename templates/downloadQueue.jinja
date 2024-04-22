@@ -1,6 +1,6 @@
 {% set copy = '<span title="Copy to clipboard" style="cursor: copy;"
 	onclick="civsfz_copyInnerText(this,false);">📋</span>' %}
-{% set tdStyle1 = 'style="width: 1%;padding:0.4em;"' %}
+{% set tdStyle1 = 'style="width: 1%;padding:0.4em;white-space: nowrap;"' %}
 {% set tdStyle5 = 'style="padding:0.4em;
 					max-width: 0; overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"' %}
 
@@ -11,7 +11,7 @@
 			{% set tdStyle3 = 'style="width: 1%;padding:0.4em;background-color: ForestGreen"'
 					if item['result'] == "Succeeded"
 					else 'style="padding:0.4em;background-color: GoldenRod"' %}
-			{% set tdStyle4 = 'style="width: 1%;padding:0.4em;background-image: linear-gradient(90deg, Gray 0%, DimGray {:.0%},
+			{% set tdStyle4 = 'style="width: 1%;padding:0.4em;white-space: nowrap;background-image: linear-gradient(90deg, Gray 0%, DimGray {:.0%},
 			SlateGray {:.0%}, LightSlateGray 100%);"'.format(item['expiration'],item['expiration']) %}
 			<tr>
 				<th {{ tdStyle3 }}>{{ item['result'] }}</th>
@@ -20,7 +20,7 @@
 			</tr>
 		{%- endfor %}
 		{%- for item in threadQ %}
-			{% set tdStyle2 = 'style="width: 1%;padding:0.4em;background-image: linear-gradient(90deg, DarkGreen 0%, ForestGreen {:.0%}, MidnightBlue {:.0%}, MediumBlue 100%);"'.format(item['progress'],item['progress']) %}
+			{% set tdStyle2 = 'style="width: 1%;padding:0.4em;white-space: nowrap;background-image: linear-gradient(90deg, DarkGreen 0%, ForestGreen {:.0%}, MidnightBlue {:.0%}, MediumBlue 100%);"'.format(item['progress'],item['progress']) %}
 			<tr>
 				<th {{ tdStyle1 }}>Downloading</th>
 				<td {{ tdStyle2 }}>{{ item['filename'] }}</td>

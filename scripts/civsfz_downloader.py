@@ -1,10 +1,10 @@
-
+import math
 import os
-import random
 import re
 import requests
 from colorama import Fore, Back, Style
 from collections import deque
+from datetime import datetime, timedelta, timezone
 from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
 from threading import Thread, local
@@ -25,6 +25,7 @@ class Downloader:
     _ctrlQ = deque()  # control
     #_msgQ = deque()  # msg from worker
     _thread_local = local()
+    _dlResults = deque() # Download results
     _maxThreadNum = 2
     _threadNum = 0
 
@@ -38,6 +39,9 @@ class Downloader:
 
 
     def add(self, folder, filename,  url, hash, api_key, early_access):
+        if Downloader._threadNum == 0:
+            # Clear queue because garbage may remain due to errors that cannot be caught
+            Downloader._threadQ.clear()
         Downloader._ctrlQ.clear() # Clear cancel request
         Downloader._dlQ.append({"folder": folder,
                              "filename": filename,
@@ -70,16 +74,33 @@ class Downloader:
             return f"Canceled:{filename}"
 
     def status(self):
+        now = datetime.now(timezone.utc)
+        # Discard past results
+        expireQ = deque()
+        remove = None
+        deadline = 180
+        for item in Downloader._dlResults:
+            tdDiff = now - item['completedAt']
+            secDiff = math.ceil(abs(tdDiff / timedelta(seconds=1)))
+            item['expiration'] = secDiff / deadline
+            if secDiff < deadline:
+                expireQ.append(item)
+            else:
+                remove = item
+        if remove is not None:
+            Downloader._dlResults.remove(remove)
+                
         templatesPath = Path.joinpath(
             extensionFolder(), Path("../templates"))
         environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
         template = environment.get_template("downloadQueue.jinja")
         content = template.render(
-            threadQ=Downloader._threadQ, waitQ=Downloader._dlQ)
+            threadQ=Downloader._threadQ, waitQ=Downloader._dlQ, resultQ=expireQ)
         return content
     
     def download(self) -> None:
         session = self.get_session()
+        result = "" # Success or Error
         while len(Downloader._dlQ) > 0:
             q = Downloader._dlQ.popleft()
             q['progress'] = 0 # add progress info
@@ -144,6 +165,7 @@ class Downloader:
                                                 Downloader._ctrlQ.popleft()
                                                 exitGenerator = True
                                                 cancel = True
+                                                result = "Canceled"
                                                 print_lc(
                                                     f"Canceled:{file_name_display}:")
                                                 break
@@ -155,6 +177,7 @@ class Downloader:
                                 print_ly(
                                     f"{file_name_display}:Download canceled. Early Access!")
                                 exitGenerator = True
+                                result = "Early Access"
                                 break
                             else:
                                 print_lc("May need API key")
@@ -165,19 +188,24 @@ class Downloader:
                                         f"{file_name_display}:Apply API key")
                                 else:
                                     exitGenerator = True
+                                    result = "Unexpected response"
                                     break
 
                 except requests.exceptions.Timeout as e:
                     print_ly(f"{file_name_display}:{e}")
+                    result = "Timeout"
                     exitGenerator = True
                 except ConnectionError as e:
                     print_ly(f"{file_name_display}:{e}")
+                    result = "Connection Error"
                     exitGenerator = True
                 except requests.exceptions.RequestException as e:
                     print_ly(f"{file_name_display}:{e}")
+                    result = "Request exception"
                     exitGenerator = True
                 except Exception as e:
                     print_ly(f"{file_name_display}:{e}")
+                    result = "Exception"
                     exitGenerator = True
                 # Decrement the number of retries
                 max_retries -= 1
@@ -202,6 +230,7 @@ class Downloader:
                     if hash != "":
                         if sha256[:len(hash)] == hash.upper():
                             print_n(f"Save: {file_name_display}")
+                            result = "Succeeded"
                             #gr.Info(f"Success: {file_name_display}")
                         else:
                             print_ly(
@@ -210,11 +239,16 @@ class Downloader:
                             print_lc(f'Downloaded hash : {sha256}')
                             #gr.Warning(f"Hash mismatch: {file_name_display}")
                             removeFile(file_name)
+                            result = "Hash mismatch"
                     else:
                         print_n(f"Save: {file_name_display}")
                         print_ly("No hash value provided. Unable to confirm file.")
+                        result = "No hash value"
                         #gr.Info(f"No hash: {file_name_display}")
             #Downloader._dlQ.task_done()
             Downloader._threadQ.remove(q)
+            q['result'] = result
+            q['completedAt'] = datetime.now(timezone.utc)
+            Downloader._dlResults.append(q)
         Downloader._threadNum -= 1
 

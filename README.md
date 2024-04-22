@@ -8,6 +8,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 ***If you fork, please replace prefix `civsfz` in file names, function names, css class names, etc. with your own prefix to avoid conflicts.***
 ## Features
 - Search Civitai models in ***multiple tabs***
+- Download ***queue*** and ***multithreaded*** downloads
 - List models as ***card image***
 - Safe display in ***sfw*** search
 - Highlight models ***you have***
@@ -26,6 +27,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.19β
+- Display download results for a while
 - Downloading with queue and multithreading
   - The number of threads is provisionally set to 2.
   - Download can be canceled

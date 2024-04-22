@@ -188,7 +188,7 @@ class Downloader:
                                         f"{file_name_display}:Apply API key")
                                 else:
                                     exitDownloading = True
-                                    result = "Unexpected response"
+                                    result = "No API key"
                                     break
 
                 except requests.exceptions.Timeout as e:

@@ -99,15 +99,15 @@ class Components():
                     with gr.Accordion(scale=2, label="Browsing Level", open=False):
                         with gr.Column(min_width=80):
                             grChkbxgrpLevel = gr.CheckboxGroup(label='Browsing Level', choices=list(self.civitai.nsfwLevel.items()) ,value=opts.civsfz_browsing_level, interactive=True, show_label=False)
-            with gr.Row(elem_id=f'civsfz_model-data{self.id}'):
+            with gr.Row():
                 grHtmlDlQueue = gr.HTML(
                     elem_id=f'civsfz_download_queue{self.id}', value=dlQHtml, every=1)
-            with gr.Row():
-                with gr.Column(scale=1):
+            with gr.Row(elem_id=f'civsfz_model-data{self.id}'):
+                with gr.Column():
                     grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
-                with gr.Column(scale=5):
-                    grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
+            with gr.Row():
+                grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
             with gr.Row():
                 txt_list = ""
                 grTxtTrainedWords = gr.Textbox(

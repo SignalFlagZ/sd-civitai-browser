@@ -27,6 +27,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v1.19β
+- Sorted infotext to make it easier to read
 - Display download results for a while
 - Downloading with queue and multithreading
   - The number of threads is provisionally set to 2.

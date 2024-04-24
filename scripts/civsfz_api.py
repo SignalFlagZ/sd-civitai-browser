@@ -6,7 +6,7 @@ import json
 import urllib.parse
 from pathlib import Path
 import requests
-#from requests_cache import CachedSession
+# from requests_cache import CachedSession
 from colorama import Fore, Back, Style
 from scripts.civsfz_filemanage import generate_model_save_path2, extensionFolder
 from modules.shared import opts
@@ -327,7 +327,7 @@ class APIInformation():
         else:
             #print_lc(f'Set periods')
             pass
-        
+
 class CivitaiModels(APIInformation):
     '''CivitaiModels: Handle the response of civitai models api v1.'''
     def __init__(self, url:str=None, json_data:dict=None, content_type:str=None):
@@ -382,13 +382,13 @@ class CivitaiModels(APIInformation):
         '''Return: [(str: Model name, str: index)]'''
         model_list = [] 
         for index, item in enumerate(self.jsonData['items']):
-            #print_lc(
+            # print_lc(
             #    f"{item['nsfwLevel']}-{item['nsfwLevel'] & sum(opts.civsfz_browsing_level)}-{opts.civsfz_browsing_level}")
-            #if (item['nsfwLevel'] & 2*sum(opts.civsfz_browsing_level)-1) > 0:
-                if showNsfw:
-                    model_list.append((item['name'], index))
-                elif not self.treatAsNsfw(modelIndex=index):  #item['nsfw']:
-                    model_list.append((item['name'], index))
+            # if (item['nsfwLevel'] & 2*sum(opts.civsfz_browsing_level)-1) > 0:
+            if showNsfw:
+                model_list.append((item['name'], index))
+            elif not self.treatAsNsfw(modelIndex=index):  #item['nsfw']:
+                model_list.append((item['name'], index))
         return model_list
 
     # def getModelNames(self) -> dict: #include nsfw models
@@ -512,7 +512,7 @@ class CivitaiModels(APIInformation):
                 canRentCivit = len(allowCommercialUse & canRentCivitPermissions) > 0
                 canRent = len(allowCommercialUse & canRentPermissions) > 0
                 canSell = len(allowCommercialUse & canSellPermissions) > 0
-                
+
                 permissions['allowNoCredit'] = allowNoCredit
                 permissions['canSellImages'] = canSellImages
                 permissions['canRentCivit'] = canRentCivit
@@ -529,7 +529,7 @@ class CivitaiModels(APIInformation):
         else:
             item = self.jsonData['items'][self.modelIndex]
             versionNames = [ (version['name'],i) for i,version in enumerate(item['modelVersions'])]
-                #versionNames[version['name']] = version["name"]
+            # versionNames[version['name']] = version["name"]
         return versionNames
 
     # Version
@@ -609,7 +609,7 @@ class CivitaiModels(APIInformation):
                 'Z', '+00:00')  # < Python 3.11
         else:
             strPublishedAt = version_dict['publishedAt'][:19] + '+00:00'
-        #print_lc(f'{version_dict["publishedAt"]=}  {strPublishedAt=}')
+        # print_lc(f'{version_dict["publishedAt"]=}  {strPublishedAt=}')
         dtPublishedAt = datetime.datetime.fromisoformat(strPublishedAt)
         # print_lc(f'{dtPublishedAt} {dtPublishedAt.tzinfo}')
         return dtPublishedAt
@@ -647,10 +647,10 @@ class CivitaiModels(APIInformation):
                     img["meta"] = {
                         "WARNING": "Model Version API request error"}
         return modelInfo
-    
+
     def addMetaIID(self, vID:dict, modelInfo:dict) -> dict:
         imagesRes = self.requestImagesByVersionId(vID)
-        if imagesRes is not None:
+        if imagesRes is not None and "meta" in imagesRes["items"]:
             IDs = { item['id']: item['meta'] for item in imagesRes['items'] }
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'id' in img:
@@ -667,7 +667,7 @@ class CivitaiModels(APIInformation):
                 if 'meta' not in img:
                     img["meta"] = {"ERROR": "Images API request error"}
         return modelInfo
-    
+
     def makeModelInfo2(self, modelIndex=None, versionIndex=None, nsfwLevel=0) -> dict:
         """make selected version info"""
         modelIndex = self.modelIndex if modelIndex is None else modelIndex
@@ -692,8 +692,8 @@ class CivitaiModels(APIInformation):
         # add version info
         modelInfo['versionId'] = version['id']
         modelInfo['versionName'] = version['name']
-        #modelInfo['createdAt'] = version['createdAt']
-        #modelInfo['updatedAt'] = version['updatedAt']
+        # modelInfo['createdAt'] = version['createdAt']
+        # modelInfo['updatedAt'] = version['updatedAt']
         modelInfo['publishedAt'] = version['publishedAt']
         modelInfo['trainedWords'] = version['trainedWords'] if 'trainedWords' in version else ""
         modelInfo['baseModel'] = version['baseModel']
@@ -701,7 +701,7 @@ class CivitaiModels(APIInformation):
         modelInfo["downloadUrl"] = (
             version["downloadUrl"] if "downloadUrl" in version else None
         )
-        #self.addMetaVID(version["id"], modelInfo)
+        # self.addMetaVID(version["id"], modelInfo)
         self.addMetaIID(version["id"], modelInfo)
         html = self.modelInfoHtml(modelInfo, nsfwLevel)
         modelInfo["html"] = html
@@ -745,7 +745,7 @@ class CivitaiModels(APIInformation):
     def addFirstPage(self, response:dict, types:list=None, sort:str=None, searchType:str=None,
                      searchTerm:str=None, nsfw:bool=None, period:str=None, basemodels:list=None) -> None:
         self.cardPagination = ModelCardsPagination(response, types, sort, searchType, searchTerm, nsfw, period, basemodels)
-        #print_lc(f'{self.cardPagination.getPagination()=}')
+        # print_lc(f'{self.cardPagination.getPagination()=}')
     def addNextPage(self, response:dict) -> None:
         self.cardPagination.nextPage(response)
     def backPage(self, response:dict) -> None:
@@ -756,22 +756,21 @@ class CivitaiModels(APIInformation):
         self.cardPagination.pageJump(response, page)
     def getPagination(self):
         return self.cardPagination.getPagination()
-    
-    
+
     def getCurrentPage(self) -> str:
-        #return f"{self.jsonData['metadata']['currentPage']}"
+        # return f"{self.jsonData['metadata']['currentPage']}"
         return self.cardPagination.currentPage if self.cardPagination is not None else 0
     def getTotalPages(self) -> str:
-        #return f"{self.jsonData['metadata']['totalPages']}"
-        #return f"{self.jsonData['metadata']['pageSize']}"
+        # return f"{self.jsonData['metadata']['totalPages']}"
+        # return f"{self.jsonData['metadata']['pageSize']}"
         return self.cardPagination.pageSize
     def getPages(self) -> str:
         return f"{self.getCurrentPage()}/{self.getTotalPages()}"
     def nextPage(self) -> str:
-        #return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
+        # return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
         return self.cardPagination.getNextUrl()
     def prevPage(self) -> str:
-        #return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
+        # return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
         return self.cardPagination.getPrevUrl()
 
     # HTML
@@ -797,8 +796,8 @@ class CivitaiModels(APIInformation):
                 'imgType':  ""
                 }
             if any(item['modelVersions']):
-                #if len(item['modelVersions'][0]['images']) > 0:
-                #default image
+                # if len(item['modelVersions'][0]['images']) > 0:
+                # default image
                 for i, img in enumerate(item['modelVersions'][0]['images']):
                     if i == 0: # 0 as default
                         param['imgType'] = img['type']
@@ -806,7 +805,7 @@ class CivitaiModels(APIInformation):
                         if img['nsfwLevel'] > 1 and not self.isShowNsfw():
                             param['isNsfw'] = True
                     if self.matchLevel(img['nsfwLevel'],  nsfwLevel): 
-                        #img  = item['modelVersions'][0]['images'][0]
+                        # img  = item['modelVersions'][0]['images'][0]
                         param['imgType'] = img['type']
                         param['imgsrc'] = img["url"]
                         if img['nsfwLevel'] > 1 and not self.isShowNsfw():
@@ -814,7 +813,7 @@ class CivitaiModels(APIInformation):
                         break
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
-                    
+
                 folder = generate_model_save_path2(
                     self.getModelTypeByIndex(index),
                     item["name"],
@@ -840,16 +839,16 @@ class CivitaiModels(APIInformation):
                         break
                 ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
                 if ea:
-                    #strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
-                    #dtPub = datetime.datetime.fromisoformat(strPub)
+                    # strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
+                    # dtPub = datetime.datetime.fromisoformat(strPub)
                     strEA = item["modelVersions"][0]['earlyAccessDeadline'].replace('Z', '+00:00')  # < Python 3.11
                     dtEA = datetime.datetime.fromisoformat(strEA)
                     dtNow = datetime.datetime.now(datetime.timezone.utc)
-                    #dtDiff = dtNow - dtPub
+                    # dtDiff = dtNow - dtPub
                     if dtNow < dtEA:
                         param['ea'] = 'in'
             cards.append(param)
-            
+
         forTrigger = f'<!-- {datetime.datetime.now()} -->'  # for trigger event
         template = environment.get_template("cardlist.jinja")
         content = template.render(forTrigger=forTrigger, cards=cards)
@@ -857,19 +856,53 @@ class CivitaiModels(APIInformation):
 
     def meta2html(self, meta:dict) -> str:
         # convert key name as infotext
+        sortKey = [
+            'prompt',
+            'negativePrompt',
+            'Model',
+            'VAE',
+            'sampler',
+            'Schedule type',
+            'cfgScale',
+            'steps',
+            'seed',
+            'clipSkip',
+        ]
+        infotextDict = { key: meta[key] if key in meta else None for key in sortKey }
+        infotextDict.update(meta)
+        # print(f"{infotextDict=}")
+        # if 'hashes' in infotextDict:
+        # print(type(infotextDict['hashes']))
+
+        template = environment.get_template("infotext.jinja")
+        content = template.render(infotext=infotextDict)
+        return content
+
+    def meta2infotext(self, meta:dict) -> str:
+        # convert key name as infotext
         renameKey = {
             'prompt':'Prompt',
             'negativePrompt': 'Negative prompt',
+            'sampler': 'Sampler',
             'steps': 'Steps',
             'seed': 'Seed',
-            'sampler': 'Sampler',
             'cfgScale': 'CFG scale',
             'clipSkip': 'Clip skip'
                 }
-        infotext = {renameKey.get(key, key): value for key, value in meta.items()} if meta is not None else None
-        template = environment.get_template("infotext.jinja")
-        content = template.render({'infotext': infotext})
-        return content
+        infotextDict = {renameKey.get(key, key): value for key, value in meta.items()} if meta is not None else None
+        # print(f"{infotextDict=}")
+        infotext = ""
+        if 'Prompt' in infotextDict:
+            infotext += infotextDict['Prompt'] + "\n"
+        if 'Negative prompt' in infotextDict:
+            infotext += "Negative prompt: " + infotextDict['Negative prompt']
+        infotext += "\n"
+        tmpList:list = []
+        for key, value in infotextDict.items():
+            if not key in ('Prompt','Negative prompt'):
+                tmpList.append("{}:{}".format(key,value))
+        infotext += ",".join(tmpList)
+        return infotext
 
     def modelInfoHtml(self, modelInfo:dict, nsfwLevel:int=0) -> str:
         '''Generate HTML of model info'''
@@ -877,22 +910,24 @@ class CivitaiModels(APIInformation):
         for pic in modelInfo["modelVersions"][0]["images"]:
             if self.matchLevel(pic['nsfwLevel'], nsfwLevel):
                 nsfw = pic['nsfwLevel'] > 1 and not self.showNsfw
-                infotext = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
+                infotext = self.meta2infotext(pic['meta']) if pic['meta'] is not None else ""
+                metaHtml = self.meta2html(pic['meta']) if pic['meta'] is not None else ""
                 template = environment.get_template("sampleImage.jinja")
                 samples += template.render(
                     pic=pic,
                     nsfw=nsfw,
-                    infotext=infotext
+                    infotext=infotext,
+                    metaHtml=metaHtml
                     )
 
-        #created = self.getCreatedDatetime().astimezone(
+        # created = self.getCreatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
         if self.getPublishedDatetime() is not None:
             published = self.getPublishedDatetime().astimezone(
                 tz.tzlocal()).replace(microsecond=0).isoformat()
         else:
             published = ""
-        #updated = self.getUpdatedDatetime().astimezone(
+        # updated = self.getUpdatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
         template = environment.get_template("modelbasicinfo.jinja")
         basicInfo = template.render(
@@ -902,12 +937,13 @@ class CivitaiModels(APIInformation):
             strVNsfw=self.strNsfwLevel(
                 modelInfo["modelVersions"][0]['nsfwLevel'])
             )
-        
+
         permissions = self.permissionsHtml(self.allows2permissions())
         # function:copy to clipboard
-        js = ('<script>''function civsfz_copyInnerText(node) {'
-            'if (node.nextSibling != null) {'
-              'return navigator.clipboard.writeText(node.nextElementSibling.innerText).then('
+        js = ('<script>''function civsfz_send2txt2img(text) {'
+            'text = decodeURI(text);'
+            'if (text != null) {'
+              'return navigator.clipboard.writeText(text).then('
 			'function () {'
 				'alert("Copied");'
 			'}).catch('
@@ -919,7 +955,7 @@ class CivitaiModels(APIInformation):
         content = template.render(
             modelInfo=modelInfo, basicInfo=basicInfo, permissions=permissions,
             samples=samples, js=js)
-            
+
         return content
 
     def permissionsHtml(self, premissions:dict, msgType:int=3) -> str:
@@ -976,21 +1012,21 @@ class CivitaiModels(APIInformation):
         if url is None:
             url = self.getModelsApiUrl()
         if query is not None:
-            #Replace Boolean with a lowercase string True->true, False->false
+            # Replace Boolean with a lowercase string True->true, False->false
             query = { k: str(v).lower() if isinstance(v, bool) else v
                      for k, v in query.items()}
-            #print_lc(f'{query=}')
+            # print_lc(f'{query=}')
             query = urllib.parse.urlencode(query, doseq=True, quote_via=urllib.parse.quote)
 
         # Make a GET request to the API
-        #cachePath = Path.joinpath(extensionFolder(), "../api_cache")
-        #headers = {'Cache-Control': 'no-cache'} if cache else {}
+        # cachePath = Path.joinpath(extensionFolder(), "../api_cache")
+        # headers = {'Cache-Control': 'no-cache'} if cache else {}
         try:
-            #with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
+            # with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
             browse = Browser()
             response = browse.session.get(url, params=query, timeout=(10, 15))
-            #print_lc(f'{response.url=}')
-            #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
+            # print_lc(f'{response.url=}')
+            # print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(Fore.LIGHTYELLOW_EX + "Request error: " , e)
@@ -1001,39 +1037,39 @@ class CivitaiModels(APIInformation):
             data = self.jsonData # No update data
             self.requestError = e
         else:
-            #print_lc(f'{response.url=}')
+            # print_lc(f'{response.url=}')
             response.encoding  = "utf-8" # response.apparent_encoding
             data = json.loads(response.text)
             data['requestUrl'] = response.url
             data = self.patchResponse(data)
         return data
-    
+
     def patchResponse(self, data:dict) -> dict:
         # make compatibility
-        #if 'metadata' in data:
-            #print_lc(f"{data['metadata']=}")
-            #parse = urllib.parse.urlparse(data['metadata']['nextPage'])
-            #strQuery = parse.query
-            #dictQuery = urllib.parse.parse_qs(strQuery)
-            #dictQuery.pop('cursor', None)        
-            #addQuery = { 'page': data['metadata']['currentPage']}
-            #query = dictQuery | addQuery
-            #currentURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
-            #data['metadata']['currentPageUrl'] = urllib.parse.urlunparse(currentURL)
-            #if data['metadata']['currentPage'] == data['metadata']['pageSize']:
-            #    data['metadata']['nextPage'] = None
-            #if data['metadata']['currentPage'] < data['metadata']['pageSize']:
-            #    addQuery ={ 'page': data['metadata']['currentPage'] + 1 }
-            #    query = dictQuery | addQuery
-            #    query.pop('cursor', None)
-            #    nextPage = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
-            #    data['metadata']['nextPage'] = urllib.parse.urlunparse(nextPage)
-            ##if data['metadata']['currentPage'] > 1:
-            #    addQuery ={ 'page': data['metadata']['currentPage'] - 1 }
-            #    query = dictQuery | addQuery
-            #    query.pop('cursor', None)
-            #    prevURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
-            #    data['metadata']['prevPage'] = prevURL
+        # if 'metadata' in data:
+        # print_lc(f"{data['metadata']=}")
+        # parse = urllib.parse.urlparse(data['metadata']['nextPage'])
+        # strQuery = parse.query
+        # dictQuery = urllib.parse.parse_qs(strQuery)
+        # dictQuery.pop('cursor', None)
+        # addQuery = { 'page': data['metadata']['currentPage']}
+        # query = dictQuery | addQuery
+        # currentURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+        # data['metadata']['currentPageUrl'] = urllib.parse.urlunparse(currentURL)
+        # if data['metadata']['currentPage'] == data['metadata']['pageSize']:
+        #    data['metadata']['nextPage'] = None
+        # if data['metadata']['currentPage'] < data['metadata']['pageSize']:
+        #    addQuery ={ 'page': data['metadata']['currentPage'] + 1 }
+        #    query = dictQuery | addQuery
+        #    query.pop('cursor', None)
+        #    nextPage = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+        #    data['metadata']['nextPage'] = urllib.parse.urlunparse(nextPage)
+        ##if data['metadata']['currentPage'] > 1:
+        #    addQuery ={ 'page': data['metadata']['currentPage'] - 1 }
+        #    query = dictQuery | addQuery
+        #    query.pop('cursor', None)
+        #    prevURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
+        #    data['metadata']['prevPage'] = prevURL
 
         return data
 

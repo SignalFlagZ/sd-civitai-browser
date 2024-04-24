@@ -2,17 +2,17 @@
 {# pic  nsfw  #}
 {%- set style='style="vertical-align: top;width: 35%;height: 30em;object-fit: contain;"' %}
 {%- if pic['meta'] %}
-	{%- set style='style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="civsfz_copyInnerText(this);"' %}
+	{%- set style='style="cursor: copy;vertical-align: top;width: 35%;height: 30em;object-fit: contain;" onclick="civsfz_send2txt2img(this.dataset.infotext);"' %}
 {%- endif %}
 {%- if nsfw %}
-<div class="civsfz-nsfw" style="display:flex;margin-top: 1em">
+	<div class="civsfz-nsfw" style="display:flex;margin-top: 1em">
 {%- else %}
-<div style="display:flex;margin-top: 1em">
+	<div style="display:flex;margin-top: 1em">
 {%- endif %}
 	{%- if pic['type'] == 'image' %}
-		<img src={{ pic['url'] }} {{ style }} />
+		<img src={{ pic['url'] }} {{ style }} data-infotext="{{- infotext|e -}}"/>
 	{%- else %}
-		<video loop autoplay muted poster={{ pic['url'] }} {{ style }}>
+		<video loop autoplay muted poster={{ pic['url'] }} {{ style }} data-infotext="{{- infotext|e -}}">
 			<source src={{ pic['url'] }} type="video/webm" />
 			<source src={{ pic['url'] }} type="video/mp4" />
 			<img src={{ pic['url'] }} type="image/gif" />
@@ -20,7 +20,7 @@
 	{%- endif %}
 	{%- if pic['meta']  %}
 		<div style="width: 65%;padding-left: 1em;height: 30em;overflow-y: auto;overflow-wrap: anywhere;">
-			{{- infotext -}}
+			{{ metaHtml }}
 		</div>
 	{%- endif %}
 </div>

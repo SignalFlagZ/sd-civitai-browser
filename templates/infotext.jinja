@@ -1,5 +1,6 @@
 {# meta to infotext #}
-{% macro extract_dict(dict) %}
+{%- macro extract_dict(dict) %}
+{%- if dict is mapping%}
 {{ "{" }}
 {%- for key, value in dict.items() %}
 <span style='padding-right:0.5em;style="display: inline-block;"'>
@@ -7,18 +8,23 @@
 </span>
 {%- endfor %}
 {{ "}" }}
-{% endmacro%}
+{%- else %}
+<span style='padding-right:0.5em;style="display: inline-block;"'>
+	{{ dict|e }}
+</span>
+{%- endif %}
+{%- endmacro%}
 
 {%- if infotext['prompt'] is not none %}
 <p style="margin-bottom:0.2em">
 	<var style="font-weight:bold;">prompt</var>: {{ infotext['prompt']|e }}
 </p>
-{% endif %}
+{%- endif %}
 {%- if infotext['negativePrompt'] is not none %}
 <p style="margin-bottom:0.5em">
 	<var style="font-weight:bold;">negativePrompt</var>: {{ infotext['negativePrompt']|e }}
 </p>
-{% endif %}
+{%- endif %}
 <p>
 	{%- for key, value in infotext.items() %}
 	{%- if not key in ('prompt','negativePrompt', 'resources', 'hashes', 'comfy', 'models', 'additionalResources', 'civitaiResources', 'TI hashes') %}

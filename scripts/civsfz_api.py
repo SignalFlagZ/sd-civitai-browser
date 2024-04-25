@@ -651,10 +651,10 @@ class CivitaiModels(APIInformation):
 
     def addMetaIID(self, vID:dict, modelInfo:dict) -> dict:
         imagesRes = self.requestImagesByVersionId(vID)
+        if self.requestError is not None:
+            print_ly(f"Version ID API Request Error: Fail to get meta info.")
         if imagesRes is not None:
-            IDs = {
-                item["id"]: item["meta"] for item in imagesRes["items"]
-            }
+            IDs = {item["id"]: item["meta"] for item in imagesRes["items"] if 'meta' in item}
             for i, img in enumerate(modelInfo["modelVersions"][0]["images"]):
                 if 'id' not in img:
                     # Extract image ID from url

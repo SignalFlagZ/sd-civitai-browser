@@ -731,6 +731,36 @@ def on_ui_tabs():
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
+        with gr.Accordion(label="Important! V2.0 Update information", open=True):
+            gr.Markdown(
+                value=(
+                    "# Major changes in v2.0"
+                    "\n"
+                    "## Move the SD1.5 models under the `_SD_1_5` folder"
+                    "\n"
+                    "By default, a subfolder with the base model name is added to the path. "
+                    "Previously, SD 1.5 models did not have a base model name path. "
+                    "This change was made because it is thought that the frequency of use of the SD1.5 series will decrease in the future, and to maintain the consistency of the folder structure."
+                    "\n"
+                    "## LoCon and DoRA are stored in subfolders under `models/Lora/_LoCon` or `models/Lora/_DoRA`"
+                    "\n"
+                    "Previously  `LoCon` was stored in the 'LyCORIS' folder. New types such as DoRA are increasing, but they are now treated the same as LoRA."
+                    "\n"
+                    "## When setting the save folder in the settings, the base folder is `models` folder for all types."
+                    "\n"
+                    "Previously, it was based on the default or optionally specified folder in the SD web UI. Therefore, the path specification for subfolders by type in Settings will change."
+                    "\n"
+                    "## New feuture"
+                    "\n"
+                    "- Supports download queue and multi-threaded downloads"
+                    "\n"
+                    "  - You can cancel downloads on the cue list."
+                    "\n"
+                    "  - You can open the save folder from the cue list"
+                    "\n"
+                )
+            )
+
         with gr.Tabs(elem_id='civsfz_tab-element'):
             for i,name in enumerate(tabNames):
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:

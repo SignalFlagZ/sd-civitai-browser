@@ -30,7 +30,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Add cancel download button to cue list
 - Add open download folder button to cue list
 - Removed the cancel button that was in the model information
-- Removed Save trained tagas and included it in Save model info
+- Removed `Save trained tagas` button and included it in `Save model info`
 ### v1.19β
 - Sorted infotext to make it easier to read
 - Display download results for a while

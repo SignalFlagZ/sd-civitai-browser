@@ -104,7 +104,13 @@ class Downloader:
             threadQ=Downloader._threadQ, waitQ=Downloader._dlQ, resultQ=expireQ)
         return content
 
-    def ui(self, gr: gr):
+    def uiDlList(self, gr: gr):
+        def dlHtml():
+            html = self.status()
+            return html
+        grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=dlHtml, every=1)
+
+    def uiJsEvent(self, gr: gr):
         # Cancel Download item
         grTxtJsEventDl = gr.Textbox(
             label="Event text",
@@ -119,11 +125,11 @@ class Downloader:
             if command[0].startswith("CancelDl"):
                 path = Path(command[1])
                 self.sendCancel(path)
-                gr.Info(f"Cancel clicked")
+                gr.Info(f"Cancel")
             elif command[0].startswith("OpenFolder"):
                 path = Path(command[1])
                 open_folder(path)
-                gr.Info(f"Open folder clicked")
+                gr.Info(f"Open folder")
             return
 
         grTxtJsEventDl.change(

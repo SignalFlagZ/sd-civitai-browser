@@ -167,11 +167,11 @@ def on_ui_settings():
         key="civsfz_save_type_folders",
         info=shared.OptionInfo(
             "",
-            label='Save folders for Types. Set JSON Key-Value pair. The key is the type and the value is the path. The path is relative path from the base folder of each type or absolute path. Folder separator is "/".',
+            label='Save folders for Types. Set JSON Key-Value pair. The key is the type and the value is the path. The path is relative path from models/ folder or absolute path. Folder separator is "/".',
             component=gr.Textbox,
             component_args={
                 "lines": 4,
-                "info": 'Example: { "LoCon": "../Lora/LyCORIS" }',
+                "info": 'Example: { "LoCon": "../Lora/_LyCORIS" }',
                 "placeholder": '{\n\
     "Checkpoint": "MY_SUBFOLDER",\n\
     "VAE": "",\n\
@@ -200,7 +200,7 @@ def on_ui_settings():
             component=gr.Textbox,
             component_args={
                 "lines": 1,
-                "placeholder": '{{BASEMODELbkCmpt}}/.{{NSFW}}/{{MODELNAME}}',
+                "placeholder": '{{BASEMODEL}}/.{{NSFW}}/{{MODELNAME}}',
             },
             section=section,
         ),

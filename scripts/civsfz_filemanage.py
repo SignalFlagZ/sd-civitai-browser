@@ -74,64 +74,58 @@ def type_path(type: str) -> Path:
     else:
         folderSetting = {}       
     pre_opt_folder = opts.civsfz_save_type_folders
-        
+    base = models_path
     if type == "Checkpoint":
-        base = ckpt_dir
-        folder = ckpt_dir
+        default = ckpt_dir
+        # folder = ckpt_dir
+        folder = os.path.relpath(default, base)  # os.path.join(models_path, "Stable-diffusion")
     elif type == "Hypernetwork":
-        base = cmd_opts.hypernetwork_dir
-        folder = base
+        default = cmd_opts.hypernetwork_dir
+        folder = os.path.relpath(default, base)
     elif type == "TextualInversion":
-        base = cmd_opts.embeddings_dir
-        folder = base
+        default = cmd_opts.embeddings_dir
+        folder = os.path.relpath(default, base)
     elif type == "AestheticGradient":
-        base = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
-        folder = base
+        default = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+        folder = os.path.relpath(default, base)
     elif type == "LORA":
-        base = cmd_opts.lora_dir  # "models/Lora"
-        folder = base
+        default = cmd_opts.lora_dir  # "models/Lora"
+        folder = os.path.relpath(default, base)
     elif type == "LoCon":
-        if "lyco_dir" in cmd_opts:
-            base = f"{cmd_opts.lyco_dir}"
-        elif "lyco_dir_backcompat" in cmd_opts:  # A1111 V1.5.1
-            base = f"{cmd_opts.lyco_dir_backcompat}"
-        else:
-            base = os.path.join(models_path, "LyCORIS")
-        folder = base
+        #if "lyco_dir" in cmd_opts:
+        #    default = f"{cmd_opts.lyco_dir}"
+        #elif "lyco_dir_backcompat" in cmd_opts:  # A1111 V1.5.1
+        #    default = f"{cmd_opts.lyco_dir_backcompat}"
+        #else:
+        default = os.path.join(models_path, "Lora/_LyCORIS")
+        folder = os.path.relpath(default, base)
     elif type == "DoRA":
-        base = os.path.join(cmd_opts.lora_dir, "_DoRA")  # "models/Lora/_DoRA"
-        folder = base
+        default = os.path.join(models_path, "Lora/_DoRA")  # "models/Lora/_DoRA"
+        folder = os.path.relpath(default, base)
     elif type == "VAE":
         if cmd_opts.vae_dir:
-            base = cmd_opts.vae_dir  # "models/VAE"
+            default = cmd_opts.vae_dir  # "models/VAE"
         else:
-            base = os.path.join(models_path, "VAE")
-        folder = base
+            default = os.path.join(models_path, "VAE")
+        folder = os.path.relpath(default, base)
     elif type == "Controlnet":
-        base = models_path
-        folder = os.path.join(models_path, "ControlNet")
+        folder = "ControlNet"
     elif type == "Poses":
-        base = models_path
-        folder = os.path.join(models_path, "OtherModels/Poses")
+        folder = "OtherModels/Poses"
     elif type == "Upscaler":
-        base = models_path
-        folder = os.path.join(models_path, "OtherModels/Upscaler")
+        folder = "OtherModels/Upscaler"
     elif type == "MotionModule":
-        base = models_path
-        folder = os.path.join(models_path, "OtherModels/MotionModule")
+        folder = "OtherModels/MotionModule"
     elif type == "Wildcards":
-        base = models_path
-        folder = os.path.join(models_path, "OtherModels/Wildcards")
+        folder = "OtherModels/Wildcards"
     elif type == "Workflows":
-        base = models_path
-        folder = os.path.join(models_path, "OtherModels/Workflows")
+        folder = "OtherModels/Workflows"
     elif type == "Other":
-        base = models_path
-        folder = os.path.join(models_path, "OtherModels/Other")
+        folder = "OtherModels/Other"
 
     optFolder = folderSetting.get(type, "")
     if optFolder == "":
-        pType = Path(folder)
+        pType = Path(base) / Path(folder)
     else:
         pType = Path(base) / Path(optFolder)
     return pType

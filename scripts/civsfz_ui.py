@@ -3,6 +3,7 @@ import itertools
 import json
 import math
 import re
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from colorama import Fore, Back, Style
@@ -27,11 +28,12 @@ class Components():
     newid = itertools.count()
     sHistory = SearchHistory()
     cHistory = ConditionsHistory()
-    downloader = Downloader()
-    def __init__(self, tab=None):
+    downloader = None
+    def __init__(self, downloader:Downloader, tab=None):
         '''id: Event ID for javascrypt'''
         from scripts.civsfz_filemanage import generate_model_save_path2, isExistFile, \
             save_text_file, saveImageFiles
+        Components.downloader = downloader
         self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = CivitaiModels()
@@ -133,7 +135,7 @@ class Components():
                 with gr.Column(scale=1):
                     with gr.Row():
                         grTextProgress = gr.Textbox(label='Download status',show_label=False)
-                        grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
+                        # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
             with gr.Row():
                 with gr.Column():
                     grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
@@ -184,7 +186,7 @@ class Components():
                     ],
                 outputs=[grTextProgress]
                 )
-            download = grBtnDownloadModel.click(
+            grBtnDownloadModel.click(
                 fn=Components.downloader.add,
                 inputs=[
                     grTxtSaveFolder,
@@ -196,20 +198,6 @@ class Components():
                     ],
                 outputs=[grTextProgress]
                 )
-
-            def cancel_download(grTxtSaveFolder, grDrpdwnFilenames):
-                Components.downloader.sendCancel(
-                    grTxtSaveFolder, grDrpdwnFilenames)
-                return gr.Textbox.update(value="Canceled")
-            grBtnCancel.click(
-                fn=cancel_download,
-                inputs=[
-                    grTxtSaveFolder,
-                    grDrpdwnFilenames,
-                ],
-                outputs=[grTextProgress],
-                )
-            
 
             def selectSHistory(grDropdownSearchTerm):
                 if grDropdownSearchTerm == None:
@@ -259,7 +247,7 @@ class Components():
                                 inputs=[],
                                 outputs=[grDrpdwnCHistory]
                             )
-            
+
             def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grDropdownSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels, grChkbxgrpLevel:list):
                 response = None
                 self.civitai.clearRequestError()
@@ -367,26 +355,6 @@ class Components():
                 ]
             )
 
-            # def UpdatedModels(grDrpdwnModels):
-            #    #print_ly(f"{grDrpdwnModels=}")
-            #    eventText = None
-            #    if grDrpdwnModels is not None:
-            #        match = re.match(r'(.*)\:\((\d+)\)$',grDrpdwnModels)
-            #        if match:
-            #            index = match.group(2)
-            #            eventText = 'Index:' + str(index)
-            #    return gr.Textbox.update(value=eventText)
-            # grDrpdwnModels.change(
-            #    fn=UpdatedModels,
-            #    inputs=[
-            #        grDrpdwnModels,
-            #    ],
-            #    outputs=[
-            #        #grRadioVersions,
-            #        grTxtJsEvent
-            #    ]
-            # )
-
             def  update_model_info(model_version=None, grChkbxgrpLevel=[0]):
                 if model_version is not None and self.civitai.selectVersionByIndex(model_version) is not None:
                     path = generate_model_save_path2(self.civitai.getSelectedModelType(),
@@ -469,7 +437,6 @@ class Components():
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
-                        gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
                         gr.Textbox.update(value="")
 
             def checkEarlyAccess(grTxtEarlyAccess):
@@ -500,7 +467,6 @@ class Components():
                     grBtnSaveText,
                     grBtnSaveImages,
                     grBtnDownloadModel,
-                    grBtnCancel,
                     grTextProgress
                     ]
             ).then(
@@ -592,11 +558,11 @@ class Components():
                 )
 
             def jump_to_page(grChkboxShowNsfw, grSldrPage, grChkbxgrpLevel):
-                #url = self.civitai.nextPage()
-                #if url is None:
+                # url = self.civitai.nextPage()
+                # if url is None:
                 #    url = self.civitai.prevPage()
-                #addQuery =  {'page': grSldrPage }
-                #newURL = self.civitai.updateQuery(url, addQuery)
+                # addQuery =  {'page': grSldrPage }
+                # newURL = self.civitai.updateQuery(url, addQuery)
                 newURL = self.civitai.getJumpUrl(grSldrPage)
                 if newURL is None:
                     return None, None,  gr.HTML.update(), None, None, gr.Slider.update(), gr.Textbox.update()
@@ -759,16 +725,19 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v1.19β.3'
+    ver = 'v2.0β.0'
     tabNames = []
+    downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
         with gr.Tabs(elem_id='civsfz_tab-element'):
             for i,name in enumerate(tabNames):
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
-                    Components(tab) #(tab)
-        gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
+                    Components(downloader, tab)  # (tab)
+        with gr.Row():
+            gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
+            downloader.ui(gr)
     return [(civitai_interface, "CivBrowser", "civsfz_interface")]
 
 script_callbacks.on_ui_tabs(on_ui_tabs)

@@ -950,17 +950,21 @@ class CivitaiModels(APIInformation):
 
         permissions = self.permissionsHtml(self.allows2permissions())
         # function:copy to clipboard
-        js = ('<script>''function civsfz_send2txt2img(text) {'
-            'text = decodeURI(text);'
-            'if (text != null) {'
-              'return navigator.clipboard.writeText(text).then('
-			'function () {'
-				'alert("Copied");'
-			'}).catch('
-			    'function (error) {'
-				'alert((error && error.message) || "Failed to copy infotext");'
-			'})} }'
-            '</script>')
+        js = (
+            "<script>"
+            "function civsfz_copyInnerText(node, send) {"
+            "return navigator.clipboard.writeText(node.nextElementSibling.innerText)"
+			".then("
+				"function () {"
+					"alert('Copied ' + node.nextElementSibling.innerText);"
+				"}"
+			").catch ("
+				"function (error) {"
+					"alert((error && error.message) || 'Failed to copy infotext');"
+				"}"
+			")}"
+            "</script>"
+        )
         template = environment.get_template("modelInfo.jinja")
         content = template.render(
             modelInfo=modelInfo, basicInfo=basicInfo, permissions=permissions,

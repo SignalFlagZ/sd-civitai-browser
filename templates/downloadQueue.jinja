@@ -1,5 +1,11 @@
-{% set copy = '<span title="Copy to clipboard" style="cursor: copy;"
-	onclick="civsfz_copyInnerText(this,false);">📋</span>' %}
+{% macro OPEN_FOLDER(file) -%}
+	<span title="Open Folder" style="cursor: pointer;" data-filepath="{{ file|e }}"
+		onclick="civsfz_open_folder(this.dataset.filepath);">📂</span>
+{%- endmacro %}
+{% macro CANCEL(file) -%}
+	<span title="Cancel" style="cursor: pointer;" data-filepath="{{ file|e }}"
+		onclick="civsfz_cancel_download(this.dataset.filepath)">❌</span>
+{%- endmacro %}
 {% set tdStyle1 = 'style="width: 1%;padding:0.4em;white-space: nowrap;"' %}
 {% set tdStyle5 = 'style="padding:0.4em;
 					max-width: 0; overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"' %}
@@ -16,7 +22,8 @@
 			<tr>
 				<th {{ tdStyle3 }}>{{ item['result'] }}</th>
 				<td {{ tdStyle4 }}>{{ item['filename'] }}</td>
-				<td {{ tdStyle5 }}>{{ copy }}<span>{{ item['folder']|e }}</span></td>
+				<td {{ tdStyle1 }}></td>
+				<td {{ tdStyle5 }}>{{ OPEN_FOLDER(item['folder']) }}<span>{{ item['folder']|e }}</span></td>
 			</tr>
 		{%- endfor %}
 		{%- for item in threadQ %}
@@ -24,14 +31,16 @@
 			<tr>
 				<th {{ tdStyle1 }}>Downloading</th>
 				<td {{ tdStyle2 }}>{{ item['filename'] }}</td>
-				<td {{ tdStyle5 }}>{{ copy }}<span>{{ item['folder']|e }}</span></td>
+				<td {{ tdStyle1 }}>{{ CANCEL(item['path']) }}</td>
+				<td {{ tdStyle5 }}>{{ OPEN_FOLDER(item['folder']) }}<span>{{ item['folder']|e }}</span></td>
 			</tr>
 		{%- endfor %}
 		{%- for item in waitQ %}
 			<tr>
 				<th {{ tdStyle1 }}>Waiting</th>
 				<td {{ tdStyle1 }}>{{ item['filename'] }}</td>
-				<td {{ tdStyle5 }}>{{ copy }}<span>{{ item['folder']|e }}</span></td>
+				<td {{ tdStyle1 }}>{{ CANCEL(item['path']) }}</td>
+				<td {{ tdStyle5 }}>{{ OPEN_FOLDER(item['folder']) }}<span>{{ item['folder']|e }}</span></td>
 			</tr>
 		{%- endfor %}
 	</table>

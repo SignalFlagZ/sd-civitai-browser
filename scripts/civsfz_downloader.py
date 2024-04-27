@@ -1,3 +1,4 @@
+import gradio as gr
 import math
 import os
 import re
@@ -11,7 +12,7 @@ from threading import Thread, local
 from time import sleep
 from tqdm import tqdm
 from modules.hashes import calculate_sha256
-from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder
+from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder, open_folder
 
 def print_ly(x): return print(Fore.LIGHTYELLOW_EX +
                               "CivBrowser: " + x + Style.RESET_ALL)
@@ -23,7 +24,7 @@ class Downloader:
     _dlQ = deque()  # Download
     _threadQ = deque() # Downloading
     _ctrlQ = deque()  # control
-    #_msgQ = deque()  # msg from worker
+    # _msgQ = deque()  # msg from worker
     _thread_local = local()
     _dlResults = deque() # Download results
     _maxThreadNum = 2
@@ -31,54 +32,59 @@ class Downloader:
 
     def __init__(self) -> None:
         Downloader._thread_local.progress = 0
-    
+
     def get_session(self) -> requests.Session:
         if not hasattr(Downloader._thread_local, 'session'):
             Downloader._thread_local.session = requests.Session()
         return Downloader._thread_local.session
 
-
     def add(self, folder, filename,  url, hash, api_key, early_access):
         if Downloader._threadNum == 0:
             # Clear queue because garbage may remain due to errors that cannot be caught
             Downloader._threadQ.clear()
+        path = Path(folder, filename)
         Downloader._ctrlQ.clear() # Clear cancel request
-        Downloader._dlQ.append({"folder": folder,
-                             "filename": filename,
-                             "url": url,
-                             "hash": hash,
-                             "apiKey": api_key,
-                             "EarlyAccess": early_access
-                             })
-        if Downloader._threadNum < Downloader._maxThreadNum:
-            Downloader._threadNum += 1
-            worker = Thread(target=self.download)
-            worker.start()
+        if (not any(item['path'] == path  for item in Downloader._dlQ) 
+            and not any(item['path'] == path for item in Downloader._threadQ)):
+            Downloader._dlQ.append({"folder": folder,
+                                "filename": filename,
+                                "path": path,
+                                "url": url,
+                                "hash": hash,
+                                "apiKey": api_key,
+                                "EarlyAccess": early_access
+                                })
+            if Downloader._threadNum < Downloader._maxThreadNum:
+                Downloader._threadNum += 1
+                worker = Thread(target=self.download)
+                worker.start()
+        else:
+            return "Already in queue"
         return f"Queue {len(Downloader._dlQ)}: Threads {Downloader._threadNum}"
 
-    def sendCancel(self, folder, filename):
+    def sendCancel(self, path:Path):
         '''
             Cancel downloading by file path
         '''
+        # path = Path(folder, filename)
         delete = None
         for dl in Downloader._dlQ:
-            if len({folder, filename} & {dl["folder"], dl["filename"]}) > 0:
+            if path == dl["path"]:
                 delete = dl
                 break
         if delete is None:
-            Downloader._ctrlQ.append({"control": "cancel",
-                                  "file": os.path.join(folder, filename)})
+            Downloader._ctrlQ.append({"control": "cancel", "path": path})
         else:
             Downloader._dlQ.remove(dl)
-            print_lc(f"Canceled:{filename}")
-            return f"Canceled:{filename}"
+            print_lc(f"Canceled:{path}")
+            return f"Canceled:{path}"
 
     def status(self):
         now = datetime.now(timezone.utc)
         # Discard past results
         expireQ = deque()
         remove = None
-        deadline = 180
+        deadline = 3 * 60
         for item in Downloader._dlResults:
             tdDiff = now - item['completedAt']
             secDiff = math.ceil(abs(tdDiff / timedelta(seconds=1)))
@@ -89,7 +95,7 @@ class Downloader:
                 remove = item
         if remove is not None:
             Downloader._dlResults.remove(remove)
-                
+
         templatesPath = Path.joinpath(
             extensionFolder(), Path("../templates"))
         environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
@@ -97,7 +103,35 @@ class Downloader:
         content = template.render(
             threadQ=Downloader._threadQ, waitQ=Downloader._dlQ, resultQ=expireQ)
         return content
-    
+
+    def ui(self, gr: gr):
+        # Cancel Download item
+        grTxtJsEventDl = gr.Textbox(
+            label="Event text",
+            value=None,
+            elem_id="civsfz_eventtext_dl",
+            visible=False,
+            interactive=True,
+            lines=1,
+        )
+        def eventDl(grTxtJsEventDl):
+            command = grTxtJsEventDl.split("??")
+            if command[0].startswith("CancelDl"):
+                path = Path(command[1])
+                self.sendCancel(path)
+                gr.Info(f"Cancel clicked")
+            elif command[0].startswith("OpenFolder"):
+                path = Path(command[1])
+                open_folder(path)
+                gr.Info(f"Open folder clicked")
+            return
+
+        grTxtJsEventDl.change(
+            fn=eventDl,
+            inputs=[grTxtJsEventDl],
+            outputs=[],
+        )
+
     def download(self) -> None:
         session = self.get_session()
         result = "" # Success or Error
@@ -154,14 +188,14 @@ class Downloader:
                                             file.write(chunk)
                                             progressConsole.update(len(chunk))
                                             prg += len(chunk)
-                                            #update progress
+                                            # update progress
                                             i = Downloader._threadQ.index(q)
                                             q['progress'] = prg / total_size
                                             Downloader._threadQ[i] = q
                                         # cancel
                                         if len(Downloader._ctrlQ) > 0:
                                             ctrl = Downloader._ctrlQ[0]
-                                            if ctrl['control'] == "cancel" and ctrl['file'] == file_name:
+                                            if ctrl["control"] == "cancel" and Path(folder, filename) == Path(ctrl["path"]) :
                                                 Downloader._ctrlQ.popleft()
                                                 exitDownloading = True
                                                 cancel = True
@@ -218,12 +252,12 @@ class Downloader:
             if exitDownloading:
                 if cancel:
                     print_lc(f'Canceled : {file_name_display}')
-                    #gr.Warning(f"Canceled: {file_name_display}")
+                    # gr.Warning(f"Canceled: {file_name_display}")
                 if os.path.exists(file_name):
                     removeFile(file_name)                
             else:
                 if os.path.exists(file_name):
-                    #downloaded_size = os.path.getsize(file_name)
+                    # downloaded_size = os.path.getsize(file_name)
                     # Check if the download was successful
                     sha256 = calculate_sha256(file_name).upper()
                     # print_lc(f'Model file hash : {hash}')
@@ -231,24 +265,23 @@ class Downloader:
                         if sha256[:len(hash)] == hash.upper():
                             print_n(f"Save: {file_name_display}")
                             result = "Succeeded"
-                            #gr.Info(f"Success: {file_name_display}")
+                            # gr.Info(f"Success: {file_name_display}")
                         else:
                             print_ly(
                                 f"Error: File download failed. {file_name_display}")
                             print_lc(f'Model file hash : {hash}')
                             print_lc(f'Downloaded hash : {sha256}')
-                            #gr.Warning(f"Hash mismatch: {file_name_display}")
+                            # gr.Warning(f"Hash mismatch: {file_name_display}")
                             removeFile(file_name)
                             result = "Hash mismatch"
                     else:
                         print_n(f"Save: {file_name_display}")
                         print_ly("No hash value provided. Unable to confirm file.")
                         result = "No hash value"
-                        #gr.Info(f"No hash: {file_name_display}")
-            #Downloader._dlQ.task_done()
+                        # gr.Info(f"No hash: {file_name_display}")
+            # Downloader._dlQ.task_done()
             Downloader._threadQ.remove(q)
             q['result'] = result
             q['completedAt'] = datetime.now(timezone.utc)
             Downloader._dlResults.append(q)
         Downloader._threadNum -= 1
-

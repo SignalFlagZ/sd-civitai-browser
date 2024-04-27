@@ -302,7 +302,6 @@ def saveImageFiles(folder, versionName, html, content_type, versionInfo):
     return "Save infos"
 
 
-
 def download(session, folder, filename,  url, hash, api_key, early_access):
     makedirs(folder)
     file_name = os.path.join(folder, filename)
@@ -597,7 +596,7 @@ def open_folder(f):
     path = os.path.normpath(f)
     if os.path.isdir(path):
         if platform.system() == "Windows":
-            os.startfile(path)
+            os.startfile(path, operation="open")
         elif platform.system() == "Darwin":
             sp.Popen(["open", path])
         elif "microsoft-standard-WSL2" in platform.uname().release:
@@ -686,4 +685,3 @@ class ConditionsHistory(History):
         return ret
     def getDelimiter(self) -> str:
         return self._delimiter
-    

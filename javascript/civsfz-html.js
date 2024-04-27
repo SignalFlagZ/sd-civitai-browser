@@ -26,6 +26,39 @@ function civsfz_select_model(model_name) {
 	}
 }
 
+function civsfz_update_textbox(ID, text) {
+	//console.log(text)
+	let selector =  ID + ' textarea';
+	let textbox = gradioApp().querySelector(selector);
+	if (textbox) {
+		/*Force event*/
+		textbox.value = text;
+		updateInput(textbox);
+	}
+}
+
+function civsfz_cancel_download(path) {
+	// Cancel download
+	//console.log(text)
+	path = decodeURI(path);
+	let id = '#civsfz_eventtext_dl';
+	if (path) {
+		let text = 'CancelDl??' + path + '??' + civsfz_getRandomIntInclusive(0, 9999);
+		civsfz_update_textbox(id, text);
+	}
+}
+
+function civsfz_open_folder(path) {
+	// Cancel download
+	//console.log(text)
+	path = decodeURI(path);
+	let id = '#civsfz_eventtext_dl';
+	if (path) {
+		let text = 'OpenFolder??' + path + '??' + civsfz_getRandomIntInclusive(0, 9999);
+		civsfz_update_textbox(id, text);
+	}
+}
+
 /*https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Math/random#%E5%8C%85%E6%8B%AC%E7%9A%84%E3%81%AB_2_%E3%81%A4%E3%81%AE%E5%80%A4%E3%81%AE%E9%96%93%E3%81%AE%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%81%AA%E6%95%B4%E6%95%B0%E3%82%92%E5%BE%97%E3%82%8B*/
 function civsfz_getRandomIntInclusive(min, max) {
 	min = Math.ceil(min);
@@ -44,6 +77,7 @@ function civsfz_trigger_key_down(element, key){
 	//element.focus();
 	element.dispatchEvent(e);
 }
+
 function civsfz_send2txt2img(text, send = true) {
 	//console.log(text)
 	text = decodeURI(text);

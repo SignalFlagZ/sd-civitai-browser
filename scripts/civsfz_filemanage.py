@@ -86,7 +86,7 @@ def type_path(type: str) -> Path:
         default = cmd_opts.embeddings_dir
         folder = os.path.relpath(default, base)
     elif type == "AestheticGradient":
-        default = "extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings"
+        default = os.path.join(models_path, "../extensions/stable-diffusion-webui-aesthetic-gradients/aesthetic_embeddings")
         folder = os.path.relpath(default, base)
     elif type == "LORA":
         default = cmd_opts.lora_dir  # "models/Lora"

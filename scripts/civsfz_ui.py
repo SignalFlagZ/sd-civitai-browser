@@ -727,7 +727,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.0β.0'
+    ver = 'v2.0β.1'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -764,9 +764,11 @@ def on_ui_tabs():
                     "\n"
                     "- Supports download queue and multi-threaded downloads"
                     "\n"
-                    "  - You can cancel downloads on the cue list."
+                    "  - You can cancel downloads on the cue list"
                     "\n"
                     "  - You can open the save folder from the cue list"
+                    "\n"
+                    "- Set the order of infotext keys"
                     "\n"
                 )
             )

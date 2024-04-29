@@ -22,13 +22,13 @@
 {%- endmacro%}
 
 {%- if infotext['prompt'] is not none %}
-<p style="margin-bottom:0.2em">
+<p>
 	<var style="font-weight:bold;">prompt</var>: {{ infotext['prompt']|e }}
 </p>
 {%- endif %}
 
 {%- if infotext['negativePrompt'] is not none %}
-<p style="margin-bottom:0.5em">
+<p>
 	<var style="font-weight:bold;">negativePrompt</var>: {{ infotext['negativePrompt']|e }}
 </p>
 {%- endif %}

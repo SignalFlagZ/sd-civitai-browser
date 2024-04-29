@@ -1,18 +1,24 @@
 {# meta to infotext #}
-{%- macro extract_dict(dict) %}
-{%- if dict is mapping%}
-{{ "{" }}
-{%- for key, value in dict.items() %}
-<span style='padding-right:0.5em;style="display: inline-block;"'>
-	<var style="font-weight:bold;">{{ key|e }}</var>: {{ value|e }}{{ ", " if not loop.last else "" }}
-</span>
-{%- endfor %}
-{{ "}" }}
-{%- else %}
-<span style='padding-right:0.5em;style="display: inline-block;"'>
-	{{ dict|e }}
-</span>
-{%- endif %}
+{%- macro extract_var(var) %}
+	{%- if var is mapping%}
+		{{ "{" }}
+		{%- for key, value in var.items() %}
+			<span style='padding-right:0.5em;display: inline-block;"'>
+				<var style="font-weight:bold;">{{ key|e }}</var>: {{ value|e }}{{ ", " if not loop.last else "" }}
+			</span>
+		{%- endfor -%}
+		{{- "}" -}}
+	{% elif var is iterable and var is not string %}
+		{%- for item in infotext['models'] %}
+		<span style="padding-right:0.5em;display: inline-block;">
+			{{ item|e }}{{ ", " if not loop.last else "" }}
+		</span>
+		{% endfor -%}
+	{%- else %}
+		<span style='padding-right:0.5em;display: inline-block;"'>
+			{{ var|e }}
+		</span>
+	{%- endif %}
 {%- endmacro%}
 
 {%- if infotext['prompt'] is not none %}
@@ -20,82 +26,74 @@
 	<var style="font-weight:bold;">prompt</var>: {{ infotext['prompt']|e }}
 </p>
 {%- endif %}
+
 {%- if infotext['negativePrompt'] is not none %}
 <p style="margin-bottom:0.5em">
 	<var style="font-weight:bold;">negativePrompt</var>: {{ infotext['negativePrompt']|e }}
 </p>
 {%- endif %}
+
 <p>
 	{%- for key, value in infotext.items() %}
-	{%- if not key in ('prompt','negativePrompt', 'resources', 'hashes', 'comfy', 'models', 'additionalResources', 'civitaiResources', 'TI hashes') %}
-	{%- if value is not none %}
-	<span style='padding-right:0.5em;style="display: inline-block;"'>
-		<var style="font-weight:bold;">{{ key|e }}</var>: {{ value|e }}{{ ", " if not loop.last else "" }}
-	</span>
-	{%- endif %}
-	{%- endif %}
+		{%- if not key in ('prompt','negativePrompt', 'resources', 'hashes', 'comfy', 'models', 'additionalResources', 'civitaiResources', 'TI hashes') %}
+			{%- if value is not none %}
+				<span style='padding-right:0.5em;display: inline-block;"'>
+					<var style="font-weight:bold;">{{ key|e }}</var>: {{ value|e }}{{ ", " if not loop.last else "" }}
+				</span>
+			{%- endif %}
+		{%- endif %}
 	{%- endfor %}
 </p>
-<p>
-	{%- if 'models' in infotext %}
-	{% if infotext['models'] is mapping %}
-	<var style="font-weight:bold;">models</var>:
-	{{- extract_dict(infotext['models']) }}
-	{%- else %}
-	<var style="font-weight:bold;">models</var>:{{ "[" }}
-	{%- for item in infotext['models'] %}
-	<span style="padding-right:0.5em">
-		{{ item|e }}{{ ", " if not loop.last else "" }}
-	</span>
-	{%- endfor %}
-	{{ "]" }}
-	{%- endif %}
-	{%- endif %}
-</p>
-<p>
-	{%- if 'hashes' in infotext %}
-	<var style="font-weight:bold;">hashes</var>:
-	{{- extract_dict(infotext['hashes']) }}
-	{%- endif %}
-</p>
-<p>
-	{%- if 'TI hashes' in infotext %}
-	<var style="font-weight:bold;">TI hashes</var>:
-	{{- extract_dict(infotext['TI hashes']) }}
-	{%- endif %}
-</p>
-<p>
-	{%- if 'resources' in infotext %}
-	<var style="font-weight:bold;">resources</var>:{{ "[" }}
-	{%- for item in infotext['resources'] %}
-	{{- extract_dict(item) }}
-	{{ ", " if not loop.last else "" }}
-	{%- endfor %}
-	{{ "]" }}
-	{%- endif %}
-</p>
-<p>
-	{%- if 'additionalResources' in infotext %}
-	<var style="font-weight:bold;">additionalResources</var>:{{ "[" }}
-	{%- for item in infotext['additionalResources'] %}
-		{{- extract_dict(item) }}{{ ", " if not loop.last else "" }}
-	{%- endfor %}
-	{{ "]" }}
-	{%- endif %}
-</p>
-<p>
-	{%- if 'civitaiResources' in infotext %}
-	<var style="font-weight:bold;">civitaiResources</var>:{{ "[" }}
-	{%- for item in infotext['civitaiResources'] %}
-	{{- extract_dict(item) }}{{ ", " if not loop.last else "" }}
-	{%- endfor %}
-	{{ "]" }}
-	{%- endif %}
-</p>
-<p>
-	{%- if 'comfy' in infotext %}
-	<span style="padding-right:0.5em">
-		<var style="font-weight:bold;">comfy</var>: {{ infotext['comfy']|e }}
-	</span>
-	{%- endif %}
-</p>
+
+{%- if 'models' in infotext %}
+	<p>
+		<var style="font-weight:bold;">models</var>:
+		{{- extract_var(infotext['models']) }}
+	</p>
+{%- endif %}
+{%- if 'hashes' in infotext %}
+	<p>
+		<var style="font-weight:bold;">hashes</var>:
+		{{- extract_var(infotext['hashes']) }}
+	</p>
+{%- endif %}
+{%- if 'TI hashes' in infotext %}
+	<p>
+		{{- extract_var(infotext['TI hashes']) }}
+	</p>
+{%- endif %}
+{%- if 'resources' in infotext %}
+	<p>
+		<var style="font-weight:bold;">resources</var>: {{ "[" }}
+		{%- for item in infotext['resources'] %}
+			{{- extract_var(item) -}}
+			{{- ", " if not loop.last else "" }}
+		{%- endfor -%}
+		{{ "]" }}
+	</p>
+{%- endif %}
+{%- if 'additionalResources' in infotext %}
+	<p>
+		<var style="font-weight:bold;">additionalResources</var>: {{ "[" }}
+		{%- for item in infotext['additionalResources'] %}
+			{{- extract_var(item) }}{{ ", " if not loop.last else "" }}
+		{%- endfor -%}
+		{{ "]" }}
+	</p>
+{%- endif %}
+{%- if 'civitaiResources' in infotext %}
+	<p>
+		<var style="font-weight:bold;">civitaiResources</var>: {{ "[" }}
+		{%- for item in infotext['civitaiResources'] %}
+			{{- extract_var(item) }}{{ ", " if not loop.last else "" }}
+		{%- endfor -%}
+		{{ "]" }}
+	</p>
+{%- endif %}
+{%- if 'comfy' in infotext %}
+	<p>
+		<span style="padding-right:0.5em">
+			<var style="font-weight:bold;">comfy</var>: {{ infotext['comfy']|e }}
+		</span>
+	</p>
+{%- endif %}

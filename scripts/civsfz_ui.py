@@ -631,13 +631,12 @@ class Components():
                         grRadioVersions = updateVersionsByModelID(self.civitai.getSelectedModelID())
                         grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder, grTxtEarlyAccess = update_model_info(
                             grRadioVersions['value'], grChkbxgrpLevel)
-                        grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
+                        #grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
                         grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames['value']))
                         grDrpdwnModels = gr.Dropdown.update(value=f'{self.civitai.getSelectedModelName()}:({index})')
                         return  grDrpdwnModels,\
                                 grRadioVersions,\
                                 grHtmlModelInfo,\
-                                grTxtDlUrl,\
                                 grTxtEarlyAccess,\
                                 grTxtHash,\
                                 grTxtTrainedWords,\
@@ -649,7 +648,6 @@ class Components():
                                 gr.Radio.update(value=None),\
                                 gr.HTML.update(value=None),\
                                 gr.Textbox.update(value=None),\
-                                gr.Textbox.update(value=None),\
                                 gr.Textbox.update(value=""),\
                                 gr.Textbox.update(value=None),\
                                 gr.Dropdown.update(value=None),\
@@ -659,7 +657,6 @@ class Components():
                     return  gr.Dropdown.update(value=None),\
                             gr.Radio.update(value=None),\
                             gr.HTML.update(value=None),\
-                            gr.Textbox.update(value=None),\
                             gr.Textbox.update(value=None), \
                             gr.Textbox.update(value=""),\
                             gr.Textbox.update(value=None),\
@@ -676,7 +673,6 @@ class Components():
                     grDrpdwnModels,
                     grRadioVersions,
                     grHtmlModelInfo,
-                    grTxtDlUrl,
                     grTxtEarlyAccess,
                     grTxtHash,
                     grTxtTrainedWords,

@@ -590,12 +590,17 @@ def open_folder(f):
     path = os.path.normpath(f)
     if os.path.isdir(path):
         if platform.system() == "Windows":
-            os.startfile(path, operation="open")
+            # sp.Popen(rf'explorer /select,"{path}"')
+            # sp.run(["explorer", path])
+            os.startfile(path, operation="explore")
         elif platform.system() == "Darwin":
+            # sp.run(["open", path])
             sp.Popen(["open", path])
         elif "microsoft-standard-WSL2" in platform.uname().release:
+            # sp.run(["wsl-open", path])
             sp.Popen(["wsl-open", path])
         else:
+            # sp.run(["xdg-open", path])
             sp.Popen(["xdg-open", path])
     else:
         print_lc(f'Not found "{path}"')

@@ -163,6 +163,7 @@ class Downloader:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0'
             }
+            applyAPI = False  # True if API key is added
             mode = "wb"  # Open file mode
             if os.path.exists(file_name):
                 print_lc("Overwrite")
@@ -213,23 +214,30 @@ class Downloader:
                             # Break out of the loop if the download is successful
                             break
                         else:
-                            if early_access:
+                            if early_access and applyAPI:
                                 print_ly(
                                     f"{file_name_display}:Download canceled. Early Access!")
                                 exitDownloading = True
                                 result = "Early Access"
                                 break
-                            else:
+                            if not applyAPI:
                                 print_lc("May need API key")
                                 if len(api_key) == 32:
                                     headers.update(
                                         {"Authorization": f"Bearer {api_key}"})
-                                    print_lc(
-                                        f"{file_name_display}:Apply API key")
+                                    applyAPI = True
+                                    print_lc(f"{file_name_display}:Apply API key")
                                 else:
                                     exitDownloading = True
                                     result = "No API key"
                                     break
+                            else:
+                                exitDownloading = True
+                                print_lc(
+                                    f"{file_name_display}:Invalid API key"
+                                )
+                                result = "Invalid API key"
+                                break
 
                 except requests.exceptions.Timeout as e:
                     print_ly(f"{file_name_display}:{e}")

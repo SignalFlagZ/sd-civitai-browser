@@ -723,13 +723,13 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.0β.1'
+    ver = 'v2.0.0'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
-        with gr.Accordion(label="Important! V2.0 Update information", open=True):
+        with gr.Accordion(label="V2.0 Update information", open=False):
             gr.Markdown(
                 value=(
                     "# Major changes in v2.0"

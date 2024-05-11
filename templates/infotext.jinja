@@ -1,10 +1,13 @@
 {# meta to infotext #}
+{% set copy = '<span title="Copy to clipboard" style="cursor: copy;"
+	onclick="civsfz_copyInnerText(this,false);">📋</span>' %}
+
 {%- macro extract_var(var) %}
 	{%- if var is mapping%}
 		{{ "{" }}
 		{%- for key, value in var.items() %}
 			<span style='padding-right:0.5em;display: inline-block;"'>
-				<var style="font-weight:bold;">{{ key|e }}</var>: {{ value|e }}{{ ", " if not loop.last else "" }}
+				<var style="font-weight:bold;">{{ key|e }}</var>: {{ copy }}<span>{{ value|e }}</span>{{ ", " if not loop.last else "" }}
 			</span>
 		{%- endfor -%}
 		{{- "}" -}}

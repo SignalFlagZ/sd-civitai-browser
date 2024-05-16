@@ -26,6 +26,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v2.0
+
 ### v2.0β
 - Add cancel download button to cue list
 - Add open download folder button to cue list

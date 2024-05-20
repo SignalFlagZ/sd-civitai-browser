@@ -1,5 +1,16 @@
 {% set copy = '<span title="Copy to clipboard" style="cursor: copy;" onclick="civsfz_copyInnerText(this,false);">📋</span>' %}
 {% set tdStyle1 = 'style="max-width:20em;min-width:7em;padding:0.2em;"' %}
+{%- if "SD 1" in modelInfo['baseModel'] %}
+	{%- set baseModelColor = 'civsfz-bgcolor-SD1' %}
+{%- elif "SD 2" in modelInfo['baseModel'] %}
+	{%- set baseModelColor = 'civsfz-bgcolor-SD2' %}
+{%- elif "SDXL" in modelInfo['baseModel'] %}
+	{%- set baseModelColor = 'civsfz-bgcolor-SDXL' %}
+{%- elif "Pony" in modelInfo['baseModel'] %}
+	{%- set baseModelColor = 'civsfz-bgcolor-Pony' %}
+{%- else %}
+	{%- set baseModelColor = 'civsfz-bgcolor-base' %}
+{%- endif %}
 <div class="civsfz-modelBasicInfo" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
 	<table>
 		<caption style="text-align: left">Model attributes</caption>
@@ -53,7 +64,7 @@
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Base Model</th>
-			<td {{ tdStyle1 }}>{{ modelInfo["baseModel"]|e }}</td>
+			<td {{ tdStyle1 }}><span class="{{ baseModelColor }}">{{ modelInfo["baseModel"]|e }}</span></td>
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Tags</th>

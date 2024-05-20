@@ -146,17 +146,17 @@ function civsfz_overwriteProperties(propertiesText) {
 	//let propertiesText = gradioApp().querySelector('#' + elem_id + ' textarea').value;
 	//console.log(elem_id, propertiesText)
 	let p = propertiesText.split(';');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-figcaption-background-color', p[0] + 'd9');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sd1-background-color', p[1] + 'd9');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sd2-background-color', p[2] + 'd9');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sdxl-background-color', p[3] + 'd9');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-pony-background-color', p[4] + 'd9');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-default-shadow-color', p[5] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhave-shadow-color', p[6] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhad-shadow-color', p[7] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[8]);
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[9]);
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[10]);
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-figcaption-background-color', p[0] + 'd9');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-sd1-background-color', p[1] + 'd9');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-sd2-background-color', p[2] + 'd9');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-sdxl-background-color', p[3] + 'd9');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-pony-background-color', p[4] + 'd9');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-default-shadow-color', p[5] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-alreadyhave-shadow-color', p[6] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-alreadyhad-shadow-color', p[7] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-hover-scale', p[8]);
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-card-width', p[9]);
+	civsfz_querySelectSetProperty('.civsfz-custom-property', '--civsfz-card-height', p[10]);
 
 }
 

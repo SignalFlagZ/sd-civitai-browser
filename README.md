@@ -27,7 +27,8 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.0
-
+- Add background color to model information base model
+- The background color of the Pony model can be specified
 ### v2.0β
 - Add cancel download button to cue list
 - Add open download folder button to cue list

@@ -53,7 +53,7 @@ class Components():
         def browsingLevelChoices():
             return list(self.civitai.nsfwLevel.items())
 
-        with gr.Column() as self.components:
+        with gr.Column(elem_classes="civsfz-custom-property") as self.components:
             with gr.Row():
                 with gr.Column(scale=1):
                     grChkbxGrpContentType = gr.CheckboxGroup(
@@ -88,7 +88,7 @@ class Components():
                     with gr.Column(scale=1,min_width=80):
                         grTxtPages = gr.Textbox(label='Pages',show_label=False)
                 with gr.Row():
-                    grHtmlCards = gr.HTML(elem_classes='civsfz-modelcardshtml')
+                    grHtmlCards = gr.HTML()
                     grTxtPropaties = gr.Textbox(elem_id="civsfz_css-properties", label="CSS Properties", value="", visible=False, interactive=False, lines=1)
                 with gr.Row(elem_classes="civsfz-jump-page-control civsfz-sticky-element"):
                     with gr.Column(scale=3):
@@ -123,7 +123,7 @@ class Components():
             with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
                 with gr.Column(scale=2):
                     with gr.Row():
-                        #grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
+                        # grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
                         grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
                         grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id=f'civsfz_downloadbutton{self.id}',min_width=80)
                 with gr.Column(scale=1):
@@ -158,7 +158,7 @@ class Components():
 
             def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
                 return 
-            #grBtnSaveText.click(
+            # grBtnSaveText.click(
             #    fn=save_text,
             #    inputs=[
             #        grTxtSaveFolder,
@@ -631,7 +631,7 @@ class Components():
                         grRadioVersions = updateVersionsByModelID(self.civitai.getSelectedModelID())
                         grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder, grTxtEarlyAccess = update_model_info(
                             grRadioVersions['value'], grChkbxgrpLevel)
-                        #grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
+                        # grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
                         grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames['value']))
                         grDrpdwnModels = gr.Dropdown.update(value=f'{self.civitai.getSelectedModelName()}:({index})')
                         return  grDrpdwnModels,\
@@ -724,7 +724,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.0.0'
+    ver = 'v2.0.1'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):

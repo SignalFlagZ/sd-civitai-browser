@@ -150,12 +150,13 @@ function civsfz_overwriteProperties(propertiesText) {
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sd1-background-color', p[1] + 'd9');
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sd2-background-color', p[2] + 'd9');
 	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-sdxl-background-color', p[3] + 'd9');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-default-shadow-color', p[4] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhave-shadow-color', p[5] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhad-shadow-color', p[6] + 'f0');
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[7]);
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[8]);
-	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[9]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-pony-background-color', p[4] + 'd9');
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-default-shadow-color', p[5] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhave-shadow-color', p[6] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-alreadyhad-shadow-color', p[7] + 'f0');
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-hover-scale', p[8]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-width', p[9]);
+	civsfz_querySelectSetProperty('.civsfz-modelcardshtml', '--civsfz-card-height', p[10]);
 
 }
 

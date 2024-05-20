@@ -137,13 +137,22 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
-        key='civsfz_default_shadow_color',
+        key="civsfz_pony_background_color",
         info=shared.OptionInfo(
-            '#798a9f' ,
-            label='Frame color for cards',
+            "#ce274b",
+            label="Background color for PONY models",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
+    )
+    shared.opts.add_option(
+        key="civsfz_default_shadow_color",
+        info=shared.OptionInfo(
+            "#798a9f",
+            label="Frame color for cards",
+            component=gr.ColorPicker,
+            section=section,
+        ),
     )
     shared.opts.add_option(
         key='civsfz_alreadyhave_shadow_color',

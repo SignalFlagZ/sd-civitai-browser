@@ -11,6 +11,7 @@
 	--civsfz-sd1-background-color: #87ba39d9;
 	--civsfz-sd2-background-color: #54c696d9;
 	--civsfz-sdxl-background-color: #d54b44d9;
+	--civsfz-pony-background-color: #ce274bd9;
 	--civsfz-early-access-in-background-color: rgba(39, 52, 201, 0.8);
 }
 
@@ -64,6 +65,9 @@
 }
 .civsfz-bgcolor-SDXL {
 	background-color: var(--civsfz-sdxl-background-color);
+}
+.civsfz-bgcolor-Pony {
+	background-color: var(--civsfz-pony-background-color);
 }
 
 .civsfz-modelcard img {

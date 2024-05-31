@@ -109,7 +109,11 @@ class Components():
                 grTxtTrainedWords = gr.Textbox(
                     label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
             with gr.Row(equal_height=False):
-                grBtnFolder = gr.Button(value='📂',interactive=True, elem_classes ="civsfz-small-buttons")
+                grBtnFolder = gr.Button(
+                    value="\N{Open file folder}",
+                    interactive=True,
+                    elem_classes="civsfz-small-buttons",
+                )  # 📂
                 grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
                 grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
                 grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
@@ -135,7 +139,7 @@ class Components():
                     grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
                     with gr.Row(elem_classes='civsfz-back-to-top'):
                         grHtmlBackToTop = gr.HTML(
-                            value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>🔝</span></div>")
+                            value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>&#x1F51D;</span></div>")  # 🔝
 
             # def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')

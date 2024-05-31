@@ -1,10 +1,10 @@
 {% macro OPEN_FOLDER(file) -%}
 	<span title="Open Folder" style="cursor: pointer;" data-filepath="{{ file|e }}"
-		onclick="civsfz_open_folder(this.dataset.filepath);">📂</span>
+		onclick="civsfz_open_folder(this.dataset.filepath);">&#x1F4C2;</span> {# 📂 #}
 {%- endmacro %}
 {% macro CANCEL(file) -%}
 	<span title="Cancel" style="cursor: pointer;" data-filepath="{{ file|e }}"
-		onclick="civsfz_cancel_download(this.dataset.filepath)">❌</span>
+		onclick="civsfz_cancel_download(this.dataset.filepath)">&#x274C;</span> {# ❌ #}
 {%- endmacro %}
 {% set tdStyle1 = 'style="width: 1%;padding:0.4em;white-space: nowrap;"' %}
 {% set tdStyle5 = 'style="padding:0.4em;

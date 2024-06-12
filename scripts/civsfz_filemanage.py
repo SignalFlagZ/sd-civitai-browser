@@ -598,7 +598,7 @@ def open_folder(f):
             sp.Popen(["open", path])
         elif "microsoft-standard-WSL2" in platform.uname().release:
             # sp.run(["wsl-open", path])
-            sp.Popen(["wsl-open", path])
+            sp.Popen(["explorer.exe", sp.check_output(["wslpath", "-w", path])])
         else:
             # sp.run(["xdg-open", path])
             sp.Popen(["xdg-open", path])

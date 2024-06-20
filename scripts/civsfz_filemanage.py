@@ -52,6 +52,7 @@ def escaped_filename(model_name):
                                     "*": r"_",
                                     "\"": r"",
                                     "\\": r"",
+                                    "\t":r"_",
                                     "/": r"/" if opts.civsfz_treat_slash_as_folder_separator else r"_"
                                 })
     new_name = model_name.translate(escapechars)

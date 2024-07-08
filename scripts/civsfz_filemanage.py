@@ -35,8 +35,20 @@ pre_opt_folder = None
 def extensionFolder() -> Path:
     return Path(__file__).parent
 
+def name_len(s:str):
+        #return len(s.encode('utf-16'))
+        return len(s.encode('utf-8'))
+def cut_name(s:str):
+    MAX_FILENAME_LENGTH = 240
+    l = name_len(s)
+    #print_lc(f'filename length:{len(s.encode("utf-8"))}-{len(s.encode("utf-16"))}')
+    while l >= MAX_FILENAME_LENGTH: 
+        s = s[:-1]
+        l = name_len(s)
+    return s
+    
+    
 def escaped_filename(model_name):
-    MAX_LENGTH = 254
     escapechars = str.maketrans({   " ": r"_",
                                     "(": r"",
                                     ")": r"",
@@ -56,12 +68,11 @@ def escaped_filename(model_name):
                                     "/": r"/" if opts.civsfz_treat_slash_as_folder_separator else r"_"
                                 })
     new_name = model_name.translate(escapechars)
-    if len(new_name) > MAX_LENGTH:
-        new_name = re.sub('_+', '_', new_name)
-        if len(new_name) > MAX_LENGTH:
-            new_name = new_name[0:MAX_LENGTH-1]
-
+    new_name = re.sub('_+', '_', new_name)
+    new_name = cut_name(new_name)
     return new_name
+
+    
 
 def type_path(type: str) -> Path:
     global pre_opt_folder, ckpt_dir

@@ -26,6 +26,12 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v2.1
+- Avoid too long file name warning when deleting folders in Windows
+- Avoid filename length issues on Linux
+  - The maximum length of a file/folder name is now 240 bytes (Number of bytes in UTF-8)
+  - Previous model files with long names cannot be recognized as existing
+  - This is just a display issue, and the models can still be used as before
 ### v2.0
 - Add background color to model information base model
 - The background color of the Pony model can be specified

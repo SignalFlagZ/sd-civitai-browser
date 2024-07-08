@@ -728,49 +728,25 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.0.3'
+    ver = 'v2.1.0'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
-        with gr.Accordion(label="V2.0 Update information", open=False):
+        with gr.Accordion(label="V2.1 Update information", open=True):
             gr.Markdown(
                 value=(
-                    "# Major changes in v2.0"
+                    "# Major changes in v2.1"
                     "\n"
-                    "## Move SD1.5 models under `_SD_1_5` folder"
+                    "Avoid filename length issues on Linux. "
+                    "Avoid too long file name warning when deleting folders in Windows."
                     "\n"
-                    "By default, a subfolder with the base model name is added to the path. "
-                    "Previously, SD 1.5 models did not have a base model name path. "
-                    "This change was made with the advent of SD 3, etc. and to maintain consistency in folder structure."
+                    "- The maximum length of a file/folder name is now 240 bytes. (Number of bytes in UTF-8)"
                     "\n"
-                    "## Move `mosels/LyCORIS/` files to `models/Lora/_LyCORIS/`"
+                    "- Previous model files with long names cannot be recognized as existing."
                     "\n"
-                    "LoCon and DoRA are stored in subfolders under `models/Lora/_LyCORIS` or `models/Lora/_DoRA`."
-                    "\n"
-                    "Previously `LoCon` was stored in the `LyCORIS` folder. The current SD web UI does not require a `LyCORIS` folder. It can be used for backwards compatibility. New types such as DoRA are increasing, but they are now treated the same as LoRA."
-                    "\n"
-                    "## Save folders can be customized in Settings"
-                    "\n"
-                    "Specify a custom folder in JSON format. Absolute and relative paths can be used. Use a relative path from the `models/` folder. Please note that this has changed from V1."
-                    "\n"
-                    "More details: [GitHub Wiki](https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki)"
-                    "\n"
-                    "## Other changes"
-                    "\n"
-                    "- Removed `Save trained tagas` button and included it in `Save model info`. "
-                    "\n"
-                    "## New feuture"
-                    "\n"
-                    "- Supports download queue and multi-threaded downloads"
-                    "\n"
-                    "  - You can cancel downloads on the cue list"
-                    "\n"
-                    "  - You can open the save folder from the cue list"
-                    "\n"
-                    "- Set the order of infotext keys"
-                    "\n"
+                    "- This is just a display issue, and the models can still be used as before."
                 )
             )
         downloader.uiDlList(gr)

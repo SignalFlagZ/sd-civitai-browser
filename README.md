@@ -27,11 +27,20 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.1
-- Avoid too long file name warning when deleting folders in Windows
 - Avoid filename length issues on Linux
-  - The maximum length of a file/folder name is now 240 bytes (Number of bytes in UTF-8)
+  - The maximum length of a file/folder name is now 246 bytes (Number of bytes in UTF-8)
   - Previous model files with long names cannot be recognized as existing
   - This is just a display issue, and the models can still be used as before
+- FYI
+  - Windows
+    - [https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation)
+      - Maximum path length: 255 characters (<Windows 10, Version 1607)
+    - [https://learn.microsoft.com/en-us/answers/questions/670083/get-childitem-the-specified-path-file-name-or-both](https://learn.microsoft.com/en-us/answers/questions/670083/get-childitem-the-specified-path-file-name-or-both)
+      - Directory name length < 248 characters
+  - Linux
+    - [https://en.wikipedia.org/wiki/Ext4](https://en.wikipedia.org/wiki/Ext4)
+      - Max filename length: 256 bytes (NOT CHARACTERS)
+
 ### v2.0
 - Add background color to model information base model
 - The background color of the Pony model can be specified

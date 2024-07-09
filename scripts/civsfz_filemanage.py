@@ -39,7 +39,7 @@ def name_len(s:str):
         #return len(s.encode('utf-16'))
         return len(s.encode('utf-8'))
 def cut_name(s:str):
-    MAX_FILENAME_LENGTH = 240
+    MAX_FILENAME_LENGTH = 246
     l = name_len(s)
     #print_lc(f'filename length:{len(s.encode("utf-8"))}-{len(s.encode("utf-16"))}')
     while l >= MAX_FILENAME_LENGTH: 

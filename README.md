@@ -6,6 +6,9 @@ An extension to help download models from CivitAi without leaving WebUI
 https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-40a9-b826-30ff20bf7bb3
 
 ***If you fork, please replace prefix `civsfz` in file names, function names, css class names, etc. with your own prefix to avoid conflicts.***
+
+Add `Forge` branch for ***Forge*** Support. (ecperimental)
+
 ## Features
 - Search Civitai models in ***multiple tabs***
 - Download ***queue*** and ***multithreaded*** downloads

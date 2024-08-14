@@ -446,6 +446,7 @@ class Components():
                         gr.Textbox.update(value="")
 
             def checkEarlyAccess(grTxtEarlyAccess):
+                return gr.Textbox.update(value="" if grTxtEarlyAccess == "" else "Early Access")
                 msg = ""
                 if grTxtEarlyAccess != "":
                     dtPub = self.civitai.getPublishedDatetime()
@@ -728,24 +729,20 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.1.0'
+    ver = 'v2.2.0'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
-        with gr.Accordion(label="V2.1 Update information", open=True):
+        with gr.Accordion(label="V2.2 Update information", open=True):
             gr.Markdown(
                 value=(
-                    "# Major changes in v2.1"
+                    "# Changes"
                     "\n"
-                    "Avoid filename length issues on Linux. "
+                    "- Support Early Access status key that changed to `availability` instead of `earlyAccessDeadline`"
                     "\n"
-                    "- The maximum length of a file/folder name is now 246 bytes. (Number of bytes in UTF-8)"
-                    "\n"
-                    "- Previous model files with long names cannot be recognized as existing."
-                    "\n"
-                    "- This is just a display issue, and the models can still be used as before."
+                    "- Fix to support arrays of `Trained Tags` and display multiple `Trained Tags`"
                 )
             )
         downloader.uiDlList(gr)

@@ -29,8 +29,10 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 - Show the ***Early Access*** period of models
 
 ## Versions
-### v2.1
+### v2.2
+- Support Early Access status key that changed to `availability` instead of `earlyAccessDeadline`
 - Fix to support arrays of `Trained Tags` and display multiple `Trained Tags`
+### v2.1
 - Avoid filename length issues on Linux
   - The maximum length of a file/folder name is now 246 bytes (Number of bytes in UTF-8)
   - Previous model files with long names cannot be recognized as existing

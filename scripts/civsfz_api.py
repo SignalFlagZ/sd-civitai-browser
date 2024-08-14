@@ -571,8 +571,10 @@ class CivitaiModels(APIInformation):
         '''
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessTimeFrame']
     def getSelectedVersionEarlyAccessDeadline(self):
-        if 'earlyAccessDeadline' in self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]:
-            return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessDeadline']
+        #if 'earlyAccessDeadline' in self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]:
+        #    return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessDeadline']
+        if self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['availability'] == "EarlyAccess":
+            return "EA"
         else:
             return ""
     def setModelVersionInfo(self, modelInfo: str):
@@ -847,15 +849,13 @@ class CivitaiModels(APIInformation):
                                 break
                     if param['have'] != "":
                         break
-                ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
+                #ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
+                ea = item["modelVersions"][0]['availability'] == "EarlyAccess"
                 if ea:
-                    # strPub = item["modelVersions"][0]['publishedAt'].replace('Z', '+00:00')  # < Python 3.11
-                    # dtPub = datetime.datetime.fromisoformat(strPub)
-                    strEA = item["modelVersions"][0]['earlyAccessDeadline'].replace('Z', '+00:00')  # < Python 3.11
-                    dtEA = datetime.datetime.fromisoformat(strEA)
-                    dtNow = datetime.datetime.now(datetime.timezone.utc)
-                    # dtDiff = dtNow - dtPub
-                    if dtNow < dtEA:
+                    #strEA = item["modelVersions"][0]['earlyAccessDeadline'].replace('Z', '+00:00')  # < Python 3.11
+                    #dtEA = datetime.datetime.fromisoformat(strEA)
+                    #dtNow = datetime.datetime.now(datetime.timezone.utc)
+                    #if dtNow < dtEA:
                         param['ea'] = 'in'
             cards.append(param)
 

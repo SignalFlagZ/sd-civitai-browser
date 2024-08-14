@@ -214,12 +214,12 @@ class Downloader:
                             # Break out of the loop if the download is successful
                             break
                         else:
-                            if early_access and applyAPI:
-                                print_ly(
-                                    f"{file_name_display}:Download canceled. Early Access!")
-                                exitDownloading = True
-                                result = "Early Access"
-                                break
+                            #if early_access and applyAPI:
+                            #    print_ly(
+                            #        f"{file_name_display}:Download canceled. Early Access!")
+                            #    exitDownloading = True
+                            #    result = "Early Access"
+                            #    break
                             if not applyAPI:
                                 print_lc("May need API key")
                                 if len(api_key) == 32:
@@ -234,9 +234,9 @@ class Downloader:
                             else:
                                 exitDownloading = True
                                 print_lc(
-                                    f"{file_name_display}:Invalid API key"
+                                    f"{file_name_display}:Invalid API key or Early Access"
                                 )
-                                result = "Invalid API key"
+                                result = "Invalid API key or Early Access"
                                 break
 
                 except requests.exceptions.Timeout as e:

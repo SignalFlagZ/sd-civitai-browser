@@ -27,6 +27,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.1
+- Fix to support arrays of `Trained Tags` and display multiple `Trained Tags`
 - Avoid filename length issues on Linux
   - The maximum length of a file/folder name is now 246 bytes (Number of bytes in UTF-8)
   - Previous model files with long names cannot be recognized as existing

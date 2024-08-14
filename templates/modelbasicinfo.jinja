@@ -84,7 +84,12 @@
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Trained Tags</th>
-			<td {{ tdStyle1 }}>{{ copy }}<span>{{ ", ".join(modelInfo["trainedWords"])|e }}</span></td>
+			<td {{ tdStyle1 }}>
+					{%- for trainedW in modelInfo['trainedWords'] %}
+						<p>{{ copy }}<span>{{ trainedW |e }}</span></p>
+					{%- endfor %}
+				</table>
+			</td>
 		</tr>
 	</table>
 </div>

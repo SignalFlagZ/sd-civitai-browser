@@ -100,14 +100,14 @@ class Components():
                             grChkbxgrpLevel = gr.CheckboxGroup(label='Browsing Level', choices=list(self.civitai.nsfwLevel.items()) ,value=opts.civsfz_browsing_level, interactive=True, show_label=False)
             with gr.Row(elem_id=f'civsfz_model-data{self.id}'):
                 with gr.Column():
-                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None)
+                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None, visible=False)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
             with gr.Row():
                 grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
             with gr.Row():
                 txt_list = ""
                 grTxtTrainedWords = gr.Textbox(
-                    label='Trained Tags (if any)', value=f'{txt_list}', interactive=True, lines=1)
+                    label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
             with gr.Row(equal_height=False):
                 grBtnFolder = gr.Button(
                     value="\N{Open file folder}",

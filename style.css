@@ -12,6 +12,7 @@
 	--civsfz-sd2-background-color: #54c696d9;
 	--civsfz-sdxl-background-color: #d54b44d9;
 	--civsfz-pony-background-color: #ce274bd9;
+	--civsfz-flux1-background-color: #ce27bdd9;
 	--civsfz-early-access-in-background-color: rgba(39, 52, 201, 0.8);
 }
 
@@ -69,7 +70,9 @@
 .civsfz-bgcolor-Pony {
 	background-color: var(--civsfz-pony-background-color);
 }
-
+.civsfz-bgcolor-Flux1 {
+	background-color: var(--civsfz-flux1-background-color);
+}
 .civsfz-modelcard img {
 	/*filter: blur(6px);*/
 	width:  calc(var(--civsfz-card-width) * var(--civsfz-card-size-unit));

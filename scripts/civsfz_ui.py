@@ -709,6 +709,7 @@ class Components():
                     str(opts.civsfz_sd2_background_color),
                     str(opts.civsfz_sdxl_background_color),
                     str(opts.civsfz_pony_background_color),
+                    str(opts.civsfz_flux1_background_color),
                     str(opts.civsfz_default_shadow_color),
                     str(opts.civsfz_alreadyhave_shadow_color),
                     str(opts.civsfz_alreadyhad_shadow_color),

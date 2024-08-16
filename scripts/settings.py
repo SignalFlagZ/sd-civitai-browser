@@ -146,6 +146,15 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
+        key="civsfz_flux1_background_color",
+        info=shared.OptionInfo(
+            "#ce27bd",
+            label="Background color for Flux.1 models",
+            component=gr.ColorPicker,
+            section=section,
+        ),
+    )
+    shared.opts.add_option(
         key="civsfz_default_shadow_color",
         info=shared.OptionInfo(
             "#798a9f",

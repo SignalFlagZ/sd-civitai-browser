@@ -172,26 +172,26 @@
 	z-index: 2;
 }
 .civsfz-save-buttons {
-	position: sticky;
+	position: sticky !important;
 	position: -webkit-sticky;	/* Safari */
 	top: 3em;
 	z-index: 1;
 }
 .civsfz-back-to-top {
 	text-align: right;
-	position:sticky;
+	position:sticky !important;
 	position: -webkit-sticky;	/* Safari */
 	bottom: 1em;
 	cursor: pointer;
 }
 .civsfz-navigation-buttons {
-	position: sticky;
+	position: sticky !important;
 	position: -webkit-sticky; /* Safari */
 	top: 3em;
 	z-index: 1;
 }
 .civsfz-jump-page-control {
-	position: sticky;
+	position: sticky !important;
 	position: -webkit-sticky; /* Safari */
 	bottom: 0px;
 	z-index: 1;

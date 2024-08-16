@@ -34,6 +34,8 @@ class Components():
         from scripts.civsfz_filemanage import generate_model_save_path2, isExistFile, \
             save_text_file, saveImageFiles
         Components.downloader = downloader
+        self.gr_version = gr.__version__
+        #print_ly(f"{self.gr_version}")
         self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = CivitaiModels()
@@ -80,7 +82,7 @@ class Components():
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
                 with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-element"):
                     with gr.Column(scale=3):
-                        grBtnGetListAPI = gr.Button(label="Get cards", value="GET cards")
+                        grBtnGetListAPI = gr.Button(value="GET cards")
                     with gr.Column(scale=2,min_width=80):
                         grBtnPrevPage = gr.Button(value="PREV", interactive=False)
                     with gr.Column(scale=2,min_width=80):
@@ -95,7 +97,7 @@ class Components():
                         grSldrPage = gr.Slider(label="Page", minimum=1, maximum=10,value = 1, step=1, interactive=False, scale=3)
                     with gr.Column(scale=1,min_width=80):
                         grBtnGoPage = gr.Button(value="JUMP", interactive=False, scale=1)
-                    with gr.Accordion(scale=2, label="Browsing Level", open=False):
+                    with gr.Accordion(label="Browsing Level", open=False):
                         with gr.Column(min_width=80):
                             grChkbxgrpLevel = gr.CheckboxGroup(label='Browsing Level', choices=list(self.civitai.nsfwLevel.items()) ,value=opts.civsfz_browsing_level, interactive=True, show_label=False)
             with gr.Row(elem_id=f'civsfz_model-data{self.id}'):

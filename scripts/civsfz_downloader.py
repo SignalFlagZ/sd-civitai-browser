@@ -274,17 +274,15 @@ class Downloader:
                     # downloaded_size = os.path.getsize(file_name)
                     # Check if the download was successful
                     sha256 = calculate_sha256(file_name).upper()
-                    # print_lc(f'Model file hash : {hash}')
+                    print_lc(f'Downloaded hash : {sha256}')
                     if hash != "":
                         if sha256[:len(hash)] == hash.upper():
                             print_n(f"Save: {file_name_display}")
                             result = "Succeeded"
                             # gr.Info(f"Success: {file_name_display}")
                         else:
-                            print_ly(
-                                f"Error: File download failed. {file_name_display}")
                             print_lc(f'Model file hash : {hash}')
-                            print_lc(f'Downloaded hash : {sha256}')
+                            print_ly(f"Hash mismatch. {file_name_display}")
                             # gr.Warning(f"Hash mismatch: {file_name_display}")
                             removeFile(file_name)
                             result = "Hash mismatch"

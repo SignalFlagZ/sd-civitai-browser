@@ -70,7 +70,7 @@ class Components():
                     with gr.Row():
                         grDrpdwnPeriod = gr.Dropdown(label='Period', choices=self.civitai.getPeriodOptions(
                         ), value=defaultPeriod, type="value")
-                        grDrpdwnBasemodels = gr.Dropdown(label="Base Models (experimental)", choices=self.civitai.getBasemodelOptions(
+                        grDrpdwnBasemodels = gr.Dropdown(label="Base Models", choices=self.civitai.getBasemodelOptions(
                         ), value=None, type="value", multiselect=True)
                     with gr.Row():
                         grDrpdwnCHistory = gr.Dropdown(label="Conditions History", choices=Components.cHistory.getAsChoices(), type="value")

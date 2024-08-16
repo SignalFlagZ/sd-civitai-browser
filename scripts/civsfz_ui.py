@@ -15,6 +15,13 @@ except ImportError:
     # SD web UI < v1.6.0-RC
     # SD.Next
     from modules.shared import cmd_opts
+try:
+    from modules_forge import forge_version
+except ImportError:
+    # not forge
+    FORGE = False
+else:
+    FORGE = True
 import scripts as scripts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import open_folder, SearchHistory, ConditionsHistory

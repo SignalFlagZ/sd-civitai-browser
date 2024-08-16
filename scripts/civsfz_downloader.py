@@ -11,7 +11,16 @@ from pathlib import Path
 from threading import Thread, local
 from time import sleep
 from tqdm import tqdm
-from modules.hashes import calculate_sha256
+try:
+    from modules_forge import forge_version
+except ImportError:
+    # not forge
+    FORGE = False
+    from modules.hashes import calculate_sha256
+else:
+    FORGE = True
+    from modules.hashes import calculate_sha256_real as calculate_sha256
+
 from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder, open_folder
 
 def print_ly(x): return print(Fore.LIGHTYELLOW_EX +

@@ -31,7 +31,7 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 ## Versions
 ### v2.2
 - Works on Forge
-  - Hash mismatch occurs because calculate_sha256 has changed in Forge
+  - ~~Hash mismatch occurs because calculate_sha256 has changed in Forge~~
 - Support Early Access status key that changed to `availability` instead of `earlyAccessDeadline`
 - Fix to support arrays of `Trained Tags` and display multiple `Trained Tags`
 ### v2.1

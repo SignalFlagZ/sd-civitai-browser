@@ -42,7 +42,7 @@ class Components():
             save_text_file, saveImageFiles
         Components.downloader = downloader
         self.gr_version = gr.__version__
-        #print_ly(f"{self.gr_version}")
+        # print_ly(f"{self.gr_version}")
         self.tab = tab
         # Set the URL for the API endpoint
         self.civitai = CivitaiModels()
@@ -107,48 +107,49 @@ class Components():
                     with gr.Accordion(label="Browsing Level", open=False):
                         with gr.Column(min_width=80):
                             grChkbxgrpLevel = gr.CheckboxGroup(label='Browsing Level', choices=list(self.civitai.nsfwLevel.items()) ,value=opts.civsfz_browsing_level, interactive=True, show_label=False)
-            with gr.Row(elem_id=f'civsfz_model-data{self.id}'):
-                with gr.Column():
+
+            with gr.Column(elem_id=f"civsfz_model-data{self.id}"):
+                with gr.Row():
                     grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None, visible=False)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
-            with gr.Row():
-                grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
-            with gr.Row():
-                txt_list = ""
-                grTxtTrainedWords = gr.Textbox(
-                    label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
-            with gr.Row(equal_height=False):
-                grBtnFolder = gr.Button(
-                    value="\N{Open file folder}",
-                    interactive=True,
-                    elem_classes="civsfz-small-buttons",
-                )  # 📂
-                grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
-                grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
-                grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
-            with gr.Row():
-                grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
-                grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
-                grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
-                grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-                grTxtApiKey = gr.Textbox(
-                    label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
-            with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
-                with gr.Column(scale=2):
-                    with gr.Row():
-                        # grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
-                        grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
-                        grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id=f'civsfz_downloadbutton{self.id}',min_width=80)
-                with gr.Column(scale=1):
-                    with gr.Row():
-                        grTextProgress = gr.Textbox(label='Download status',show_label=False)
-                        # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
-            with gr.Row():
-                with gr.Column():
-                    grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
-                    with gr.Row(elem_classes='civsfz-back-to-top'):
-                        grHtmlBackToTop = gr.HTML(
-                            value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>&#x1F51D;</span></div>")  # 🔝
+                    txt_list = ""
+                    grTxtTrainedWords = gr.Textbox(
+                        label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
+                with gr.Row():
+                    with gr.Column():
+                        grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
+                with gr.Row(equal_height=False):
+                    grBtnFolder = gr.Button(
+                        value="\N{Open file folder}",
+                        interactive=True,
+                        elem_classes="civsfz-small-buttons",
+                    )  # 📂
+                    grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
+                    grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
+                    grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
+                with gr.Row():
+                    grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
+                    grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
+                    grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
+                    grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
+                    grTxtApiKey = gr.Textbox(
+                        label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
+                with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
+                    with gr.Column(scale=2):
+                        with gr.Row():
+                            # grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
+                            grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
+                            grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id=f'civsfz_downloadbutton{self.id}',min_width=80)
+                    with gr.Column(scale=1):
+                        with gr.Row():
+                            grTextProgress = gr.Textbox(label='Download status',show_label=False)
+                            # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
+                with gr.Row():
+                    with gr.Column():
+                        grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
+                        with gr.Row(elem_classes='civsfz-back-to-top'):
+                            grHtmlBackToTop = gr.HTML(
+                                value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>&#x1F51D;</span></div>")  # 🔝
 
             # def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')
@@ -360,15 +361,20 @@ class Components():
                 outputs=[
                     grDrpdwnModels,
                     grRadioVersions,
-                    grHtmlCards,            
+                    grHtmlCards,
                     grBtnPrevPage,
                     grBtnNextPage,
                     grBtnGoPage,
                     grSldrPage,
                     grTxtPages,
                     grDropdownSearchTerm,
-                    grDrpdwnCHistory
-                ]
+                    grDrpdwnCHistory,
+                ],
+            ).then(
+                _js=f'() => {{civsfz_scroll_to("#civsfz_model-navigation{self.id}");}}',
+                fn=None,
+                inputs=[],
+                outputs=[],
             )
 
             def  update_model_info(model_version=None, grChkbxgrpLevel=[0]):

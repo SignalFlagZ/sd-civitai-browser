@@ -170,9 +170,15 @@ function civsfz_querySelectSetProperty(q, p, c) {
 
 function civsfz_scroll_to(q) {
 	const elem = gradioApp().querySelector(q);
-	elem.scrollIntoView({
-		behavior: 'smooth',
-		block: 'start',
-		inline: 'nearest'
-	});
+	if (true) {
+		const offset = -40;
+		const y = elem.getBoundingClientRect().top + window.scrollY + offset;
+		window.scrollTo({ top: y, behavior: 'smooth' });
+	} else {
+		elem.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start',
+			inline: 'nearest'
+		});
+	}
 }

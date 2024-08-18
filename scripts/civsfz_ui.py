@@ -116,24 +116,20 @@ class Components():
                     grTxtTrainedWords = gr.Textbox(
                         label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
                 with gr.Row():
-                    with gr.Column():
-                        grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
+                    grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
+                with gr.Row():
+                    grTxtBaseModel = gr.Textbox(scale=1, label='Base Model', value='', interactive=True, lines=1)
+                    grDrpdwnSelectFile = gr.Dropdown(scale=3, label="File select", choices=[], interactive=True, value=None)
                 with gr.Row(equal_height=False):
-                    grBtnFolder = gr.Button(
-                        value="\N{Open file folder}",
-                        interactive=True,
-                        elem_classes="civsfz-small-buttons",
-                    )  # 📂
+                    grBtnFolder = gr.Button(value="\N{Open file folder}", interactive=True, elem_classes="civsfz-small-buttons")  # 📂
                     grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
                     grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
-                    grDrpdwnFilenames = gr.Dropdown(label="Model Filename", choices=[], interactive=True, value=None)
+                    grtxtSaveFilename = gr.Textbox(label="Save file name", choices=[], interactive=True, value=None)
                 with gr.Row():
-                    grTxtBaseModel = gr.Textbox(label='Base Model', value='', interactive=True, lines=1)
                     grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                     grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
                     grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-                    grTxtApiKey = gr.Textbox(
-                        label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
+                    grTxtApiKey = gr.Textbox(label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
                 with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
                     with gr.Column(scale=2):
                         with gr.Row():
@@ -170,23 +166,23 @@ class Components():
             #    outputs=[grTxtApiKey],
             #    )
 
-            def save_text(grTxtSaveFolder, grDrpdwnFilenames, trained_words):
+            def save_text(grTxtSaveFolder, grtxtSaveFilename, trained_words):
                 return 
             # grBtnSaveText.click(
             #    fn=save_text,
             #    inputs=[
             #        grTxtSaveFolder,
-            #        grDrpdwnFilenames,
+            #        grtxtSaveFilename,
             #        grTxtTrainedWords,
             #        ],
             #   outputs=[grTextProgress]
             #    )
 
-            def save_image_files(grTxtSaveFolder, grDrpdwnFilenames, grTxtTrainedWords, grHtmlModelInfo):
-                res1 = save_text_file(grTxtSaveFolder, grDrpdwnFilenames, grTxtTrainedWords)
+            def save_image_files(grTxtSaveFolder, grtxtSaveFilename, grTxtTrainedWords, grHtmlModelInfo):
+                res1 = save_text_file(grTxtSaveFolder, grtxtSaveFilename, grTxtTrainedWords)
                 res2 = saveImageFiles(
                     grTxtSaveFolder,
-                    grDrpdwnFilenames,
+                    grtxtSaveFilename,
                     grHtmlModelInfo,
                     self.civitai.getSelectedModelType(),
                     self.civitai.getModelVersionInfo(),
@@ -197,7 +193,7 @@ class Components():
                 fn=save_image_files,
                 inputs=[
                     grTxtSaveFolder,
-                    grDrpdwnFilenames,
+                    grtxtSaveFilename,
                     grTxtTrainedWords,
                     grHtmlModelInfo,
                 ],
@@ -207,7 +203,7 @@ class Components():
                 fn=Components.downloader.add,
                 inputs=[
                     grTxtSaveFolder,
-                    grDrpdwnFilenames,
+                    grtxtSaveFilename,
                     grTxtDlUrl,
                     grTxtHash,
                     grTxtApiKey,
@@ -391,6 +387,7 @@ class Components():
                     dict = self.civitai.makeModelInfo2(nsfwLevel=sum(grChkbxgrpLevel))
                     if dict['modelVersions'][0]["files"] == []:
                         drpdwn =  gr.Dropdown.update(choices=[], value="")
+                        grtxtSaveFilename = gr.Textbox.update(value="")
                     else:
                         filename = dict["modelVersions"][0]["files"][0]["name"]
                         for f in dict["modelVersions"][0]["files"]:
@@ -404,6 +401,7 @@ class Components():
                             ],
                             value=filename,
                         )
+                        grtxtSaveFilename = gr.Textbox.update(value=filename)
                     return (
                         gr.HTML.update(value=dict["html"]),
                         gr.Textbox.update(value=", ".join(dict["trainedWords"])),
@@ -413,29 +411,31 @@ class Components():
                         gr.Textbox.update(
                             value=self.civitai.getSelectedVersionEarlyAccessDeadline()
                         ),
+                        grtxtSaveFilename,
                     )
                 else:
-                    return  gr.HTML.update(value=None),\
-                            gr.Textbox.update(value=None),\
-                            gr.Dropdown.update(choices=[], value=None),\
-                            gr.Textbox.update(value=None),\
-                            gr.Textbox.update(value=None), \
-                            gr.Textbox.update(value=None)
+                    return (
+                        gr.HTML.update(value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Dropdown.update(choices=[], value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Textbox.update(value=None),
+                    )
             grRadioVersions.change(
                 fn=update_model_info,
-                inputs=[
-                grRadioVersions,
-                grChkbxgrpLevel
-                ],
+                inputs=[grRadioVersions, grChkbxgrpLevel],
                 outputs=[
                     grHtmlModelInfo,
                     grTxtTrainedWords,
-                    grDrpdwnFilenames,
+                    grDrpdwnSelectFile,
                     grTxtBaseModel,
                     grTxtSaveFolder,
-                    grTxtEarlyAccess
-                ]
-                )
+                    grTxtEarlyAccess,
+                    grtxtSaveFilename,
+                ],
+            )
 
             def save_folder_changed(folder, filename):
                 self.civitai.setSaveFolder(folder)
@@ -445,7 +445,7 @@ class Components():
                 return gr.Markdown.update(visible = True if isExist else False)
             grTxtSaveFolder.blur(
                 fn=save_folder_changed,
-                inputs={grTxtSaveFolder,grDrpdwnFilenames},
+                inputs={grTxtSaveFolder,grDrpdwnSelectFile},
                 outputs=[grMrkdwnFileMessage])
 
             grTxtSaveFolder.change(
@@ -453,12 +453,19 @@ class Components():
                 inputs={grTxtSaveFolder},
                 outputs=[])
 
-            def updateDlUrl(grDrpdwnFilenames):
-                return  gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames)),\
-                        gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames)),\
-                        gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
-                        gr.Button.update(interactive=True if grDrpdwnFilenames else False),\
-                        gr.Textbox.update(value="")
+            def updateDlUrl(grDrpdwnSelectFile):
+                return (
+                    gr.Textbox.update(
+                        value=self.civitai.getUrlByName(grDrpdwnSelectFile)
+                    ),
+                    gr.Textbox.update(
+                        value=self.civitai.getHashByName(grDrpdwnSelectFile)
+                    ),
+                    gr.Button.update(interactive=True if grDrpdwnSelectFile else False),
+                    gr.Button.update(interactive=True if grDrpdwnSelectFile else False),
+                    gr.Textbox.update(value=""),
+                    gr.Textbox.update(value=grDrpdwnSelectFile),
+                )
 
             def checkEarlyAccess(grTxtEarlyAccess):
                 return gr.Textbox.update(value="" if grTxtEarlyAccess == "" else "Early Access")
@@ -480,34 +487,29 @@ class Components():
                         msg = f"Early Access: {math.ceil(abs(tdDiff / timedelta(days=1)))} days left"
                 return gr.Textbox.update(value="" if grTxtEarlyAccess == "" else f"{msg} ")
 
-            grDrpdwnFilenames.change(
+            grDrpdwnSelectFile.change(
                 fn=updateDlUrl,
-                inputs=[grDrpdwnFilenames],
+                inputs=[grDrpdwnSelectFile],
                 outputs=[
                     grTxtDlUrl,
                     grTxtHash,
-                    #grBtnSaveText,
+                    # grBtnSaveText,
                     grBtnSaveImages,
                     grBtnDownloadModel,
-                    grTextProgress
-                    ]
-            ).then(
-                fn=checkEarlyAccess,
-                inputs=[
-                    grTxtEarlyAccess
+                    grTextProgress,
+                    grtxtSaveFilename,
                 ],
-                outputs=[
-                    grTextProgress
-                ]
+            ).then(
+                fn=checkEarlyAccess, inputs=[grTxtEarlyAccess], outputs=[grTextProgress]
             )
 
-            def file_exist_check(grTxtSaveFolder, grDrpdwnFilenames):
-                isExist = isExistFile(grTxtSaveFolder, grDrpdwnFilenames)            
+            def file_exist_check(grTxtSaveFolder, grDrpdwnSelectFile):
+                isExist = isExistFile(grTxtSaveFolder, grDrpdwnSelectFile)            
                 return gr.Markdown.update(visible = True if isExist else False)
             grTxtDlUrl.change(
                 fn=file_exist_check,
                 inputs=[grTxtSaveFolder,
-                        grDrpdwnFilenames
+                        grDrpdwnSelectFile
                         ],
                 outputs=[
                         grMrkdwnFileMessage
@@ -649,46 +651,60 @@ class Components():
                         index = int(grTxtJsEvent[1]) # str: 'Index:{index}:{id}'
                         self.civitai.selectModelByIndex(index)
                         grRadioVersions = updateVersionsByModelID(self.civitai.getSelectedModelID())
-                        grHtmlModelInfo, grTxtTrainedWords, grDrpdwnFilenames, grTxtBaseModel, grTxtSaveFolder, grTxtEarlyAccess = update_model_info(
-                            grRadioVersions['value'], grChkbxgrpLevel)
-                        # grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnFilenames['value']))
-                        grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnFilenames['value']))
+                        (
+                            grHtmlModelInfo,
+                            grTxtTrainedWords,
+                            grDrpdwnSelectFile,
+                            grTxtBaseModel,
+                            grTxtSaveFolder,
+                            grTxtEarlyAccess,
+                            grtxtSaveFilename,
+                        ) = update_model_info(grRadioVersions["value"], grChkbxgrpLevel)
+                        # grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnSelectFile['value']))
+                        grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnSelectFile['value']))
                         grDrpdwnModels = gr.Dropdown.update(value=f'{self.civitai.getSelectedModelName()}:({index})')
-                        return  grDrpdwnModels,\
-                                grRadioVersions,\
-                                grHtmlModelInfo,\
-                                grTxtEarlyAccess,\
-                                grTxtHash,\
-                                grTxtTrainedWords,\
-                                grDrpdwnFilenames,\
-                                grTxtBaseModel,\
-                                grTxtSaveFolder
+                        return (
+                            grDrpdwnModels,
+                            grRadioVersions,
+                            grHtmlModelInfo,
+                            grTxtEarlyAccess,
+                            grTxtHash,
+                            grTxtTrainedWords,
+                            grDrpdwnSelectFile,
+                            grTxtBaseModel,
+                            grTxtSaveFolder,
+                            grtxtSaveFilename,
+                        )
                     else:
-                        return  gr.Dropdown.update(value=None),\
-                                gr.Radio.update(value=None),\
-                                gr.HTML.update(value=None),\
-                                gr.Textbox.update(value=None),\
-                                gr.Textbox.update(value=""),\
-                                gr.Textbox.update(value=None),\
-                                gr.Dropdown.update(value=None),\
-                                gr.Textbox.update(value=None),\
-                                gr.Textbox.update(value=None)
+                        return (
+                            gr.Dropdown.update(value=None),
+                            gr.Radio.update(value=None),
+                            gr.HTML.update(value=None),
+                            gr.Textbox.update(value=None),
+                            gr.Textbox.update(value=""),
+                            gr.Textbox.update(value=None),
+                            gr.Dropdown.update(value=None),
+                            gr.Textbox.update(value=None),
+                            gr.Textbox.update(value=None),
+                            gr.Textbox.update(value=None),
+                        )
                 else:
-                    return  gr.Dropdown.update(value=None),\
-                            gr.Radio.update(value=None),\
-                            gr.HTML.update(value=None),\
-                            gr.Textbox.update(value=None), \
-                            gr.Textbox.update(value=""),\
-                            gr.Textbox.update(value=None),\
-                            gr.Dropdown.update(value=None),\
-                            gr.Textbox.update(value=None),\
-                            gr.Textbox.update(value=None)
+                    return (
+                        gr.Dropdown.update(value=None),
+                        gr.Radio.update(value=None),
+                        gr.HTML.update(value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Textbox.update(value=""),
+                        gr.Textbox.update(value=None),
+                        gr.Dropdown.update(value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Textbox.update(value=None),
+                        gr.Textbox.update(value=None),
+                    )
+
             grTxtJsEvent.change(
                 fn=eventTextUpdated,
-                inputs=[
-                    grTxtJsEvent,
-                    grChkbxgrpLevel
-                ],
+                inputs=[grTxtJsEvent, grChkbxgrpLevel],
                 outputs=[
                     grDrpdwnModels,
                     grRadioVersions,
@@ -696,17 +712,17 @@ class Components():
                     grTxtEarlyAccess,
                     grTxtHash,
                     grTxtTrainedWords,
-                    grDrpdwnFilenames,
+                    grDrpdwnSelectFile,
                     grTxtBaseModel,
                     grTxtSaveFolder,
-                    
-                ]
-                ).then(
+                    grtxtSaveFilename,
+                ],
+            ).then(
                 _js=f'() => {{civsfz_scroll_to("#civsfz_model-data{self.id}");}}',
                 fn=None,
                 inputs=[],
-                outputs=[]    
-                )
+                outputs=[],
+            )
 
             def updatePropertiesText():
                 propertiesText = ';'.join([
@@ -745,7 +761,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.0'
+    ver = 'v2.2.1'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):

@@ -30,6 +30,7 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.2
+- Save file name can be changed
 - Works on Forge
   - ~~Hash mismatch occurs because calculate_sha256 has changed in Forge~~
 - Support Early Access status key that changed to `availability` instead of `earlyAccessDeadline`

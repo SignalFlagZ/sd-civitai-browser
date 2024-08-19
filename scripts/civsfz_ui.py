@@ -62,7 +62,7 @@ class Components():
         def browsingLevelChoices():
             return list(self.civitai.nsfwLevel.items())
 
-        with gr.Column(elem_classes="civsfz-custom-property") as self.components:
+        with gr.Column() as self.components:
             with gr.Row():
                 with gr.Column(scale=1):
                     grChkbxGrpContentType = gr.CheckboxGroup(
@@ -778,7 +778,7 @@ def on_ui_tabs():
                 )
             )
         downloader.uiDlList(gr)
-        with gr.Tabs(elem_id='civsfz_tab-element'):
+        with gr.Tabs(elem_id='civsfz_tab-element', elem_classes="civsfz-custom-property"):
             for i,name in enumerate(tabNames):
                 with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
                     Components(downloader, tab)  # (tab)

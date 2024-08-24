@@ -571,7 +571,7 @@ class CivitaiModels(APIInformation):
         '''
         return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessTimeFrame']
     def getSelectedVersionEarlyAccessDeadline(self):
-        #if 'earlyAccessDeadline' in self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]:
+        # if 'earlyAccessDeadline' in self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]:
         #    return self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['earlyAccessDeadline']
         if self.jsonData['items'][self.modelIndex]['modelVersions'][self.versionIndex]['availability'] == "EarlyAccess":
             return "EA"
@@ -686,7 +686,7 @@ class CivitaiModels(APIInformation):
         versionIndex = self.versionIndex if versionIndex is None else versionIndex
         item = self.jsonData["items"][modelIndex]
         version = item["modelVersions"][versionIndex]
-        modelInfo = {"infoVersion": "2.2",
+        modelInfo = {"infoVersion": "2.3",
                      # Some models do not have 'creator'
                      #"creator": {"username": ""}
                     }
@@ -849,14 +849,14 @@ class CivitaiModels(APIInformation):
                                 break
                     if param['have'] != "":
                         break
-                #ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
+                # ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
                 ea = item["modelVersions"][0]['availability'] == "EarlyAccess"
                 if ea:
-                    #strEA = item["modelVersions"][0]['earlyAccessDeadline'].replace('Z', '+00:00')  # < Python 3.11
-                    #dtEA = datetime.datetime.fromisoformat(strEA)
-                    #dtNow = datetime.datetime.now(datetime.timezone.utc)
-                    #if dtNow < dtEA:
-                        param['ea'] = 'in'
+                    # strEA = item["modelVersions"][0]['earlyAccessDeadline'].replace('Z', '+00:00')  # < Python 3.11
+                    # dtEA = datetime.datetime.fromisoformat(strEA)
+                    # dtNow = datetime.datetime.now(datetime.timezone.utc)
+                    # if dtNow < dtEA:
+                    param['ea'] = 'in'
             cards.append(param)
 
         forTrigger = f'<!-- {datetime.datetime.now()} -->'  # for trigger event
@@ -929,6 +929,12 @@ class CivitaiModels(APIInformation):
                     infotext=infotext,
                     metaHtml=metaHtml
                     )
+        filesize = modelInfo["modelVersions"][0]["files"][0]["sizeKB"]
+        # Get primary file size
+        fileIndex = 0
+        for i, file in enumerate(modelInfo["modelVersions"][0]["files"]):
+            if "primary" in file:
+                fileIndex = i
 
         # created = self.getCreatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
@@ -943,10 +949,10 @@ class CivitaiModels(APIInformation):
         basicInfo = template.render(
             modelInfo=modelInfo,
             published=published,
-            strNsfw=self.strNsfwLevel(modelInfo['nsfwLevel']),
-            strVNsfw=self.strNsfwLevel(
-                modelInfo["modelVersions"][0]['nsfwLevel'])
-            )
+            strNsfw=self.strNsfwLevel(modelInfo["nsfwLevel"]),
+            strVNsfw=self.strNsfwLevel(modelInfo["modelVersions"][0]["nsfwLevel"]),
+            fileIndex=fileIndex,
+        )
 
         permissions = self.permissionsHtml(self.allows2permissions())
         # function:copy to clipboard

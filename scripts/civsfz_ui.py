@@ -761,7 +761,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.1'
+    ver = 'v2.2.2'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -772,15 +772,17 @@ def on_ui_tabs():
                 value=(
                     "# Changes"
                     "\n"
-                    "- Support Early Access status key that changed to `availability` instead of `earlyAccessDeadline`"
+                    "- SD models are saved in the _SD_1_X folder by default"
                     "\n"
-                    "- Fix to support arrays of `Trained Tags` and display multiple `Trained Tags`"
+                    "  - Move the SD model files to _SD_1_X."
+                    "\n"
+                    "  - You can use `BASEMODELbkCmpt` in Settings to maintain backward compatibility (deprecated)"
                 )
             )
         downloader.uiDlList(gr)
         with gr.Tabs(elem_id='civsfz_tab-element', elem_classes="civsfz-custom-property"):
             for i,name in enumerate(tabNames):
-                with gr.TabItem(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
+                with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
                     Components(downloader, tab)  # (tab)
         with gr.Row():
             gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')

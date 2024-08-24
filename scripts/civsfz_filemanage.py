@@ -177,7 +177,7 @@ def generate_model_save_path2(type, modelName: str = "", baseModel: str = "", ns
         "VERSIONID": str(vID) if vID is not None else None,
     }
     if not str.strip(opts.civsfz_save_subfolder):
-        subTree = "{{BASEMODELbkCmpt}}/.{{NSFW}}/{{MODELNAME}}"
+        subTree = "_{{BASEMODEL}}/.{{NSFW}}/{{MODELNAME}}"
     else:
         subTree = str.strip(opts.civsfz_save_subfolder)
     subTreeList = subTree.split("/")

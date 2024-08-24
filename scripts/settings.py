@@ -218,7 +218,7 @@ def on_ui_settings():
             component=gr.Textbox,
             component_args={
                 "lines": 1,
-                "placeholder": '{{BASEMODEL}}/.{{NSFW}}/{{MODELNAME}}',
+                "placeholder": "_{{BASEMODEL}}/.{{NSFW}}/{{MODELNAME}}",
             },
             section=section,
         ),

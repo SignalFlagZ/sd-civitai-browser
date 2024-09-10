@@ -113,11 +113,12 @@ class Downloader:
             threadQ=Downloader._threadQ, waitQ=Downloader._dlQ, resultQ=expireQ)
         return content
 
-    def uiDlList(self, gr: gr):
+    def uiDlList(self, gr:gr):
         def dlHtml():
             html = self.status()
             return html
-        grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=dlHtml, every=1)
+        grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=dlHtml, every=2.0)
+        return grHtmlDlQueue
 
     def uiJsEvent(self, gr: gr):
         # Cancel Download item
@@ -223,7 +224,7 @@ class Downloader:
                             # Break out of the loop if the download is successful
                             break
                         else:
-                            #if early_access and applyAPI:
+                            # if early_access and applyAPI:
                             #    print_ly(
                             #        f"{file_name_display}:Download canceled. Early Access!")
                             #    exitDownloading = True

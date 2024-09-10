@@ -30,6 +30,7 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.2
+- Reduce browser lag with Forge #59
 - Save file name can be changed
 - Works on Forge
   - ~~Hash mismatch occurs because calculate_sha256 has changed in Forge~~

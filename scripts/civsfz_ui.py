@@ -261,6 +261,37 @@ class Components():
                                 outputs=[grDrpdwnCHistory]
                             )
 
+            def updatePropertiesText():
+                propertiesText = ";".join(
+                    [
+                        str(opts.civsfz_figcaption_background_color),
+                        str(opts.civsfz_sd1_background_color),
+                        str(opts.civsfz_sd2_background_color),
+                        str(opts.civsfz_sdxl_background_color),
+                        str(opts.civsfz_pony_background_color),
+                        str(opts.civsfz_flux1_background_color),
+                        str(opts.civsfz_default_shadow_color),
+                        str(opts.civsfz_alreadyhave_shadow_color),
+                        str(opts.civsfz_alreadyhad_shadow_color),
+                        str(opts.civsfz_hover_zoom_magnification),
+                        str(opts.civsfz_card_size_width),
+                        str(opts.civsfz_card_size_height),
+                    ]
+                )
+                return gr.Textbox.update(value=propertiesText)
+
+            # https://github.com/SignalFlagZ/sd-webui-civbrowser/issues/59
+            # grHtmlCards.change(
+            #    fn=updatePropertiesText,
+            #    inputs=[],
+            #    outputs=[grTxtPropaties]
+            #    ).then(
+            #    _js='(x) => civsfz_overwriteProperties(x)',
+            #    fn = None,
+            #    inputs=[grTxtPropaties],
+            #    outputs=[]
+            #    )
+
             def update_model_list(grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType, grDropdownSearchTerm, grChkboxShowNsfw, grDrpdwnPeriod, grDrpdwnBasemodels, grChkbxgrpLevel:list):
                 response = None
                 self.civitai.clearRequestError()
@@ -371,7 +402,16 @@ class Components():
                 fn=None,
                 inputs=[],
                 outputs=[],
-            )
+            ).then(
+                fn=updatePropertiesText,
+                inputs=[],
+                outputs=[grTxtPropaties]
+            ).then(
+                _js='(x) => civsfz_overwriteProperties(x)',
+                fn = None,
+                inputs=[grTxtPropaties],
+                outputs=[]
+                )
 
             def  update_model_info(model_version=None, grChkbxgrpLevel=[0]):
                 if model_version is not None and self.civitai.selectVersionByIndex(model_version) is not None:
@@ -724,33 +764,6 @@ class Components():
                 outputs=[],
             )
 
-            def updatePropertiesText():
-                propertiesText = ';'.join([
-                    str(opts.civsfz_figcaption_background_color),
-                    str(opts.civsfz_sd1_background_color), 
-                    str(opts.civsfz_sd2_background_color),
-                    str(opts.civsfz_sdxl_background_color),
-                    str(opts.civsfz_pony_background_color),
-                    str(opts.civsfz_flux1_background_color),
-                    str(opts.civsfz_default_shadow_color),
-                    str(opts.civsfz_alreadyhave_shadow_color),
-                    str(opts.civsfz_alreadyhad_shadow_color),
-                    str(opts.civsfz_hover_zoom_magnification),
-                    str(opts.civsfz_card_size_width),
-                    str(opts.civsfz_card_size_height)
-                    ])
-                return gr.Textbox.update(value=propertiesText)
-            grHtmlCards.change(
-                fn=updatePropertiesText,
-                inputs=[],
-                outputs=[grTxtPropaties]
-                ).then(
-                _js='(x) => civsfz_overwriteProperties(x)',
-                fn = None,
-                inputs=[grTxtPropaties],
-                outputs=[]                
-                )
-
             grBtnFolder.click(
                 fn=open_folder,
                 inputs=[grTxtSaveFolder],
@@ -761,7 +774,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.2'
+    ver = 'v2.2.3'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -780,6 +793,17 @@ def on_ui_tabs():
                 )
             )
         downloader.uiDlList(gr)
+        # Use the Timer component because there are problems with `every` on HTML component.
+        #grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=None)
+        #grTimer = gr.Timer(value=10.0)
+        #def updateDlList():
+        #    ret = gr.HTML.update(value=Downloader.uiDlList)
+        #    return ret
+        #grTimer.tick(
+        #    fn=updateDlList,
+        #    inputs=[],
+        #    outputs=[grHtmlDlQueue],
+        #)
         with gr.Tabs(elem_id='civsfz_tab-element', elem_classes="civsfz-custom-property"):
             for i,name in enumerate(tabNames):
                 with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:

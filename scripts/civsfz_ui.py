@@ -124,7 +124,7 @@ class Components():
                     grBtnFolder = gr.Button(value="\N{Open file folder}", interactive=True, elem_classes="civsfz-small-buttons")  # 📂
                     grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
                     grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
-                    grtxtSaveFilename = gr.Textbox(label="Save file name", choices=[], interactive=True, value=None)
+                    grtxtSaveFilename = gr.Textbox(label="Save file name", interactive=True, value=None)
                 with gr.Row():
                     grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                     grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)

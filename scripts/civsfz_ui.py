@@ -397,21 +397,24 @@ class Components():
                     grDropdownSearchTerm,
                     grDrpdwnCHistory,
                 ],
+            ).then( # for custum settings
+                fn=updatePropertiesText,
+                inputs=[],
+                outputs=[grTxtPropaties]
             ).then(
                 _js=f'() => {{civsfz_scroll_to("#civsfz_model-navigation{self.id}");}}',
                 fn=None,
                 inputs=[],
                 outputs=[],
-            ).then(
-                fn=updatePropertiesText,
-                inputs=[],
-                outputs=[grTxtPropaties]
-            ).then(
+            )
+            
+            # for custum settings
+            grTxtPropaties.change(
                 _js='(x) => civsfz_overwriteProperties(x)',
                 fn = None,
                 inputs=[grTxtPropaties],
                 outputs=[]
-                )
+            )
 
             def  update_model_info(model_version=None, grChkbxgrpLevel=[0]):
                 if model_version is not None and self.civitai.selectVersionByIndex(model_version) is not None:
@@ -774,13 +777,13 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.3'
+    ver = 'v2.2.4'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
-        with gr.Accordion(label="V2.2 Update information", open=True):
+        with gr.Accordion(label="V2.2 Update information", open=False):
             gr.Markdown(
                 value=(
                     "# Changes"

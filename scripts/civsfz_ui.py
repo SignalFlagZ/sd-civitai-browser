@@ -373,6 +373,12 @@ class Components():
                         gr.Textbox.update(value=grTxtPages),\
                         gr.Dropdown.update(choices=Components.sHistory.getAsChoices()),\
                         gr.Dropdown.update(choices=Components.cHistory.getAsChoices(),value=Components.cHistory.getAsChoices()[0])
+            def preload_nextpage():
+                hasNext = not self.civitai.nextPage() is None
+                if hasNext:
+                    url = self.civitai.nextPage()
+                    response = self.civitai.requestApi(url)
+
             grBtnGetListAPI.click(
                 fn=update_model_list,
                 inputs=[
@@ -402,12 +408,16 @@ class Components():
                 inputs=[],
                 outputs=[grTxtPropaties]
             ).then(
+                fn=preload_nextpage,
+                inputs=[],
+                outputs=[],
+            ).then(
                 _js=f'() => {{civsfz_scroll_to("#civsfz_model-navigation{self.id}");}}',
                 fn=None,
                 inputs=[],
                 outputs=[],
             )
-            
+
             # for custum settings
             grTxtPropaties.change(
                 _js='(x) => civsfz_overwriteProperties(x)',
@@ -586,7 +596,7 @@ class Components():
                         gr.Button.update(interactive=hasNext),\
                         gr.Slider.update(value=self.civitai.getCurrentPage(), maximum=self.civitai.getTotalPages()),\
                         gr.Textbox.update(value=grTxtPages)
-
+                    
             grBtnNextPage.click(
                 fn=update_next_page,
                 inputs=[
@@ -603,6 +613,10 @@ class Components():
                     grTxtPages
                     #grTxtSaveFolder
                 ]
+            ).then(
+                fn=preload_nextpage,
+                inputs=[],
+                outputs=[],
             )
             def update_prev_page(grChkboxShowNsfw, grChkbxgrpLevel):
                 return update_next_page(grChkboxShowNsfw, grChkbxgrpLevel, isNext=False)

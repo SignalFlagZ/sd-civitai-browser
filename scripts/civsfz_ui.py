@@ -377,7 +377,7 @@ class Components():
                 hasNext = not self.civitai.nextPage() is None
                 if hasNext:
                     url = self.civitai.nextPage()
-                    response = self.civitai.requestApi(url)
+                    response = self.civitai.requestApi(url, timeout=(10,10))
 
             grBtnGetListAPI.click(
                 fn=update_model_list,
@@ -596,7 +596,7 @@ class Components():
                         gr.Button.update(interactive=hasNext),\
                         gr.Slider.update(value=self.civitai.getCurrentPage(), maximum=self.civitai.getTotalPages()),\
                         gr.Textbox.update(value=grTxtPages)
-                    
+
             grBtnNextPage.click(
                 fn=update_next_page,
                 inputs=[

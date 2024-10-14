@@ -1032,7 +1032,7 @@ class CivitaiModels(APIInformation):
         newURL = parse._replace(query=urllib.parse.urlencode(query,  doseq=True, quote_via=urllib.parse.quote))
         return urllib.parse.urlunparse(newURL)
 
-    def requestApi(self, url=None, query=None):
+    def requestApi(self, url=None, query=None, timeout=(10, 15)):
         self.requestError = None
         if url is None:
             url = self.getModelsApiUrl()
@@ -1049,7 +1049,7 @@ class CivitaiModels(APIInformation):
         try:
             # with CachedSession(cache_name=cachePath.resolve(), expire_after=5*60) as session:
             browse = Browser()
-            response = browse.session.get(url, params=query, timeout=(10, 15))
+            response = browse.session.get(url, params=query, timeout=timeout)
             # print_lc(f'{response.url=}')
             # print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()

@@ -791,23 +791,19 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.4'
+    ver = 'v2.2.5'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
-        with gr.Accordion(label="V2.2 Update information", open=False):
+        with gr.Accordion(label="Update information", open=False):
             gr.Markdown(
                 value=(
                     "# Changes"
                     "\n"
-                    "- SD models are saved in the _SD_1_X folder by default"
-                    "\n"
-                    "  - Move the SD model files to _SD_1_X."
-                    "\n"
-                    "  - You can use `BASEMODELbkCmpt` in Settings to maintain backward compatibility (deprecated)"
-                )
+                    "- Preload next page"
+                    )
             )
         downloader.uiDlList(gr)
         # Use the Timer component because there are problems with `every` on HTML component.

@@ -30,6 +30,7 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.2
+- Preload next page
 - Reduce browser lag on Forge [#59](https://github.com/SignalFlagZ/sd-webui-civbrowser/issues/59)
 - Save file name can be changed
 - Works on Forge

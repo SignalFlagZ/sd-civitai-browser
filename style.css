@@ -195,8 +195,10 @@
 	text-align: right;
 	position: -webkit-sticky; /* Safari */
 	position:sticky;
-	bottom: 1em;
-	cursor: pointer;
+	top: 7em;
+	z-index: 2;
+	float: inline-end;
+	pointer-events: none;
 }
 .civsfz-sticky-parent {
 	display: initial;

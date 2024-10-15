@@ -109,12 +109,17 @@ class Components():
                             grChkbxgrpLevel = gr.CheckboxGroup(label='Browsing Level', choices=list(self.civitai.nsfwLevel.items()) ,value=opts.civsfz_browsing_level, interactive=True, show_label=False)
 
             with gr.Column(elem_id=f"civsfz_model-data{self.id}"):
+                grHtmlBackToTop = gr.HTML(
+                    elem_classes="civsfz-back-to-top",
+                    value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;cursor: pointer;pointer-events: auto;'>&#x1F51D;</span></div>",
+                )  # 🔝
                 with gr.Row():
                     grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None, visible=False)
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                     txt_list = ""
                     grTxtTrainedWords = gr.Textbox(
                         label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
+
                 with gr.Row():
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
                 with gr.Row():
@@ -141,11 +146,7 @@ class Components():
                             grTextProgress = gr.Textbox(label='Download status',show_label=False)
                             # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
                 with gr.Row():
-                    with gr.Column():
-                        grHtmlModelInfo = gr.HTML(elem_id=f'civsfz_model-info{self.id}')
-                        with gr.Row(elem_classes='civsfz-back-to-top'):
-                            grHtmlBackToTop = gr.HTML(
-                                value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;'>&#x1F51D;</span></div>")  # 🔝
+                    grHtmlModelInfo = gr.HTML(elem_id=f"civsfz_model-info{self.id}")
 
             # def renameTab(type):
             #    return gr.TabItem.update(label=f'{self.id}:{type}')
@@ -791,7 +792,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.5'
+    ver = 'v2.2.6'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -802,21 +803,23 @@ def on_ui_tabs():
                 value=(
                     "# Changes"
                     "\n"
+                    "- Change the position of Back-to-Top button to reduce mouse movement"
+                    "\n"
                     "- Preload next page"
-                    )
+                )
             )
         downloader.uiDlList(gr)
         # Use the Timer component because there are problems with `every` on HTML component.
-        #grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=None)
-        #grTimer = gr.Timer(value=10.0)
-        #def updateDlList():
+        # grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=None)
+        # grTimer = gr.Timer(value=10.0)
+        # def updateDlList():
         #    ret = gr.HTML.update(value=Downloader.uiDlList)
         #    return ret
-        #grTimer.tick(
+        # grTimer.tick(
         #    fn=updateDlList,
         #    inputs=[],
         #    outputs=[grHtmlDlQueue],
-        #)
+        # )
         with gr.Tabs(elem_id='civsfz_tab-element', elem_classes="civsfz-custom-property"):
             for i,name in enumerate(tabNames):
                 with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:

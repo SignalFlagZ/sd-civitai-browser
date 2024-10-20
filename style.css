@@ -199,6 +199,7 @@
 	z-index: 2;
 	float: inline-end;
 	pointer-events: none;
+	height: 0em;
 }
 .civsfz-sticky-parent {
 	display: initial;

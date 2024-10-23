@@ -188,8 +188,7 @@ class APIInformation():
             if nsfwLevel & v > 0:
                 keys.append(k)
         return ", ".join(keys)
-            
-    
+
     def requestApiOptions(self, url=None, query=None):
         if url is None:
             url = self.getModelsApiUrl()
@@ -200,10 +199,10 @@ class APIInformation():
 
         # Make a GET request to the API
         try:
-            #with requests.Session() as request:
+            # with requests.Session() as request:
             browser = Browser()
             response = browser.session.get(url, params=query, timeout=(10, 15))
-            #print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
+            # print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             # print(f"{response=}")
@@ -244,7 +243,7 @@ class APIInformation():
                                     "Other"
                                 ]
         else:
-            #print_lc(f'Set types')
+            # print_lc(f'Set types')
             pass
         priorityTypes = [
             "Checkpoint",
@@ -267,30 +266,42 @@ class APIInformation():
         except:
             print_ly(f'ERROR: Get base models')
             APIInformation.basemodelOptions = [
-                                    "SD 1.4",
-                                    "SD 1.5",
-                                    "SD 1.5 LCM",
-                                    "SD 2.0",
-                                    "SD 2.0 768",
-                                    "SD 2.1",
-                                    "SD 2.1 768",
-                                    "SD 2.1 Unclip",
-                                    "SDXL 0.9",
-                                    "SDXL 1.0",
-                                    "Pony",
-                                    "SDXL 1.0 LCM",
-                                    "SDXL Distilled",
-                                    "SDXL Turbo",
-                                    "SDXL Lightning",
-                                    "Stable Cascade",
-                                    "SVD",
-                                    "SVD XT",
-                                    "Playground v2",
-                                    "PixArt a",
-                                    "Other"
-                                ]
+                "ODOR",
+                "SD 1.4",
+                "SD 1.5",
+                "SD 1.5 LCM",
+                "SD 1.5 Hyper",
+                "SD 2.0",
+                "SD 2.0 768",
+                "SD 2.1",
+                "SD 2.1 768",
+                "SD 2.1 Unclip",
+                "SDXL 0.9",
+                "SDXL 1.0",
+                "SD 3",
+                "SD 3.5",
+                "Pony",
+                "Flux.1 S",
+                "Flux.1 D",
+                "AuraFlow",
+                "SDXL 1.0 LCM",
+                "SDXL Distilled",
+                "SDXL Turbo",
+                "SDXL Lightning",
+                "SDXL Hyper",
+                "Stable Cascade",
+                "SVD",
+                "SVD XT",
+                "Playground v2",
+                "PixArt a",
+                "PixArt E",
+                "Hunyuan 1",
+                "Lumina",
+                "Kolors",
+                "Other",
+            ]
         else:
-            #print_lc(f'Set base models')
+            # print_lc(f'Set base models')
             pass
         query = {'sort': ""}
         data = self.requestApiOptions(url, query)
@@ -310,7 +321,7 @@ class APIInformation():
                     "Oldest"
                 ]
         else:
-            #print_lc(f'Set sorts')
+            # print_lc(f'Set sorts')
             pass
         query = {'period': ""}
         data = self.requestApiOptions(url, query)
@@ -326,7 +337,7 @@ class APIInformation():
                     "AllTime"
                 ]
         else:
-            #print_lc(f'Set periods')
+            # print_lc(f'Set periods')
             pass
 
 class CivitaiModels(APIInformation):

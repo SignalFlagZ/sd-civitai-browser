@@ -147,19 +147,22 @@ function civsfz_overwriteProperties(propertiesText) {
 	//console.log(elem_id, propertiesText)
 	let p = propertiesText.split(';');
 	let elem = gradioApp().querySelector('.civsfz-custom-property');
+	let i=0
 	//elements.forEach((elem) => {
-		elem.style.setProperty('--civsfz-figcaption-background-color', p[0] + 'd9');
-		elem.style.setProperty('--civsfz-sd1-background-color', p[1] + 'd9');
-		elem.style.setProperty('--civsfz-sd2-background-color', p[2] + 'd9');
-		elem.style.setProperty('--civsfz-sdxl-background-color', p[3] + 'd9');
-		elem.style.setProperty('--civsfz-pony-background-color', p[4] + 'd9');
-		elem.style.setProperty('--civsfz-flux1-background-color', p[5] + 'd9');
-		elem.style.setProperty('--civsfz-default-shadow-color', p[6] + 'f0');
-		elem.style.setProperty('--civsfz-alreadyhave-shadow-color', p[7] + 'f0');
-		elem.style.setProperty('--civsfz-alreadyhad-shadow-color', p[8] + 'f0');
-		elem.style.setProperty('--civsfz-hover-scale', p[9]);
-		elem.style.setProperty('--civsfz-card-width', p[10]);
-		elem.style.setProperty('--civsfz-card-height', p[11]);
+	elem.style.setProperty('--civsfz-figcaption-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-sd1-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-sd2-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-sd3-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-sd35-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-sdxl-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-pony-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-flux1-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-default-shadow-color', p[i++] + 'f0');
+	elem.style.setProperty('--civsfz-alreadyhave-shadow-color', p[i++] + 'f0');
+	elem.style.setProperty('--civsfz-alreadyhad-shadow-color', p[i++] + 'f0');
+	elem.style.setProperty('--civsfz-hover-scale', p[i++]);
+	elem.style.setProperty('--civsfz-card-width', p[i++]);
+	elem.style.setProperty('--civsfz-card-height', p[i++]);
 	//});
 }
 

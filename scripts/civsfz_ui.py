@@ -268,6 +268,8 @@ class Components():
                         str(opts.civsfz_figcaption_background_color),
                         str(opts.civsfz_sd1_background_color),
                         str(opts.civsfz_sd2_background_color),
+                        str(opts.civsfz_sd3_background_color),
+                        str(opts.civsfz_sd35_background_color),
                         str(opts.civsfz_sdxl_background_color),
                         str(opts.civsfz_pony_background_color),
                         str(opts.civsfz_flux1_background_color),
@@ -792,7 +794,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.6'
+    ver = 'v2.2.7'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):

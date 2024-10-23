@@ -128,13 +128,31 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
-        key='civsfz_sdxl_background_color',
+        key="civsfz_sd3_background_color",
         info=shared.OptionInfo(
-            '#d54b44',
-            label='Background color for SDXL models',
+            "#215639",
+            label="Background color for SD3 models",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
+    )
+    shared.opts.add_option(
+        key="civsfz_sd35_background_color",
+        info=shared.OptionInfo(
+            "#0f8645",
+            label="Background color for SD3.5 models",
+            component=gr.ColorPicker,
+            section=section,
+        ),
+    )
+    shared.opts.add_option(
+        key="civsfz_sdxl_background_color",
+        info=shared.OptionInfo(
+            "#d54b44",
+            label="Background color for SDXL models",
+            component=gr.ColorPicker,
+            section=section,
+        ),
     )
     shared.opts.add_option(
         key="civsfz_pony_background_color",

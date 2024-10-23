@@ -10,6 +10,8 @@
 	--civsfz-card-size-unit: 1em;
 	--civsfz-sd1-background-color: #87ba39d9;
 	--civsfz-sd2-background-color: #54c696d9;
+	--civsfz-sd3-background-color: #215639d9;
+	--civsfz-sd35-background-color: #0f8645d9;
 	--civsfz-sdxl-background-color: #d54b44d9;
 	--civsfz-pony-background-color: #ce274bd9;
 	--civsfz-flux1-background-color: #ce27bdd9;
@@ -63,6 +65,12 @@
 }
 .civsfz-bgcolor-SD2 {
 	background-color: var(--civsfz-sd2-background-color);
+}
+.civsfz-bgcolor-SD3 {
+	background-color: var(--civsfz-sd3-background-color);
+}
+.civsfz-bgcolor-SD35 {
+	background-color: var(--civsfz-sd35-background-color);
 }
 .civsfz-bgcolor-SDXL {
 	background-color: var(--civsfz-sdxl-background-color);

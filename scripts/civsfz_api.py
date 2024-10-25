@@ -298,7 +298,8 @@ class APIInformation():
                 "Hunyuan 1",
                 "Lumina",
                 "Kolors",
-                "Other",
+                "Illustrious",
+                "Other"
             ]
         else:
             # print_lc(f'Set base models')

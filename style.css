@@ -14,6 +14,7 @@
 	--civsfz-sd35-background-color: #0f8645d9;
 	--civsfz-sdxl-background-color: #d54b44d9;
 	--civsfz-pony-background-color: #ce274bd9;
+	--civsfz-Illustrious-background-color: #c60a1cd9;
 	--civsfz-flux1-background-color: #ce27bdd9;
 	--civsfz-early-access-in-background-color: rgba(39, 52, 201, 0.8);
 }
@@ -77,6 +78,9 @@
 }
 .civsfz-bgcolor-Pony {
 	background-color: var(--civsfz-pony-background-color);
+}
+.civsfz-bgcolor-Illustrious {
+	background-color: var(--civsfz-Illustrious-background-color);
 }
 .civsfz-bgcolor-Flux1 {
 	background-color: var(--civsfz-flux1-background-color);

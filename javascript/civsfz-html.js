@@ -156,6 +156,7 @@ function civsfz_overwriteProperties(propertiesText) {
 	elem.style.setProperty('--civsfz-sd35-background-color', p[i++] + 'd9');
 	elem.style.setProperty('--civsfz-sdxl-background-color', p[i++] + 'd9');
 	elem.style.setProperty('--civsfz-pony-background-color', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-Illustrious-background-color', p[i++] + 'd9');
 	elem.style.setProperty('--civsfz-flux1-background-color', p[i++] + 'd9');
 	elem.style.setProperty('--civsfz-default-shadow-color', p[i++] + 'f0');
 	elem.style.setProperty('--civsfz-alreadyhave-shadow-color', p[i++] + 'f0');

@@ -164,6 +164,15 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
+        key="civsfz_Illustrious_background_color",
+        info=shared.OptionInfo(
+            "#c60a1c",
+            label="Background color for Illustrious models",
+            component=gr.ColorPicker,
+            section=section,
+        ),
+    )
+    shared.opts.add_option(
         key="civsfz_flux1_background_color",
         info=shared.OptionInfo(
             "#ce27bd",

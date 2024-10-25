@@ -1,5 +1,5 @@
 {{ forTrigger }}
-{% from 'macros.jinja' import classname_background %}
+{% from 'macros.jinja' import bgClass %}
 <div class="column civsfz-modellist">
 {%- for card in cards if card.matchLevel %}
 	{%- set nsfw = 'civsfz-cardnsfw' if card['isNsfw'] else '' %}
@@ -8,7 +8,6 @@
 	{%- elif card['have'] == 'old' %}
 		{%- set alreadyhave = 'civsfz-modelcardalreadyhad' %}
 	{%- endif %}	
-	{% set baseModelColor=classname_background(card['baseModel']) %}
 	<figure class="civsfz-modelcard {{ nsfw }} {{ alreadyhave }}" onclick="civsfz_select_model('Index{{ card['jsId'] }}:{{ card['index'] }}:{{ card['id'] }}')">
 		{%- if card['imgType'] == 'image' %}
 			<img src={{ card['imgsrc'] }}/>
@@ -23,7 +22,7 @@
 		{%- endif %}
 		<figcaption>{{ card['name'] }}</figcaption>
 		<div class="civsfz-modeltype">{{ card['type'] }}</div>
-		<div class="civsfz-basemodel {{ baseModelColor }}">{{ card['baseModel'] }}</div>
+		<div class="civsfz-basemodel {{ bgClass(card['baseModel'])|trim }}">{{ card['baseModel'] }}</div>
 		{%- if card['ea'] == 'in' %}
 			<div class="civsfz-early-access-in">EA</div>
 		{%- elif card['ea'] == 'out' %}

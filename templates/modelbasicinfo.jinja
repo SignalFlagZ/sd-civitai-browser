@@ -1,7 +1,6 @@
-{% from 'macros.jinja' import classname_background %}
+{% from 'macros.jinja' import bgClass %}
 {% set copy = '<span title="Copy to clipboard" style="cursor: copy;" onclick="civsfz_copyInnerText(this,false);">&#x1F4CB;</span>' %} {# 📋 #}
 {% set tdStyle1 = 'style="max-width:20em;min-width:7em;padding:0.2em;"' %}
-{% set baseModelColor=classname_background(modelInfo['baseModel']) %}
 
 <div class="civsfz-modelBasicInfo" style="display:flex; align-items:flex-start; column-gap:2em;flex-wrap: wrap;">
 	<table>
@@ -64,7 +63,7 @@
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Base Model</th>
-			<td {{ tdStyle1 }}><span class="{{ baseModelColor }}">{{ modelInfo["baseModel"]|e }}</span></td>
+			<td {{ tdStyle1 }}><span class="{{ bgClass(modelInfo['baseModel'])|trim }}">{{ modelInfo["baseModel"]|e }}</span></td>
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Tags</th>

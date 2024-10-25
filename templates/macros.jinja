@@ -1,21 +1,26 @@
-{% macro classname_background(basemodel) -%}
-	{%- if "SD 1" in basemodel %}
-		civsfz-bgcolor-SD1
-	{%- elif "SD 2" in basemodel %}
-		civsfz-bgcolor-SD2
-	{%- elif "SD 3." in basemodel %}
-		civsfz-bgcolor-SD35
-	{%- elif "SD 3" in basemodel %}
-		civsfz-bgcolor-SD3
-	{%- elif "SDXL" in basemodel %}
-		civsfz-bgcolor-SDXL
-	{%- elif "Pony" in basemodel %}
-		civsfz-bgcolor-Pony
-	{%- elif "Illustrious" in basemodel %}
-		civsfz-bgcolor-Illustrious
-	{%- elif "Flux.1" in basemodel %}
-		civsfz-bgcolor-Flux1
-	{%- else %}
-		civsfz-bgcolor-base
-	{%- endif %}
-{%- endmacro %}
+
+{% macro bgClass(basemodel) %}
+{# Return: Class name for base model #}
+{# Use trim filter for returned value #}
+	{% set dict_modelclass = {
+		"SD 1":			"civsfz-bgcolor-SD1",
+		"SD 2":			"civsfz-bgcolor-SD2",
+		"SD 3":			"civsfz-bgcolor-SD3",
+		"SD 3.":		"civsfz-bgcolor-SD35",
+		"SDXL":			"civsfz-bgcolor-SDXL",
+		"Pony":			"civsfz-bgcolor-Pony",
+		"Illustrious":	"civsfz-bgcolor-Illustrious",
+		"Flux.1": 		"civsfz-bgcolor-Flux1",
+		"BASE": 		"civsfz-bgcolor-base",
+	 } %}
+	{% set ns = namespace(ret=none) %}
+	{% for key, val in dict_modelclass.items() %}
+		{% if key in basemodel %}			
+			{% set ns.ret=val %}
+		{% endif %}
+		{% if loop.last and ns.ret is none %}
+			{% set ns.ret=val %}
+		{% endif %}
+	{% endfor %}
+	{{ ns.ret }}
+{% endmacro %}

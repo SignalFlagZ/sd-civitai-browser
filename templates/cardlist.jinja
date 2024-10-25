@@ -1,5 +1,5 @@
-
 {{ forTrigger }}
+{% from 'macros.jinja' import classname_background %}
 <div class="column civsfz-modellist">
 {%- for card in cards if card.matchLevel %}
 	{%- set nsfw = 'civsfz-cardnsfw' if card['isNsfw'] else '' %}
@@ -8,25 +8,7 @@
 	{%- elif card['have'] == 'old' %}
 		{%- set alreadyhave = 'civsfz-modelcardalreadyhad' %}
 	{%- endif %}	
-	{%- if "SD 1" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-SD1' %}
-	{%- elif "SD 2" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-SD2' %}
-	{%- elif "SD 3." in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-SD35' %}
-	{%- elif "SD 3" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-SD3' %}
-	{%- elif "SDXL" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-SDXL' %}
-	{%- elif "Pony" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-Pony' %}
-	{%- elif "Illustrious" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-Illustrious' %}
-	{%- elif "Flux.1" in card['baseModel'] %}
-		{%- set baseModelColor = 'civsfz-bgcolor-Flux1' %}
-	{%- else %}
-		{%- set baseModelColor = 'civsfz-bgcolor-base' %}
-	{%- endif %}
+	{% set baseModelColor=classname_background(card['baseModel']) %}
 	<figure class="civsfz-modelcard {{ nsfw }} {{ alreadyhave }}" onclick="civsfz_select_model('Index{{ card['jsId'] }}:{{ card['index'] }}:{{ card['id'] }}')">
 		{%- if card['imgType'] == 'image' %}
 			<img src={{ card['imgsrc'] }}/>

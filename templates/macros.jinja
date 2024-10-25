@@ -1,0 +1,21 @@
+{% macro classname_background(basemodel) -%}
+	{%- if "SD 1" in basemodel %}
+		civsfz-bgcolor-SD1
+	{%- elif "SD 2" in basemodel %}
+		civsfz-bgcolor-SD2
+	{%- elif "SD 3." in basemodel %}
+		civsfz-bgcolor-SD35
+	{%- elif "SD 3" in basemodel %}
+		civsfz-bgcolor-SD3
+	{%- elif "SDXL" in basemodel %}
+		civsfz-bgcolor-SDXL
+	{%- elif "Pony" in basemodel %}
+		civsfz-bgcolor-Pony
+	{%- elif "Illustrious" in basemodel %}
+		civsfz-bgcolor-Illustrious
+	{%- elif "Flux.1" in basemodel %}
+		civsfz-bgcolor-Flux1
+	{%- else %}
+		civsfz-bgcolor-base
+	{%- endif %}
+{%- endmacro %}

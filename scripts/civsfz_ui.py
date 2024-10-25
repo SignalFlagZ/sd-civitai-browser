@@ -795,7 +795,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.8'
+    ver = 'v2.2.9'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):

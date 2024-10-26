@@ -114,7 +114,12 @@ class Components():
                     value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;cursor: pointer;pointer-events: auto;'>&#x1F51D;</span></div>",
                 )  # 🔝
                 with gr.Row():
-                    grDrpdwnModels = gr.Dropdown(label="Model", choices=[], interactive=False, elem_id=f"civsfz_modellist{self.id}", value=None, visible=False)
+                    grHtmlModelName = gr.HTML(
+                        elem_id=f"civsfz_modellist{self.id}",
+                        value=None,
+                        visible=True,
+                        container=False,
+                    )
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                     txt_list = ""
                     grTxtTrainedWords = gr.Textbox(
@@ -123,7 +128,7 @@ class Components():
                 with gr.Row():
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
                 with gr.Row():
-                    grTxtBaseModel = gr.Textbox(scale=1, label='Base Model', value='', interactive=True, lines=1)
+                    grTxtBaseModel = gr.Textbox(scale=1, label='Base Model', value='', interactive=True, lines=1, visible=False)
                     grDrpdwnSelectFile = gr.Dropdown(scale=3, label="File select", choices=[], interactive=True, value=None)
                 with gr.Row(equal_height=False):
                     grBtnFolder = gr.Button(value="\N{Open file folder}", interactive=True, elem_classes="civsfz-small-buttons")  # 📂
@@ -339,7 +344,7 @@ class Components():
                 if err is not None:
                     gr.Warning(str(err))
                 if response is None:
-                    return gr.Dropdown.update(choices=[], value=None),\
+                    return gr.HTML.update(choices=[], value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=None),\
                         gr.Button.update(interactive=False),\
@@ -367,7 +372,7 @@ class Components():
                 # HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 models = self.civitai.getModels(grChkboxShowNsfw)
                 HTML = self.civitai.modelCardsHtml(models, jsID=self.id, nsfwLevel=sum(grChkbxgrpLevel))
-                return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
+                return  gr.HTML.update(value=""), \
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
@@ -396,7 +401,7 @@ class Components():
                     grChkbxgrpLevel,
                 ],
                 outputs=[
-                    grDrpdwnModels,
+                    grHtmlModelName,
                     grRadioVersions,
                     grHtmlCards,
                     grBtnPrevPage,
@@ -407,10 +412,8 @@ class Components():
                     grDropdownSearchTerm,
                     grDrpdwnCHistory,
                 ],
-            ).then( # for custum settings
-                fn=updatePropertiesText,
-                inputs=[],
-                outputs=[grTxtPropaties]
+            ).then(  # for custum settings
+                fn=updatePropertiesText, inputs=[], outputs=[grTxtPropaties]
             ).then(
                 fn=preload_nextpage,
                 inputs=[],
@@ -593,7 +596,7 @@ class Components():
                 # HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 models = self.civitai.getModels(grChkboxShowNsfw)
                 HTML = self.civitai.modelCardsHtml(models, self.id, nsfwLevel=sum(grChkbxgrpLevel))
-                return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
+                return  gr.HTML.update(value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
@@ -603,20 +606,17 @@ class Components():
 
             grBtnNextPage.click(
                 fn=update_next_page,
-                inputs=[
-                    grChkboxShowNsfw,
-                    grChkbxgrpLevel
-                ],
+                inputs=[grChkboxShowNsfw, grChkbxgrpLevel],
                 outputs=[
-                    grDrpdwnModels,
+                    grHtmlModelName,
                     grRadioVersions,
                     grHtmlCards,
                     grBtnPrevPage,
                     grBtnNextPage,
                     grSldrPage,
-                    grTxtPages
-                    #grTxtSaveFolder
-                ]
+                    grTxtPages,
+                    # grTxtSaveFolder
+                ],
             ).then(
                 fn=preload_nextpage,
                 inputs=[],
@@ -626,21 +626,18 @@ class Components():
                 return update_next_page(grChkboxShowNsfw, grChkbxgrpLevel, isNext=False)
             grBtnPrevPage.click(
                 fn=update_prev_page,
-                inputs=[
-                    grChkboxShowNsfw,
-                    grChkbxgrpLevel
-                ],
+                inputs=[grChkboxShowNsfw, grChkbxgrpLevel],
                 outputs=[
-                    grDrpdwnModels,
+                    grHtmlModelName,
                     grRadioVersions,
                     grHtmlCards,
                     grBtnPrevPage,
                     grBtnNextPage,
                     grSldrPage,
-                    grTxtPages
-                    #grTxtSaveFolder
-                ]
-                )
+                    grTxtPages,
+                    # grTxtSaveFolder
+                ],
+            )
 
             def jump_to_page(grChkboxShowNsfw, grSldrPage, grChkbxgrpLevel):
                 # url = self.civitai.nextPage()
@@ -669,7 +666,7 @@ class Components():
                 # HTML = self.civitai.modelCardsHtml(model_names, self.id)
                 models = self.civitai.getModels(grChkboxShowNsfw)
                 HTML = self.civitai.modelCardsHtml(models, jsID=self.id, nsfwLevel=sum(grChkbxgrpLevel))
-                return  gr.Dropdown.update(choices=[f'{model[0]}:({model[1]})' for model in models], value=None),\
+                return  gr.HTML.update(value=None),\
                         gr.Radio.update(choices=[], value=None),\
                         gr.HTML.update(value=HTML),\
                         gr.Button.update(interactive=hasPrev),\
@@ -678,20 +675,17 @@ class Components():
                         gr.Textbox.update(value=grTxtPages)
             grBtnGoPage.click(
                 fn=jump_to_page,
-                inputs=[
-                    grChkboxShowNsfw,
-                    grSldrPage,
-                    grChkbxgrpLevel
-                ],
+                inputs=[grChkboxShowNsfw, grSldrPage, grChkbxgrpLevel],
                 outputs=[
-                    grDrpdwnModels,
+                    grHtmlModelName,
                     grRadioVersions,
                     grHtmlCards,
                     grBtnPrevPage,
                     grBtnNextPage,
                     grSldrPage,
-                    grTxtPages
-                ])
+                    grTxtPages,
+                ],
+            )
 
             def updateVersionsByModelID(model_ID=None):
                 if model_ID is not None:
@@ -723,9 +717,11 @@ class Components():
                         ) = update_model_info(grRadioVersions["value"], grChkbxgrpLevel)
                         # grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnSelectFile['value']))
                         grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnSelectFile['value']))
-                        grDrpdwnModels = gr.Dropdown.update(value=f'{self.civitai.getSelectedModelName()}:({index})')
+                        grHtmlModelName = gr.HTML.update(
+                            value=self.civitai.modelNameTitleHtml(self.civitai.getSelectedModelName(), grTxtBaseModel['value']),
+                        )
                         return (
-                            grDrpdwnModels,
+                            grHtmlModelName,
                             grRadioVersions,
                             grHtmlModelInfo,
                             grTxtEarlyAccess,
@@ -738,7 +734,7 @@ class Components():
                         )
                     else:
                         return (
-                            gr.Dropdown.update(value=None),
+                            gr.HTML.update(value=None),
                             gr.Radio.update(value=None),
                             gr.HTML.update(value=None),
                             gr.Textbox.update(value=None),
@@ -751,7 +747,7 @@ class Components():
                         )
                 else:
                     return (
-                        gr.Dropdown.update(value=None),
+                        gr.HTML.update(value=None),
                         gr.Radio.update(value=None),
                         gr.HTML.update(value=None),
                         gr.Textbox.update(value=None),
@@ -767,7 +763,7 @@ class Components():
                 fn=eventTextUpdated,
                 inputs=[grTxtJsEvent, grChkbxgrpLevel],
                 outputs=[
-                    grDrpdwnModels,
+                    grHtmlModelName,
                     grRadioVersions,
                     grHtmlModelInfo,
                     grTxtEarlyAccess,

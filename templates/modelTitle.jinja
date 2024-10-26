@@ -1,0 +1,9 @@
+{%- from 'macros.jinja' import bgClass %}
+<div  style="font-size:x-large;">
+		<div class="{{ bgClass(baseModel)|trim }}" style="float:left;padding: 0.1em 0.5em;">
+			{{ baseModel|e }}
+		</div>
+		<div style="float:left;padding: 0.1em 0.5em;">
+			{{ modelName|e }}
+		</div>
+</div>

@@ -878,6 +878,10 @@ class CivitaiModels(APIInformation):
         template = environment.get_template("cardlist.jinja")
         content = template.render(forTrigger=forTrigger, cards=cards)
         return content
+    def modelNameTitleHtml(self, name:str, base:str):
+        template = environment.get_template("modelTitle.jinja")
+        content = template.render(modelName=name, baseModel=base)
+        return content
 
     def meta2html(self, meta:dict) -> str:
         # convert key name as infotext

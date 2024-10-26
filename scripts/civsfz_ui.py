@@ -124,6 +124,27 @@ class Components():
                     txt_list = ""
                     grTxtTrainedWords = gr.Textbox(
                         label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
+                with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
+                    with gr.Column(scale=2):
+                        with gr.Row():
+                            # grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
+                            grBtnSaveImages = gr.Button(
+                                value="Save model infos",
+                                interactive=False,
+                                min_width=80,
+                            )
+                            grBtnDownloadModel = gr.Button(
+                                value="Download model",
+                                interactive=False,
+                                elem_id=f"civsfz_downloadbutton{self.id}",
+                                min_width=80,
+                            )
+                    with gr.Column(scale=1):
+                        with gr.Row():
+                            grTextProgress = gr.Textbox(
+                                label="Download status", show_label=False
+                            )
+                            # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
 
                 with gr.Row():
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
@@ -140,16 +161,6 @@ class Components():
                     grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
                     grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
                     grTxtApiKey = gr.Textbox(label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
-                with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
-                    with gr.Column(scale=2):
-                        with gr.Row():
-                            # grBtnSaveText = gr.Button(value="Save trained tags",interactive=False, min_width=80)
-                            grBtnSaveImages = gr.Button(value="Save model infos",interactive=False, min_width=80)
-                            grBtnDownloadModel = gr.Button(value="Download model",interactive=False, elem_id=f'civsfz_downloadbutton{self.id}',min_width=80)
-                    with gr.Column(scale=1):
-                        with gr.Row():
-                            grTextProgress = gr.Textbox(label='Download status',show_label=False)
-                            # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
                 with gr.Row():
                     grHtmlModelInfo = gr.HTML(elem_id=f"civsfz_model-info{self.id}")
 
@@ -791,7 +802,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.2.9'
+    ver = 'v2.3.0'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -801,6 +812,10 @@ def on_ui_tabs():
             gr.Markdown(
                 value=(
                     "# Recent changes"
+                    "\n"
+                    "- Change the layout of save buttons to reduce mouse movement"
+                    "\n"
+                    "- Model name and base model are displayed in large size"
                     "\n"
                     "- Add background color for Illustrious"
                     "\n"

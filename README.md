@@ -29,6 +29,9 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v2.3
+- Change the layout of save buttons to reduce mouse movement
+- Model name and base model are displayed in large size
 ### v2.2
 - Add background color for Illustrious
 - Add background color for SD3 and SD3.5

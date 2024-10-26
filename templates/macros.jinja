@@ -13,14 +13,10 @@
 		"Flux.1": 		"civsfz-bgcolor-Flux1",
 		"BASE": 		"civsfz-bgcolor-base",
 	 } %}
-	{% set ns = namespace(ret=none) %}
 	{% for key, val in dict_modelclass.items() %}
-		{% if key in basemodel %}			
-			{% set ns.ret=val %}
-		{% endif %}
-		{% if loop.last and ns.ret is none %}
-			{% set ns.ret=val %}
+		{% if loop.last or key in basemodel %}			
+			{{ val }}
+			{% break %} {# Using break requires Loop Control extension #}
 		{% endif %}
 	{% endfor %}
-	{{ ns.ret }}
 {% endmacro %}

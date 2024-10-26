@@ -107,7 +107,10 @@ class Downloader:
 
         templatesPath = Path.joinpath(
             extensionFolder(), Path("../templates"))
-        environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+        environment = Environment(
+            loader=FileSystemLoader(templatesPath.resolve()),
+            extensions=["jinja2.ext.loopcontrols"],
+        )
         template = environment.get_template("downloadQueue.jinja")
         content = template.render(
             threadQ=Downloader._threadQ, waitQ=Downloader._dlQ, resultQ=expireQ)

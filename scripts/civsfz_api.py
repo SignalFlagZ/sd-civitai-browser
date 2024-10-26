@@ -19,7 +19,10 @@ print_n = lambda  x: print("CivBrowser: " + x )
 
 templatesPath = Path.joinpath(
     extensionFolder(), Path("../templates"))
-environment = Environment(loader=FileSystemLoader(templatesPath.resolve()))
+environment = Environment(
+    loader=FileSystemLoader(templatesPath.resolve()),
+    extensions=["jinja2.ext.loopcontrols"],
+)
 
 class Browser:
     session = None

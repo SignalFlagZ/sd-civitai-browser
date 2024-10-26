@@ -101,34 +101,34 @@ def on_ui_settings():
         )
     )
     shared.opts.add_option(
-        key='civsfz_figcaption_background_color',
+        key="civsfz_background_color_figcaption",
         info=shared.OptionInfo(
-            '#798a9f' ,
-            label='Background color for model names',
+            "#798a9f",
+            label="Background color for model names",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
     )
     shared.opts.add_option(
-        key='civsfz_sd1_background_color',
+        key="civsfz_background_color_sd1",
         info=shared.OptionInfo(
-            '#87ba39',
-            label='Background color for SD1 models',
+            "#87ba39",
+            label="Background color for SD1 models",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
     )
     shared.opts.add_option(
-        key='civsfz_sd2_background_color',
+        key="civsfz_background_color_sd2",
         info=shared.OptionInfo(
-            '#54c696',
-            label='Background color for SD2 models',
+            "#54c696",
+            label="Background color for SD2 models",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
     )
     shared.opts.add_option(
-        key="civsfz_sd3_background_color",
+        key="civsfz_background_color_sd3",
         info=shared.OptionInfo(
             "#215639",
             label="Background color for SD3 models",
@@ -137,7 +137,7 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key="civsfz_sd35_background_color",
+        key="civsfz_background_color_sd35",
         info=shared.OptionInfo(
             "#0f8645",
             label="Background color for SD3.5 models",
@@ -146,7 +146,7 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key="civsfz_sdxl_background_color",
+        key="civsfz_background_color_sdxl",
         info=shared.OptionInfo(
             "#d54b44",
             label="Background color for SDXL models",
@@ -155,7 +155,7 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key="civsfz_pony_background_color",
+        key="civsfz_background_color_pony",
         info=shared.OptionInfo(
             "#ce274b",
             label="Background color for PONY models",
@@ -164,7 +164,7 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key="civsfz_Illustrious_background_color",
+        key="civsfz_background_color_illustrious",
         info=shared.OptionInfo(
             "#c60a1c",
             label="Background color for Illustrious models",
@@ -173,7 +173,7 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key="civsfz_flux1_background_color",
+        key="civsfz_background_color_flux1",
         info=shared.OptionInfo(
             "#ce27bd",
             label="Background color for Flux.1 models",
@@ -182,7 +182,7 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key="civsfz_default_shadow_color",
+        key="civsfz_shadow_color_default",
         info=shared.OptionInfo(
             "#798a9f",
             label="Frame color for cards",
@@ -191,22 +191,22 @@ def on_ui_settings():
         ),
     )
     shared.opts.add_option(
-        key='civsfz_alreadyhave_shadow_color',
+        key="civsfz_shadow_color_alreadyhave",
         info=shared.OptionInfo(
-            '#7fffd4' ,
-            label='Frame color for cards you already have',
+            "#7fffd4",
+            label="Frame color for cards you already have",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
     )
     shared.opts.add_option(
-        key='civsfz_alreadyhad_shadow_color',
+        key="civsfz_shadow_color_alreadyhad",
         info=shared.OptionInfo(
-            '#caff7f',
-            label='Frame color for cards with updates',
+            "#caff7f",
+            label="Frame color for cards with updates",
             component=gr.ColorPicker,
             section=section,
-        )
+        ),
     )
     shared.opts.add_option(
         key="civsfz_save_type_folders",

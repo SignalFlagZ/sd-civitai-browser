@@ -1,22 +1,22 @@
 
 .civsfz-custom-property {
-	--civsfz-figcaption-background-color: rgba(121, 138, 160, 0.85);
-	--civsfz-default-shadow-color: #798a9f;
-	--civsfz-alreadyhave-shadow-color:  #7fffd4;
-	--civsfz-alreadyhad-shadow-color: #caff7f;
+	--civsfz-background-color-figcaption: rgba(121, 138, 160, 0.85);
+	--civsfz-shadow-color-default: #798a9f;
+	--civsfz-shadow-color-alreadyhave:  #7fffd4;
+	--civsfz-shadow-color-alreadyhad: #caff7f;
 	--civsfz-hover-scale: 1.5;
 	--civsfz-card-width: 8;
 	--civsfz-card-height: 12;
 	--civsfz-card-size-unit: 1em;
-	--civsfz-sd1-background-color: #87ba39d9;
-	--civsfz-sd2-background-color: #54c696d9;
-	--civsfz-sd3-background-color: #215639d9;
-	--civsfz-sd35-background-color: #0f8645d9;
-	--civsfz-sdxl-background-color: #d54b44d9;
-	--civsfz-pony-background-color: #ce274bd9;
-	--civsfz-Illustrious-background-color: #c60a1cd9;
-	--civsfz-flux1-background-color: #ce27bdd9;
-	--civsfz-early-access-in-background-color: rgba(39, 52, 201, 0.8);
+	--civsfz-background-color-sd1: #87ba39d9;
+	--civsfz-background-color-sd2: #54c696d9;
+	--civsfz-background-color-sd3: #215639d9;
+	--civsfz-background-color-sd35: #0f8645d9;
+	--civsfz-background-color-sdxl: #d54b44d9;
+	--civsfz-background-color-pony: #ce274bd9;
+	--civsfz-background-color-illustrious: #c60a1cd9;
+	--civsfz-background-color-flux1: #ce27bdd9;
+	--civsfz-background-color-early-access-in: rgba(39, 52, 201, 0.8);
 }
 
 .civsfz-modellist {
@@ -41,23 +41,23 @@
 	overflow: visible;
 	/* need for z-index */
 	z-index: var(--layer-5);
-	box-shadow: 0 0 4px 6px var(--civsfz-default-shadow-color);
+	box-shadow: 0 0 4px 6px var(--civsfz-shadow-color-default);
 }
 
 .civsfz-modelcardalreadyhave {
-	box-shadow: 0 0 1px 4px var(--civsfz-alreadyhave-shadow-color);
+	box-shadow: 0 0 1px 4px var(--civsfz-shadow-color-alreadyhave);
 }
 .civsfz-modelcardalreadyhave:hover {
-	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhave-shadow-color);
+	box-shadow: 0 0 4px 6px var(--civsfz-shadow-color-alreadyhave);
 }
 .civsfz-modelcardalreadyhad {
-	box-shadow: 0 0 1px 4px var(--civsfz-alreadyhad-shadow-color);
+	box-shadow: 0 0 1px 4px var(--civsfz-shadow-color-alreadyhad);
 }
 .civsfz-modelcardalreadyhad:hover {
-	box-shadow: 0 0 4px 6px var(--civsfz-alreadyhad-shadow-color);
+	box-shadow: 0 0 4px 6px var(--civsfz-shadow-color-alreadyhad);
 }
 
-
+/*
 .civsfz-bgcolor-base {
 	background-color: var(--civsfz-figcaption-background-color);
 }
@@ -80,11 +80,12 @@
 	background-color: var(--civsfz-pony-background-color);
 }
 .civsfz-bgcolor-Illustrious {
-	background-color: var(--civsfz-Illustrious-background-color);
+	background-color: var(--civsfz-illustrious-background-color);
 }
 .civsfz-bgcolor-Flux1 {
 	background-color: var(--civsfz-flux1-background-color);
 }
+*/
 .civsfz-modelcard img {
 	/*filter: blur(6px);*/
 	width:  calc(var(--civsfz-card-width) * var(--civsfz-card-size-unit));
@@ -105,7 +106,7 @@
 	left: 5px;
 	right: 5px;
 	word-break: break-word;
-	background-color: var(--civsfz-figcaption-background-color);
+	background-color: var(--civsfz-background-color-figcaption);
 	/*transition: bottom .3s ease-out;*/
 	max-height: 60%;
 }
@@ -131,7 +132,7 @@
  	left: 0px;
  	word-break: break-word;
  	font-size: smaller;
-	background-color: var(--civsfz-figcaption-background-color);
+	background-color: var(--civsfz-background-color-figcaption);
  }
 .civsfz-modelcard:hover .civsfz-modeltype {
 	top: -1.5em;
@@ -154,7 +155,7 @@
 	right: 0em;
 	word-break: break-word;
 	font-size: smaller;
-	background-color: var(--civsfz-early-access-in-background-color);
+	background-color: var(--civsfz-background-color-early-access-in);
 }
 .civsfz-modelcard:hover .civsfz-early-access-in {
 	top: -1.5em;

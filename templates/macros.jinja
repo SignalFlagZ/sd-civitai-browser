@@ -1,5 +1,6 @@
 
 {% macro bgClass(basemodel) %}
+{# Deprecated #}
 {# Return: Class name for base model #}
 {# Use trim filter for returned value #}
 	{% set dict_modelclass = {
@@ -16,6 +17,28 @@
 	{% for key, val in dict_modelclass.items() %}
 		{% if loop.last or key in basemodel %}			
 			{{ val }}
+			{% break %} {# Using break requires Loop Control extension #}
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+{% macro bgColor(basemodel) %}
+{# Return: Color for base model #}
+{# Use trim filter for returned value #}
+	{% set dict_modelclass = {
+		"SD 1":			"--civsfz-background-color-sd1",
+		"SD 2":			"--civsfz-background-color-sd2",
+		"SD 3":			"--civsfz-background-color-sd3",
+		"SD 3.":		"--civsfz-background-color-sd35",
+		"SDXL":			"--civsfz-background-color-sdxl",
+		"Pony":			"--civsfz-background-color-pony",
+		"Illustrious":	"--civsfz-background-color-illustrious",
+		"Flux.1":		"--civsfz-background-color-flux1",
+		"BASE":			"--civsfz-background-color-figcaption",
+	} %}
+	{% for key, val in dict_modelclass.items() %}
+		{% if loop.last or key in basemodel %}
+			var({{ val }})
 			{% break %} {# Using break requires Loop Control extension #}
 		{% endif %}
 	{% endfor %}

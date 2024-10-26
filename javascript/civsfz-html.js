@@ -149,18 +149,18 @@ function civsfz_overwriteProperties(propertiesText) {
 	let elem = gradioApp().querySelector('.civsfz-custom-property');
 	let i=0
 	//elements.forEach((elem) => {
-	elem.style.setProperty('--civsfz-figcaption-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-sd1-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-sd2-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-sd3-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-sd35-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-sdxl-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-pony-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-Illustrious-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-flux1-background-color', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-default-shadow-color', p[i++] + 'f0');
-	elem.style.setProperty('--civsfz-alreadyhave-shadow-color', p[i++] + 'f0');
-	elem.style.setProperty('--civsfz-alreadyhad-shadow-color', p[i++] + 'f0');
+	elem.style.setProperty('--civsfz-background-color-figcaption', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-sd1', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-sd2', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-sd3', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-sd35', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-sdxl', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-pony', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-illustrious', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-flux1', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-shadow-color-default', p[i++] + 'f0');
+	elem.style.setProperty('--civsfz-shadow-color-alreadyhave', p[i++] + 'f0');
+	elem.style.setProperty('--civsfz-shadow-color-alreadyhad', p[i++] + 'f0');
 	elem.style.setProperty('--civsfz-hover-scale', p[i++]);
 	elem.style.setProperty('--civsfz-card-width', p[i++]);
 	elem.style.setProperty('--civsfz-card-height', p[i++]);

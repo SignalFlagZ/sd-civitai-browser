@@ -281,18 +281,18 @@ class Components():
             def updatePropertiesText():
                 propertiesText = ";".join(
                     [
-                        str(opts.civsfz_figcaption_background_color),
-                        str(opts.civsfz_sd1_background_color),
-                        str(opts.civsfz_sd2_background_color),
-                        str(opts.civsfz_sd3_background_color),
-                        str(opts.civsfz_sd35_background_color),
-                        str(opts.civsfz_sdxl_background_color),
-                        str(opts.civsfz_pony_background_color),
-                        str(opts.civsfz_Illustrious_background_color),
-                        str(opts.civsfz_flux1_background_color),
-                        str(opts.civsfz_default_shadow_color),
-                        str(opts.civsfz_alreadyhave_shadow_color),
-                        str(opts.civsfz_alreadyhad_shadow_color),
+                        str(opts.civsfz_background_color_figcaption),
+                        str(opts.civsfz_background_color_sd1),
+                        str(opts.civsfz_background_color_sd2),
+                        str(opts.civsfz_background_color_sd3),
+                        str(opts.civsfz_background_color_sd35),
+                        str(opts.civsfz_background_color_sdxl),
+                        str(opts.civsfz_background_color_pony),
+                        str(opts.civsfz_background_color_illustrious),
+                        str(opts.civsfz_background_color_flux1),
+                        str(opts.civsfz_shadow_color_default),
+                        str(opts.civsfz_shadow_color_alreadyhave),
+                        str(opts.civsfz_shadow_color_alreadyhad),
                         str(opts.civsfz_hover_zoom_magnification),
                         str(opts.civsfz_card_size_width),
                         str(opts.civsfz_card_size_height),
@@ -802,7 +802,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.3.0'
+    ver = 'v2.3.1'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):

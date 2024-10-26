@@ -216,7 +216,7 @@ def on_ui_settings():
             component=gr.Textbox,
             component_args={
                 "lines": 4,
-                "info": 'Example: { "LoCon": "../Lora/_LyCORIS" }',
+                "info": 'Example for Stability Matrix: {"Checkpoint":"Stable-diffusion/sd"}',
                 "placeholder": '{\n\
     "Checkpoint": "MY_SUBFOLDER",\n\
     "VAE": "",\n\

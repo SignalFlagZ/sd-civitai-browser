@@ -149,15 +149,15 @@ function civsfz_overwriteProperties(propertiesText) {
 	let elem = gradioApp().querySelector('.civsfz-custom-property');
 	let i=0
 	//elements.forEach((elem) => {
-	elem.style.setProperty('--civsfz-background-color-figcaption', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-sd1', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-sd2', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-sd3', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-sd35', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-sdxl', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-pony', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-illustrious', p[i++] + 'd9');
-	elem.style.setProperty('--civsfz-background-color-flux1', p[i++] + 'd9');
+	elem.style.setProperty('--civsfz-background-color-figcaption', p[i++]);
+	elem.style.setProperty('--civsfz-background-color-sd1', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-sd2', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-sd3', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-sd35', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-sdxl', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-pony', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-illustrious', p[i++] + 'd8');
+	elem.style.setProperty('--civsfz-background-color-flux1', p[i++] + 'd8');
 	elem.style.setProperty('--civsfz-shadow-color-default', p[i++] + 'f0');
 	elem.style.setProperty('--civsfz-shadow-color-alreadyhave', p[i++] + 'f0');
 	elem.style.setProperty('--civsfz-shadow-color-alreadyhad', p[i++] + 'f0');

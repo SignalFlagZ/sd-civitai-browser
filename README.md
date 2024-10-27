@@ -30,6 +30,8 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.3
+- Updated to easily add new model background colors
+  - The default color has been changed
 - Refactor the base model background color logic
   - Changed variable names in Settings
   - If you have changed the background color, you will need to reconfigure it

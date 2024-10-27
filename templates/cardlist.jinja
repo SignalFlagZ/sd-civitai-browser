@@ -22,7 +22,7 @@
 		{%- endif %}
 		<figcaption>{{ card['name'] }}</figcaption>
 		<div class="civsfz-modeltype">{{ card['type'] }}</div>
-		<div class="civsfz-basemodel" style="background-color:{{ bgColor(card['baseModel'])|trim }};">{{ card['baseModel'] }}</div>
+		<div class="civsfz-basemodel" style="background-color:{{ bgColor(card['baseModel'],dict_modelprop)|trim }};">{{ card['baseModel'] }}</div>
 		{%- if card['ea'] == 'in' %}
 			<div class="civsfz-early-access-in">EA</div>
 		{%- elif card['ea'] == 'out' %}

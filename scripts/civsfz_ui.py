@@ -8,6 +8,8 @@ from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from colorama import Fore, Back, Style
 from modules.shared import opts
+from scripts.civsfz_color import BaseModelColors
+
 try:
     # SD web UI >= v1.6.0-RC
     from modules.shared_cmd_options import cmd_opts
@@ -279,9 +281,10 @@ class Components():
                             )
 
             def updatePropertiesText():
+                opacity = f"{int(opts.civsfz_background_opacity*255):02x}"
                 propertiesText = ";".join(
                     [
-                        str(opts.civsfz_background_color_figcaption),
+                        str(opts.civsfz_background_color_figcaption) + opacity,
                         str(opts.civsfz_background_color_sd1),
                         str(opts.civsfz_background_color_sd2),
                         str(opts.civsfz_background_color_sd3),
@@ -298,6 +301,7 @@ class Components():
                         str(opts.civsfz_card_size_height),
                     ]
                 )
+                BaseModelColors().updateColor()
                 return gr.Textbox.update(value=propertiesText)
 
             # https://github.com/SignalFlagZ/sd-webui-civbrowser/issues/59
@@ -802,7 +806,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.3.1'
+    ver = 'v2.3.2'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -812,6 +816,8 @@ def on_ui_tabs():
             gr.Markdown(
                 value=(
                     "# Recent changes"
+                    "\n"
+                    "- The default color has been changed due to code corrections related to background color settings."
                     "\n"
                     "- Change the layout of save buttons to reduce mouse movement"
                     "\n"

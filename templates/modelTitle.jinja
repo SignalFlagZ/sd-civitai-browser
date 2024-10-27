@@ -1,10 +1,9 @@
 {%- from 'macros.jinja' import bgColor %}
 <div  style="font-size:x-large;">
-	<div
-		style="float:left;padding: 0.1em 0.5em;background-color:{{ bgColor(baseModel)|trim }};border: 2px solid {{ bgColor(baseModel)|trim }};">
+	<div style="float:left;padding: 0.1em 0.5em;background-color:{{ bgColor(baseModel,dict_modelprop)|trim }};border: 2px solid {{ bgColor(baseModel,dict_modelprop)|trim }};">
 		{{ baseModel|e }}
 	</div>
-	<div style="float:left;padding: 0.1em 0.5em;background-color:rgb(from {{ bgColor(baseModel)|trim }} r g b / 0.5 );border: 2px solid {{ bgColor(baseModel)|trim }};">
+	<div style="float:left;padding: 0.1em 0.5em;background-color:hsl(from {{ bgColor(baseModel,dict_modelprop)|trim }} h s calc(l/2) );border: 2px solid {{ bgColor(baseModel,dict_modelprop)|trim }};">
 		{{ modelName|e }}
 	</div>
 </div>

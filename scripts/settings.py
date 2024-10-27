@@ -1,6 +1,7 @@
 import gradio as gr
 from modules import script_callbacks
 from modules import shared
+from scripts.civsfz_color import BaseModelColors
 
 from scripts.civsfz_api import APIInformation
 
@@ -100,87 +101,28 @@ def on_ui_settings():
             section=section,
         )
     )
+
     shared.opts.add_option(
-        key="civsfz_background_color_figcaption",
+        key="civsfz_background_opacity",
         info=shared.OptionInfo(
-            "#798a9f",
-            label="Background color for model names",
-            component=gr.ColorPicker,
+            0.75,
+            label="Background opacity for model names",
+            component=gr.Slider,
+            component_args={"minimum": 0.0, "maximum": 1.0, "step": 0.05},
             section=section,
         ),
     )
-    shared.opts.add_option(
-        key="civsfz_background_color_sd1",
-        info=shared.OptionInfo(
-            "#87ba39",
-            label="Background color for SD1 models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_sd2",
-        info=shared.OptionInfo(
-            "#54c696",
-            label="Background color for SD2 models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_sd3",
-        info=shared.OptionInfo(
-            "#215639",
-            label="Background color for SD3 models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_sd35",
-        info=shared.OptionInfo(
-            "#0f8645",
-            label="Background color for SD3.5 models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_sdxl",
-        info=shared.OptionInfo(
-            "#d54b44",
-            label="Background color for SDXL models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_pony",
-        info=shared.OptionInfo(
-            "#ce274b",
-            label="Background color for PONY models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_illustrious",
-        info=shared.OptionInfo(
-            "#c60a1c",
-            label="Background color for Illustrious models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
-    shared.opts.add_option(
-        key="civsfz_background_color_flux1",
-        info=shared.OptionInfo(
-            "#ce27bd",
-            label="Background color for Flux.1 models",
-            component=gr.ColorPicker,
-            section=section,
-        ),
-    )
+    for item in BaseModelColors().colors:
+        shared.opts.add_option(
+            key=item["key"],
+            info=shared.OptionInfo(
+                item['color'],
+                label=item["label"],
+                component=gr.ColorPicker,
+                section=section,
+            ),
+        )
+
     shared.opts.add_option(
         key="civsfz_shadow_color_default",
         info=shared.OptionInfo(

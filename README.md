@@ -30,6 +30,8 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.3
+- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings.
+- Refactoring Settings
 - Updated to easily add new model background colors
   - The default color has been changed
 - Refactor the base model background color logic

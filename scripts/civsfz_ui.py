@@ -53,7 +53,11 @@ class Components():
         self.APIKey = ""
         if cmd_opts.civsfz_api_key:
             self.APIKey = cmd_opts.civsfz_api_key[0:32]
-            # print(f"{self.APIKey=}")
+            print_ly(
+                "Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
+            )
+        if opts.civsfz_api_key:
+            self.APIKey = opts.civsfz_api_key[0:32]
         def defaultContentType():
             value = contentTypes[self.id % len(contentTypes)]
             return value
@@ -120,7 +124,6 @@ class Components():
                         elem_id=f"civsfz_modellist{self.id}",
                         value=None,
                         visible=True,
-                        container=False,
                     )
                     grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
                     txt_list = ""
@@ -162,7 +165,12 @@ class Components():
                     grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
                     grTxtEarlyAccess = gr.Textbox(label='Early Access', interactive=False, value=None, visible=False)
                     grTxtHash = gr.Textbox(label="File hash", interactive=False, value="", visible=False)
-                    grTxtApiKey = gr.Textbox(label='API Key', value=cmdoptsAPIKey, type="password", lines=1)
+                    grTxtApiKey = gr.Textbox(
+                        label="API Key",
+                        value=lambda: self.APIKey,
+                        type="password",
+                        lines=1,
+                    )
                 with gr.Row():
                     grHtmlModelInfo = gr.HTML(elem_id=f"civsfz_model-info{self.id}")
 
@@ -806,7 +814,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.3.2'
+    ver = 'v2.3.3'
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):
@@ -816,6 +824,8 @@ def on_ui_tabs():
             gr.Markdown(
                 value=(
                     "# Recent changes"
+                    "\n"
+                    "- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
                     "\n"
                     "- The default color has been changed due to code corrections related to background color settings."
                     "\n"

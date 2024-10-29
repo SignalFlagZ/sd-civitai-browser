@@ -149,7 +149,8 @@ def on_ui_settings():
                 "Other": "OtherModels/Other"\n\
                 }'
     try:
-        # for gr.Code
+        from modules_forge import forge_version
+        # for Forge
         shared.opts.add_option(
             civsfz_option_editor_key,
             shared.OptionInfo(
@@ -165,7 +166,7 @@ def on_ui_settings():
                 section=civsfz_section,
             ),
         )
-    except AttributeError:
+    except ImportError:
         shared.opts.add_option(
             civsfz_option_editor_key,
             shared.OptionInfo(

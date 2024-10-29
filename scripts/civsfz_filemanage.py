@@ -14,7 +14,14 @@ from modules import shared, sd_models
 from colorama import Fore, Back, Style
 from requests.exceptions import ConnectionError
 from tqdm import tqdm
-from scripts.civsfz_shared import opts, cmd_opts
+try:
+    # SD web UI >= v1.6.0-RC
+    from modules.shared_cmd_options import cmd_opts
+except ImportError:
+    # SD web UI < v1.6.0-RC
+    # SD.Next
+    from modules.shared import cmd_opts
+from modules.shared import opts
 from modules.paths import models_path
 from modules.hashes import calculate_sha256
 try:

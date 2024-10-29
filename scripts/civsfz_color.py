@@ -1,5 +1,6 @@
 import colorsys
-from scripts.civsfz_shared import opts
+from modules.shared import opts
+from scripts.civsfz_shared import VERSION
 
 def hex_color_hsl_to_rgb(h,s,l):
     # param order h,s,l not h,l,s
@@ -94,11 +95,7 @@ class BaseModelColors():
         ret={}
         for d in self.colors:
             ret[d["name"]]=d["property"]
-        # reverse order for sd3.
+        # reverse order for sd3.5
         return dict(reversed(list(ret.items())))
-
-    def updateColor(self):
-        for d in self.colors:
-            d["color"] = opts.data[d["key"]]
 
 # print(f"{BaseModelColors().name_property_dict()}")

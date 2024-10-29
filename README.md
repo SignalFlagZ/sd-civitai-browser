@@ -30,6 +30,7 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.3
+- Works on SD.Next (Hard to maintain)
 - Command line option `--civsfz_api_key` is deprecated. Instead, use Settings.
 - Refactoring Settings
 - Updated to easily add new model background colors

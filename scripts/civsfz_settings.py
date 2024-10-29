@@ -2,22 +2,36 @@ import gradio as gr
 from modules import script_callbacks
 from modules import shared
 from scripts.civsfz_color import BaseModelColors
-
 from scripts.civsfz_api import APIInformation
 
+
+
 def on_ui_settings():
+    platform = "A1111"
+    try:
+        from modules_forge import forge_version
+    except ImportError:
+        from modules.cmd_args import parser
+        if parser.description:
+            platform = "SD.Next"
+        pass
+    else:
+        platform = "Forge"
+    
     civsfz_section = 'Civsfz_Browser', 'CivBrowser'
 
     # OptionInfo params
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
     # SD.Next dose not have OptionHTML
     civsfz_options1 = {
-        "civsfz_msg1": shared.OptionHTML(
-            "The command line option `--civsfz-api-key` is deprecated. "
-            "We felt that this was a risk because some users might not notice the API Key being displayed on the console."
-            "The API key here is saved in the `settings.json` file. "
-            "If you do not know this, there is a risk of your API key being leaked."
-        ),
+            "civsfz_msg1": shared.OptionHTML(
+                "The command line option `--civsfz-api-key` is deprecated. "
+                "We felt that this was a risk because some users might not notice the API Key being displayed on the console."
+                "The API key here is saved in the `settings.json` file. "
+                "If you do not know this, there is a risk of your API key being leaked."
+            ),
+        } if not platform == "SD.Next" else {}
+    civsfz_options2 = {
         "civsfz_api_key": shared.OptionInfo(
             "",
             label="API Key",
@@ -100,7 +114,7 @@ def on_ui_settings():
                 component=gr.ColorPicker,
             )
 
-    civsfz_options2 = {
+    civsfz_options3 = {
         "civsfz_shadow_color_default": shared.OptionInfo(
             "#798a9f",
             label="Frame color for cards",
@@ -116,15 +130,20 @@ def on_ui_settings():
             label="Frame color for cards with updates",
             component=gr.ColorPicker,
         ),
-        "civsfz_msg2": shared.OptionHTML(
-            "Click <a href='https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki'>here(Wiki|GitHub)</a> to learn how to specify the model folder and subfolders."
-        ),
     }
+    civsfz_options4 = {
+            "civsfz_msg2": shared.OptionHTML(
+                "Click <a href='https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki'>here(Wiki|GitHub)</a> to learn how to specify the model folder and subfolders."
+            ),
+        } if not platform == "SD.Next" else {}
 
+    emptyDict = {}
     for key, opt in {
         **civsfz_options1,
-        **civsfz_modelColor_options,
         **civsfz_options2,
+        **civsfz_modelColor_options,
+        **civsfz_options3,
+        **civsfz_options4,
     }.items():
         opt.section = civsfz_section
         shared.opts.add_option(key, opt)

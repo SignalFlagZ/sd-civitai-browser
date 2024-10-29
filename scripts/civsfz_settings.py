@@ -10,13 +10,13 @@ def on_ui_settings():
 
     # OptionInfo params
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
+    # SD.Next dose not have OptionHTML
     civsfz_options1 = {
         "civsfz_msg1": shared.OptionHTML(
             "The command line option `--civsfz-api-key` is deprecated. "
-            "We felt that this was dangerous because some users might not notice the API Key being displayed on the console."
-            "The settings here are saved in the `settings.json` file. "
-            "If you do not know this, there is a risk of your API key being leaked. "
-            "Please remember this."
+            "We felt that this was a risk because some users might not notice the API Key being displayed on the console."
+            "The API key here is saved in the `settings.json` file. "
+            "If you do not know this, there is a risk of your API key being leaked."
         ),
         "civsfz_api_key": shared.OptionInfo(
             "",
@@ -148,9 +148,9 @@ def on_ui_settings():
                 "Workflows": "OtherModels/Workflows",\n\
                 "Other": "OtherModels/Other"\n\
                 }'
-    try:
-        from modules_forge import forge_version
-        # for Forge
+
+    from scripts.civsfz_shared import platform
+    if platform == "Forge":
         shared.opts.add_option(
             civsfz_option_editor_key,
             shared.OptionInfo(
@@ -166,7 +166,7 @@ def on_ui_settings():
                 section=civsfz_section,
             ),
         )
-    except ImportError:
+    else:
         shared.opts.add_option(
             civsfz_option_editor_key,
             shared.OptionInfo(

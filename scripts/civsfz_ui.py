@@ -7,23 +7,10 @@ from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from colorama import Fore, Back, Style
-from modules.shared import opts
+# from modules.shared import opts
 from scripts.civsfz_color import BaseModelColors
+from scripts.civsfz_shared import VERSION, cmd_opts, opts
 
-try:
-    # SD web UI >= v1.6.0-RC
-    from modules.shared_cmd_options import cmd_opts
-except ImportError:
-    # SD web UI < v1.6.0-RC
-    # SD.Next
-    from modules.shared import cmd_opts
-try:
-    from modules_forge import forge_version
-except ImportError:
-    # not forge
-    FORGE = False
-else:
-    FORGE = True
 import scripts as scripts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import open_folder, SearchHistory, ConditionsHistory
@@ -814,7 +801,7 @@ class Components():
         return self.components
 
 def on_ui_tabs():
-    ver = 'v2.3.3'
+    ver = VERSION
     tabNames = []
     downloader = Downloader()
     for i in range(1, opts.civsfz_number_of_tabs + 1):

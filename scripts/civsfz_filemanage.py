@@ -14,7 +14,7 @@ from modules import shared, sd_models
 from colorama import Fore, Back, Style
 from requests.exceptions import ConnectionError
 from tqdm import tqdm
-from modules.shared import opts, cmd_opts
+from scripts.civsfz_shared import opts, cmd_opts
 from modules.paths import models_path
 from modules.hashes import calculate_sha256
 try:
@@ -46,8 +46,8 @@ def cut_name(s:str):
         s = s[:-1]
         l = name_len(s)
     return s
-    
-    
+
+
 def escaped_filename(model_name):
     escapechars = str.maketrans({   " ": r"_",
                                     "(": r"",
@@ -72,7 +72,6 @@ def escaped_filename(model_name):
     new_name = cut_name(new_name)
     return new_name
 
-    
 
 def type_path(type: str) -> Path:
     global pre_opt_folder, ckpt_dir

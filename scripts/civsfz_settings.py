@@ -5,21 +5,10 @@ from scripts.civsfz_color import BaseModelColors
 from scripts.civsfz_api import APIInformation
 
 
-
 def on_ui_settings():
-    platform = "A1111"
-    try:
-        from modules_forge import forge_version
-    except ImportError:
-        from modules.cmd_args import parser
-        if parser.description:
-            platform = "SD.Next"
-        pass
-    else:
-        platform = "Forge"
-    
-    civsfz_section = 'Civsfz_Browser', 'CivBrowser'
+    from scripts.civsfz_shared import platform
 
+    civsfz_section = 'Civsfz_Browser', 'CivBrowser'
     # OptionInfo params
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
     # SD.Next dose not have OptionHTML

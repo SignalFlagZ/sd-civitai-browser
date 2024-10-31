@@ -11,15 +11,12 @@ from pathlib import Path
 from threading import Thread, local
 from time import sleep
 from tqdm import tqdm
-try:
-    from modules_forge import forge_version
-except ImportError:
-    # not forge
-    FORGE = False
-    from modules.hashes import calculate_sha256
-else:
-    FORGE = True
+from scripts.civsfz_shared import platform
+
+if platform == "Forge":
     from modules.hashes import calculate_sha256_real as calculate_sha256
+else:
+    from modules.hashes import calculate_sha256
 
 from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder, open_folder
 

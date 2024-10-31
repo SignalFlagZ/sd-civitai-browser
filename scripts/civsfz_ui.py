@@ -9,16 +9,7 @@ from modules import script_callbacks
 from colorama import Fore, Back, Style
 # from modules.shared import opts
 from scripts.civsfz_color import BaseModelColors
-from scripts.civsfz_shared import VERSION
-try:
-    # SD web UI >= v1.6.0-RC
-    from modules.shared_cmd_options import cmd_opts
-except ImportError:
-    # SD web UI < v1.6.0-RC
-    # SD.Next
-    from modules.shared import cmd_opts
-from modules.shared import opts
-import scripts as scripts
+from scripts.civsfz_shared import VERSION, cmd_opts, opts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import open_folder, SearchHistory, ConditionsHistory
 from scripts.civsfz_downloader import Downloader

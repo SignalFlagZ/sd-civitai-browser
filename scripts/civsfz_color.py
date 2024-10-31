@@ -1,6 +1,5 @@
 import colorsys
-from modules.shared import opts
-from scripts.civsfz_shared import VERSION
+from scripts.civsfz_shared import VERSION, opts
 
 def hex_color_hsl_to_rgb(h,s,l):
     # param order h,s,l not h,l,s

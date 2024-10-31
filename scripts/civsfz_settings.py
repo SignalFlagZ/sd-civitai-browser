@@ -13,7 +13,7 @@ def on_ui_settings():
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
     # SD.Next dose not have OptionHTML
     civsfz_options1 = {
-            "civsfz_msg1": shared.OptionHTML(
+            "civsfz_msg_html1": shared.OptionHTML(
                 "The command line option `--civsfz-api-key` is deprecated. "
                 "We felt that this was a risk because some users might not notice the API Key being displayed on the console."
                 "The API key here is saved in the `settings.json` file. "
@@ -121,7 +121,7 @@ def on_ui_settings():
         ),
     }
     civsfz_options4 = {
-            "civsfz_msg2": shared.OptionHTML(
+            "civsfz_msg_html2": shared.OptionHTML(
                 "Click <a href='https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki'>here(Wiki|GitHub)</a> to learn how to specify the model folder and subfolders."
             ),
         } if not platform == "SD.Next" else {}

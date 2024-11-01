@@ -79,12 +79,6 @@ def on_ui_settings():
             label=r'Treat "/" as folder separator. If you change this, some models may not be able to confirm the existence of the file.',
             component=gr.Checkbox,
         ),
-        "civsfz_background_opacity": shared.OptionInfo(
-            0.75,
-            label="Background opacity for model names",
-            component=gr.Slider,
-            component_args={"minimum": 0.0, "maximum": 1.0, "step": 0.05},
-        ),
         "civsfz_length_of_conditions_history": shared.OptionInfo(
             5,
             label="Length of conditions history",
@@ -96,6 +90,15 @@ def on_ui_settings():
             label="Length of search term history",
             component=gr.Slider,
             component_args={"minimum": 5, "maximum": 15, "step": 1},
+        ),
+    }
+
+    dict_background_opacity = {
+        "civsfz_background_opacity": shared.OptionInfo(
+            0.75,
+            label="Background opacity for model names",
+            component=gr.Slider,
+            component_args={"minimum": 0.0, "maximum": 1.0, "step": 0.05},
         ),
     }
 
@@ -188,6 +191,7 @@ def on_ui_settings():
     for key, opt in {
         **dict_api_info,
         **dict_options1,
+        **dict_background_opacity,
         **dict_modelColor,
         **dict_shadow_color,
         **dict_folder_info,

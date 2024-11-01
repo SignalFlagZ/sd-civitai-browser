@@ -30,6 +30,7 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 
 ## Versions
 ### v2.3
+- Add setting whether to delete file with different hash value
 - Works on SD.Next (Hard to maintain)
 - Command line option `--civsfz_api_key` is deprecated. Instead, use Settings.
 - Refactoring Settings

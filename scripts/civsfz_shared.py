@@ -1,4 +1,4 @@
-VERSION = "v2.3.5"
+VERSION = "v2.3.6"
 
 platform = "A1111"
 try:

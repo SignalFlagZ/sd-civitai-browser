@@ -79,6 +79,11 @@ def on_ui_settings():
             label=r'Treat "/" as folder separator. If you change this, some models may not be able to confirm the existence of the file.',
             component=gr.Checkbox,
         ),
+        "civsfz_discard_different_hash": shared.OptionInfo(
+            True,
+            label="Discard downloaded model file if the hash value differs",
+            component=gr.Checkbox,
+        ),
         "civsfz_length_of_conditions_history": shared.OptionInfo(
             5,
             label="Length of conditions history",

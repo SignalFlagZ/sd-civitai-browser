@@ -11,7 +11,7 @@ from pathlib import Path
 from threading import Thread, local
 from time import sleep
 from tqdm import tqdm
-from scripts.civsfz_shared import calculate_sha256
+from scripts.civsfz_shared import calculate_sha256, opts
 
 from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder, open_folder
 
@@ -289,7 +289,10 @@ class Downloader:
                             print_lc(f'Model file hash : {hash}')
                             print_ly(f"Hash mismatch. {file_name_display}")
                             # gr.Warning(f"Hash mismatch: {file_name_display}")
-                            removeFile(file_name)
+                            if opts.civsfz_discard_different_hash:
+                                removeFile(file_name)
+                            else:
+                                print_ly("Not trashed due to your setting.")
                             result = "Hash mismatch"
                     else:
                         print_n(f"Save: {file_name_display}")

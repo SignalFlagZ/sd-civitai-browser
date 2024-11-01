@@ -1,8 +1,6 @@
-import os
 import re
 import datetime
 from dateutil import tz
-from html import escape
 import json
 import urllib.parse
 from pathlib import Path

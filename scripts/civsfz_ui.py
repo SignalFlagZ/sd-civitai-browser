@@ -7,8 +7,6 @@ from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from colorama import Fore, Back, Style
-# from modules.shared import opts
-from scripts.civsfz_color import BaseModelColors
 from scripts.civsfz_shared import VERSION, cmd_opts, opts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import open_folder, SearchHistory, ConditionsHistory

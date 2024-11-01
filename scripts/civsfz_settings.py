@@ -12,15 +12,19 @@ def on_ui_settings():
     # OptionInfo params
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
     # SD.Next dose not have OptionHTML
-    civsfz_options1 = {
+    dict_api_info = (
+        {
             "civsfz_msg_html1": shared.OptionHTML(
                 "The command line option `--civsfz-api-key` is deprecated. "
                 "We felt that this was a risk because some users might not notice the API Key being displayed on the console."
                 "The API key here is saved in the `settings.json` file. "
                 "If you do not know this, there is a risk of your API key being leaked."
             ),
-        } if not platform == "SD.Next" else {}
-    civsfz_options2 = {
+        }
+        if not platform == "SD.Next"
+        else {}
+    )
+    dict_options1 = {
         "civsfz_api_key": shared.OptionInfo(
             "",
             label="API Key",
@@ -95,15 +99,15 @@ def on_ui_settings():
         ),
     }
 
-    civsfz_modelColor_options = {}
+    dict_modelColor = {}
     for item in BaseModelColors().colors:
-        civsfz_modelColor_options[item["key"]]=shared.OptionInfo(
-                item["color"],
-                label=item["label"],
-                component=gr.ColorPicker,
-            )
+        dict_modelColor[item["key"]] = shared.OptionInfo(
+            item["color"],
+            label=item["label"],
+            component=gr.ColorPicker,
+        )
 
-    civsfz_options3 = {
+    dict_shadow_color = {
         "civsfz_shadow_color_default": shared.OptionInfo(
             "#798a9f",
             label="Frame color for cards",
@@ -120,27 +124,15 @@ def on_ui_settings():
             component=gr.ColorPicker,
         ),
     }
-    civsfz_options4 = {
+    dict_folder_info = {
             "civsfz_msg_html2": shared.OptionHTML(
                 "Click <a href='https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki'>here(Wiki|GitHub)</a> to learn how to specify the model folder and subfolders."
             ),
         } if not platform == "SD.Next" else {}
 
-    emptyDict = {}
-    for key, opt in {
-        **civsfz_options1,
-        **civsfz_options2,
-        **civsfz_modelColor_options,
-        **civsfz_options3,
-        **civsfz_options4,
-    }.items():
-        opt.section = civsfz_section
-        shared.opts.add_option(key, opt)
-
-    civsfz_option_editor_key = "civsfz_save_type_folders"
-    civsfz_option_editor_label = 'Save folders for Types. Set JSON Key-Value pair. The folder separator is "/" not "\\". The path is relative from models folder or absolute.'
-    civsfz_option_editor_info = 'Example for Stability Matrix: {"Checkpoint":"Stable-diffusion/sd"}'
-    civsfz_option_editor_placefolder = '{\n\
+    label = 'Save folders for Types. Set JSON Key-Value pair. The folder separator is "/" not "\\". The path is relative from models folder or absolute.'
+    info = 'Example for Stability Matrix: {"Checkpoint":"Stable-diffusion/sd"}'
+    placefolder = '{\n\
                 "Checkpoint": "MY_SUBFOLDER",\n\
                 "VAE": "",\n\
                 "TextualInversion": "",\n\
@@ -157,13 +149,11 @@ def on_ui_settings():
                 "Other": "OtherModels/Other"\n\
                 }'
 
-    from scripts.civsfz_shared import platform
-    if platform == "Forge":
-        shared.opts.add_option(
-            civsfz_option_editor_key,
+    dict_folders = {
+        "civsfz_save_type_folders": (
             shared.OptionInfo(
                 "",
-                label=civsfz_option_editor_label + " " +civsfz_option_editor_info,
+                label=label + " " + info,
                 comment_after=None,
                 component=gr.Code,
                 component_args=lambda: {
@@ -171,42 +161,39 @@ def on_ui_settings():
                     "interactive": True,
                     "lines": 4,
                 },
-                section=civsfz_section,
-            ),
-        )
-    else:
-        shared.opts.add_option(
-            civsfz_option_editor_key,
-            shared.OptionInfo(
+            )
+            if platform == "Forge"
+            else shared.OptionInfo(
                 "",
-                label=civsfz_option_editor_label,
+                label=label,
                 component=gr.Textbox,
                 component_args={
                     "lines": 4,
-                    "info": civsfz_option_editor_info,
-                    "placeholder": civsfz_option_editor_placefolder,
+                    "info": info,
+                    "placeholder": placefolder,
                 },
-                section=civsfz_section,
-            ),
-        )
-
-    civsfz_option_editor_key = "civsfz_save_subfolder"
-    civsfz_option_editor_label = 'Subfolders under type folders. Model information can be referenced by the key name enclosed in double curly brachets "{{}}". Available key names are "BASEMODELbkCmpt", "BASEMODEL", "NSFW", "USERNAME", "MODELNAME", "MODELID", "VERSIONNAME" and "VERSIONID". Folder separator is "/".'
-    civsfz_option_editor_info = ''
-    civsfz_option_editor_placefolder = "_{{BASEMODEL}}/.{{NSFW}}/{{MODELNAME}}"
-    shared.opts.add_option(
-        civsfz_option_editor_key,
-        shared.OptionInfo(
+            )
+        ),
+        "civsfz_save_subfolder": shared.OptionInfo(
             "",
-            label=civsfz_option_editor_label,
+            label='Subfolders under type folders. Model information can be referenced by the key name enclosed in double curly brachets "{{}}". Available key names are "BASEMODELbkCmpt", "BASEMODEL", "NSFW", "USERNAME", "MODELNAME", "MODELID", "VERSIONNAME" and "VERSIONID". Folder separator is "/".',
             component=gr.Textbox,
             component_args={
                 "lines": 1,
-                "info": civsfz_option_editor_info,
-                "placeholder": civsfz_option_editor_placefolder,
+                "placeholder": "_{{BASEMODEL}}/.{{NSFW}}/{{MODELNAME}}",
             },
-            section=civsfz_section,
         ),
-    )
+    }
+
+    for key, opt in {
+        **dict_api_info,
+        **dict_options1,
+        **dict_modelColor,
+        **dict_shadow_color,
+        **dict_folder_info,
+        **dict_folders,
+    }.items():
+        opt.section = civsfz_section
+        shared.opts.add_option(key, opt)
 
 script_callbacks.on_ui_settings(on_ui_settings)

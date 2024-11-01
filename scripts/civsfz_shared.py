@@ -21,3 +21,8 @@ except ImportError:
     # SD.Next
     from modules.shared import cmd_opts as cmd_opts
 from modules.shared import opts as opts
+
+if platform == "Forge":
+    from modules.hashes import calculate_sha256_real as calculate_sha256
+else:
+    from modules.hashes import calculate_sha256 as calculate_sha256

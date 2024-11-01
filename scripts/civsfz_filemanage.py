@@ -14,16 +14,8 @@ from modules import shared, sd_models
 from colorama import Fore, Back, Style
 from requests.exceptions import ConnectionError
 from tqdm import tqdm
-try:
-    # SD web UI >= v1.6.0-RC
-    from modules.shared_cmd_options import cmd_opts
-except ImportError:
-    # SD web UI < v1.6.0-RC
-    # SD.Next
-    from modules.shared import cmd_opts
-from modules.shared import opts
+from scripts.civsfz_shared import cmd_opts, opts, calculate_sha256
 from modules.paths import models_path
-from modules.hashes import calculate_sha256
 try:
     from send2trash import send2trash
     send2trash_installed = True

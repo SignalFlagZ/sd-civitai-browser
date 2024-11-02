@@ -1,6 +1,7 @@
 VERSION = "v2.3.6"
 
 platform = "A1111"
+forge_version = None
 try:
     from modules_forge import forge_version
 except ImportError:

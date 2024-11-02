@@ -3,7 +3,7 @@ import colorsys
 def hex_color_hsl_to_rgb(h,s,l):
     # param order h,s,l not h,l,s
     if h > 1.0:
-        h=max(min(h/360,1.0),0)
+        h=max(min((h%360)/360,1.0),0)
     if l > 1.0:
         l=max(min(l/100,1.0),0)
     if s > 1.0:

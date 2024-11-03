@@ -1,7 +1,6 @@
 {% macro bgColor(basemodel, dict_modelprop) %}
 {# Return: Color for base model #}
 {# Use trim filter for returned value #}
-
 	{% for key, val in dict_modelprop.items() %}
 		{% if loop.last or key in basemodel %}
 			var({{ val }})

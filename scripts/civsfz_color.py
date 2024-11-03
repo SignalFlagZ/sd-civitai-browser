@@ -1,24 +1,104 @@
 import colorsys
+from scripts.civsfz_shared import opts
 
-def hex_color_hsl_to_rgb(h,s,l):
+
+def hex_color_hsl_to_rgb(h, s, l):
     # param order h,s,l not h,l,s
     if h > 1.0:
-        h=max(min((h%360)/360,1.0),0)
+        h = max(min((h % 360) / 360, 1.0), 0)
     if l > 1.0:
-        l=max(min(l/100,1.0),0)
+        l = max(min(l / 100, 1.0), 0)
     if s > 1.0:
-        s=max(min(s/100,1.0),0)
-    (r, g, b) = colorsys.hls_to_rgb( h, l, s)
+        s = max(min(s / 100, 1.0), 0)
+    (r, g, b) = colorsys.hls_to_rgb(h, l, s)
     return f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
 
-def hex_color_hls_to_rgba(h, s, l, a=1.0):
-    # param order h,s,l not h,l,s
-    ret = hex_color_hsl_to_rgb(h, l, s)
-    if a > 1.0:
-        a = max(min(a / 100, 1.0), 0)
-    return f"{ret}{int(a*255):02x}"
 
-class BaseModelColors():
+def hex_color_hls_to_rgba(h, s, l, opacity=None):
+    # param order h,s,l not h,l,s
+    ret = hex_color_hsl_to_rgb(h, s, l)
+    if opacity is not None:
+        if opacity > 1.0:
+            opacity = max(min(opacity / 100, 1.0), 0)
+        alpha = f"{int(opacity*255):02x}"
+    else:
+        alpha = ""
+    return f"{ret}{alpha}"
+
+
+def hls_from_hex(hexrgb):
+    (r, g, b) = (int(hexrgb[1:3], 16), int(hexrgb[3:5], 16), int(hexrgb[5:7], 16))
+    (r, g, b) = (x / 255 for x in (r, g, b))
+    return colorsys.rgb_to_hls(r, g, b)
+
+
+# Initial values
+familyColor: dict = {
+    "family1": {
+        "value": ["SD 1.5", "SD 1.5 LCM", "SD 1.5 Hyper", "SD 1.4"],
+        "color": hex_color_hsl_to_rgb(100, 100, 40),
+    },
+    "family2": {
+        "value": ["SD 2.1", "SD 2.1 768", "SD 2.0", "SD 2.0 768", "SD 2.1 Unclip"],
+        "color": hex_color_hsl_to_rgb(75, 70, 45),
+    },
+    "family3": {
+        "value": [
+            "Illustrious",
+            "Pony",
+            "SDXL 1.0",
+            "SDXL 0.9",
+            "SDXL 1.0 LCM",
+            "SDXL Distilled",
+            "SDXL Turbo",
+            "SDXL Lightning",
+            "SDXL Hyper",
+        ],
+        "color": hex_color_hsl_to_rgb(15, 100, 45),
+    },
+    "family4": {
+        "value": ["SD 3.5", "SD 3"],
+        "color": hex_color_hsl_to_rgb(130, 90, 30),
+    },
+    "family5": {
+        "value": ["Flux.1 D", "Flux.1 S"],
+        "color": hex_color_hsl_to_rgb(330, 90, 45),
+    },
+    "family6": {
+        "value": [""],
+        "color": hex_color_hsl_to_rgb(60, 90, 45),
+    },
+    "non_family": {
+        "value": [""],
+        "color": hex_color_hsl_to_rgb(250, 14, 30),
+    },
+}
+
+
+def autoColorRotate(hexColor: str, num: int, i: int, hue=30, opacity=None):
+    (h, l, s) = hls_from_hex(hexColor)
+    h = h + hue/(num/5)*i//5
+    l = l * ((1 - (i % 3) / 3) * 0.4 + 0.6)
+    return hex_color_hls_to_rgba(h, s, l, opacity)
+
+
+def dictBasemodelColors(listBaseModel: list) -> dict:
+    ret = {}
+    for name in listBaseModel:
+        for k, v in familyColor.items():
+            family = getattr(opts, "civsfz_" + k, [])
+            if name in family:
+                num = len(family)
+                i = family.index(name)
+                hexColor = getattr(opts, "civsfz_color_" + k)
+                ret[name] = autoColorRotate(hexColor, num, i)
+        if name not in ret:
+            ret[name] = opts.civsfz_color_non_family
+    #print(f"{ret}")
+    return ret
+
+
+class BaseModelColors:
     colors = [
         {
             "name": "BASE",
@@ -90,10 +170,11 @@ class BaseModelColors():
 
     # for macros.jinja
     def name_property_dict(self):
-        ret={}
+        ret = {}
         for d in self.colors:
-            ret[d["name"]]=d["property"]
+            ret[d["name"]] = d["property"]
         # reverse order for sd3.5
         return dict(reversed(list(ret.items())))
+
 
 # print(f"{BaseModelColors().name_property_dict()}")

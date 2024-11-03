@@ -1,29 +1,32 @@
 import gradio as gr
-from modules import script_callbacks
-from modules import shared
-from scripts.civsfz_color import BaseModelColors
-from scripts.civsfz_api import APIInformation
+from modules import script_callbacks, shared
+from scripts.civsfz_color import BaseModelColors, familyColor
 
 
 def on_ui_settings():
     from scripts.civsfz_shared import platform
+    from scripts.civsfz_api import APIInformation
 
-    civsfz_section = 'Civsfz_Browser', 'CivBrowser'
+    Api = APIInformation()
+
+    civsfz_section = "Civsfz_Browser", "CivBrowser"
     # OptionInfo params
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
     # SD.Next dose not have OptionHTML
     dict_api_info = (
         {
             "civsfz_msg_html1": shared.OptionHTML(
-                "The command line option `--civsfz-api-key` is deprecated. "
-                "We felt that this was a risk because some users might not notice the API Key being displayed on the console."
-                "The API key here is saved in the `settings.json` file. "
+                "<h3>API-Key</h3>"
+                "The command line option `<var>--civsfz-api-key</var>` is deprecated. "
+                "We felt that this was a risk because some users might not notice the API Key being displayed on the console. "
+                "The API key here is saved in the `<var>settings.json</var>` file.</br>"
                 "If you do not know this, there is a risk of your API key being leaked."
             ),
         }
         if not platform == "SD.Next"
         else {}
     )
+
     dict_options1 = {
         "civsfz_api_key": shared.OptionInfo(
             "",
@@ -36,7 +39,7 @@ def on_ui_settings():
             label="Browsing level",
             component=gr.CheckboxGroup,
             component_args={
-                "choices": list(APIInformation.nsfwLevel.items()),
+                "choices": list(Api.nsfwLevel.items()),
             },
         ),
         "civsfz_number_of_tabs": shared.OptionInfo(
@@ -101,12 +104,13 @@ def on_ui_settings():
     dict_background_opacity = {
         "civsfz_background_opacity": shared.OptionInfo(
             0.75,
-            label="Background opacity for model names",
+            label="Background opacity for model name",
             component=gr.Slider,
             component_args={"minimum": 0.0, "maximum": 1.0, "step": 0.05},
         ),
     }
 
+    # deprecated
     dict_modelColor = {}
     for item in BaseModelColors().colors:
         dict_modelColor[item["key"]] = shared.OptionInfo(
@@ -132,11 +136,16 @@ def on_ui_settings():
             component=gr.ColorPicker,
         ),
     }
-    dict_folder_info = {
+    dict_folder_info = (
+        {
             "civsfz_msg_html2": shared.OptionHTML(
+                "<h3>How to set subfolders</h3>"
                 "Click <a href='https://github.com/SignalFlagZ/sd-webui-civbrowser/wiki'>here(Wiki|GitHub)</a> to learn how to specify the model folder and subfolders."
             ),
-        } if not platform == "SD.Next" else {}
+        }
+        if not platform == "SD.Next"
+        else {}
+    )
 
     label = 'Save folders for Types. Set JSON Key-Value pair. The folder separator is "/" not "\\". The path is relative from models folder or absolute.'
     info = 'Example for Stability Matrix: {"Checkpoint":"Stable-diffusion/sd"}'
@@ -192,17 +201,70 @@ def on_ui_settings():
             },
         ),
     }
+    dict_color_figcaption = {
+        "civsfz_background_color_figcaption": shared.OptionInfo(
+            "#414758",
+            label="Background color for model name",
+            component=gr.ColorPicker,
+        ),
+    }
+
+    dict_color_family = (
+        {
+            "civsfz_msg_html3": shared.OptionHTML(
+                "<h3>What is Family?</h3>"
+                "You can set the color for each color family. "
+                "You can register the base model to the family. "
+                "Colors within a family will automatically change based on the family color. "
+                "The color changes gradually according to the hls color wheel."
+            ),
+        }
+        if not platform == "SD.Next"
+        else {}
+    )
+    for k in familyColor.keys():
+        if k not in "non_family":
+            dict_color_family |= {
+                "civsfz_"
+                + k: shared.OptionInfo(
+                    familyColor[k]["value"],
+                    label=k.capitalize(),
+                    component=gr.Dropdown,
+                    component_args={
+                        "multiselect": True,
+                        "choices": Api.getBasemodelOptions(),
+                    },
+                ),
+                "civsfz_color_"
+                + k: shared.OptionInfo(
+                    familyColor[k]["color"],
+                    label=k.capitalize() + " color",
+                    component=gr.ColorPicker,
+                ),
+            }
+        else:
+            dict_color_family |= {
+                "civsfz_color_"
+                + k: shared.OptionInfo(
+                    familyColor[k]["color"],
+                    label="Non-family color",
+                    component=gr.ColorPicker,
+                ),
+            }
 
     for key, opt in {
         **dict_api_info,
         **dict_options1,
         **dict_background_opacity,
-        **dict_modelColor,
+        # **dict_modelColor,
+        **dict_color_figcaption,
+        **dict_color_family,
         **dict_shadow_color,
         **dict_folder_info,
         **dict_folders,
     }.items():
         opt.section = civsfz_section
         shared.opts.add_option(key, opt)
+
 
 script_callbacks.on_ui_settings(on_ui_settings)

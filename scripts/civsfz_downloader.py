@@ -11,7 +11,7 @@ from pathlib import Path
 from threading import Thread, local
 from time import sleep
 from tqdm import tqdm
-from scripts.civsfz_shared import calculate_sha256, opts
+from scripts.civsfz_shared import opts, calculate_sha256
 from scripts.civsfz_filemanage import makedirs, removeFile, extensionFolder, open_folder
 
 def print_ly(x): return print(Fore.LIGHTYELLOW_EX +

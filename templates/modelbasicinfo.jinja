@@ -1,4 +1,3 @@
-{% from 'macros.jinja' import bgColor %}
 {% set copy = '<span title="Copy to clipboard" style="cursor: copy;" onclick="civsfz_copyInnerText(this,false);">&#x1F4CB;</span>' %} {# 📋 #}
 {% set tdStyle1 = 'style="max-width:20em;min-width:7em;padding:0.2em;"' %}
 
@@ -63,7 +62,7 @@
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Base Model</th>
-			<td {{ tdStyle1 }}><span style="background-color:{{ bgColor(modelInfo['baseModel'],dict_modelprop)|trim }}">{{ modelInfo["baseModel"]|e }}</span></td>
+			<td {{ tdStyle1 }}><span style="background-color:{{ dictBasemodelColor[modelInfo['baseModel']]|trim }};">{{ modelInfo["baseModel"]|e }}</span></td>
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Tags</th>

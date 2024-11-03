@@ -29,6 +29,12 @@ Add `Forge` branch for ***Forge*** Support. (ecperimental)
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v2.4
+- The base model color settings have changed
+  - You can set the color for each color family
+  - You can register the base model to the family
+  - Colors within a family will automatically change based on the family color
+  - The color changes gradually according to the hls color wheel
 ### v2.3
 - Add setting whether to delete file with different hash value
 - Works on SD.Next (Hard to maintain)

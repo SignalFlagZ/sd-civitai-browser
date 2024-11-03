@@ -276,14 +276,6 @@ class Components():
                 propertiesText = ";".join(
                     [
                         str(opts.civsfz_background_color_figcaption) + opacity,
-                        str(opts.civsfz_background_color_sd1),
-                        str(opts.civsfz_background_color_sd2),
-                        str(opts.civsfz_background_color_sd3),
-                        str(opts.civsfz_background_color_sd35),
-                        str(opts.civsfz_background_color_sdxl),
-                        str(opts.civsfz_background_color_pony),
-                        str(opts.civsfz_background_color_illustrious),
-                        str(opts.civsfz_background_color_flux1),
                         str(opts.civsfz_shadow_color_default),
                         str(opts.civsfz_shadow_color_alreadyhave),
                         str(opts.civsfz_shadow_color_alreadyhad),
@@ -805,23 +797,18 @@ def on_ui_tabs():
         with gr.Accordion(label="Update information", open=False):
             gr.Markdown(
                 value=(
-                    "# Recent changes"
+                    "# Changes " + ver + "\n"
+                    "- The base model color settings have changed"
+                    "\n"
+                    "- You can set the color for each color family"
+                    "\n"
+                    "- You can register the base model to the family"
+                    "\n"
+                    "- Colors within a family will automatically change based on the family color"
+                    "\n"
+                    "- The color changes gradually according to the hls color wheel"
                     "\n"
                     "- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
-                    "\n"
-                    "- The default color has been changed due to code corrections related to background color settings."
-                    "\n"
-                    "- Change the layout of save buttons to reduce mouse movement"
-                    "\n"
-                    "- Model name and base model are displayed in large size"
-                    "\n"
-                    "- Add background color for Illustrious"
-                    "\n"
-                    "- Add background color for SD3 and SD3.5"
-                    "\n"
-                    "- Change the position of Back-to-Top button to reduce mouse movement"
-                    "\n"
-                    "- Preload next page"
                     "\n\n"
                     "For more information, please click [here(CivBrowser|GitHub)](https://github.com/SignalFlagZ/sd-webui-civbrowser)"
                 )

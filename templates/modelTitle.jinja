@@ -1,9 +1,9 @@
 {%- from 'macros.jinja' import bgColor %}
 <div  style="font-size:x-large;">
-	<div style="float:left;padding: 0.1em 0.5em;background-color:{{ bgColor(baseModel,dict_modelprop)|trim }};border: 2px solid {{ bgColor(baseModel,dict_modelprop)|trim }};">
+	<div style="float:left;padding: 0.1em 0.5em;background-color:{{ dictBasemodelColor[baseModel]|trim }};border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
 		{{ baseModel|e }}
 	</div>
-	<div style="float:left;padding: 0.1em 0.5em;background-color:hsl(from {{ bgColor(baseModel,dict_modelprop)|trim }} h s calc(l/2) );border: 2px solid {{ bgColor(baseModel,dict_modelprop)|trim }};">
+	<div style="float:left;padding: 0.1em 0.5em;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/2) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
 		{{ modelName|e }}
 	</div>
 </div>

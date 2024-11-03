@@ -1,4 +1,4 @@
-VERSION = "v2.3.6"
+VERSION = "v2.4.0"
 
 platform = "A1111"
 forge_version = None
@@ -14,14 +14,16 @@ else:
     forge_version = forge_version
 # print(f'Working on {platform}')
 
+
+from modules.shared import opts as opts
 try:
     # SD web UI >= v1.6.0-RC
+    # Forge
     from modules.shared_cmd_options import cmd_opts as cmd_opts
 except ImportError:
     # SD web UI < v1.6.0-RC
     # SD.Next
     from modules.shared import cmd_opts as cmd_opts
-from modules.shared import opts as opts
 
 if platform == "Forge":
     from modules.hashes import calculate_sha256_real as calculate_sha256

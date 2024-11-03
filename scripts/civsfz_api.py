@@ -8,7 +8,7 @@ import requests
 # from requests_cache import CachedSession
 from colorama import Fore, Back, Style
 from scripts.civsfz_filemanage import generate_model_save_path2, extensionFolder
-from scripts.civsfz_color import BaseModelColors
+from scripts.civsfz_color import dictBasemodelColors
 from scripts.civsfz_shared import opts
 from jinja2 import Environment, FileSystemLoader
 
@@ -874,17 +874,19 @@ class CivitaiModels(APIInformation):
             cards.append(param)
 
         forTrigger = f'<!-- {datetime.datetime.now()} -->'  # for trigger event
-        dict_modelprop = BaseModelColors().name_property_dict()
+        dictBasemodelColor = dictBasemodelColors(self.getBasemodelOptions())
         template = environment.get_template("cardlist.jinja")
         content = template.render(
-            forTrigger=forTrigger, cards=cards, dict_modelprop=dict_modelprop
+            forTrigger=forTrigger,
+            cards=cards,
+            dictBasemodelColor=dictBasemodelColor,
         )
         return content
     def modelNameTitleHtml(self, name:str, base:str):
-        dict_modelprop = BaseModelColors().name_property_dict()
+        dictBasemodelColor = dictBasemodelColors(self.getBasemodelOptions())
         template = environment.get_template("modelTitle.jinja")
         content = template.render(
-            modelName=name, baseModel=base, dict_modelprop=dict_modelprop
+            modelName=name, baseModel=base, dictBasemodelColor=dictBasemodelColor
         )
         return content
 
@@ -969,7 +971,7 @@ class CivitaiModels(APIInformation):
             published = ""
         # updated = self.getUpdatedDatetime().astimezone(
         #    tz.tzlocal()).replace(microsecond=0).isoformat()
-        dict_modelprop = BaseModelColors().name_property_dict()
+        dictBasemodelColor = dictBasemodelColors(self.getBasemodelOptions())
         template = environment.get_template("modelbasicinfo.jinja")
         basicInfo = template.render(
             modelInfo=modelInfo,
@@ -977,7 +979,7 @@ class CivitaiModels(APIInformation):
             strNsfw=self.strNsfwLevel(modelInfo["nsfwLevel"]),
             strVNsfw=self.strNsfwLevel(modelInfo["modelVersions"][0]["nsfwLevel"]),
             fileIndex=fileIndex,
-            dict_modelprop=dict_modelprop,
+            dictBasemodelColor=dictBasemodelColor,
         )
 
         permissions = self.permissionsHtml(self.allows2permissions())

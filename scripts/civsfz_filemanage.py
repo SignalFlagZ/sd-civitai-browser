@@ -8,9 +8,10 @@ from pathlib import Path
 import platform
 import subprocess as sp
 from collections import deque
-from modules import shared, sd_models
+from modules import  sd_models
 from colorama import Fore, Back, Style
 from scripts.civsfz_shared import cmd_opts, opts
+from modules import shared
 from modules.paths import models_path
 try:
     from send2trash import send2trash

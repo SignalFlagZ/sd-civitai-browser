@@ -5,13 +5,13 @@ from scripts.civsfz_shared import opts
 def hex_color_hsl_to_rgb(h, s, l):
     # param order h,s,l not h,l,s
     if h > 1.0:
-        h = max(min((h % 360) / 360, 1.0), 0)
+        h = h % 360 / 360
     if l > 1.0:
         l = max(min(l / 100, 1.0), 0)
     if s > 1.0:
         s = max(min(s / 100, 1.0), 0)
     (r, g, b) = colorsys.hls_to_rgb(h, l, s)
-    return f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+    return f"#{round(r*255):02x}{round(g*255):02x}{round(b*255):02x}"
 
 
 def hex_color_hls_to_rgba(h, s, l, opacity=None):
@@ -20,7 +20,7 @@ def hex_color_hls_to_rgba(h, s, l, opacity=None):
     if opacity is not None:
         if opacity > 1.0:
             opacity = max(min(opacity / 100, 1.0), 0)
-        alpha = f"{int(opacity*255):02x}"
+        alpha = f"{round(opacity*255):02x}"
     else:
         alpha = ""
     return f"{ret}{alpha}"
@@ -73,7 +73,6 @@ familyColor: dict = {
         "color": hex_color_hsl_to_rgb(250, 14, 30),
     },
 }
-
 
 def autoColorRotate(hexColor: str, num: int, i: int, hue=30, opacity=None):
     (h, l, s) = hls_from_hex(hexColor)

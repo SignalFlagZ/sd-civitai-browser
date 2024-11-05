@@ -1,31 +1,28 @@
 {%- from 'macros.jinja' import bgColor %}
-<div  style="display:table;">
-	<div style="display: table-cell;vertical-align:top;">
-		<div style="display: table-row;text-align:center;white-space: nowrap;background-color:{{ dictBasemodelColor[baseModel]|trim }};border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
-			&nbsp;&nbsp;{{ baseModel|e }}&nbsp;&nbsp;
-		</div>
+<div  style="display:grid;grid-template-columns: auto auto auto minmax(0, 1fr) ;">
+	<div style="grid-column: 1 / 2;grid-row: 1 / 2;display: flex;align-items: center;justify-content:center; white-space: nowrap;background-color:{{ dictBasemodelColor[baseModel]|trim }};">
+		<span style="padding:0em 0.5em;">{{ baseModel|e }}</span>
+	</div>
 
-		{% if not ea == "" %}
-		<div
-			style="display: table-row;text-align:center;white-space: nowrap; background-color: var(--civsfz-background-color-early-access-in);border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
-			&nbsp;&nbsp;Early Access&nbsp;&nbsp;
-		</div>
-		{% else %}
-		<div style="display: table-row;"> 
-		</div>
-		{% endif %}
+	{%- if not ea == "" %}
+	<div
+		style="grid-column: 1 / 2;grid-row: 2 / 2;display: flex;align-items: center;justify-content:center;white-space: nowrap; background-color: var(--civsfz-background-color-early-access-in);">
+		&nbsp;&nbsp;Early Access&nbsp;&nbsp;
 	</div>
-	<div style="display: table-cell;font-size:x-large;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/1.5) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
-		{{ modelName|e }}
+	{%- else %}
+	<div style="grid-column: 1 / 2;grid-row: 2 / 2;display: flex;align-items: center;"></div>
+	{%- endif %}
+	<div style="grid-column: 2 / 3;grid-row: 1 / 3;display: flex;align-items: center;font-size:x-large;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/1.5) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};border-right:none;">
+		<div style="padding:0.0em 0.5em;line-height:1.2;">{{ modelName|e }}</div>
 	</div>
-	<div style="display: table-cell;vertical-align:bottom;">
-		<div
-			style="display: table-row;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/2) );">
-			{{ versionName|e }}
-		</div>
-		<div
-			style="display: table-row;white-space: nowrap;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/3) );">
-			by <span style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">{{ uploadUser|e }}</span>
-		</div>
+	<div
+		style="grid-column: 3 / 4;grid-row: 1 / 2;display: flex;align-items: center;white-space: nowrap;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/3) );border-left: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
+		<span style="padding:0.0em 0.5em;">by <span
+				style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">{{ uploadUser|e
+				}}</span></span>
+	</div>
+	<div
+		style="grid-column: 3 / 4;grid-row: 2 / 2;display: flex;align-items: center;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/1.8) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};border-left:none;">
+		<span style="padding:0.0em 0.5em;">{{ versionName|e }}</span>
 	</div>
 </div>

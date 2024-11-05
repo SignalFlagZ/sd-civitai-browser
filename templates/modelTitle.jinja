@@ -20,8 +20,12 @@
 	</div>
 	<div style="display: table-cell;vertical-align:bottom;">
 		<div
-			style="display: table-cell;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/2) );">
+			style="display: table-row;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/2) );">
 			{{ versionName|e }}
+		</div>
+		<div
+			style="display: table-row;white-space: nowrap;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/3) );">
+			by <span style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">{{ uploadUser|e }}</span>
 		</div>
 	</div>
 </div>

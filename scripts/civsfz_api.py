@@ -882,11 +882,11 @@ class CivitaiModels(APIInformation):
             dictBasemodelColor=dictBasemodelColor,
         )
         return content
-    def modelNameTitleHtml(self, name:str, vname:str, base:str, ea:str=""):
+    def modelNameTitleHtml(self, name:str, vname:str, base:str, upuser:str="", ea:str=""):
         dictBasemodelColor = dictBasemodelColors(self.getBasemodelOptions())
         template = environment.get_template("modelTitle.jinja")
         content = template.render(
-            modelName=name, versionName=vname, baseModel=base, dictBasemodelColor=dictBasemodelColor, ea=ea,
+            modelName=name, versionName=vname, baseModel=base, uploadUser=upuser, dictBasemodelColor=dictBasemodelColor, ea=ea,
         )
         return content
 

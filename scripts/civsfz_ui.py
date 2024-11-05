@@ -449,6 +449,7 @@ class Components():
                                 self.civitai.getSelectedModelName(),
                                 self.civitai.getSelectedVersionName(),
                                 self.civitai.getSelectedVersionBaseModel(),
+                                self.civitai.getUserName(),
                                 txtEarlyAccess,
                             ),
                         )

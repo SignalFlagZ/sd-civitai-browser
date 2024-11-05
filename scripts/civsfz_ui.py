@@ -46,10 +46,6 @@ class Components():
             return value
         def defaultPeriod():
             return "Month"
-        def cmdoptsAPIKey():
-            return self.APIKey
-        def browsingLevelChoices():
-            return list(self.civitai.nsfwLevel.items())
 
         with gr.Column() as self.components:
             with gr.Row():
@@ -174,18 +170,6 @@ class Components():
             #    fn=check_key_length,
             #    inputs=[grTxtApiKey],
             #    outputs=[grTxtApiKey],
-            #    )
-
-            def save_text(grTxtSaveFolder, grtxtSaveFilename, trained_words):
-                return 
-            # grBtnSaveText.click(
-            #    fn=save_text,
-            #    inputs=[
-            #        grTxtSaveFolder,
-            #        grtxtSaveFilename,
-            #        grTxtTrainedWords,
-            #        ],
-            #   outputs=[grTextProgress]
             #    )
 
             def save_image_files(grTxtSaveFolder, grtxtSaveFilename, grTxtTrainedWords, grHtmlModelInfo):
@@ -459,16 +443,25 @@ class Components():
                             value=filename,
                         )
                         grtxtSaveFilename = gr.Textbox.update(value=filename)
+                        txtEarlyAccess = self.civitai.getSelectedVersionEarlyAccessDeadline()
+                        grHtmlModelName = gr.HTML.update(
+                            value=self.civitai.modelNameTitleHtml(
+                                self.civitai.getSelectedModelName(),
+                                self.civitai.getSelectedVersionName(),
+                                self.civitai.getSelectedVersionBaseModel(),
+                                txtEarlyAccess,
+                            ),
+                        )
+
                     return (
                         gr.HTML.update(value=dict["html"]),
                         gr.Textbox.update(value=", ".join(dict["trainedWords"])),
                         drpdwn,
                         gr.Textbox.update(value=dict["baseModel"]),
                         gr.Textbox.update(value=path),
-                        gr.Textbox.update(
-                            value=self.civitai.getSelectedVersionEarlyAccessDeadline()
-                        ),
+                        gr.Textbox.update(value=txtEarlyAccess),
                         grtxtSaveFilename,
+                        grHtmlModelName,
                     )
                 else:
                     return (
@@ -479,6 +472,7 @@ class Components():
                         gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
+                        gr.HTML.update(value=None),
                     )
             grRadioVersions.change(
                 fn=update_model_info,
@@ -491,6 +485,7 @@ class Components():
                     grTxtSaveFolder,
                     grTxtEarlyAccess,
                     grtxtSaveFilename,
+                    grHtmlModelName,
                 ],
             )
 
@@ -711,12 +706,10 @@ class Components():
                             grTxtSaveFolder,
                             grTxtEarlyAccess,
                             grtxtSaveFilename,
+                            grHtmlModelName,
                         ) = update_model_info(grRadioVersions["value"], grChkbxgrpLevel)
                         # grTxtDlUrl = gr.Textbox.update(value=self.civitai.getUrlByName(grDrpdwnSelectFile['value']))
                         grTxtHash = gr.Textbox.update(value=self.civitai.getHashByName(grDrpdwnSelectFile['value']))
-                        grHtmlModelName = gr.HTML.update(
-                            value=self.civitai.modelNameTitleHtml(self.civitai.getSelectedModelName(), grTxtBaseModel['value']),
-                        )
                         return (
                             grHtmlModelName,
                             grRadioVersions,

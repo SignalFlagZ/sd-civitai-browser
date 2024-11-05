@@ -1,9 +1,27 @@
 {%- from 'macros.jinja' import bgColor %}
-<div  style="font-size:x-large;">
-	<div style="float:left;padding: 0.1em 0.5em;background-color:{{ dictBasemodelColor[baseModel]|trim }};border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
-		{{ baseModel|e }}
+<div  style="display:table;">
+	<div style="display: table-cell;vertical-align:top;">
+		<div style="display: table-row;text-align:center;white-space: nowrap;background-color:{{ dictBasemodelColor[baseModel]|trim }};border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
+			&nbsp;&nbsp;{{ baseModel|e }}&nbsp;&nbsp;
+		</div>
+
+		{% if not ea == "" %}
+		<div
+			style="display: table-row;text-align:center;white-space: nowrap; background-color: var(--civsfz-background-color-early-access-in);border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
+			&nbsp;&nbsp;Early Access&nbsp;&nbsp;
+		</div>
+		{% else %}
+		<div style="display: table-row;"> 
+		</div>
+		{% endif %}
 	</div>
-	<div style="float:left;padding: 0.1em 0.5em;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/2) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
+	<div style="display: table-cell;font-size:x-large;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/1.5) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
 		{{ modelName|e }}
+	</div>
+	<div style="display: table-cell;vertical-align:bottom;">
+		<div
+			style="display: table-cell;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/2) );">
+			{{ versionName|e }}
+		</div>
 	</div>
 </div>

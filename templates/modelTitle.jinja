@@ -15,12 +15,14 @@
 	<div style="grid-column: 2 / 3;grid-row: 1 / 3;display: flex;align-items: center;font-size:x-large;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/1.5) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};border-right:none;">
 		<div style="padding:0.0em 0.5em;line-height:1.2;">{{ modelName|e }}</div>
 	</div>
-	<div
-		style="grid-column: 3 / 4;grid-row: 1 / 2;display: flex;align-items: center;white-space: nowrap;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/3) );border-left: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
-		<span style="padding:0.0em 0.5em;">by <span
-				style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">{{ uploadUser|e
-				}}</span></span>
-	</div>
+	{%- if not uploadUser == "" %}
+		<div
+			style="grid-column: 3 / 4;grid-row: 1 / 2;display: flex;align-items: center;white-space: nowrap;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/3) );border-left: 2px solid {{ dictBasemodelColor[baseModel]|trim }};">
+			<span style="padding:0.0em 0.5em;">by <span
+					style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">{{ uploadUser|e
+					}}</span></span>
+		</div>
+	{%- endif %}
 	<div
 		style="grid-column: 3 / 4;grid-row: 2 / 2;display: flex;align-items: center;font-size:normal;background-color:hsl(from {{ dictBasemodelColor[baseModel]|trim }} h s calc(l/1.8) );border: 2px solid {{ dictBasemodelColor[baseModel]|trim }};border-left:none;">
 		<span style="padding:0.0em 0.5em;">{{ versionName|e }}</span>

@@ -14,7 +14,7 @@ def hex_color_hsl_to_rgb(h, s, l):
     return f"#{round(r*255):02x}{round(g*255):02x}{round(b*255):02x}"
 
 
-def hex_color_hls_to_rgba(h, s, l, opacity=None):
+def hex_color_hsl_to_rgba(h, s, l, opacity=None):
     # param order h,s,l not h,l,s
     ret = hex_color_hsl_to_rgb(h, s, l)
     if opacity is not None:
@@ -76,9 +76,9 @@ familyColor: dict = {
 
 def autoColorRotate(hexColor: str, num: int, i: int, hue=30, opacity=None):
     (h, l, s) = hls_from_hex(hexColor)
-    h = h + hue/(num/5)*i//5
-    l = l * ((1 - (i % 3) / 3) * 0.4 + 0.6)
-    return hex_color_hls_to_rgba(h, s, l, opacity)
+    h = h + (hue/(num/3)*(i//3))/360
+    l = l * ((1 - (i % 5) / 5) * 0.5 + 0.5)
+    return hex_color_hsl_to_rgba(h, s, l, opacity)
 
 
 def dictBasemodelColors(listBaseModel: list) -> dict:
@@ -86,14 +86,16 @@ def dictBasemodelColors(listBaseModel: list) -> dict:
     for name in listBaseModel:
         for k, v in familyColor.items():
             family = getattr(opts, "civsfz_" + k, [])
-            if name in family:
-                num = len(family)
-                i = family.index(name)
-                hexColor = getattr(opts, "civsfz_color_" + k)
-                ret[name] = autoColorRotate(hexColor, num, i)
+            num = len(family)
+            for baseModel in family:
+                if name == baseModel:
+                    i = family.index(name)
+                    hexColor = getattr(opts, "civsfz_color_" + k)
+                    ret[name] = autoColorRotate(hexColor, num, i)
+                    # print(f"{name}:{k}-{num}:{i}:{hexColor}:{ret[name]}")
         if name not in ret:
             ret[name] = opts.civsfz_color_non_family
-    #print(f"{ret}")
+    # print(f"{ret}")
     return ret
 
 

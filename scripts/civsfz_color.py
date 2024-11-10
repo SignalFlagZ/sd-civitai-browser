@@ -57,7 +57,13 @@ familyColor: dict = {
         "color": hex_color_hsl_to_rgb(15, 100, 45),
     },
     "family4": {
-        "value": ["SD 3.5", "SD 3"],
+        "value": [
+            "SD 3.5",
+            "SD 3.5 Large",
+            "SD 3.5 Medium",
+            "SD 3.5 Large Turbo",
+            "SD 3",
+        ],
         "color": hex_color_hsl_to_rgb(130, 90, 30),
     },
     "family5": {

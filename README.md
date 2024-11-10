@@ -7,8 +7,6 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ***If you fork, please replace prefix `civsfz` in file names, function names, css class names, etc. with your own prefix to avoid conflicts.***
 
-Add `Forge` branch for ***Forge*** Support. (ecperimental)
-
 ## Features
 - Works with ***A1111***, ***Forge***, ***SD.Next*** （above v2.3.5）
   - SD.Next is far away from A1111, so it may stop working eventually 

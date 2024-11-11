@@ -791,7 +791,9 @@ def on_ui_tabs():
         with gr.Accordion(label="Update information", open=False):
             gr.Markdown(
                 value=(
-                    "# Changes " + ver + "\n"
+                    "# Changes " + "v2.4" + "\n"
+                    "- Preview family colors in Settings"
+                    "\n"
                     "- The base model color settings have changed"
                     "\n"
                     "- You can set the color for each color family"

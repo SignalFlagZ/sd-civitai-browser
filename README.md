@@ -30,6 +30,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.4
+- Preview family colors in Settings
 - The base model color settings have changed
   - You can set the color for each color family
   - You can register the base model to the family

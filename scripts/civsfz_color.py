@@ -83,7 +83,7 @@ familyColor: dict = {
 def autoColorRotate(hexColor: str, num: int, i: int, hue=30, opacity=None):
     (h, l, s) = hls_from_hex(hexColor)
     h = h + (hue/(num/3)*(i//3))/360
-    l = l * ((1 - (i % 5) / 5) * 0.5 + 0.5)
+    l = l * ((1 - (i % 3) / 3) * 0.7 + 0.3)
     return hex_color_hsl_to_rgba(h, s, l, opacity)
 
 

@@ -28,7 +28,7 @@ function civsfz_select_model(model_name) {
 
 function civsfz_update_textbox(ID, text) {
 	//console.log(text)
-	let selector =  ID + ' textarea';
+	let selector = ID + ' textarea';
 	let textbox = gradioApp().querySelector(selector);
 	if (textbox) {
 		/*Force event*/
@@ -72,7 +72,7 @@ function civsfz_trigger_event(element, event) {
 	//element.focus();
 	element.dispatchEvent(e);
 }
-function civsfz_trigger_key_down(element, key){
+function civsfz_trigger_key_down(element, key) {
 	let e = new KeyboardEvent("keydown", { key: key });
 	//element.focus();
 	element.dispatchEvent(e);
@@ -109,7 +109,7 @@ function civsfz_send2txt2img(text, send = true) {
 	}
 }
 
-function civsfz_copyInnerText(node, send=true) {
+function civsfz_copyInnerText(node, send = true) {
 	if (node.nextSibling != null) {
 		//let ret = navigator.clipboard.writeText(node.nextSibling.innerText;
 		//alert("Copied infotext");
@@ -129,15 +129,15 @@ function civsfz_copyInnerText(node, send=true) {
 			}
 		} else {
 			return navigator.clipboard.writeText(node.nextElementSibling.innerText)
-			.then(
-				function () {
-					alert("Copied " + node.nextElementSibling.innerText);
-				}
-			).catch (
-				function (error) {
-					alert((error && error.message) || "Failed to copy infotext");
-				}
-			)
+				.then(
+					function () {
+						alert("Copied " + node.nextElementSibling.innerText);
+					}
+				).catch(
+					function (error) {
+						alert((error && error.message) || "Failed to copy infotext");
+					}
+				)
 		}
 	}
 }
@@ -147,7 +147,7 @@ function civsfz_overwriteProperties(propertiesText) {
 	//console.log(elem_id, propertiesText)
 	let p = propertiesText.split(';');
 	let elem = gradioApp().querySelector('.civsfz-custom-property');
-	let i=0
+	let i = 0
 	//elements.forEach((elem) => {
 	elem.style.setProperty('--civsfz-background-color-figcaption', p[i++]);
 	elem.style.setProperty('--civsfz-shadow-color-default', p[i++] + 'f0');
@@ -178,5 +178,27 @@ function civsfz_scroll_to(q) {
 			block: 'start',
 			inline: 'nearest'
 		});
+	}
+}
+
+function preview_colors() {
+	for (var i = 1; i <= 10; i++) {
+		let elmDropdwn = gradioApp().querySelector('#setting_civsfz_family' + i.toString(10));
+		if (elmDropdwn) {
+			let elmColor = gradioApp().querySelector('#setting_civsfz_color_family' + i.toString(10));
+			let color = elmColor.querySelector("input").value;
+			//console.log(color);
+			let tokens = elmDropdwn.getElementsByClassName("token");
+			let len = tokens.length;
+			for (let j=0; j < tokens.length; j++) {
+				let token = tokens[j];
+				let h_param = 30 / (len / 3) * Math.floor(j/ 3);
+				let l_param = (1 - j % 3 / 3)* 0.7 + 0.3;
+				token.style.setProperty("background",`hsl(from ${color} calc(h + ${h_param} ) s calc(l*${l_param} )`,"important");
+			}
+		} else 
+		{ 
+			break; 
+		}
 	}
 }

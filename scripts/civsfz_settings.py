@@ -1,11 +1,21 @@
 import gradio as gr
-from modules import script_callbacks, shared
+from modules import script_callbacks, shared, ui_components
 from scripts.civsfz_color import BaseModelColors, familyColor
-
 
 def on_ui_settings():
     from scripts.civsfz_shared import platform
     from scripts.civsfz_api import APIInformation
+
+    class myOption(shared.OptionInfo):
+        def __init__(self, text, **kwargs):
+            super().__init__(text, **kwargs)
+            self.do_not_save = True
+
+        def js(self, label, js_func):
+            self.comment_before += (
+                f"[<a onclick='{js_func}(this); return false'>{label}</a>]"
+            )
+            return self
 
     Api = APIInformation()
 
@@ -18,9 +28,9 @@ def on_ui_settings():
             "civsfz_msg_html1": shared.OptionHTML(
                 "<h3>API-Key</h3>"
                 "The command line option `<var>--civsfz-api-key</var>` is deprecated. "
-                "We felt that this was a risk because some users might not notice the API Key being displayed on the console. "
-                "The API key here is saved in the `<var>settings.json</var>` file.</br>"
-                "If you do not know this, there is a risk of your API key being leaked."
+                "We felt that this was a risk because some users might not notice the API-Key being displayed on the console. "
+                "The API-Key here is saved in the `<var>settings.json</var>` file.</br>"
+                "If you do not know this, there is a risk of your API-Key being leaked."
             ),
         }
         if not platform == "SD.Next"
@@ -30,10 +40,10 @@ def on_ui_settings():
     dict_options1 = {
         "civsfz_api_key": shared.OptionInfo(
             "",
-            label="API Key",
+            label="API-Key",
             component=gr.Textbox,
             component_args={"type": "password"},
-        ).info("Note: API key is stored in the `settings.json` file."),
+        ).info("Note: API-Key is stored in the `settings.json` file."),
         "civsfz_browsing_level": shared.OptionInfo(
             [1],
             label="Browsing level",
@@ -229,9 +239,8 @@ def on_ui_settings():
                 + k: shared.OptionInfo(
                     familyColor[k]["value"],
                     label=k.capitalize(),
-                    component=gr.Dropdown,
+                    component=ui_components.DropdownMulti, # Prevent multiselect error on A1111 v1.10.0
                     component_args={
-                        "multiselect": True,
                         "choices": Api.getBasemodelOptions(),
                     },
                 ),
@@ -240,7 +249,7 @@ def on_ui_settings():
                     familyColor[k]["color"],
                     label=k.capitalize() + " color",
                     component=gr.ColorPicker,
-                ),
+                ).js("Preview the colors", "preview_colors"),
             }
         else:
             dict_color_family |= {

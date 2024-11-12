@@ -184,22 +184,22 @@ function civsfz_scroll_to(q) {
 function civsfz_preview_colors() {
 	for (var i = 1; i <= 10; i++) {
 		let elmDropdwn = gradioApp().querySelector('#setting_civsfz_family' + i.toString(10));
-		if (elmDropdwn) {
-			let elmColor = gradioApp().querySelector('#setting_civsfz_color_family' + i.toString(10));
-			let color = elmColor.querySelector("input").value;
-			//console.log(color);
-			let tokens = elmDropdwn.getElementsByClassName("token");
-			let len = tokens.length;
-			for (let j=0; j < tokens.length; j++) {
-				let token = tokens[j];
+		if (elmDropdwn == null) { break; }
+		let elmColor = gradioApp().querySelector('#setting_civsfz_color_family' + i.toString(10));
+		let color = elmColor.querySelector("input").value;
+		//console.log(color);
+		let tokens = elmDropdwn.getElementsByClassName("token");
+		let len = tokens.length;
+		for (let j=0; j < tokens.length; j++) {
+			let token = tokens[j];
+			if (!token.style.getPropertyValue("background")) {
 				let h_param = 30 / (len / 3) * Math.floor(j/4);
 				let l_param = (1 - j % 4 / 5)* 0.6 + 0.4;
 				let s_param = 0.5/len*(len-j) + 0.5;
 				token.style.setProperty("background",`hsl(from ${color} calc(h + ${h_param}) calc(s*${s_param}) calc(l*${l_param})`);
+			} else {
+				token.style.removeProperty("background"); console.log("null");
 			}
-		} else 
-		{ 
-			break; 
 		}
 	}
 }

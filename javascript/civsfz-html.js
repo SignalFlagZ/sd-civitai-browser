@@ -190,9 +190,10 @@ function civsfz_preview_colors() {
 		//console.log(color);
 		let tokens = elmDropdwn.getElementsByClassName("token");
 		let len = tokens.length;
+		let hasBg = len > 0 ? tokens[0].style.getPropertyValue("background") : false;
 		for (let j=0; j < tokens.length; j++) {
 			let token = tokens[j];
-			if (!token.style.getPropertyValue("background")) {
+			if (!hasBg) {
 				let h_param = 30 / (len / 3) * Math.floor(j/4);
 				let l_param = (1 - j % 4 / 5)* 0.6 + 0.4;
 				let s_param = 0.5/len*(len-j) + 0.5;

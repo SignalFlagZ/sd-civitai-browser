@@ -198,7 +198,7 @@ function civsfz_preview_colors() {
 				let s_param = 0.5/len*(len-j) + 0.5;
 				token.style.setProperty("background",`hsl(from ${color} calc(h + ${h_param}) calc(s*${s_param}) calc(l*${l_param})`);
 			} else {
-				token.style.removeProperty("background"); console.log("null");
+				token.style.removeProperty("background");
 			}
 		}
 	}

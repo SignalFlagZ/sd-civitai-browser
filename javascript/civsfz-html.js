@@ -181,7 +181,7 @@ function civsfz_scroll_to(q) {
 	}
 }
 
-function preview_colors() {
+function civsfz_preview_colors() {
 	for (var i = 1; i <= 10; i++) {
 		let elmDropdwn = gradioApp().querySelector('#setting_civsfz_family' + i.toString(10));
 		if (elmDropdwn) {
@@ -192,9 +192,10 @@ function preview_colors() {
 			let len = tokens.length;
 			for (let j=0; j < tokens.length; j++) {
 				let token = tokens[j];
-				let h_param = 30 / (len / 3) * Math.floor(j/ 3);
-				let l_param = (1 - j % 3 / 3)* 0.7 + 0.3;
-				token.style.setProperty("background",`hsl(from ${color} calc(h + ${h_param} ) s calc(l*${l_param} )`,"important");
+				let h_param = 30 / (len / 3) * Math.floor(j/4);
+				let l_param = (1 - j % 4 / 5)* 0.6 + 0.4;
+				let s_param = 0.5/len*(len-j) + 0.5;
+				token.style.setProperty("background",`hsl(from ${color} calc(h + ${h_param}) calc(s*${s_param}) calc(l*${l_param})`);
 			}
 		} else 
 		{ 

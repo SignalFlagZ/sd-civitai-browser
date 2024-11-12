@@ -239,7 +239,7 @@ def on_ui_settings():
                 + k: shared.OptionInfo(
                     familyColor[k]["value"],
                     label=k.capitalize(),
-                    component=ui_components.DropdownMulti, # Prevent multiselect error on A1111 v1.10.0
+                    component=ui_components.DropdownMulti,  # Prevent multiselect error on A1111 v1.10.0
                     component_args={
                         "choices": Api.getBasemodelOptions(),
                     },
@@ -249,7 +249,7 @@ def on_ui_settings():
                     familyColor[k]["color"],
                     label=k.capitalize() + " color",
                     component=gr.ColorPicker,
-                ).js("Preview the colors", "preview_colors"),
+                ).js("preview", "civsfz_preview_colors"),
             }
         else:
             dict_color_family |= {

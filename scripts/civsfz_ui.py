@@ -791,18 +791,14 @@ def on_ui_tabs():
         with gr.Accordion(label="Update information", open=False):
             gr.Markdown(
                 value=(
-                    "# Changes " + "v2.4" + "\n"
-                    "- Preview family colors in Settings"
+                    "# Changes " + "v2.5" + "\n"
+                    "- Add favorite creator feature"
                     "\n"
-                    "- The base model color settings have changed"
+                    "  - Display ⭐️ on cards by creator name"
                     "\n"
-                    "- You can set the color for each color family"
+                    "- Add blacklist feature"
                     "\n"
-                    "- You can register the base model to the family"
-                    "\n"
-                    "- Colors within a family will automatically change based on the family color"
-                    "\n"
-                    "- The color changes gradually according to the hls color wheel"
+                    "  - Hide card by creator name"
                     "\n"
                     "- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
                     "\n\n"

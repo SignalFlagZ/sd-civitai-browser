@@ -29,6 +29,11 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Show the ***Early Access*** period of models
 
 ## Versions
+### v2.5
+- Add favorite creator feature
+  - Display ⭐️ on cards by creator name
+- Add blacklist feature
+  - Hide card by creator name
 ### v2.4
 - Preview family colors in Settings
 - The base model color settings have changed

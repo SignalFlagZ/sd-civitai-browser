@@ -803,24 +803,32 @@ class CivitaiModels(APIInformation):
     # Make model cards html
     def modelCardsHtml(self, models, jsID=0, nsfwLevel=0):
         '''Generate HTML of model cards.'''
+        # Black List
+        txtBl = opts.civsfz_blacklist_creators  # Comma-separated text
+        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
+        blackUsers = [s.strip() for s in txtBl.split(",")]
+        favUsers = [s.strip() for s in txtFav.split(",")]
         cards = []
         for model in models:
             index = model[1]
             item = self.jsonData['items'][model[1]]
+            creator = item["creator"]["username"] if "creator" in item else ""
             base_model = ""
             param = {
-                'name':     item['name'],
-                'index':    index,
-                'jsId':     jsID,
-                'id':       item['id'],
-                'isNsfw':   False,
-                'nsfwLevel': item['nsfwLevel'],
-                'matchLevel': self.matchLevel(item['nsfwLevel'], nsfwLevel),
-                'type':     item['type'],
-                'have':     "",
-                'ea':       "",
-                'imgType':  ""
-                }
+                "name": item["name"],
+                "index": index,
+                "jsId": jsID,
+                "id": item["id"],
+                "isNsfw": False,
+                "nsfwLevel": item["nsfwLevel"],
+                "matchLevel": self.matchLevel(item["nsfwLevel"], nsfwLevel),
+                "type": item["type"],
+                "have": "",
+                "ea": "",
+                "imgType": "",
+                "blacklist": creator in blackUsers,
+                "favorite": creator in favUsers,
+            }
             if any(item['modelVersions']):
                 # if len(item['modelVersions'][0]['images']) > 0:
                 # default image
@@ -845,11 +853,11 @@ class CivitaiModels(APIInformation):
                     item["name"],
                     base_model,
                     self.treatAsNsfw(modelIndex=index),
-                    item["creator"]["username"] if 'creator' in item else "",
-                    item['id'],
-                    item['modelVersions'][0]['id'],
-                    item['modelVersions'][0]['name']
-                    )
+                    creator,
+                    item["id"],
+                    item["modelVersions"][0]["id"],
+                    item["modelVersions"][0]["name"],
+                )
                 for i,ver in enumerate(item['modelVersions']):
                     for file in ver['files']:
                         file_name = file['name']

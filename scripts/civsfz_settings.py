@@ -111,6 +111,27 @@ def on_ui_settings():
         ),
     }
 
+    dict_creator_control = {
+        "civsfz_favorite_creators": shared.OptionInfo(
+            "",
+            label="Favorite creators",
+            component=gr.Textbox,
+            component_args={
+                "info": "Comma-separated text",
+                "placeholder": "xxx, yyy",
+            },
+        ),
+        "civsfz_blacklist_creators": shared.OptionInfo(
+            "",
+            label="Blacklist creators",
+            component=gr.Textbox,
+            component_args={
+                "info": "Comma-separated text",
+                "placeholder": "xxx, yyy",
+            },
+        ),
+    }
+
     dict_background_opacity = {
         "civsfz_background_opacity": shared.OptionInfo(
             0.75,
@@ -264,6 +285,7 @@ def on_ui_settings():
     for key, opt in {
         **dict_api_info,
         **dict_options1,
+        **dict_creator_control,
         **dict_background_opacity,
         # **dict_modelColor,
         **dict_color_figcaption,

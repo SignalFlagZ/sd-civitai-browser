@@ -1,6 +1,6 @@
 {{ forTrigger }}
 <div class="column civsfz-modellist">
-{%- for card in cards if card.matchLevel %}
+{%- for card in cards if card.matchLevel and not card.blacklist %}
 	{%- set nsfw = 'civsfz-cardnsfw' if card['isNsfw'] else '' %}
 	{%- if card['have'] == 'new' %}
 		{%- set alreadyhave = 'civsfz-modelcardalreadyhave' %}
@@ -26,6 +26,9 @@
 			<div class="civsfz-early-access-in">EA</div>
 		{%- elif card['ea'] == 'out' %}
 			<div class="civsfz-early-access-out">EA</div>	
+		{%- endif %}
+		{%- if card['favorite'] %}
+			<div class="civsfz-favorite">⭐️</div>
 		{%- endif %}
 	</figure>
 {%- endfor %}

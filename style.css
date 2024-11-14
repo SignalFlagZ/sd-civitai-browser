@@ -130,6 +130,21 @@
 	top: -1.5em;
 }
 
+.civsfz-modelcard .civsfz-favorite {
+	position: absolute;
+	bottom: 0em;
+	right: 0em;
+	word-break: break-word;
+	font-size: x-large;
+}
+.civsfz-modelcard:hover .civsfz-favorite {
+	bottom: -1em;
+	right: -0.5em;
+	opacity: 90%;
+	transform:rotate(20deg);
+}
+
+
 .civsfz-modelcard .civsfz-early-access-out {
 	position: absolute;
 	top: 1.4em;
@@ -153,6 +168,8 @@
 	top: -1.5em;
 	right: -1.2em;
 }
+
+
 
 .civsfz-nsfw img {
 	filter: blur(12px);
@@ -229,4 +246,3 @@
 	max-width: 8em;
 	min-width: 8em !important;
 }
-

@@ -72,7 +72,7 @@ familyColor: dict = {
     },
     "family6": {
         "value": [""],
-        "color": hex_color_hsl_to_rgb(60, 90, 45),
+        "color": hex_color_hsl_to_rgb(300, 90, 45),
     },
     "non_family": {
         "value": [""],

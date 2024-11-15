@@ -853,18 +853,19 @@ class CivitaiModels(APIInformation):
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
 
-                folder = generate_model_save_path2(
-                    self.getModelTypeByIndex(index),
-                    item["name"],
-                    base_model,
-                    self.treatAsNsfw(modelIndex=index),
-                    creator,
-                    item["id"],
-                    item["modelVersions"][0]["id"],
-                    item["modelVersions"][0]["name"],
-                )
                 for i,ver in enumerate(item['modelVersions']):
                     for file in ver['files']:
+                        folder = generate_model_save_path2(
+                            self.getModelTypeByIndex(index),
+                            item["name"],
+                            ver["baseModel"],
+                            self.treatAsNsfw(modelIndex=index),
+                            creator,
+                            item["id"],
+                            ver["id"],
+                            ver["name"],
+                        )
+                        print(f"{folder}")
                         file_name = file['name']
                         path_file = folder / Path(file_name)
                         if path_file.exists():

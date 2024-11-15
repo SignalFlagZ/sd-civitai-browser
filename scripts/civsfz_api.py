@@ -826,6 +826,7 @@ class CivitaiModels(APIInformation):
                 "have": "",
                 "ea": "",
                 "imgType": "",
+                "creator": creator,
                 "blacklist": creator in blackUsers,
                 "favorite": creator in favUsers,
             }

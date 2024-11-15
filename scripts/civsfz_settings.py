@@ -117,19 +117,19 @@ def on_ui_settings():
             label="Favorite creators",
             component=gr.Textbox,
             component_args={
-                "info": "Show ⭐️ on card. Comma-separated text.",
+                "info": "Comma-separated text",
                 "placeholder": "xxx, yyy",
             },
-        ),
+        ).info("Show ⭐️ on card"),
         "civsfz_blacklist_creators": shared.OptionInfo(
             "",
             label="Blacklist creators",
             component=gr.Textbox,
             component_args={
-                "info": "Hide Cards. Comma-separated text.",
+                "info": "Comma-separated text",
                 "placeholder": "xxx, yyy",
             },
-        ),
+        ).info("Hide Cards"),
     }
 
     dict_background_opacity = {

@@ -1,6 +1,6 @@
 {{ forTrigger }}
 <div class="column civsfz-modellist">
-{%- for card in cards if card.matchLevel and not card.blacklist %}
+{%- for card in cards if card.matchLevel and not card.ngUser %}
 	{%- set nsfw = 'civsfz-cardnsfw' if card['isNsfw'] else '' %}
 	{%- if card['have'] == 'new' %}
 		{%- set alreadyhave = 'civsfz-modelcardalreadyhave' %}

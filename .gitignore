@@ -3,3 +3,4 @@ __pycache__/
 search_history.json
 api_cache.sqlite
 conditions_history.json
+standalone.py

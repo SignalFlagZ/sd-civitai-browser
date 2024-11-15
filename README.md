@@ -37,6 +37,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
   - Display ⭐️ on card by creator name
 - Add blacklist feature
   - Hide cards by creator name
+- Fix not detected previous models 
 ### v2.4
 - Preview family colors in Settings
 - The base model color settings have changed

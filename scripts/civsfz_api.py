@@ -282,6 +282,9 @@ class APIInformation():
                 "SDXL 1.0",
                 "SD 3",
                 "SD 3.5",
+                "SD 3.5 Medium",
+                "SD 3.5 Large",
+                "SD 3.5 Large Turbo",
                 "Pony",
                 "Flux.1 S",
                 "Flux.1 D",
@@ -301,7 +304,8 @@ class APIInformation():
                 "Lumina",
                 "Kolors",
                 "Illustrious",
-                "Other"
+                "Mochi",
+                "Other",
             ]
         else:
             # print_lc(f'Set base models')

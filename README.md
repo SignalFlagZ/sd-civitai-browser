@@ -32,10 +32,11 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.5
+- Add favorite creators in search term
 - Add favorite creator feature
   - Display ⭐️ on card by creator name
 - Add blacklist feature
-  - Hide card by creator name
+  - Hide cards by creator name
 ### v2.4
 - Preview family colors in Settings
 - The base model color settings have changed

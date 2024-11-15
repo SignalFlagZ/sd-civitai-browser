@@ -210,6 +210,7 @@ class Components():
                 if grDropdownSearchTerm == None:
                     return (gr.Dropdown.update(),
                             gr.Radio.update())
+                """
                 m = re.match(rf'(.+){self.sHistory.getDelimiter()}(.+)$', grDropdownSearchTerm)
                 if m is None:
                     return (gr.Dropdown.update(),
@@ -219,6 +220,15 @@ class Components():
                         gr.Radio.update())
                 return (gr.Dropdown.update(value=m.group(1)),
                         gr.Radio.update(value=m.group(2)))
+                """
+                term = grDropdownSearchTerm.split(self.sHistory.getDelimiter())
+                if term[0] == "":
+                    return (gr.Dropdown.update(), gr.Radio.update())
+                return (
+                    gr.Dropdown.update(value=term[0]),
+                    gr.Radio.update(value=term[1]),
+                )
+
             grDropdownSearchTerm.select(
                 fn=selectSHistory,
                 inputs=[grDropdownSearchTerm],
@@ -798,7 +808,9 @@ def on_ui_tabs():
                     "\n"
                     "- Add blacklist feature"
                     "\n"
-                    "  - Hide card by creator name"
+                    "  - Hide cards by creator name"
+                    "\n"
+                    "- Add favorite creators in search term"
                     "\n"
                     "- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
                     "\n\n"

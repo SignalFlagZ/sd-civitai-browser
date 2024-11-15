@@ -374,6 +374,9 @@ class SearchHistory(History):
     def add(self, type, word):
         if type == "No" or word == "" or word == None:
             return
+        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
+        if word in txtFav:
+            return
         dict = { "type" : type,
                 "word": word }  
         try:                  
@@ -386,7 +389,13 @@ class SearchHistory(History):
         self.save()
     def getAsChoices(self):
         ret = [f'{w["word"]}{self._delimiter}{w["type"]}' for w in self._history]
-        return ret
+        # Add favorite users
+        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
+        favUsers = [
+            f"{s.strip()}{self._delimiter}User name{self._delimiter}⭐️"
+            for s in txtFav.split(",")
+        ]
+        return ret + favUsers
     def getDelimiter(self) -> str:
         return self._delimiter
 

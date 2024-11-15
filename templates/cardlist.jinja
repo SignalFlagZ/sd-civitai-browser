@@ -19,7 +19,10 @@
 		{%- else %}
 			<img src="./file=html/card-no-preview.png" />
 		{%- endif %}
-		<figcaption>{{ card['name'] }}</figcaption>
+		<figcaption class="civsfz-tooltip">
+			{{ card['name'] }}
+			<span class="civsfz-tooltiptext">{{ card['creator'] }}</span>
+		</figcaption>
 		<div class="civsfz-modeltype">{{ card['type'] }}</div>
 		<div class="civsfz-basemodel" style="background-color:{{ dictBasemodelColor[card['baseModel']]|trim }}C0;">{{ card['baseModel'] }}</div>
 		{%- if card['ea'] == 'in' %}
@@ -28,12 +31,8 @@
 			<div class="civsfz-early-access-out">EA</div>	
 		{%- endif %}
 		{%- if card['favorite'] %}
-			<div style="visibility: visible;font-size:x-large;" class="civsfz-creator-icon civsfz-tooltip">⭐️
-		{% else %}
-			<div class="civsfz-creator-icon civsfz-tooltip">🧑‍🎨
+			<div class="civsfz-creator-favorite">★</div>
 		{%- endif %}
-		<span class="civsfz-tooltiptext">{{ card['creator'] }}</span>
-		</div>
 	</figure>
 {%- endfor %}
 </div>

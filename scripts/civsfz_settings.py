@@ -111,6 +111,27 @@ def on_ui_settings():
         ),
     }
 
+    dict_creator_control = {
+        "civsfz_favorite_creators": shared.OptionInfo(
+            "",
+            label="Favorite creators",
+            component=gr.Textbox,
+            component_args={
+                "info": "Show ⭐️ on card. Comma-separated text.",
+                "placeholder": "xxx, yyy",
+            },
+        ),
+        "civsfz_blacklist_creators": shared.OptionInfo(
+            "",
+            label="Blacklist creators",
+            component=gr.Textbox,
+            component_args={
+                "info": "Hide Cards. Comma-separated text.",
+                "placeholder": "xxx, yyy",
+            },
+        ),
+    }
+
     dict_background_opacity = {
         "civsfz_background_opacity": shared.OptionInfo(
             0.75,
@@ -223,8 +244,9 @@ def on_ui_settings():
         {
             "civsfz_msg_html3": shared.OptionHTML(
                 "<h3>What is Family?</h3>"
-                "You can set the color for each color family. "
+                "Families are groups of similar base models. "
                 "You can register the base model to the family. "
+                "You can set the color for each color family. "
                 "Colors within a family will automatically change based on the family color. "
                 "The color changes gradually according to the hls color wheel."
             ),
@@ -264,6 +286,7 @@ def on_ui_settings():
     for key, opt in {
         **dict_api_info,
         **dict_options1,
+        **dict_creator_control,
         **dict_background_opacity,
         # **dict_modelColor,
         **dict_color_figcaption,

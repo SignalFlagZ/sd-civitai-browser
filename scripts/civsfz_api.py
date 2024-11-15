@@ -282,6 +282,9 @@ class APIInformation():
                 "SDXL 1.0",
                 "SD 3",
                 "SD 3.5",
+                "SD 3.5 Medium",
+                "SD 3.5 Large",
+                "SD 3.5 Large Turbo",
                 "Pony",
                 "Flux.1 S",
                 "Flux.1 D",
@@ -301,7 +304,8 @@ class APIInformation():
                 "Lumina",
                 "Kolors",
                 "Illustrious",
-                "Other"
+                "Mochi",
+                "Other",
             ]
         else:
             # print_lc(f'Set base models')
@@ -803,24 +807,33 @@ class CivitaiModels(APIInformation):
     # Make model cards html
     def modelCardsHtml(self, models, jsID=0, nsfwLevel=0):
         '''Generate HTML of model cards.'''
+        # Black List
+        txtBl = opts.civsfz_blacklist_creators  # Comma-separated text
+        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
+        blackUsers = [s.strip() for s in txtBl.split(",")]
+        favUsers = [s.strip() for s in txtFav.split(",")]
         cards = []
         for model in models:
             index = model[1]
             item = self.jsonData['items'][model[1]]
+            creator = item["creator"]["username"] if "creator" in item else ""
             base_model = ""
             param = {
-                'name':     item['name'],
-                'index':    index,
-                'jsId':     jsID,
-                'id':       item['id'],
-                'isNsfw':   False,
-                'nsfwLevel': item['nsfwLevel'],
-                'matchLevel': self.matchLevel(item['nsfwLevel'], nsfwLevel),
-                'type':     item['type'],
-                'have':     "",
-                'ea':       "",
-                'imgType':  ""
-                }
+                "name": item["name"],
+                "index": index,
+                "jsId": jsID,
+                "id": item["id"],
+                "isNsfw": False,
+                "nsfwLevel": item["nsfwLevel"],
+                "matchLevel": self.matchLevel(item["nsfwLevel"], nsfwLevel),
+                "type": item["type"],
+                "have": "",
+                "ea": "",
+                "imgType": "",
+                "creator": creator,
+                "blacklist": creator in blackUsers,
+                "favorite": creator in favUsers,
+            }
             if any(item['modelVersions']):
                 # if len(item['modelVersions'][0]['images']) > 0:
                 # default image
@@ -840,18 +853,19 @@ class CivitaiModels(APIInformation):
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
 
-                folder = generate_model_save_path2(
-                    self.getModelTypeByIndex(index),
-                    item["name"],
-                    base_model,
-                    self.treatAsNsfw(modelIndex=index),
-                    item["creator"]["username"] if 'creator' in item else "",
-                    item['id'],
-                    item['modelVersions'][0]['id'],
-                    item['modelVersions'][0]['name']
-                    )
                 for i,ver in enumerate(item['modelVersions']):
                     for file in ver['files']:
+                        folder = generate_model_save_path2(
+                            self.getModelTypeByIndex(index),
+                            item["name"],
+                            ver["baseModel"],
+                            self.treatAsNsfw(modelIndex=index),
+                            creator,
+                            item["id"],
+                            ver["id"],
+                            ver["name"],
+                        )
+                        # print(f"{folder}")
                         file_name = file['name']
                         path_file = folder / Path(file_name)
                         if path_file.exists():

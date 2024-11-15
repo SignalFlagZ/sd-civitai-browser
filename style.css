@@ -130,6 +130,23 @@
 	top: -1.5em;
 }
 
+
+.civsfz-modelcard .civsfz-creator-favorite {
+	position: absolute;
+	bottom: 4px;
+	right: -4px;
+	word-break: break-word;
+	color: gold;
+	font-size: x-large;
+	text-shadow: -3px -3px 2px black;
+}
+.civsfz-modelcard:hover .civsfz-creator-favorite {
+	bottom: -1em;
+	right: -0.5em;
+	opacity: 90%;
+	transform:rotate(20deg);
+}
+
 .civsfz-modelcard .civsfz-early-access-out {
 	position: absolute;
 	top: 1.4em;
@@ -230,3 +247,25 @@
 	min-width: 8em !important;
 }
 
+.civsfz-tooltip {
+	position: relative;
+	display: inline-block;
+	/* border-bottom: 1px dotted black; */
+}
+.civsfz-tooltip .civsfz-tooltiptext {
+	visibility: hidden;
+	width: max-content;
+	max-width: 100%;
+	bottom: 100%;
+	right: 0%;
+	background-color: var(--civsfz-background-color-figcaption);
+	text-align: left;
+	padding: 2px 5px;
+	border-radius: 6px;
+	position: absolute;
+	z-index: 1;
+	font-size: x-small;
+}
+.civsfz-tooltip:hover .civsfz-tooltiptext {
+	visibility: visible;
+}

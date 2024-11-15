@@ -26,9 +26,18 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - ***Automatically*** set save folder, or specify it directly
 - Card ***size and colors*** can be changed in Settings
 - Support ***API Key***
-- Show the ***Early Access*** period of models
+- ~~Show the ***Early Access*** period of models~~
+- Blacklist feature (Hide models by creator names)
+- Favorite creators feature (Highlight the model with ⭐️)
 
 ## Versions
+### v2.5
+- Add favorite creators in search term
+- Add favorite creator feature
+  - Display ⭐️ on card by creator name
+- Add blacklist feature
+  - Hide cards by creator name
+- Fix not detected previous models 
 ### v2.4
 - Preview family colors in Settings
 - The base model color settings have changed

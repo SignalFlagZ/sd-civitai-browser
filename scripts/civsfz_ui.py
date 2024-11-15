@@ -210,6 +210,7 @@ class Components():
                 if grDropdownSearchTerm == None:
                     return (gr.Dropdown.update(),
                             gr.Radio.update())
+                """
                 m = re.match(rf'(.+){self.sHistory.getDelimiter()}(.+)$', grDropdownSearchTerm)
                 if m is None:
                     return (gr.Dropdown.update(),
@@ -219,6 +220,15 @@ class Components():
                         gr.Radio.update())
                 return (gr.Dropdown.update(value=m.group(1)),
                         gr.Radio.update(value=m.group(2)))
+                """
+                term = grDropdownSearchTerm.split(self.sHistory.getDelimiter())
+                if term[0] == "":
+                    return (gr.Dropdown.update(), gr.Radio.update())
+                return (
+                    gr.Dropdown.update(value=term[0]),
+                    gr.Radio.update(value=term[1]),
+                )
+
             grDropdownSearchTerm.select(
                 fn=selectSHistory,
                 inputs=[grDropdownSearchTerm],
@@ -791,18 +801,16 @@ def on_ui_tabs():
         with gr.Accordion(label="Update information", open=False):
             gr.Markdown(
                 value=(
-                    "# Changes " + "v2.4" + "\n"
-                    "- Preview family colors in Settings"
+                    "# Changes " + "v2.5" + "\n"
+                    "- Add favorite creator feature"
                     "\n"
-                    "- The base model color settings have changed"
+                    "  - Display ⭐️ on cards by creator name"
                     "\n"
-                    "- You can set the color for each color family"
+                    "- Add blacklist feature"
                     "\n"
-                    "- You can register the base model to the family"
+                    "  - Hide cards by creator name"
                     "\n"
-                    "- Colors within a family will automatically change based on the family color"
-                    "\n"
-                    "- The color changes gradually according to the hls color wheel"
+                    "- Add favorite creators in search term"
                     "\n"
                     "- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
                     "\n\n"

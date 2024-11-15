@@ -117,7 +117,7 @@ def on_ui_settings():
             label="Favorite creators",
             component=gr.Textbox,
             component_args={
-                "info": "Comma-separated text",
+                "info": "Show ⭐️ on card. Comma-separated text.",
                 "placeholder": "xxx, yyy",
             },
         ),
@@ -126,7 +126,7 @@ def on_ui_settings():
             label="Blacklist creators",
             component=gr.Textbox,
             component_args={
-                "info": "Comma-separated text",
+                "info": "Hide Cards. Comma-separated text.",
                 "placeholder": "xxx, yyy",
             },
         ),

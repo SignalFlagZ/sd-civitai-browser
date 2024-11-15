@@ -244,8 +244,9 @@ def on_ui_settings():
         {
             "civsfz_msg_html3": shared.OptionHTML(
                 "<h3>What is Family?</h3>"
-                "You can set the color for each color family. "
+                "Families are groups of similar base models. "
                 "You can register the base model to the family. "
+                "You can set the color for each color family. "
                 "Colors within a family will automatically change based on the family color. "
                 "The color changes gradually according to the hls color wheel."
             ),

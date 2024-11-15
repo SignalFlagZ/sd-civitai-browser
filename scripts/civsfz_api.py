@@ -807,10 +807,10 @@ class CivitaiModels(APIInformation):
     # Make model cards html
     def modelCardsHtml(self, models, jsID=0, nsfwLevel=0):
         '''Generate HTML of model cards.'''
-        # Black List
-        txtBl = opts.civsfz_blacklist_creators  # Comma-separated text
+        # NG List
+        txtNG = opts.civsfz_ng_creators  # Comma-separated text
         txtFav = opts.civsfz_favorite_creators  # Comma-separated text
-        blackUsers = [s.strip() for s in txtBl.split(",")]
+        ngUsers = [s.strip() for s in txtNG.split(",")]
         favUsers = [s.strip() for s in txtFav.split(",")]
         cards = []
         for model in models:
@@ -831,7 +831,7 @@ class CivitaiModels(APIInformation):
                 "ea": "",
                 "imgType": "",
                 "creator": creator,
-                "blacklist": creator in blackUsers,
+                "ngUser": creator in ngUsers,
                 "favorite": creator in favUsers,
             }
             if any(item['modelVersions']):

@@ -27,7 +27,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Card ***size and colors*** can be changed in Settings
 - Support ***API Key***
 - ~~Show the ***Early Access*** period of models~~
-- Blacklist feature (Hide models by creator names)
+- NG creators feature (Hide models by creator names)
 - Favorite creators feature (Highlight the model with ⭐️)
 
 ## Versions
@@ -35,7 +35,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 - Add favorite creators in search term
 - Add favorite creator feature
   - Display ⭐️ on card by creator name
-- Add blacklist feature
+- Add NG creators feature
   - Hide cards by creator name
 - Fix not detected previous models 
 ### v2.4

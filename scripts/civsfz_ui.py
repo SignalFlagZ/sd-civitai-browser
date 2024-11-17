@@ -806,7 +806,7 @@ def on_ui_tabs():
                     "\n"
                     "  - Display ⭐️ on cards by creator name"
                     "\n"
-                    "- Add ng creators feature"
+                    "- Add ban creators feature"
                     "\n"
                     "  - Hide cards by creator name"
                     "\n"

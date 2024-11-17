@@ -808,7 +808,7 @@ class CivitaiModels(APIInformation):
     def modelCardsHtml(self, models, jsID=0, nsfwLevel=0):
         '''Generate HTML of model cards.'''
         # NG List
-        txtNG = opts.civsfz_ng_creators  # Comma-separated text
+        txtNG = opts.civsfz_ban_creators  # Comma-separated text
         txtFav = opts.civsfz_favorite_creators  # Comma-separated text
         ngUsers = [s.strip() for s in txtNG.split(",") if s.strip()]
         favUsers = [s.strip() for s in txtFav.split(",") if s.strip()]

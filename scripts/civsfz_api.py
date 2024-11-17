@@ -704,10 +704,7 @@ class CivitaiModels(APIInformation):
         versionIndex = self.versionIndex if versionIndex is None else versionIndex
         item = self.jsonData["items"][modelIndex]
         version = item["modelVersions"][versionIndex]
-        modelInfo = {"infoVersion": "2.3",
-                     # Some models do not have 'creator'
-                     #"creator": {"username": ""}
-                    }
+        modelInfo = {"infoVersion": "2.4"}
         for key, value in item.items():
             if key not in ("modelVersions"):
                 modelInfo[key] = value

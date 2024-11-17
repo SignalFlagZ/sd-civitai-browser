@@ -810,8 +810,8 @@ class CivitaiModels(APIInformation):
         # NG List
         txtNG = opts.civsfz_ng_creators  # Comma-separated text
         txtFav = opts.civsfz_favorite_creators  # Comma-separated text
-        ngUsers = [s.strip() for s in txtNG.split(",")]
-        favUsers = [s.strip() for s in txtFav.split(",")]
+        ngUsers = [s.strip() for s in txtNG.split(",") if s.strip()]
+        favUsers = [s.strip() for s in txtFav.split(",") if s.strip()]
         cards = []
         for model in models:
             index = model[1]

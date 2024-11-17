@@ -393,7 +393,7 @@ class SearchHistory(History):
         txtFav = opts.civsfz_favorite_creators  # Comma-separated text
         favUsers = [
             f"{s.strip()}{self._delimiter}User name{self._delimiter}⭐️"
-            for s in txtFav.split(",")
+            for s in txtFav.split(",") if s.strip()
         ]
         return ret + favUsers
     def getDelimiter(self) -> str:

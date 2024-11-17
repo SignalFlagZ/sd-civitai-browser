@@ -134,11 +134,11 @@
 .civsfz-modelcard .civsfz-creator-favorite {
 	position: absolute;
 	bottom: 4px;
-	right: -4px;
+	right: -3px;
 	word-break: break-word;
 	color: gold;
 	font-size: x-large;
-	text-shadow: -3px -3px 2px black;
+	text-shadow: -3px 3px 2px black;
 }
 .civsfz-modelcard:hover .civsfz-creator-favorite {
 	bottom: -1em;

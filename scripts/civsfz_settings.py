@@ -121,9 +121,9 @@ def on_ui_settings():
                 "placeholder": "xxx, yyy",
             },
         ).info("Show ⭐️ on card"),
-        "civsfz_ng_creators": shared.OptionInfo(
+        "civsfz_ban_creators": shared.OptionInfo(
             "",
-            label="NG creators",
+            label="Ban creators",
             component=gr.Textbox,
             component_args={
                 "info": "Comma-separated text",

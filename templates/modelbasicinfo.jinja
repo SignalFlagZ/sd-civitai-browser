@@ -6,22 +6,19 @@
 		<caption style="text-align: left">Model attributes</caption>
 		<tr>
 			<th {{ tdStyle1 }}>ID</th>
-			<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["id"] }}</span></td>
-		</tr>
-		<tr>
-			<th {{ tdStyle1 }}>Civitai link</th>
-			<td {{ tdStyle1 }}><a href="https://civitai.com/models/{{ modelInfo['id'] }}?modelVersionId={{ modelInfo["versionId"] }}" target="_blank">https://civitai.com/models/{{
-					modelInfo['id'] }}</a></td>
-		</tr>
-		<tr>
-			<th {{ tdStyle1 }}>NSFW level</th>
-			<td {{ tdStyle1 }}>{{ strNsfw }}</td>
-		
+			<td {{ tdStyle1 }}>{{ copy }}<span>
+				<a href="https://civitai.com/models/{{ modelInfo['id'] }}?modelVersionId={{ modelInfo['versionId'] }}" target="_blank">{{ modelInfo["id"] }}
+				</a>
+			</span></td>
 		</tr>
 		<tr>
 			<th {{ tdStyle1 }}>Uploaded by</th>
 			{%- if 'creator' in modelInfo -%}
-				<td {{ tdStyle1 }}>{{ copy }}<span>{{ modelInfo["creator"]["username"]|e }}</span></td>
+				<td {{ tdStyle1 }}>{{ copy }}
+					<span>
+						<a href="https://civitai.com/user/{{ modelInfo['creator']['username'] }}" target="_blank">{{ modelInfo['creator']['username']|e }}</a>
+					</span>
+				</td>
 			{%- else -%}
 				<td {{ tdStyle1 }}><span>No creator information</span></td>
 			{%- endif -%}
@@ -30,6 +27,11 @@
 			<th {{ tdStyle1 }}>Published</th>
 			<td {{ tdStyle1 }}>{{ published }}</td>
 
+		</tr>
+		<tr>
+			<th {{ tdStyle1 }}>NSFW level</th>
+			<td {{ tdStyle1 }}>{{ strNsfw }}</td>
+		
 		</tr>
 	</table>
 

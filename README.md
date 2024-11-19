@@ -32,6 +32,9 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.5
+- Add User Management feature
+  - Favorite creators are saved in file `favoriteUsers.txt` 
+  - Banned creators are saved in file `bannedUsers.txt`
 - Add favorite creators in search term
 - Add favorite creator feature
   - Display ⭐️ on card by creator name

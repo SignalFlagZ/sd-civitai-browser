@@ -6,10 +6,17 @@ import re
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
+from modules.ui_components import ToolButton
 from colorama import Fore, Back, Style
 from scripts.civsfz_shared import VERSION, cmd_opts, opts
 from scripts.civsfz_api import CivitaiModels
-from scripts.civsfz_filemanage import open_folder, SearchHistory, ConditionsHistory
+from scripts.civsfz_filemanage import (
+    open_folder,
+    HistoryS,
+    HistoryC,
+    FavoriteCreators,
+    BanCreators,
+)
 from scripts.civsfz_downloader import Downloader
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -18,8 +25,6 @@ print_n = lambda  x: print("CivBrowser: " + x )
 
 class Components():
     newid = itertools.count()
-    sHistory = SearchHistory()
-    cHistory = ConditionsHistory()
     downloader = None
     def __init__(self, downloader:Downloader, tab=None):
         '''id: Event ID for javascrypt'''
@@ -65,12 +70,22 @@ class Components():
                         grDrpdwnBasemodels = gr.Dropdown(label="Base Models", choices=self.Civitai.getBasemodelOptions(
                         ), value=None, type="value", multiselect=True)
                     with gr.Row():
-                        grDrpdwnCHistory = gr.Dropdown(label="Conditions History", choices=Components.cHistory.getAsChoices(), type="value")
+                        grDrpdwnCHistory = gr.Dropdown(
+                            label="Conditions History",
+                            choices=HistoryC.getAsChoices(),
+                            type="value",
+                        )
 
             with gr.Row():
                 grRadioSearchType = gr.Radio(scale=2, label="Search", choices=self.Civitai.getSearchTypes(),value="No")
-                grDropdownSearchTerm = gr.Dropdown( scale=1,
-                    label="Search Term", choices=Components.sHistory.getAsChoices(), type="value",  interactive=True, allow_custom_value=True)
+                grDropdownSearchTerm = gr.Dropdown(
+                    scale=1,
+                    label="Search Term",
+                    choices=HistoryS.getAsChoices(),
+                    type="value",
+                    interactive=True,
+                    allow_custom_value=True,
+                )
             with gr.Column(elem_id=f"civsfz_model-navigation{self.id}"):
                 with gr.Row(elem_id=f"civsfz_apicontrol{self.id}", elem_classes="civsfz-navigation-buttons civsfz-sticky-element"):
                     with gr.Column(scale=3):
@@ -99,15 +114,7 @@ class Components():
                     value=f"<div onclick='civsfz_scroll_to(\"#civsfz_model-navigation{self.id}\");'><span style='font-size:200%;color:transparent;text-shadow:0 0 0 orange;cursor: pointer;pointer-events: auto;'>&#x1F51D;</span></div>",
                 )  # 🔝
                 with gr.Row():
-                    grHtmlModelName = gr.HTML(
-                        elem_id=f"civsfz_modellist{self.id}",
-                        value=None,
-                        visible=True,
-                    )
-                    grTxtJsEvent = gr.Textbox(label="Event text", value=None, elem_id=f"civsfz_eventtext{self.id}", visible=False, interactive=True, lines=1)
-                    txt_list = ""
-                    grTxtTrainedWords = gr.Textbox(
-                        label='Trained Tags (if any)', value=f'{txt_list}', interactive=False, lines=1, visible=False)
+                    grHtmlModelName = gr.HTML(elem_id=f"civsfz_modellist{self.id}", value=None, visible=True)
                 with gr.Row(elem_classes="civsfz-save-buttons civsfz-sticky-element"):
                     with gr.Column(scale=2):
                         with gr.Row():
@@ -129,7 +136,43 @@ class Components():
                                 label="Download status", show_label=False
                             )
                             # deprecated grBtnCancel = gr.Button(value="Cancel",interactive=False, variant='stop', min_width=80)
-
+                with gr.Row():
+                    with gr.Accordion(label="User Management", open=False):
+                        with gr.Row():
+                            grTxtCreator = gr.Textbox(
+                                label="Creator name",
+                                value="",
+                                visible=True,
+                            )
+                            grBtnAddFavorite = ToolButton(
+                                "⭐️",
+                                interactive=False,
+                                tooltip="Add as favorite",
+                            )
+                            grBtnAddBan = ToolButton(
+                                "🚷",
+                                interactive=False,
+                            )
+                            grBtnClearUser = ToolButton(
+                                "↻",
+                                interactive=False,
+                            )
+                    grTxtJsEvent = gr.Textbox(
+                        label="Event text",
+                        value=None,
+                        elem_id=f"civsfz_eventtext{self.id}",
+                        visible=False,
+                        interactive=True,
+                        lines=1,
+                    )
+                    txt_list = ""
+                    grTxtTrainedWords = gr.Textbox(
+                        label="Trained Tags (if any)",
+                        value=f"{txt_list}",
+                        interactive=False,
+                        lines=1,
+                        visible=False,
+                    )
                 with gr.Row():
                     grRadioVersions = gr.Radio(label="Version", choices=[], interactive=True, elem_id=f"civsfz_versionlist{self.id}", value=None)
                 with gr.Row():
@@ -172,6 +215,59 @@ class Components():
             #    outputs=[grTxtApiKey],
             #    )
 
+            def updateUserManageButton(grTxtCreator):
+                if grTxtCreator == "":
+                    blFav = False
+                    blBan = False
+                    blClr = False
+                else:
+                    blFav = not grTxtCreator in FavoriteCreators.getAsList()
+                    blBan = not grTxtCreator in BanCreators.getAsList()
+                    blClr = not (blFav and blBan)
+                return (
+                    gr.Button.update(interactive=blFav),
+                    gr.Button.update(interactive=blBan),
+                    gr.Button.update(interactive=blClr),
+                )
+
+            grTxtCreator.change(
+                fn=updateUserManageButton,
+                inputs=[grTxtCreator],
+                outputs=[grBtnAddFavorite, grBtnAddBan, grBtnClearUser],
+            )
+
+            def addFavorite(grTxtCreator):
+                if FavoriteCreators.add(grTxtCreator):
+                    gr.Info(f"Add {grTxtCreator} to favorite")
+                BanCreators.remove(grTxtCreator)
+                return updateUserManageButton(grTxtCreator)
+
+            def addBan(grTxtCreator):
+                if BanCreators.add(grTxtCreator):
+                    gr.Info(f"Ban {grTxtCreator}")
+                FavoriteCreators.remove(grTxtCreator)
+                return updateUserManageButton(grTxtCreator)
+            def clearUser(grTxtCreator):
+                if FavoriteCreators.remove(grTxtCreator):
+                    gr.Info(f"Reset {grTxtCreator}")
+                BanCreators.remove(grTxtCreator)
+                return updateUserManageButton(grTxtCreator)
+            grBtnAddFavorite.click(
+                fn=addFavorite,
+                inputs=[grTxtCreator],
+                outputs=[grBtnAddFavorite, grBtnAddBan, grBtnClearUser],
+            )
+            grBtnAddBan.click(
+                fn=addBan,
+                inputs=[grTxtCreator],
+                outputs=[grBtnAddFavorite, grBtnAddBan, grBtnClearUser],
+            )
+            grBtnClearUser.click(
+                fn=clearUser,
+                inputs=[grTxtCreator],
+                outputs=[grBtnAddFavorite, grBtnAddBan, grBtnClearUser],
+            )
+
             def save_image_files(grTxtSaveFolder, grtxtSaveFilename, grTxtTrainedWords, grHtmlModelInfo):
                 res1 = save_text_file(grTxtSaveFolder, grtxtSaveFilename, grTxtTrainedWords)
                 res2 = saveImageFiles(
@@ -211,7 +307,7 @@ class Components():
                     return (gr.Dropdown.update(),
                             gr.Radio.update())
                 """
-                m = re.match(rf'(.+){self.sHistory.getDelimiter()}(.+)$', grDropdownSearchTerm)
+                m = re.match(rf'(.+){HistoryS.getDelimiter()}(.+)$', grDropdownSearchTerm)
                 if m is None:
                     return (gr.Dropdown.update(),
                             gr.Radio.update())
@@ -221,7 +317,7 @@ class Components():
                 return (gr.Dropdown.update(value=m.group(1)),
                         gr.Radio.update(value=m.group(2)))
                 """
-                term = grDropdownSearchTerm.split(self.sHistory.getDelimiter())
+                term = grDropdownSearchTerm.split(HistoryS.getDelimiter())
                 if term[0] == "":
                     return (gr.Dropdown.update(), gr.Radio.update())
                 return (
@@ -235,9 +331,17 @@ class Components():
                 outputs=[grDropdownSearchTerm,
                         grRadioSearchType]
             )
+            def updateSearchTermChoices():
+                return gr.Dropdown.update(choices=HistoryS.getAsChoices())
+            # Dropdown and text editing conflict on focus event
+            grDropdownSearchTerm.blur(
+                fn=updateSearchTermChoices,
+                inputs=[],
+                outputs=[grDropdownSearchTerm],
+            )
             def selectCHistory(grDrpdwnHistory):
                 if grDrpdwnHistory:
-                    conditions = grDrpdwnHistory.split(self.cHistory.getDelimiter())
+                    conditions = grDrpdwnHistory.split(HistoryC.getDelimiter())
                     return (gr.Dropdown.update(value=conditions[0]),
                             gr.Dropdown.update(value=conditions[1]),
                             gr.Dropdown.update(value=json.loads(conditions[2])),
@@ -259,7 +363,7 @@ class Components():
                                             grChkboxShowNsfw]
                                    )
             def CHistoryUpdate():
-                return gr.Dropdown.update(choices=Components.cHistory.getAsChoices())
+                return gr.Dropdown.update(choices=HistoryC.getAsChoices())
             self.tab.select(fn=CHistoryUpdate,
                                 inputs=[],
                                 outputs=[grDrpdwnCHistory]
@@ -344,12 +448,15 @@ class Components():
                         gr.Slider.update(interactive=False),\
                         gr.Textbox.update(value=None),\
                         gr.Dropdown.update(),\
-                        gr.Dropdown.update()
-                Components.sHistory.add(grRadioSearchType, grDropdownSearchTerm)
-                Components.cHistory.add(grDrpdwnSortType,
-                             grDrpdwnPeriod,
-                             grDrpdwnBasemodels,
-                             grChkboxShowNsfw)
+                        gr.Dropdown.update(),\
+                        gr.Textbox.update(),
+                HistoryS.add(grRadioSearchType, grDropdownSearchTerm)
+                HistoryC.add(
+                    grDrpdwnSortType,
+                    grDrpdwnPeriod,
+                    grDrpdwnBasemodels,
+                    grChkboxShowNsfw,
+                )
                 self.Civitai.updateJsonData(response) #, grRadioContentType)
                 if err is None:
                     self.Civitai.addFirstPage(response, grChkbxGrpContentType, grDrpdwnSortType, grRadioSearchType,
@@ -363,16 +470,26 @@ class Components():
                 # HTML = self.Civitai.modelCardsHtml(model_names, self.id)
                 models = self.Civitai.getModels(grChkboxShowNsfw)
                 HTML = self.Civitai.modelCardsHtml(models, jsID=self.id, nsfwLevel=sum(grChkbxgrpLevel))
-                return  gr.HTML.update(value=""), \
-                        gr.Radio.update(choices=[], value=None),\
-                        gr.HTML.update(value=HTML),\
-                        gr.Button.update(interactive=hasPrev),\
-                        gr.Button.update(interactive=hasNext),\
-                        gr.Button.update(interactive=enableJump),\
-                        gr.Slider.update(interactive=enableJump, value=int(self.Civitai.getCurrentPage()),maximum=int(self.Civitai.getTotalPages())),\
-                        gr.Textbox.update(value=grTxtPages),\
-                        gr.Dropdown.update(choices=Components.sHistory.getAsChoices()),\
-                        gr.Dropdown.update(choices=Components.cHistory.getAsChoices(),value=Components.cHistory.getAsChoices()[0])
+                return (
+                    gr.HTML.update(value=""),
+                    gr.Radio.update(choices=[], value=None),
+                    gr.HTML.update(value=HTML),
+                    gr.Button.update(interactive=hasPrev),
+                    gr.Button.update(interactive=hasNext),
+                    gr.Button.update(interactive=enableJump),
+                    gr.Slider.update(
+                        interactive=enableJump,
+                        value=int(self.Civitai.getCurrentPage()),
+                        maximum=int(self.Civitai.getTotalPages()),
+                    ),
+                    gr.Textbox.update(value=grTxtPages),
+                    gr.Dropdown.update(choices=HistoryS.getAsChoices()),
+                    gr.Dropdown.update(
+                        choices=HistoryC.getAsChoices(),
+                        value=HistoryC.getAsChoices()[0],
+                    ),
+                    gr.Textbox.update(value=""),
+                )
             def preload_nextpage():
                 hasNext = not self.Civitai.nextPage() is None
                 if hasNext:
@@ -402,6 +519,7 @@ class Components():
                     grTxtPages,
                     grDropdownSearchTerm,
                     grDrpdwnCHistory,
+                    grTxtCreator,
                 ],
             ).then(  # for custum settings
                 fn=updatePropertiesText, inputs=[], outputs=[grTxtProperties]
@@ -473,6 +591,7 @@ class Components():
                         gr.Textbox.update(value=txtEarlyAccess),
                         grtxtSaveFilename,
                         grHtmlModelName,
+                        gr.Textbox.update(value=self.Civitai.getUserName()),
                     )
                 else:
                     return (
@@ -605,7 +724,8 @@ class Components():
                         gr.Button.update(interactive=hasPrev),\
                         gr.Button.update(interactive=hasNext),\
                         gr.Slider.update(value=self.Civitai.getCurrentPage(), maximum=self.Civitai.getTotalPages()),\
-                        gr.Textbox.update(value=grTxtPages)
+                        gr.Textbox.update(value=grTxtPages),\
+                        gr.Textbox.update(value="")
 
             grBtnNextPage.click(
                 fn=update_next_page,
@@ -618,6 +738,7 @@ class Components():
                     grBtnNextPage,
                     grSldrPage,
                     grTxtPages,
+                    grTxtCreator,
                     # grTxtSaveFolder
                 ],
             ).then(
@@ -638,6 +759,7 @@ class Components():
                     grBtnNextPage,
                     grSldrPage,
                     grTxtPages,
+                    grTxtCreator,
                     # grTxtSaveFolder
                 ],
             )
@@ -669,13 +791,16 @@ class Components():
                 # HTML = self.Civitai.modelCardsHtml(model_names, self.id)
                 models = self.Civitai.getModels(grChkboxShowNsfw)
                 HTML = self.Civitai.modelCardsHtml(models, jsID=self.id, nsfwLevel=sum(grChkbxgrpLevel))
-                return  gr.HTML.update(value=None),\
-                        gr.Radio.update(choices=[], value=None),\
-                        gr.HTML.update(value=HTML),\
-                        gr.Button.update(interactive=hasPrev),\
-                        gr.Button.update(interactive=hasNext),\
-                        gr.Slider.update(value = self.Civitai.getCurrentPage()),\
-                        gr.Textbox.update(value=grTxtPages)
+                return (
+                    gr.HTML.update(value=None),
+                    gr.Radio.update(choices=[], value=None),
+                    gr.HTML.update(value=HTML),
+                    gr.Button.update(interactive=hasPrev),
+                    gr.Button.update(interactive=hasNext),
+                    gr.Slider.update(value=self.Civitai.getCurrentPage()),
+                    gr.Textbox.update(value=grTxtPages),
+                    gr.Textbox.update(value=""),
+                )
             grBtnGoPage.click(
                 fn=jump_to_page,
                 inputs=[grChkboxShowNsfw, grSldrPage, grChkbxgrpLevel],
@@ -687,6 +812,7 @@ class Components():
                     grBtnNextPage,
                     grSldrPage,
                     grTxtPages,
+                    grTxtCreator,
                 ],
             )
 
@@ -718,6 +844,7 @@ class Components():
                             grTxtEarlyAccess,
                             grtxtSaveFilename,
                             grHtmlModelName,
+                            grTxtCreator,
                         ) = update_model_info(grRadioVersions["value"], grChkbxgrpLevel)
                         # grTxtDlUrl = gr.Textbox.update(value=self.Civitai.getUrlByName(grDrpdwnSelectFile['value']))
                         grTxtHash = gr.Textbox.update(value=self.Civitai.getHashByName(grDrpdwnSelectFile['value']))
@@ -732,6 +859,7 @@ class Components():
                             grTxtBaseModel,
                             grTxtSaveFolder,
                             grtxtSaveFilename,
+                            grTxtCreator,
                         )
                     else:
                         return (
@@ -745,6 +873,7 @@ class Components():
                             gr.Textbox.update(value=None),
                             gr.Textbox.update(value=None),
                             gr.Textbox.update(value=None),
+                            gr.Textbox.update(value=None),
                         )
                 else:
                     return (
@@ -755,6 +884,7 @@ class Components():
                         gr.Textbox.update(value=""),
                         gr.Textbox.update(value=None),
                         gr.Dropdown.update(value=None),
+                        gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
@@ -774,6 +904,7 @@ class Components():
                     grTxtBaseModel,
                     grTxtSaveFolder,
                     grtxtSaveFilename,
+                    grTxtCreator,
                 ],
             ).then(
                 _js=f'() => {{civsfz_scroll_to("#civsfz_model-data{self.id}");}}',
@@ -802,6 +933,8 @@ def on_ui_tabs():
             gr.Markdown(
                 value=(
                     "# Changes " + "v2.5" + "\n"
+                    "- Add User Management feature"
+                    "\n"
                     "- Add favorite creator feature"
                     "\n"
                     "  - Display ⭐️ on cards by creator name"

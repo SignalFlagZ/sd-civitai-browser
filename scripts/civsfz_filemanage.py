@@ -345,7 +345,7 @@ class History():
         if path != None:
             self._path = path
         self._history: deque = self.load()
-    def load(self) -> dict:
+    def load(self) -> list[dict]:
         try:
             with open(self._path, 'r', encoding="utf-8") as f:
                 ret = json.load(f)
@@ -374,26 +374,24 @@ class SearchHistory(History):
     def add(self, type, word):
         if type == "No" or word == "" or word == None:
             return
-        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
-        if word in txtFav:
+        if word in FavoriteCreators.getAsList():
             return
-        dict = { "type" : type,
+        d = { "type" : type,
                 "word": word }  
         try:                  
-            self._history.remove(dict)
+            self._history.remove(d)
         except:
             pass
-        self._history.appendleft(dict)
+        self._history.appendleft(d)
         while self.len() > opts.civsfz_length_of_search_history:
             self._history.pop()
         self.save()
     def getAsChoices(self):
         ret = [f'{w["word"]}{self._delimiter}{w["type"]}' for w in self._history]
         # Add favorite users
-        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
         favUsers = [
             f"{s.strip()}{self._delimiter}User name{self._delimiter}⭐️"
-            for s in txtFav.split(",") if s.strip()
+            for s in FavoriteCreators.getAsList()
         ]
         return ret + favUsers
     def getDelimiter(self) -> str:
@@ -405,17 +403,17 @@ class ConditionsHistory(History):
             extensionFolder(), Path("../conditions_history.json")))
         self._delimiter = "_._"
     def add(self, sort, period, baseModels, nsfw ):
-        dict = {
+        d = {
             "sort": sort,
             "period": period,
             "baseModels": baseModels,
             "nsfw": nsfw
         }
         try:                  
-            self._history.remove(dict)
+            self._history.remove(d)
         except:
             pass
-        self._history.appendleft(dict)
+        self._history.appendleft(d)
         while self.len() > opts.civsfz_length_of_conditions_history:
             self._history.pop()
         self.save()
@@ -426,3 +424,78 @@ class ConditionsHistory(History):
         return ret
     def getDelimiter(self) -> str:
         return self._delimiter
+HistoryS = SearchHistory()
+HistoryC = ConditionsHistory()
+
+class UserInfo:
+    def __init__(self, path=None):
+        self._path = Path.joinpath(extensionFolder(), Path("../users.json"))
+        if path != None:
+            self._path = path
+        self._users: list = self.load()
+
+    def add(self, name: str) -> bool:
+        name = name.strip()
+        if name == "":
+            return False
+        self.remove(name)
+        self._users.append(name)
+        self.save()
+        return True
+
+    def remove(self, name: str) -> bool:
+        name = name.strip()
+        if name == "":
+            return False
+        self._users = [u for u in self._users if u != name]
+        self.save()
+        return True
+
+    def load(self) -> list:
+        try:
+            with open(self._path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+                line = ", ".join(lines)
+                ret = [s.strip() for s in line.split(",") if s.strip()]
+        except Exception as e:
+            # print_lc(f"{e}")
+            ret = []
+        return ret
+
+    def save(self):
+        try:
+            with open(self._path, "w", encoding="utf-8") as f:
+                l = len(self._users)
+                n = 3
+                for i in range(0,int(l),n):
+                    f.write(", ".join(self._users[i : i + n]) + "\n")
+        except Exception as e:
+            # print_lc(e)
+            pass
+    def getAsList(self) -> list[str]:
+        return self._users
+    def getAsText(self) -> str:
+        return ", ".join(self._users)
+
+class FavoriteUsers(UserInfo):
+    def __init__(self):
+        super().__init__(
+            Path.joinpath(extensionFolder(), Path("../favoriteUsers.txt"))
+        )
+        if hasattr(opts, "civsfz_favorite_creators"):  # for backward compatibility
+            users = [s.strip() for s in opts.civsfz_favorite_creators.split(",") if s.strip()]
+            for u in users:
+                self.add(u)
+
+class BanUsers(UserInfo):
+    def __init__(self):
+        super().__init__(
+            Path.joinpath(extensionFolder(), Path("../bannedUsers.txt")))
+        if hasattr(opts, "civsfz_ban_creators"):  # for backward compatibility
+            users = [
+                s.strip() for s in opts.civsfz_ban_creators.split(",") if s.strip()
+            ]
+            for u in users:
+                self.add(u)
+FavoriteCreators = FavoriteUsers()
+BanCreators = BanUsers()

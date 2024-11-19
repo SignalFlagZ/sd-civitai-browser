@@ -221,8 +221,10 @@ class Components():
                     blBan = False
                     blClr = False
                 else:
-                    blFav = not grTxtCreator in FavoriteCreators.getAsList()
-                    blBan = not grTxtCreator in BanCreators.getAsList()
+                    _blFav = not grTxtCreator in FavoriteCreators.getAsList()
+                    _blBan = not grTxtCreator in BanCreators.getAsList() 
+                    blFav = _blFav and _blBan
+                    blBan = _blFav and _blBan
                     blClr = not (blFav and blBan)
                 return (
                     gr.Button.update(interactive=blFav),

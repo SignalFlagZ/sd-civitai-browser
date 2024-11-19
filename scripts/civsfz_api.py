@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 # from requests_cache import CachedSession
 from colorama import Fore, Back, Style
-from scripts.civsfz_filemanage import generate_model_save_path2, extensionFolder
+from scripts.civsfz_filemanage import generate_model_save_path2, extensionFolder, FavoriteCreators, BanCreators
 from scripts.civsfz_color import dictBasemodelColors
 from scripts.civsfz_shared import opts
 from jinja2 import Environment, FileSystemLoader
@@ -805,10 +805,10 @@ class CivitaiModels(APIInformation):
     def modelCardsHtml(self, models, jsID=0, nsfwLevel=0):
         '''Generate HTML of model cards.'''
         # NG List
-        txtNG = opts.civsfz_ban_creators  # Comma-separated text
-        txtFav = opts.civsfz_favorite_creators  # Comma-separated text
-        ngUsers = [s.strip() for s in txtNG.split(",") if s.strip()]
-        favUsers = [s.strip() for s in txtFav.split(",") if s.strip()]
+        # txtNG = opts.civsfz_ban_creators  # Comma-separated text
+        # txtFav = opts.civsfz_favorite_creators  # Comma-separated text
+        # ngUsers = [s.strip() for s in txtNG.split(",") if s.strip()]
+        # favUsers = [s.strip() for s in txtFav.split(",") if s.strip()]
         cards = []
         for model in models:
             index = model[1]
@@ -828,8 +828,8 @@ class CivitaiModels(APIInformation):
                 "ea": "",
                 "imgType": "",
                 "creator": creator,
-                "ngUser": creator in ngUsers,
-                "favorite": creator in favUsers,
+                "ngUser": creator in BanCreators.getAsList(),
+                "favorite": creator in FavoriteCreators.getAsList(),
             }
             if any(item['modelVersions']):
                 # if len(item['modelVersions'][0]['images']) > 0:

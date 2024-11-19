@@ -237,6 +237,12 @@
 	min-width: 2.5em !important;
 	height: 2.4em;
 }
+.civsfz-small-buttons2 {
+	margin: 0em 0em 0.0em 0em !important;
+	max-width: 2.5em;
+	min-width: 2.5em !important;
+	height: 2.4em;
+}
 
 .civsfz-msg {
 	/*align-self: center;*/

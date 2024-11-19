@@ -23,13 +23,29 @@ def on_ui_settings():
     # OptionInfo params
     # default=None, label="", component=None, component_args=None, onchange=None, section=None, refresh=None, comment_before='', comment_after='', infotext=None, restrict_api=False, category_id=None
     # SD.Next dose not have OptionHTML
+    dict_user_management = (
+        {
+            "civsfz_msg_user_management": shared.OptionHTML(
+                "<h3>Creator management</h3>"
+                "Favourite creators and banned creators are stored in text files `<em>favoriteUsers.txt</em>` and `<em>bannedUsers.txt</em>` respectively. "
+                "To register the creator, go to <em>User Management</em> on the CivBrowser tab. </br>"
+                "The previous registration items in here have been discontinued. "
+                "Previously registered users are re-registered every time the app is started. "
+                "Therefore, it is not possible to delete previously registered users. "
+                "To avoid this, edit your `<em>config.json</em>` file and remove the `<em>civsfz_favorite_creators</em>` and `<em>civsfz_ban_creators</em>` lines."
+            ),
+        }
+        if not platform == "SD.Next"
+        else {}
+    )
+
     dict_api_info = (
         {
             "civsfz_msg_html1": shared.OptionHTML(
                 "<h3>API-Key</h3>"
-                "The command line option `<var>--civsfz-api-key</var>` is deprecated. "
+                "The command line option `<em>--civsfz-api-key</em>` is deprecated. "
                 "We felt that this was a risk because some users might not notice the API-Key being displayed on the console. "
-                "The API-Key here is saved in the `<var>settings.json</var>` file.</br>"
+                "The API-Key here is saved in the `<em>settings.json</em>` file.</br>"
                 "If you do not know this, there is a risk of your API-Key being leaked."
             ),
         }
@@ -111,6 +127,7 @@ def on_ui_settings():
         ),
     }
 
+    # Deprecated
     dict_creator_control = {
         "civsfz_favorite_creators": shared.OptionInfo(
             "",
@@ -284,9 +301,10 @@ def on_ui_settings():
             }
 
     for key, opt in {
+        **dict_user_management,
         **dict_api_info,
         **dict_options1,
-        **dict_creator_control,
+        # **dict_creator_control,
         **dict_background_opacity,
         # **dict_modelColor,
         **dict_color_figcaption,

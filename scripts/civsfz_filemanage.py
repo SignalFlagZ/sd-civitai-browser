@@ -468,7 +468,8 @@ class UserInfo:
                 l = len(self._users)
                 n = 3
                 for i in range(0,int(l),n):
-                    f.write(", ".join(self._users[i : i + n]) + "\n")
+                    f.write(", ".join(self._users[i : i + n]))
+                    f.write("\n")
         except Exception as e:
             # print_lc(e)
             pass

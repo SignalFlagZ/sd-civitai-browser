@@ -18,6 +18,8 @@ from scripts.civsfz_filemanage import (
     BanCreators,
 )
 from scripts.civsfz_downloader import Downloader
+from scripts.civsfz_color import dictBasemodelColors
+
 
 print_ly = lambda  x: print(Fore.LIGHTYELLOW_EX + "CivBrowser: " + x + Style.RESET_ALL )
 print_lc = lambda  x: print(Fore.LIGHTCYAN_EX + "CivBrowser: " + x + Style.RESET_ALL )
@@ -194,6 +196,7 @@ class Components():
                         lines=1,
                     )
                 with gr.Row():
+                    grTxtVersionInfo = gr.Textbox(label="Version base model",value="",visible=False)
                     grHtmlModelInfo = gr.HTML(elem_id=f"civsfz_model-info{self.id}")
 
             # def renameTab(type):
@@ -372,6 +375,13 @@ class Components():
                             )
 
             def updatePropertiesText():
+                basemodelColor = dictBasemodelColors(
+                    self.Civitai.getBasemodelOptions()
+                )
+                escapeColor = {
+                    k.replace(".", "_").replace(" ", "_"): v
+                    for k, v in basemodelColor.items()
+                }
                 opacity = f"{int(opts.civsfz_background_opacity*255):02x}"
                 propertiesText = ";".join(
                     [
@@ -382,6 +392,7 @@ class Components():
                         str(opts.civsfz_hover_zoom_magnification),
                         str(opts.civsfz_card_size_width),
                         str(opts.civsfz_card_size_height),
+                        json.dumps(escapeColor),
                     ]
                 )
                 return gr.Textbox.update(value=propertiesText)
@@ -555,20 +566,21 @@ class Components():
                                                 self.Civitai.getVersionID(),
                                                 self.Civitai.getSelectedVersionName()
                                             )
-                    dict = self.Civitai.makeModelInfo2(nsfwLevel=sum(grChkbxgrpLevel))
-                    if dict['modelVersions'][0]["files"] == []:
+                    modelInfo = self.Civitai.makeModelInfo2(nsfwLevel=sum(grChkbxgrpLevel))
+                    if modelInfo["modelVersions"][0]["files"] == []:
                         drpdwn =  gr.Dropdown.update(choices=[], value="")
                         grtxtSaveFilename = gr.Textbox.update(value="")
                     else:
-                        filename = dict["modelVersions"][0]["files"][0]["name"]
-                        for f in dict["modelVersions"][0]["files"]:
+                        filename = modelInfo["modelVersions"][0]["files"][0]["name"]
+                        for f in modelInfo["modelVersions"][0]["files"]:
                             if 'primary' in f:
                                 if f['primary']:
                                     filename = f["name"]
                                     break
                         drpdwn = gr.Dropdown.update(
                             choices=[
-                                f["name"] for f in dict["modelVersions"][0]["files"]
+                                f["name"]
+                                for f in modelInfo["modelVersions"][0]["files"]
                             ],
                             value=filename,
                         )
@@ -585,10 +597,10 @@ class Components():
                         )
 
                     return (
-                        gr.HTML.update(value=dict["html"]),
-                        gr.Textbox.update(value=", ".join(dict["trainedWords"])),
+                        gr.HTML.update(value=modelInfo["html"]),
+                        gr.Textbox.update(value=", ".join(modelInfo["trainedWords"])),
                         drpdwn,
-                        gr.Textbox.update(value=dict["baseModel"]),
+                        gr.Textbox.update(value=modelInfo["baseModel"]),
                         gr.Textbox.update(value=path),
                         gr.Textbox.update(value=txtEarlyAccess),
                         grtxtSaveFilename,
@@ -850,6 +862,7 @@ class Components():
                         ) = update_model_info(grRadioVersions["value"], grChkbxgrpLevel)
                         # grTxtDlUrl = gr.Textbox.update(value=self.Civitai.getUrlByName(grDrpdwnSelectFile['value']))
                         grTxtHash = gr.Textbox.update(value=self.Civitai.getHashByName(grDrpdwnSelectFile['value']))
+                        grTxtVersionInfo = gr.Textbox.update(value=json.dumps(self.Civitai.getModelVersionsInfo()))
                         return (
                             grHtmlModelName,
                             grRadioVersions,
@@ -862,6 +875,7 @@ class Components():
                             grTxtSaveFolder,
                             grtxtSaveFilename,
                             grTxtCreator,
+                            grTxtVersionInfo,
                         )
                     else:
                         return (
@@ -876,6 +890,7 @@ class Components():
                             gr.Textbox.update(value=None),
                             gr.Textbox.update(value=None),
                             gr.Textbox.update(value=None),
+                            gr.Textbox.update(value=None),
                         )
                 else:
                     return (
@@ -886,6 +901,7 @@ class Components():
                         gr.Textbox.update(value=""),
                         gr.Textbox.update(value=None),
                         gr.Dropdown.update(value=None),
+                        gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
                         gr.Textbox.update(value=None),
@@ -907,19 +923,16 @@ class Components():
                     grTxtSaveFolder,
                     grtxtSaveFilename,
                     grTxtCreator,
+                    grTxtVersionInfo,
                 ],
             ).then(
-                _js=f'() => {{civsfz_scroll_to("#civsfz_model-data{self.id}");}}',
+                _js=f'(x) => {{civsfz_scroll_and_color("#civsfz_model-data{self.id}", "#civsfz_versionlist{self.id}", x);}}',
                 fn=None,
-                inputs=[],
+                inputs=[grTxtVersionInfo],
                 outputs=[],
             )
 
-            grBtnFolder.click(
-                fn=open_folder,
-                inputs=[grTxtSaveFolder],
-                outputs=[]
-                )
+            grBtnFolder.click(fn=open_folder, inputs=[grTxtCreator], outputs=[])
 
     def getComponents(self):
         return self.components

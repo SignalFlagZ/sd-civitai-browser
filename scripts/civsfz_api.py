@@ -550,6 +550,37 @@ class CivitaiModels(APIInformation):
             versionNames = [ (version['name'],i) for i,version in enumerate(item['modelVersions'])]
             # versionNames[version['name']] = version["name"]
         return versionNames
+    def getModelVersionsInfo(self) -> list:
+        info = []
+        if self.modelIndex is None:
+            pass
+            # print_ly("Select item first.")
+        else:
+            item = self.jsonData["items"][self.modelIndex]
+            info = [
+                {"name": version["name"], "base_model": version["baseModel"]}
+                for version in item["modelVersions"]
+            ]
+            for i,ver in enumerate(item['modelVersions']):
+                for file in ver['files']:
+                    folder = generate_model_save_path2(
+                        item["type"],
+                        item["name"],
+                        ver["baseModel"],
+                        self.treatAsNsfw(),
+                        item["creator"]["username"] if "creator" in item else "",
+                        item["id"],
+                        ver["id"],
+                        ver["name"],
+                    )
+                    # print(f"{folder}")
+                    file_name = file['name']
+                    path_file = folder / Path(file_name)
+                    info[i]["have"] = False
+                    if path_file.exists():
+                        info[i]["have"] = True
+
+        return info
 
     # Version
     def selectVersionByIndex(self, index:int) -> int:

@@ -225,12 +225,14 @@ function civsfz_version_color(id, l) {
 	let labels = elmVersionRadio.getElementsByTagName("label");
 	for (let j = 0; j < labels.length; j++) {
 		let label = labels[j];
-		let span = label.getElementsByTagName("span")[0];
+		// let span = label.getElementsByTagName("span")[0];
 		// console.log(label);
 		let color = "var(--civsfz-color-for-" + versions[j]["base_model"].replace(/[\ \.]/g, '_');
 		label.style.setProperty("border-bottom", "solid 4px " + color);
 		if (versions[j]["have"]) {
 			label.style.setProperty("border-top", "solid 2px var(--civsfz-shadow-color-alreadyhave)");
+		} else {
+			label.style.removeProperty("border-top");
 		}
 	}
 }

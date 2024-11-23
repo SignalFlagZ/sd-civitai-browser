@@ -562,6 +562,7 @@ class CivitaiModels(APIInformation):
                 for version in item["modelVersions"]
             ]
             for i,ver in enumerate(item['modelVersions']):
+                have = False
                 for file in ver['files']:
                     folder = generate_model_save_path2(
                         item["type"],
@@ -576,10 +577,11 @@ class CivitaiModels(APIInformation):
                     # print(f"{folder}")
                     file_name = file['name']
                     path_file = folder / Path(file_name)
-                    info[i]["have"] = False
+                    # print(f"{path_file}")
                     if path_file.exists():
-                        info[i]["have"] = True
-
+                        have = True
+                        break
+                info[i]["have"] = have
         return info
 
     # Version

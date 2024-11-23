@@ -156,6 +156,13 @@ function civsfz_overwriteProperties(propertiesText) {
 	elem.style.setProperty('--civsfz-hover-scale', p[i++]);
 	elem.style.setProperty('--civsfz-card-width', p[i++]);
 	elem.style.setProperty('--civsfz-card-height', p[i++]);
+	//Color Family
+	const fColors = JSON.parse(p[i]);
+	Object.keys(fColors).forEach(function (key) {
+		let color = fColors[key]
+		let prop = '--civsfz-color-for-' + key.replace(/[\ \.]/g, '_')
+		elem.style.setProperty(prop, color);
+	})
 	//});
 }
 
@@ -201,6 +208,31 @@ function civsfz_preview_colors() {
 			} else {
 				token.style.removeProperty("background");
 			}
+		}
+	}
+}
+
+function civsfz_scroll_and_color(q, id, l ){
+	civsfz_version_color(id, l);
+	civsfz_scroll_to(q);
+}
+
+function civsfz_version_color(id, l) {
+	//console.log(l);
+	let versions = JSON.parse(l);
+	let elmVersionRadio = gradioApp().querySelector(id);
+	if (elmVersionRadio == null) { return; }
+	let labels = elmVersionRadio.getElementsByTagName("label");
+	for (let j = 0; j < labels.length; j++) {
+		let label = labels[j];
+		// let span = label.getElementsByTagName("span")[0];
+		// console.log(label);
+		let color = "var(--civsfz-color-for-" + versions[j]["base_model"].replace(/[\ \.]/g, '_');
+		label.style.setProperty("border-bottom", "solid 4px " + color);
+		if (versions[j]["have"]) {
+			label.style.setProperty("border-top", "solid 2px var(--civsfz-shadow-color-alreadyhave)");
+		} else {
+			label.style.removeProperty("border-top");
 		}
 	}
 }

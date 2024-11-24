@@ -128,10 +128,10 @@ function civsfz_copyInnerText(node, send = true) {
 				//trigger_key_down(prompt, 'Escape');
 			}
 		} else {
-			return navigator.clipboard.writeText(node.nextElementSibling.innerText)
+			return navigator.clipboard.writeText(node.nextElementSibling.innerText.trim())
 				.then(
 					function () {
-						alert("Copied " + node.nextElementSibling.innerText);
+						alert("Copied " + node.nextElementSibling.innerText.trim());
 					}
 				).catch(
 					function (error) {

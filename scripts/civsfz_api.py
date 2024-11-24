@@ -1060,6 +1060,8 @@ class CivitaiModels(APIInformation):
 
     # REST API
     def makeRequestQuery(self, content_type, sort_type, period, use_search_term, search_term=None, base_models=None, grChkboxShowNsfw=False):
+        if search_term is not None:
+            search_term = str.strip(search_term)
         if use_search_term == "Model ID" or use_search_term == "Version ID":
             if not search_term.isdecimal():
                 query = ""

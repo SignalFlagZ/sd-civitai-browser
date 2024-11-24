@@ -934,7 +934,7 @@ class Components():
                 outputs=[],
             )
 
-            grBtnFolder.click(fn=open_folder, inputs=[grTxtCreator], outputs=[])
+            grBtnFolder.click(fn=open_folder, inputs=[grTxtSaveFolder], outputs=[])
 
     def getComponents(self):
         return self.components

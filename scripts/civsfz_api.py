@@ -584,7 +584,7 @@ class CivitaiModels(APIInformation):
                     item["type"],
                     item["name"],
                     ver["baseModel"],
-                    self.treatAsNsfw(modelIndex=index),
+                    self.treatAsNsfw(modelIndex=index, versionIndex=i),
                     item["creator"]["username"] if "creator" in item else "",
                     item["id"],
                     ver["id"],

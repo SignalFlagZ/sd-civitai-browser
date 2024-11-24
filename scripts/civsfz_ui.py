@@ -862,7 +862,9 @@ class Components():
                         ) = update_model_info(grRadioVersions["value"], grChkbxgrpLevel)
                         # grTxtDlUrl = gr.Textbox.update(value=self.Civitai.getUrlByName(grDrpdwnSelectFile['value']))
                         grTxtHash = gr.Textbox.update(value=self.Civitai.getHashByName(grDrpdwnSelectFile['value']))
-                        grTxtVersionInfo = gr.Textbox.update(value=json.dumps(self.Civitai.getModelVersionsInfo()))
+                        grTxtVersionInfo = gr.Textbox.update(
+                            value=json.dumps(self.Civitai.modelVersionsInfo())
+                        )
                         return (
                             grHtmlModelName,
                             grRadioVersions,

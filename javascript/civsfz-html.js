@@ -213,8 +213,8 @@ function civsfz_preview_colors() {
 }
 
 function civsfz_scroll_and_color(q, id, l ){
-	civsfz_version_color(id, l);
 	civsfz_scroll_to(q);
+	civsfz_version_color(id, l);
 }
 
 function civsfz_version_color(id, l) {

@@ -356,12 +356,12 @@ class CivitaiModels(APIInformation):
         self.showNsfw = False
         self.baseUrl = APIInformation.baseUrl if url is None else url
         self.modelIndex = None
+        self.versionsInfo = None    # for radio button and file exist check
         self.versionIndex = None
         self.modelVersionInfo = None
         self.requestError = None
         self.saveFolder = None
         self.cardPagination = None
-
     def updateJsonData(self, json_data:dict=None, content_type:str=None):
         '''Update json data.'''
         self.jsonData = json_data
@@ -542,47 +542,63 @@ class CivitaiModels(APIInformation):
         return permissions
     def getModelVersionsList(self) -> list:
         '''Return modelVersions list. Select item before.'''
-        versionNames = []
-        if self.modelIndex is None:
-            print_ly('Select item first.')
-        else:
-            item = self.jsonData['items'][self.modelIndex]
-            versionNames = [ (version['name'],i) for i,version in enumerate(item['modelVersions'])]
-            # versionNames[version['name']] = version["name"]
-        return versionNames
+        self.getModelVersionsInfo()
+        return [(item["name"], i) for i, item in enumerate(self.versionsInfo)]
+        # versionNames = []
+        # if self.modelIndex is None:
+        #     print_ly('Select item first.')
+        # else:
+        #     item = self.jsonData['items'][self.modelIndex]
+        #     versionNames = [ (version['name'],i) for i,version in enumerate(item['modelVersions'])]
+        #     # versionNames[version['name']] = version["name"]
+        # return versionNames
+
+    def modelVersionsInfo(self) -> list:
+        return self.versionsInfo
+
     def getModelVersionsInfo(self) -> list:
         info = []
         if self.modelIndex is None:
             pass
             # print_ly("Select item first.")
         else:
+            hasVersions = self.checkAlreadyHave()
+            # print_lc(f"{hasVersions=}")
             item = self.jsonData["items"][self.modelIndex]
             info = [
-                {"name": version["name"], "base_model": version["baseModel"]}
-                for version in item["modelVersions"]
+                {"name": version["name"], "base_model": version["baseModel"], "have": hasVersions[i]}
+                for i, version in enumerate(item["modelVersions"])
             ]
-            for i,ver in enumerate(item['modelVersions']):
-                have = False
-                for file in ver['files']:
-                    folder = generate_model_save_path2(
-                        item["type"],
-                        item["name"],
-                        ver["baseModel"],
-                        self.treatAsNsfw(),
-                        item["creator"]["username"] if "creator" in item else "",
-                        item["id"],
-                        ver["id"],
-                        ver["name"],
-                    )
-                    # print(f"{folder}")
-                    file_name = file['name']
-                    path_file = folder / Path(file_name)
-                    # print(f"{path_file}")
-                    if path_file.exists():
-                        have = True
-                        break
-                info[i]["have"] = have
+        self.versionsInfo = info
         return info
+
+    def checkAlreadyHave(self, index:int=None) -> list[bool]:
+        if index == None:
+            index = self.modelIndex
+        item = self.jsonData["items"][index]
+        hasVersions = []
+        for i,ver in enumerate(item['modelVersions']):
+            have = False
+            for file in ver['files']:
+                folder = generate_model_save_path2(
+                    item["type"],
+                    item["name"],
+                    ver["baseModel"],
+                    self.treatAsNsfw(modelIndex=index),
+                    item["creator"]["username"] if "creator" in item else "",
+                    item["id"],
+                    ver["id"],
+                    ver["name"],
+                )
+                # print(f"{folder}")
+                file_name = file['name']
+                path_file = folder / Path(file_name)
+                # print(f"{path_file}")
+                if path_file.exists():
+                    have = True
+                    break
+            hasVersions.append(have)
+        return hasVersions
 
     # Version
     def selectVersionByIndex(self, index:int) -> int:
@@ -883,30 +899,12 @@ class CivitaiModels(APIInformation):
                 base_model = item["modelVersions"][0]['baseModel']
                 param['baseModel'] = base_model
 
-                for i,ver in enumerate(item['modelVersions']):
-                    for file in ver['files']:
-                        folder = generate_model_save_path2(
-                            self.getModelTypeByIndex(index),
-                            item["name"],
-                            ver["baseModel"],
-                            self.treatAsNsfw(modelIndex=index),
-                            creator,
-                            item["id"],
-                            ver["id"],
-                            ver["name"],
-                        )
-                        # print(f"{folder}")
-                        file_name = file['name']
-                        path_file = folder / Path(file_name)
-                        if path_file.exists():
-                            if i == 0:
-                                param['have'] = 'new'
-                                break
-                            else:
-                                param['have'] = 'old'
-                                break
-                    if param['have'] != "":
-                        break
+                has = self.checkAlreadyHave(index)
+                if has[0]:
+                    param["have"] = "new"
+                elif any(has[1:]) :
+                    param["have"] = "old"
+
                 # ea = item["modelVersions"][0]['earlyAccessDeadline'] if "earlyAccessDeadline" in item["modelVersions"][0] else ""
                 ea = item["modelVersions"][0]['availability'] == "EarlyAccess"
                 if ea:

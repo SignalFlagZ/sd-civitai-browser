@@ -566,8 +566,12 @@ class CivitaiModels(APIInformation):
             # print_lc(f"{hasVersions=}")
             item = self.jsonData["items"][self.modelIndex]
             info = [
-                {"name": version["name"], "base_model": version["baseModel"], "have": hasVersions[i]}
-                for i, version in enumerate(item["modelVersions"])
+                {
+                    "name": l1["name"],
+                    "base_model": l1["baseModel"],
+                    "have": l2,
+                }
+                for l1,l2 in zip(item["modelVersions"], hasVersions)
             ]
         self.versionsInfo = info
         return info
@@ -844,10 +848,10 @@ class CivitaiModels(APIInformation):
         return f"{self.getCurrentPage()}/{self.getTotalPages()}"
     def nextPage(self) -> str:
         # return self.jsonData['metadata']['nextPage'] if 'nextPage' in self.jsonData['metadata'] else None
-        return self.cardPagination.getNextUrl()
+        return self.cardPagination.getNextUrl() if self.cardPagination is not None else None
     def prevPage(self) -> str:
         # return self.jsonData['metadata']['prevPage'] if 'prevPage' in self.jsonData['metadata'] else None
-        return self.cardPagination.getPrevUrl()
+        return self.cardPagination.getPrevUrl() if self.cardPagination is not None else None
 
     # HTML
     # Make model cards html

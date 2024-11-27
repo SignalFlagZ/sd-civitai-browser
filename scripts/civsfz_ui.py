@@ -257,10 +257,15 @@ class Components():
                     gr.Info(f"Reset {grTxtCreator}")
                 BanCreators.remove(grTxtCreator)
                 return updateUserManageButton(grTxtCreator)
+            def updateSearchTermChoices():
+                return gr.Dropdown.update(choices=HistoryS.getAsChoices())
+
             grBtnAddFavorite.click(
                 fn=addFavorite,
                 inputs=[grTxtCreator],
                 outputs=[grBtnAddFavorite, grBtnAddBan, grBtnClearUser],
+            ).then(
+                fn=updateSearchTermChoices, inputs=[], outputs=[grDropdownSearchTerm]
             )
             grBtnAddBan.click(
                 fn=addBan,
@@ -271,6 +276,8 @@ class Components():
                 fn=clearUser,
                 inputs=[grTxtCreator],
                 outputs=[grBtnAddFavorite, grBtnAddBan, grBtnClearUser],
+            ).then(
+                fn=updateSearchTermChoices, inputs=[], outputs=[grDropdownSearchTerm]
             )
 
             def save_image_files(grTxtSaveFolder, grtxtSaveFilename, grTxtTrainedWords, grHtmlModelInfo):
@@ -336,14 +343,7 @@ class Components():
                 outputs=[grDropdownSearchTerm,
                         grRadioSearchType]
             )
-            def updateSearchTermChoices():
-                return gr.Dropdown.update(choices=HistoryS.getAsChoices())
-            # Dropdown and text editing conflict on focus event
-            grDropdownSearchTerm.blur(
-                fn=updateSearchTermChoices,
-                inputs=[],
-                outputs=[grDropdownSearchTerm],
-            )
+
             def selectCHistory(grDrpdwnHistory):
                 if grDrpdwnHistory:
                     conditions = grDrpdwnHistory.split(HistoryC.getDelimiter())

@@ -207,9 +207,16 @@ class APIInformation():
             # print_lc(f'Page cache: {response.headers["CF-Cache-Status"]}')
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            # print(f"{response=}")
-            response.encoding = "utf-8"
-            data = json.loads(response.text)
+            # print(f"{(response.status_code)=}")
+            if response.status_code == 400: # Bad Request
+                # expected under normal conditions
+                response.encoding = "utf-8"
+                data = (
+                json.loads(response.text)
+            )
+            else:
+                data = ""
+                print_ly("Civitai server may be down or under maintenance.")
         else:
             data = ""
         # Check the status code of the response

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from modules.ui_components import ToolButton
 from colorama import Fore, Back, Style
-from scripts.civsfz_shared import VERSION, cmd_opts, opts
+from scripts.civsfz_shared import VERSION, platform, cmd_opts, opts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import (
     open_folder,
@@ -967,18 +967,17 @@ def on_ui_tabs():
                     "For more information, please click [here(CivBrowser|GitHub)](https://github.com/SignalFlagZ/sd-webui-civbrowser)"
                 )
             )
-        downloader.uiDlList(gr)
-        # Use the Timer component because there are problems with `every` on HTML component.
-        # grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=None)
-        # grTimer = gr.Timer(value=10.0)
-        # def updateDlList():
-        #    ret = gr.HTML.update(value=Downloader.uiDlList)
-        #    return ret
-        # grTimer.tick(
-        #    fn=updateDlList,
-        #    inputs=[],
-        #    outputs=[grHtmlDlQueue],
-        # )
+        if platform == "Forge":
+            grHtmlDlQueue = downloader.uiDlList(gr)
+            # Use the Timer component because there are problems with `every` on HTML component.
+            grTimer = gr.Timer(value=1.5)
+            grTimer.tick(
+                fn=lambda: gr.HTML.update(value=downloader.dlHtml()),
+                inputs=[],
+                outputs=[grHtmlDlQueue],
+            )
+        else:
+            grHtmlDlQueue = downloader.uiDlList(gr, every=1.0)
         with gr.Tabs(elem_id='civsfz_tab-element', elem_classes="civsfz-custom-property"):
             for i,name in enumerate(tabNames):
                 with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:

@@ -107,11 +107,11 @@ class Downloader:
             threadQ=Downloader._threadQ, waitQ=Downloader._dlQ, resultQ=expireQ)
         return content
 
-    def uiDlList(self, gr:gr):
-        def dlHtml():
-            html = self.status()
-            return html
-        grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=dlHtml, every=2.0)
+    def dlHtml(self):
+        html = self.status()
+        return html
+    def uiDlList(self, gr:gr, every:float=None):
+        grHtmlDlQueue = gr.HTML(elem_id=f"civsfz_download_queue", value=lambda: self.dlHtml(), every=every)
         return grHtmlDlQueue
 
     def uiJsEvent(self, gr: gr):

@@ -950,6 +950,8 @@ def on_ui_tabs():
             gr.Markdown(
                 value=(
                     "# Changes " + "v2.5" + "\n"
+                    "- Select the display of banned users using Browsing Level"
+                    "\n"
                     "- Add User Management feature"
                     "\n"
                     "- Add favorite creator feature"

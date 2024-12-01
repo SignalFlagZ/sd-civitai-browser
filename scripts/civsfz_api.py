@@ -148,7 +148,8 @@ class APIInformation():
                  "R": 4,
                  "X": 8,
                  "XXX": 16,
-                 #"Blocked":  32
+                 #"Blocked":  32,
+                 "Banned":  256,
                  } 
     def __init__(self) -> None:
         if APIInformation.typeOptions is None:
@@ -399,9 +400,18 @@ class CivitaiModels(APIInformation):
     def getSaveFolder(self):
         return self.saveFolder
     def matchLevel(self, modelLevel:int, browsingLevel:int) -> bool:
-        if browsingLevel == 0: # Show all if Browsing Level is unchecked
-            return True
-        return modelLevel & browsingLevel > 0
+        if bool(browsingLevel & self.nsfwLevel["Banned"]) :
+            # Show banned users
+            if browsingLevel == self.nsfwLevel["Banned"]:
+                # Show all if Browsing Level is unchecked
+                return True
+            return modelLevel & browsingLevel > 0
+        else:
+            if browsingLevel == 0: # Show all if Browsing Level is unchecked
+                return not bool(modelLevel & self.nsfwLevel["Banned"])
+        return bool(modelLevel & browsingLevel) and not bool(
+            modelLevel & self.nsfwLevel["Banned"]
+        )
 
     # Models
     def getModels(self, showNsfw = False) -> list:
@@ -874,6 +884,7 @@ class CivitaiModels(APIInformation):
             index = model[1]
             item = self.jsonData['items'][model[1]]
             creator = item["creator"]["username"] if "creator" in item else ""
+            level = item["nsfwLevel"] | (0 if not creator in BanCreators.getAsList() else self.nsfwLevel["Banned"])
             base_model = ""
             param = {
                 "name": item["name"],
@@ -881,8 +892,8 @@ class CivitaiModels(APIInformation):
                 "jsId": jsID,
                 "id": item["id"],
                 "isNsfw": False,
-                "nsfwLevel": item["nsfwLevel"],
-                "matchLevel": self.matchLevel(item["nsfwLevel"], nsfwLevel),
+                "nsfwLevel": level,
+                "matchLevel": self.matchLevel(level, nsfwLevel),
                 "type": item["type"],
                 "have": "",
                 "ea": "",

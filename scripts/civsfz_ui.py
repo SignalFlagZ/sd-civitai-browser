@@ -2,13 +2,11 @@ import gradio as gr
 import itertools
 import json
 import math
-import re
-from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from modules import script_callbacks
 from modules.ui_components import ToolButton
 from colorama import Fore, Back, Style
-from scripts.civsfz_shared import VERSION, platform, cmd_opts, opts
+from scripts.civsfz_shared import VERSION, GR_V440, cmd_opts, opts
 from scripts.civsfz_api import CivitaiModels
 from scripts.civsfz_filemanage import (
     open_folder,
@@ -969,7 +967,7 @@ def on_ui_tabs():
                     "For more information, please click [here(CivBrowser|GitHub)](https://github.com/SignalFlagZ/sd-webui-civbrowser)"
                 )
             )
-        if platform == "Forge":
+        if GR_V440:
             grHtmlDlQueue = downloader.uiDlList(gr)
             # Use the Timer component because there are problems with `every` on HTML component.
             grTimer = gr.Timer(value=1.5)

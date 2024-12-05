@@ -32,6 +32,7 @@ https://github.com/SignalFlagZ/sd-civitai-browser/assets/23202768/56f34586-94ea-
 
 ## Versions
 ### v2.5
+- Works on reForge (Experimental. Is there demand?)
 - Select the display of banned users using Browsing Level
 - Indicates the base model of a model version by color
 - Indicates the version you have already obtained by color

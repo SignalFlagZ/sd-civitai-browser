@@ -1,7 +1,12 @@
-VERSION = "v2.5.4"
+VERSION = "v2.5.5"
 
 platform = "A1111"
 forge_version = None
+
+import gradio as gr
+# GRADIO_VERSION = gr.__version__
+GR_V440 = True if "4.40" in gr.__version__ else False
+
 try:
     from modules_forge import forge_version
 except ImportError:
@@ -25,7 +30,7 @@ except ImportError:
     # SD.Next
     from modules.shared import cmd_opts as cmd_opts
 
-if platform == "Forge":
+try:
     from modules.hashes import calculate_sha256_real as calculate_sha256
-else:
+except ImportError:
     from modules.hashes import calculate_sha256 as calculate_sha256

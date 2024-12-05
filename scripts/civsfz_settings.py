@@ -1,6 +1,7 @@
 import gradio as gr
 from modules import script_callbacks, shared, ui_components
 from scripts.civsfz_color import BaseModelColors, familyColor
+from scripts.civsfz_shared import GR_V440
 
 def on_ui_settings():
     from scripts.civsfz_shared import platform
@@ -127,28 +128,6 @@ def on_ui_settings():
         ),
     }
 
-    # Deprecated
-    dict_creator_control = {
-        "civsfz_favorite_creators": shared.OptionInfo(
-            "",
-            label="Favorite creators",
-            component=gr.Textbox,
-            component_args={
-                "info": "Comma-separated text",
-                "placeholder": "xxx, yyy",
-            },
-        ).info("Show ⭐️ on card"),
-        "civsfz_ban_creators": shared.OptionInfo(
-            "",
-            label="Ban creators",
-            component=gr.Textbox,
-            component_args={
-                "info": "Comma-separated text",
-                "placeholder": "xxx, yyy",
-            },
-        ).info("Hide Cards"),
-    }
-
     dict_background_opacity = {
         "civsfz_background_opacity": shared.OptionInfo(
             0.75,
@@ -157,15 +136,6 @@ def on_ui_settings():
             component_args={"minimum": 0.0, "maximum": 1.0, "step": 0.05},
         ),
     }
-
-    # deprecated
-    dict_modelColor = {}
-    for item in BaseModelColors().colors:
-        dict_modelColor[item["key"]] = shared.OptionInfo(
-            item["color"],
-            label=item["label"],
-            component=gr.ColorPicker,
-        )
 
     dict_shadow_color = {
         "civsfz_shadow_color_default": shared.OptionInfo(
@@ -227,7 +197,7 @@ def on_ui_settings():
                     "lines": 4,
                 },
             )
-            if platform == "Forge"
+            if GR_V440
             else shared.OptionInfo(
                 "",
                 label=label,
@@ -304,9 +274,7 @@ def on_ui_settings():
         **dict_user_management,
         **dict_api_info,
         **dict_options1,
-        # **dict_creator_control,
         **dict_background_opacity,
-        # **dict_modelColor,
         **dict_color_figcaption,
         **dict_color_family,
         **dict_shadow_color,

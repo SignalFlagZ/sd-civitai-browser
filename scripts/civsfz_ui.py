@@ -181,7 +181,7 @@ class Components():
                 with gr.Row(equal_height=False):
                     grBtnFolder = gr.Button(value="\N{Open file folder}", interactive=True, elem_classes="civsfz-small-buttons")  # 📂
                     grTxtSaveFolder = gr.Textbox(label="Save folder", interactive=True, value="", lines=1)
-                    grMrkdwnFileMessage = gr.Markdown(value="**<span style='color:Aquamarine;'>You have</span>**", elem_classes ="civsfz-msg", visible=False)
+                    grMrkdwnFileMessage = gr.HTML(value="<span style='color:Aquamarine;'>You have</span>", elem_classes ="civsfz-msg", visible=False)
                     grtxtSaveFilename = gr.Textbox(label="Save file name", interactive=True, value=None)
                 with gr.Row():
                     grTxtDlUrl = gr.Textbox(label="Download Url", interactive=False, value=None)
@@ -636,7 +636,7 @@ class Components():
                 isExist = None
                 if filename is not None:
                     isExist = file_exist_check(folder, filename)
-                return gr.Markdown.update(visible = True if isExist else False)
+                return gr.HTML.update(visible = True if isExist else False)
             grTxtSaveFolder.blur(
                 fn=save_folder_changed,
                 inputs={grTxtSaveFolder,grDrpdwnSelectFile},
@@ -699,7 +699,7 @@ class Components():
 
             def file_exist_check(grTxtSaveFolder, grDrpdwnSelectFile):
                 isExist = isExistFile(grTxtSaveFolder, grDrpdwnSelectFile)            
-                return gr.Markdown.update(visible = True if isExist else False)
+                return gr.HTML.update(visible = True if isExist else False)
             grTxtDlUrl.change(
                 fn=file_exist_check,
                 inputs=[grTxtSaveFolder,
@@ -945,26 +945,20 @@ def on_ui_tabs():
         tabNames.append(f'Browser{i}')
     with gr.Blocks() as civitai_interface:
         with gr.Accordion(label="Update information", open=False):
-            gr.Markdown(
+            gr.HTML(
                 value=(
-                    "# Changes " + "v2.5" + "\n"
-                    "- Select the display of banned users using Browsing Level"
-                    "\n"
-                    "- Add User Management feature"
-                    "\n"
-                    "- Add favorite creator feature"
-                    "\n"
-                    "  - Display ⭐️ on cards by creator name"
-                    "\n"
-                    "- Add ban creators feature"
-                    "\n"
-                    "  - Hide cards by creator name"
-                    "\n"
-                    "- Add favorite creators in search term"
-                    "\n"
-                    "- Command line option `--civsfz_api_key` is deprecated. Instead, use Settings."
-                    "\n\n"
-                    "For more information, please click [here(CivBrowser|GitHub)](https://github.com/SignalFlagZ/sd-webui-civbrowser)"
+                    "<h3>Changes " + "v2.5" + "</h3>"
+                    "<ul>"
+                    "<li>Select the display of banned users using Browsing Level</li>"
+                    "<li>Add User Management feature</li>"
+                    "<li>Add favorite creator feature</li>"
+                    "<li>Display ⭐️ on cards by creator name</li>"
+                    "<li>Add ban creators feature</li>"
+                    "<li>Hide cards by creator name</li>"
+                    "<li>Add favorite creators in search term</li>"
+                    "<li>Command line option `--civsfz_api_key` is deprecated. Instead, use Settings.</li>"
+                    "</ul>"
+                    "<div>For more information, please click <a href='https://github.com/SignalFlagZ/sd-webui-civbrowser'>here(CivBrowser|GitHub)]'</a></div>"
                 )
             )
         if GR_V440:
@@ -983,7 +977,7 @@ def on_ui_tabs():
                 with gr.Tab(label=name, id=f"tab{i}", elem_id=f"civsfz_tab{i}") as tab:
                     Components(downloader, tab)  # (tab)
         with gr.Row():
-            gr.Markdown(value=f'<div style="text-align:center;">{ver}</div>')
+            gr.HTML(value=f'<div style="text-align:center;">{ver}</div>')
             downloader.uiJsEvent(gr)
     return [(civitai_interface, "CivBrowser", "civsfz_interface")]
 
